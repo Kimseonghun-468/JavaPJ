@@ -27,4 +27,7 @@ public class Guestbook extends BaseEntity {
     public void changeContent(String content){
         this.content = content;
     }
+    public void changeTitle(String title) {
+        this.title = title;
+    }
 }
