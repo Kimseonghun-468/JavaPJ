@@ -23,14 +23,33 @@ public class BoardServiceTests {
 //                .build();
 //        Long bno = boardService.register(dto);
 //    }
+//    @Test
+//    public void testList(){
+//        PageRequestDTO pageRequestDTO = new PageRequestDTO(3, 3, null, null);
+//        PageResultDTO<BoardDTO, Object[]> result = boardService.getList(pageRequestDTO);
+//
+//        for (BoardDTO boardDTO : result.getDtoList()){
+//            System.out.println(boardDTO);
+//        }
+//    }
+//    @Test
+//    public void testGet(){
+//        Long bno = 12L;
+//        BoardDTO boardDTO = boardService.get(bno);
+//        System.out.println(boardDTO);
+//    }
+//    @Test
+//    public void testRemove(){
+//        Long bno = 13L;
+//        boardService.removeWithReplies(bno);
+//    }
     @Test
-    public void testList(){
-        PageRequestDTO pageRequestDTO = new PageRequestDTO(3, 3, null, null);
-        PageResultDTO<BoardDTO, Object[]> result = boardService.getList(pageRequestDTO);
-
-        for (BoardDTO boardDTO : result.getDtoList()){
-            System.out.println(boardDTO);
-        }
+    public void testModify() {
+        BoardDTO boardDTO = BoardDTO.builder()
+                .bno(2L)
+                .title("Modi")
+                .content("Modi...")
+                .build();
+        boardService.modify(boardDTO);
     }
-
 }
