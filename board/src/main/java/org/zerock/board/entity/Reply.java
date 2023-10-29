@@ -17,7 +17,7 @@ public class Reply extends BaseEntity{
     private String text;
     private String replayer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 }
 
