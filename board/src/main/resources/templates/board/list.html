@@ -10,6 +10,26 @@
                 </a>
             </span>
     </h1>
+    <form action="/board/list" method="get" id="searchForm">
+      <div class="input-group">
+        <input type="hidden" name="page" value="1">
+        <div class="input-group-prepend">
+          <select class="custom-select" name ="type">
+            <option th:selected="${pageRequestDTO.type ==null}">----------</option>
+            <option value="t" th:selected="${pageRequestDTO.type == 't'}">제목</option>
+            <option value="t" th:selected="${pageRequestDTO.type == 'c'}">내용</option>
+            <option value="t" th:selected="${pageRequestDTO.type == 'w'}">작성자</option>
+            <option value="t" th:selected="${pageRequestDTO.type == 'tc'}">제목 + 내용</option>
+            <option value="t" th:selected="${pageRequestDTO.type == 'tcw'}">제목 + 내용 + 작성자</option>
+          </select>
+        </div>
+        <input class="form-control" name ="keyword" th:value="${pageRequestDTO.keyword}">
+        <div class="input-group-prepend" id="button-addon4">
+          <button class="btn btn-outline-secondary btn-search" type="button">Search</button>
+          <button class="btn btn-outline-secondary btn-claer" type="button">Clear</button>
+        </div>
+      </div>
+    </form>
     <table class="table table-striped">
       <thead>
       <tr>
@@ -52,5 +72,24 @@
             keyword = ${pageRequestDTO.keyword})}">Next</a>
       </li>
     </ul>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+      var msg = [[${msg}]];
+      console.log(msg);
+
+      if (msg) {
+        $(".modal").modal();
+      }
+      var searchFrom = $("#searchForm");
+      $('.btn-search').click(function (e){
+        searchFrom.submit();
+      });
+      $('.btn-claer').click(function (e){
+        searchFrom.empty().submit();
+      });
+    </script>
   </th:block>
 </th:block>
