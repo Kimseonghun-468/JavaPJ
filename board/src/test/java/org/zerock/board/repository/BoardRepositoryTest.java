@@ -1,6 +1,5 @@
 package org.zerock.board.repository;
 
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.board.entity.Board;
 import org.zerock.board.entity.Member;
 
@@ -69,10 +69,23 @@ public class BoardRepositoryTest {
 //            System.out.println(Arrays.toString(arr));
 //        });
 //    }
+//    @Test
+//    public void testRead3(){
+//        Object result = boardRepository.getBoardByBno(12L);
+//        Object[] arr = (Object[])result;
+//        System.out.println(Arrays.toString(arr));
+//    }
+//    @Test
+//    @Transactional
+//    public void testSearch1(){
+//        boardRepository.search1();
+//    }
     @Test
-    public void testRead3(){
-        Object result = boardRepository.getBoardByBno(12L);
-        Object[] arr = (Object[])result;
-        System.out.println(Arrays.toString(arr));
+    @Transactional
+    public void testSearchPage(){
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("title").descending());
+        Page<Object[]> result = boardRepository.searchPage("t", "1", pageable);
+
+
     }
 }
