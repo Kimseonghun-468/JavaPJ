@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fafafa;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.profile-container {
+    width: 50%;
+    background-color: white;
+    border: 1px solid #dbdbdb;
+    padding: 20px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+}
+
+.profile-picture {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-right: 20px;
+    border: 1px solid #dbdbdb;
+}
+
+.user-details {
+    flex-grow: 1;
+}
+
+.username {
+    margin: 0;
+}
+
+.stats {
+    list-style: none;
+    padding: 0;
+}
+
+.stats li {
+    display: inline;
+    margin-right: 10px;
+}
+
+.bio {
+    margin-top: 20px;
+}
