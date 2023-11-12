@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.config;
 
+import com.skhkim.instaclone.security.handler.ClubLoginFormSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,7 @@ public class SecurityConfig {
 //        }));
 
         http.formLogin(Customizer.withDefaults());
+        http.formLogin((formLogin) -> formLogin.successHandler(clubLoginFormSuccessHandler()));
 //        http.formLogin((formLgoin)->formLgoin.loginPage("/member/signup"));
         http.csrf((csrf)-> csrf.disable());
         http.logout(Customizer.withDefaults());
@@ -50,6 +52,10 @@ public class SecurityConfig {
     public ClubLoginSuccessHandler clubLoginSuccessHandler(){
         return new ClubLoginSuccessHandler(passwordEncoder());
 //        return new ClubLoginSuccessHandler(passwordEncoder());
+    }
+    @Bean
+    public ClubLoginFormSuccessHandler clubLoginFormSuccessHandler(){
+        return new ClubLoginFormSuccessHandler(passwordEncoder());
     }
 
 

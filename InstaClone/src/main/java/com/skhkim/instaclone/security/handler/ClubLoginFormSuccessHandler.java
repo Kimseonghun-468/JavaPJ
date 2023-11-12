@@ -14,19 +14,19 @@ import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import java.io.IOException;
 
 @Log4j2
-public class ClubLoginSuccessHandler implements AuthenticationSuccessHandler {
+public class ClubLoginFormSuccessHandler implements AuthenticationSuccessHandler {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private PasswordEncoder passwordEncoder;
 
-    public ClubLoginSuccessHandler(PasswordEncoder passwordEncoder){
+    public ClubLoginFormSuccessHandler(PasswordEncoder passwordEncoder){
         this.passwordEncoder = passwordEncoder;
     }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication)
-        throws IOException, ServletException{
+            throws IOException, ServletException{
 
         log.info("----------------------");
         log.info("onAuthenticationSuccess");
@@ -34,14 +34,21 @@ public class ClubLoginSuccessHandler implements AuthenticationSuccessHandler {
         ClubAuthMemberDTO authMember = (ClubAuthMemberDTO)authentication.getPrincipal();
 
         boolean fromSocial = authMember.isFromSocial();
-        log.info("Need Modify Member?" + fromSocial);
-
-        boolean passwordResult = passwordEncoder.matches("1111", authMember.getPassword());
-        log.info("What is that!!2");
-        if(fromSocial && passwordResult){
-            log.info("What is that!!");
-            redirectStrategy.sendRedirect(request, response, "/member/modify?from=social");
+        boolean passwordResult = passwordEncoder.matches("seonghun", authMember.getPassword());
+        log.info("What is that!!2" + passwordResult + fromSocial);
+        if(!fromSocial && passwordResult){
+            redirectStrategy.sendRedirect(request, response, "/sidebar");
         }
     }
 
+
 }
+//
+//public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
+//    @Override
+//    public void onAuthenticationFailure(HttpServletRequest request,
+//                                        HttpServletResponse response,
+//                                        AuthenticationException exception) throws IOException, ServletException {
+//        // 로그인 실패 시 수행할 로직
+//    }
+//}
