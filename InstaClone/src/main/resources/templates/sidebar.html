@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <link th:href="@{/css/Sidebar.css}" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -74,6 +78,14 @@
 
     <div class="up-temp3">
     <div class="temp3">
+<!--      <input name="uploadFiles" type="file" multiple>-->
+      <!-- 파일 선택 입력 필드 -->
+      <input type="file" class="fileInput" style="display: none;" multiple>
+
+      <!-- 파일 선택을 위한 버튼 -->
+      <button class="uploadButton">파일 선택</button>
+
+
       <footer class="profile-footer">
         <ul class="footer-links">
           <li><a href="#">Meta</a></li>
@@ -86,7 +98,108 @@
   </section>
   </div>
 </body>
+</div>
 
-<!-- 사이드바 이후의 페이지 내용 -->
+<div class="filemodal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">파일 제출</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        파일을 제출하시겠습니까?
+        <form th:action="@{/sidebar}" th:method="post">
+          <div class="box">
+          </div>
+          <button type="submit" class="btn btn-primary" style="display: none;">Submit</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary submitFile">제출</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </html>
+
+<script>
+  $(document).ready(function() {
+    $('.uploadButton').click(function() {
+      $('.fileInput').click();
+      console.log("?");
+    });
+
+    $('.fileInput').on('change', function() {
+      if (this.files && this.files.length > 0) {
+        // 파일이 선택되면 모달을 표시
+        $('.filemodal').modal('show');
+        var formData = new FormData();
+        var inputFile = $("input[type='file']");
+        var files = inputFile[0].files;
+        for (var i = 0; i < files.length; i++){
+          console.log(files[i]);
+          formData.append("uploadFiles", files[i]);
+        }
+
+      }
+      $('.submitFile').click(function() {
+        // 제출 버튼 클릭 시 수행할 로직
+        $.ajax({
+          url: '/uploadAjax',
+          processData: false,
+          contentType: false,
+          data: formData,
+          type: 'POST',
+          dataType: 'json',
+          success: function (result) {
+            console.log(result);
+            // showUploadedImages(result)
+            var str = "";
+            result.forEach((item, index) => {
+              console.log(item);
+              str += "<input type='hidden' name='imageDTOList["+index+"].imgName' value='"+item['fileName'] +"'>";
+              str += "<input type='hidden' name='imageDTOList["+index+"].path' value='"+item['folderPath']+"'>";
+              str += "<input type='hidden' name='imageDTOList["+index+"].uuid' value='"+item['uuid']+"'>";
+              // console.log(item.fileName);
+              // console.log(item['fileName']);
+            })
+            console.log(str);
+            $(".box").html(str);
+            $("form").submit();
+
+
+
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus)
+          }
+        });
+
+        alert('파일이 제출되었습니다.');
+        console.log(inputFile);
+        $('.filemodal').modal('hide');
+      });
+    });
+
+
+  });
+  function showUploadedImages(arr){
+    console.log(arr);
+    var divArea = $(".uploadResult");
+    var str = "";
+
+    for (var i = 0; i < arr.length; i++) {
+      str += "<div>";
+      str += "<img src='/display?fileName=" + arr[i].thumbnailURL + "'>";
+      str += "<button class='removeBtn' data-name='" + arr[i].imageURL + "'>Remove</button>";
+      str += "</div>";
+      console.log(str);
+    }
+    divArea.append(str);
+  }
+</script>

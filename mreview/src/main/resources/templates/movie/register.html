@@ -135,9 +135,9 @@
             str += "<input type='hidden' name='imageDTOList["+i+"].path' value='"+target.data('path')+"'>";
             str += "<input type='hidden' name='imageDTOList["+i+"].uuid' value='"+target.data('uuid')+"'>";
         });
-
+        console.log(str);
         $(".box").html(str);
-        $("form").submit();
+        // $("form").submit();
     })
 
 
