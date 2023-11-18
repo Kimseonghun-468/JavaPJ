@@ -1,4 +1,4 @@
 package com.skhkim.instaclone.entity;
 
-public class Profile {
+public class Post {
 }

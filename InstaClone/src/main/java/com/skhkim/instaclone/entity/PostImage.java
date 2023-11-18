@@ -13,7 +13,7 @@ import lombok.*;
 @Getter
 @ToString
 
-public class ProfileImage {
+public class PostImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
