@@ -13,12 +13,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileDTO {
+public class PostDTO {
     private Long pno;
-    private String coment;
+    private String email;
+    private String comment;
+    private String title;
 
     @Builder.Default
-    private List<ProfileImageDTO> imageDTOList = new ArrayList<>();
+    private List<PostImageDTO> imageDTOList = new ArrayList<>();
 
     private int reviewCnt;
     private LocalDateTime regDate;

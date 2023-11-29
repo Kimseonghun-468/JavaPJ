@@ -12,7 +12,8 @@ import java.net.URLEncoder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProfileImageDTO {
+public class PostImageDTO {
+    private Long pino;
     private String uuid;
     private String imgName;
     private String path;

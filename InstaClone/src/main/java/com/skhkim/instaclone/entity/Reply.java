@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,16 +9,19 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = "clubMember")
-public class Post extends BaseEntity{
+@ToString(exclude = {"post", "clubMember"})
+public class Reply extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pno;
-    private String title;
-    private String comment;
+    private Long rno;
+    private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
     private ClubMember clubMember;
+
+
 
 }

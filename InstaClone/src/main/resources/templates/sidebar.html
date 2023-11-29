@@ -43,7 +43,7 @@
         <div class="profile-info">
           <h1 class="username">[[${memberDTO.name}]]</h1>
           <div class="stats">
-            <span>게시물 1</span>
+            <span>게시물 [[${postNum}]]</span>
             <span>팔로워 0</span>
             <span>팔로우 0</span>
           </div>
@@ -61,14 +61,11 @@
       </nav>
       <div class="post-grid">
         <!-- Post items will go here -->
-        <div class="post-item">
-          <img th:src="|/display?fileName=111.png/|" alt="Post Image">
-        </div>
-        <div class="post-item">
-          <img th:src="|/display?fileName=111.png/|" alt="Post Image">
-        </div>
-        <div class="post-item">
-          <img th:src="|/display?fileName=111.png/|" alt="Post Image">
+        <div class="post-item " th:each="dto : ${result.dtoList}">
+          <td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
+                   th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
+                   th:data-url="|${dto.imageDTOList[0].getImageURL()}|"
+                   th:data-id="${dto.imageDTOList[0].pino}" width="200" height="200"></td>
         </div>
       </div>
     </section>
@@ -98,7 +95,7 @@
   </section>
   </div>
 </body>
-</div>
+
 
 <div class="filemodal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -113,7 +110,9 @@
 
         파일을 제출하시겠습니까?
         <form th:action="@{/sidebar}" th:method="post">
+          <input type="hidden" name="email" value="TT">
           <div class="box">
+
           </div>
           <button type="submit" class="btn btn-primary" style="display: none;">Submit</button>
         </form>
@@ -124,6 +123,55 @@
     </div>
   </div>
 </div>
+
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content-post">
+    <div class="modal-content-post-imagebox">
+    <img th:src="|/display?fileName=111.png/|" alt="Profile Picture" class="post-image">
+    </div>
+<!--    여기에 img BOX를 추가하는 식-->
+    <div class="comment-section">
+      <div class="comment-header">
+        <span class="comment-username">[[${memberDTO.name}]]</span>
+        <span class="options">...</span>
+      </div>
+      <div class="comment-title">
+        <div class="comment-title-username comment-bold">
+          [[${memberDTO.name}]]
+        </div>
+        <div class="comment-title-comment">
+          test Sample
+        </div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-body-reply">
+          <div class="comment-title-username">
+            [[${memberDTO.name}]]
+          </div>
+          <div class="comment-title-comment">
+            test reply
+          </div>
+        </div>
+
+      </div>
+      <div class="comment-footer">
+        <span class="comment-date">2분 전</span>
+        <span class="comment-actions">
+      <span class="heart">♥</span>
+      <span class="comment">💬</span>
+    </span>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="대화 참여...">
+        <span class="send">➤</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 
 </html>
 
@@ -172,8 +220,6 @@
             $(".box").html(str);
             $("form").submit();
 
-
-
           },
           error: function (jqXHR, textStatus, errorThrown) {
             console.log(textStatus)
@@ -202,4 +248,17 @@
     }
     divArea.append(str);
   }
+
+  $(document).ready(function() {
+    $('img').click(function() {
+      $('#myModal').modal('show');
+      var imageUrl = $(this).data('url');
+      var imageId = $(this).data('id');
+      var str = '<img src=\"/display?fileName='+imageUrl+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+      // th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
+      $(".modal-content-post-imagebox").html(str);
+      console.log(imageId);
+      console.log(imageUrl);
+    });
+  });
 </script>

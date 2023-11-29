@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<tr th:each="dto : ${result.dtoList}">
+    <th scope="row">
+        <a th:href="@{/movie/read(mno = ${dto.pno})}">[[${dto.pno}]]</a>
+    </th>
+    <td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
+             th:src ="|/display?fileName=${dto.imageDTOList[0].getThumbnailURL()}|" width="10" height="20" > tt</td>
+
+    <td><b>tt</b></td>
+    <td><b>dd</b></td>
+    <td>[[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
+</tr>
+</body>
+</html>

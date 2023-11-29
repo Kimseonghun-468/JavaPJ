@@ -1,10 +1,9 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.PageRequestDTO;
-import com.skhkim.instaclone.dto.ProfileDTO;
+import com.skhkim.instaclone.dto.PostDTO;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
-import com.skhkim.instaclone.service.LoginService;
-import com.skhkim.instaclone.service.ProfileService;
+import com.skhkim.instaclone.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -21,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class ProfileController {
 
-    private final ProfileService profileService;
+    private final PostService postService;
     @GetMapping("/profile")
     public void profile(){
         log.info("Profile...-----");
@@ -31,17 +29,19 @@ public class ProfileController {
     @GetMapping("/sidebar")
     public void sidevar(PageRequestDTO pageRequestDTO, @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO, Model model){
         log.info("Sidebar...----");
-        log.info("ClubAuth DTO : " +clubAuthMemberDTO);
         log.info("PageRequest DTO : " + pageRequestDTO);
-
+        model.addAttribute("result", postService.getList(pageRequestDTO, clubAuthMemberDTO.getEmail()));
         model.addAttribute("memberDTO", clubAuthMemberDTO);
+        model.addAttribute("postNum", postService.getPostNumber(clubAuthMemberDTO.getEmail()));
 
     }
 
     @PostMapping("/sidebar")
-    public String sidevar(ProfileDTO profileDTO, RedirectAttributes redirectAttributes){
-        log.info("profileDTO : " + profileDTO);
+    public String sidevar(PostDTO postDTO, RedirectAttributes redirectAttributes){
+        log.info("PostDTO : " + postDTO);
 
+        Long pno = postService.register(postDTO);
+        redirectAttributes.addFlashAttribute("msg", pno);
         return "redirect:/sidebar";
     }
     @GetMapping("/midle")
@@ -51,5 +51,14 @@ public class ProfileController {
     @GetMapping("/srctest")
     public void srctest(){
         log.info("src...----");
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/list")
+    public void list(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO, PageRequestDTO pageRequestDTO, Model model){
+        log.info("pageRequestDTO : " + pageRequestDTO);
+        model.addAttribute("result", postService.getList(pageRequestDTO, clubAuthMemberDTO.getEmail()));
+
+        log.info("What!");
     }
 }

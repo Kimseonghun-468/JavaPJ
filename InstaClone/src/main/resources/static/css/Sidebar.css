@@ -7,6 +7,7 @@ body {
     /*margin-right: 10px;*/
     width: 100%;
     height: 100%;
+    min-width: 1000px;
 }
 main {
     margin: 0;
@@ -120,7 +121,9 @@ main {
 }
 
 .profile-content {
-    width: 100%;
+    display: block;
+    max-height: 100%; /* 부모 요소의 높이를 넘지 않음 */
+    max-width: 100%;
     max-width: 935px;
 }
 
@@ -151,8 +154,8 @@ main {
 }
 
 .post-item img {
-    width: 100%;
-    display: block;
+    /*width: 100%;*/
+    /*display: flex;*/
 }
 
 .profile-footer {
@@ -202,6 +205,7 @@ main {
     justify-content: space-between; /* 자식 요소들 사이의 공간을 균등하게 분배 */
     width: 100%;
     height: 100vh; /* 전체 뷰포트 높이 */
+
 }
 
 .up-temp3 {
@@ -238,6 +242,8 @@ main {
     width: 100%;
     height: 100%;
     max-width: 935px;
+
+    overflow: auto;
 }
 
 .au_c {
@@ -245,4 +251,129 @@ main {
     border-top: 1px solid #000000 !important;
 
     margin-top: -1px!important;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content-post {
+    position: relative;
+    display: flex;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 85%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    max-height: 80%;
+}
+
+.post-image {
+    width: 100%;
+    height: 100%; /* 이미지의 원본 비율을 유지하면서 너비에 맞게 높이를 조정합니다. */
+    min-width: 335px;
+    min-height: 300px;
+    object-fit: contain;
+}
+
+.comment-section {
+    width: 35%;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    min-width: 380px ;
+
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #dbdbdb;
+    height: 10%;
+}
+
+.comment-username {
+    font-weight: bold;
+    margin: 0 auto;
+}
+
+.options {
+    cursor: pointer;
+}
+.comment-bold {
+    font-weight: bold;
+}
+.comment-body-reply {
+    height: 25% ;
+    padding-bottom: 10px;
+}
+
+.comment-title {
+    display: block;
+    color: #333333;
+    margin-bottom: 10px;
+    height: 10%;
+}
+.comment-title-username{
+    width: 30%;
+
+}
+.comment-title-comment{
+    width: 60%;
+}
+
+.comment-body {
+    overflow-y: auto;
+    margin-bottom: 10px;
+    height: 40%;
+}
+
+.comment-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8em;
+    color: #777777;
+    margin-bottom: 10px;
+    height: 10%;
+}
+
+.comment-actions {
+    cursor: pointer;
+}
+
+.comment-input {
+    display: flex;
+    border-top: 1px solid #cccccc;
+    padding-top: 10px;
+    height: 10%;
+}
+
+.comment-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.comment-input .send {
+    cursor: pointer;
 }
