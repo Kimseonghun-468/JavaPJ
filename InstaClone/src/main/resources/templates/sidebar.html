@@ -9,6 +9,7 @@
 </head>
 
 <body>
+<span id="userEmail" style="display: none;">[[${memberDTO.email}]]</span>
 <div class="temp">
 
   <div class="sidebar">
@@ -173,7 +174,7 @@
     </span>
       </div>
       <div class="comment-input">
-        <input type="text" placeholder="댓글 달기...">
+        <input type="text" placeholder="댓글 달기..." id="comment-box">
         <span class="send">➤</span>
       </div>
     </div>
@@ -279,31 +280,44 @@
 
           str += '<div class="comment-body-reply">';
           str += '<div class="comment-title-username comment-bold">'
-          str += `[[${memberDTO.name}]]`
+          str += reply.name
           str += '</div>'
           str += '<div class="comment-title-comment">'
           str += reply.text
           str += '</div>'
           str += '</div>'
 
-
-          // str += '<div class="card-body" data-reviewnum='+review.reviewnum+' data-mid='+review.mid+'>';
-          // str += '<h5 class="card-title">'+review.text+' <span>'+review.grade+'  </span></h5>';
-          // str += '<h6 class="card-subtitle mb-2 text-muted">'+review.nickname+'</h6>';
-          // str += '<p class="card-text">'+ formatTime(review.regDate)+'</p>';
-          // str += ' </div>';
         });
-
         $(".comment-body").html(str);
-        // <div className="comment-body-reply">
-        //   <div className="comment-title-username">
-        //     [[${memberDTO.name}]]
-        //   </div>
-        //   <div className="comment-title-comment">
-        //     test reply
-        //   </div>
-        // </div>
       })
+
+
+      var sendButton = document.querySelector('.send');
+      var commentBox = document.querySelector('#comment-box');
+      var email = document.getElementById('userEmail').textContent;
+      sendButton.addEventListener('click', function() {
+        console.log(commentBox.value)
+        var data = {pno:postId, text:commentBox.value, email:email};
+        console.log(data);
+        $.ajax({
+          url: '/reply/'+postId,
+          type: "POST",
+          data: JSON.stringify(data),
+          contentType: "application/json; charset=utf-8",
+          dataType:"text",
+          success: function (result){
+            console.log("result : " + result);
+            self.location.reload();
+          }
+        })
+
+      });
+
     });
   });
+
+  // 화살표에 클릭 이벤트 리스너를 추가
+
+
+
 </script>
