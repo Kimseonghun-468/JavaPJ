@@ -11,7 +11,7 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, String> {
     @Query("SELECT p, pi FROM Post p " +
             "LEFT OUTER JOIN PostImage pi ON pi.post = p " +
-            "LEFT OUTER JOIN Reply r ON r.post = p " +
+//            "LEFT OUTER JOIN Reply r ON r.post = p " +
             "WHERE p.clubMember.email = :email ")
     Page<Object[]> getListPage(Pageable pageable, String email);
 

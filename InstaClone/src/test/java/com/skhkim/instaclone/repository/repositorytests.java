@@ -17,11 +17,11 @@ public class repositorytests {
     @Test
     public void testListPage(){
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "pno"));
-//        Page<Object[]> result = postRepository.getListPage(pageRequest, "seonghun@naver.com");
-        Long count = postRepository.getPostCount("tjdgns@naver.com");
-        System.out.println(count);
-//        for(Object[] objects : result.getContent()){
-//            System.out.println(Arrays.toString(objects));
-//        }
+        Page<Object[]> result = postRepository.getListPage(pageRequest, "seonghun@naver.com");
+//        Long count = postRepository.getPostCount("seonghun@naver.com");
+//        System.out.println(count);
+        for(Object[] objects : result.getContent()){
+            System.out.println(Arrays.toString(objects));
+        }
     }
 }

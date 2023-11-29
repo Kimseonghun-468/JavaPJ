@@ -322,7 +322,7 @@ main {
     font-weight: bold;
 }
 .comment-body-reply {
-    height: 25% ;
+    height: auto ;
     padding-bottom: 10px;
 }
 

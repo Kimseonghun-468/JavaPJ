@@ -65,7 +65,8 @@
           <td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
                    th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
                    th:data-url="|${dto.imageDTOList[0].getImageURL()}|"
-                   th:data-id="${dto.imageDTOList[0].pino}" width="200" height="200"></td>
+                   th:data-id="${dto.imageDTOList[0].pino}"
+                   th:data-pid="${dto.pno}" width="200" height="200"></td>
         </div>
       </div>
     </section>
@@ -154,6 +155,14 @@
             test reply
           </div>
         </div>
+        <div class="comment-body-reply">
+          <div class="comment-title-username">
+            [[${memberDTO.name}]]
+          </div>
+          <div class="comment-title-comment">
+            test reply
+          </div>
+        </div>
 
       </div>
       <div class="comment-footer">
@@ -164,7 +173,7 @@
     </span>
       </div>
       <div class="comment-input">
-        <input type="text" placeholder="대화 참여...">
+        <input type="text" placeholder="댓글 달기...">
         <span class="send">➤</span>
       </div>
     </div>
@@ -254,11 +263,47 @@
       $('#myModal').modal('show');
       var imageUrl = $(this).data('url');
       var imageId = $(this).data('id');
+      var postId = $(this).data('pid');
       var str = '<img src=\"/display?fileName='+imageUrl+'/\" alt=\"Profile Picture\" class=\"post-image\">';
       // th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
       $(".modal-content-post-imagebox").html(str);
       console.log(imageId);
       console.log(imageUrl);
+      console.log(postId);
+      $.getJSON("/reply/"+postId +"/all", function (arr){
+        var str = "";
+        console.log(arr);
+
+        $.each(arr, function (idx, reply){
+          console.log(reply);
+
+          str += '<div class="comment-body-reply">';
+          str += '<div class="comment-title-username comment-bold">'
+          str += `[[${memberDTO.name}]]`
+          str += '</div>'
+          str += '<div class="comment-title-comment">'
+          str += reply.text
+          str += '</div>'
+          str += '</div>'
+
+
+          // str += '<div class="card-body" data-reviewnum='+review.reviewnum+' data-mid='+review.mid+'>';
+          // str += '<h5 class="card-title">'+review.text+' <span>'+review.grade+'  </span></h5>';
+          // str += '<h6 class="card-subtitle mb-2 text-muted">'+review.nickname+'</h6>';
+          // str += '<p class="card-text">'+ formatTime(review.regDate)+'</p>';
+          // str += ' </div>';
+        });
+
+        $(".comment-body").html(str);
+        // <div className="comment-body-reply">
+        //   <div className="comment-title-username">
+        //     [[${memberDTO.name}]]
+        //   </div>
+        //   <div className="comment-title-comment">
+        //     test reply
+        //   </div>
+        // </div>
+      })
     });
   });
 </script>
