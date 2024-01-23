@@ -31,5 +31,8 @@ public class ReplyServiceImpl implements ReplyService{
         return result.stream().map(postReview -> entityToDTO(postReview)).collect(Collectors.toList());
     }
 
-
+    @Override
+    public void remove(Long replynum){
+        replyRepository.deleteById(replynum);
+    }
 }

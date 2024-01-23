@@ -22,7 +22,7 @@ public interface PostService {
     Long register(PostDTO postDTO);
 
     Long getPostNumber(String email);
-
+    String getEmailByUserName(String userName);
     default Map<String, Object> dtoToEntity(PostDTO postDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

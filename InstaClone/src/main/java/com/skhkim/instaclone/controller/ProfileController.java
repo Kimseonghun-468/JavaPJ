@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,14 +27,26 @@ public class ProfileController {
 
     }
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/sidebar")
-    public void sidevar(PageRequestDTO pageRequestDTO, @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO, Model model){
+    @GetMapping("/sidebar/{name}")
+    public String sidebar(@PathVariable("name") String name, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO, Model model){
         log.info("Sidebar...----");
         log.info("PageRequest DTO : " + pageRequestDTO);
-        model.addAttribute("result", postService.getList(pageRequestDTO, clubAuthMemberDTO.getEmail()));
-        model.addAttribute("memberDTO", clubAuthMemberDTO);
-        model.addAttribute("postNum", postService.getPostNumber(clubAuthMemberDTO.getEmail()));
+        log.info("Sidebar name: " + name);
 
+
+        String userEamil = postService.getEmailByUserName(name);
+//       club...getEamil()부분을  PathVariable name으로 해결할 수 는 있을까?
+//        Eamil은 name을 통해 조회할 수 있도록 하고,
+
+//        model.addAttribute("result", postService.getList(pageRequestDTO, clubAuthMemberDTO.getEmail()));
+//        model.addAttribute("memberDTO", clubAuthMemberDTO);
+//        model.addAttribute("postNum", postService.getPostNumber(clubAuthMemberDTO.getEmail()));
+        model.addAttribute("result", postService.getList(pageRequestDTO, userEamil));
+        model.addAttribute("memberDTO", clubAuthMemberDTO);
+        model.addAttribute("userName", name);
+        model.addAttribute("userEmail", userEamil);
+        model.addAttribute("postNum", postService.getPostNumber(userEamil));
+        return "sidebar";
     }
 
     @PostMapping("/sidebar")

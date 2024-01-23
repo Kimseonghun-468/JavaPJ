@@ -33,4 +33,13 @@ public class ReplyController {
         Long rno = replyService.register(postReplyDTO);
         return new ResponseEntity<>(rno, HttpStatus.OK);
     }
+    @DeleteMapping("/{rno}/{replynum}")
+    public ResponseEntity<Long> removeReply(@PathVariable Long replynum){
+        log.info("-----------delete removereply -----------");
+        log.info("replynum : " + replynum);
+
+        replyService.remove(replynum);
+
+        return new ResponseEntity<>(replynum, HttpStatus.OK);
+    }
 }

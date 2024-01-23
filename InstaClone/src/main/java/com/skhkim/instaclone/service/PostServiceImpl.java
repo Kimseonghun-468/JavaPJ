@@ -61,4 +61,9 @@ public class PostServiceImpl implements PostService {
 
         return postRepository.getPostCount(email);
     }
+    @Override
+    public String getEmailByUserName(String userName){
+
+        return postRepository.getEmail(userName);
+    }
 }

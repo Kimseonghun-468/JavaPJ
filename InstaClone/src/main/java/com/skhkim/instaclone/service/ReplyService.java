@@ -13,6 +13,7 @@ public interface ReplyService {
     Long register(ReplyDTO replyDTO);
     List<ReplyDTO> getListOfPost(Long pno);
 
+    void remove(Long replynum);
     default Reply dtoToEntity(ReplyDTO replyDTO){
 
         Reply postReply = Reply.builder()
