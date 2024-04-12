@@ -17,7 +17,7 @@
   <div class="sidebar">
     <div class="logo">Instagram</div>
     <a class="menu-item">
-      <p class="Search-name">검색</p>
+      <p class="search-name">검색</p>
     </a>
     <a href="#2" class="menu-item">
       <span class="icon">&#8962;</span>홈2
@@ -46,7 +46,7 @@
         <div class="profile-info">
           <h1 class="username">[[${userName}]]</h1>
           <div class="stats">
-            <span>게시물 [[${postNum}]]</span>
+            <span>게시물 [[${postNum}]]</span>₩
             <span>팔로워 0</span>
             <span>팔로우 0</span>
           </div>
@@ -65,11 +65,13 @@
       <div class="post-grid">
         <!-- Post items will go here -->
         <div class="post-item " th:each="dto : ${result.dtoList}">
-          <td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
+          <td><img class = "post-list-img"
+                   th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
                    th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
                    th:data-url="|${dto.imageDTOList[0].getImageURL()}|"
                    th:data-id="${dto.imageDTOList[0].pino}"
-                   th:data-pid="${dto.pno}" width="200" height="200"></td>
+                   th:data-pid="${dto.pno}" width="200" height="200"
+                   ></td>
         </div>
       </div>
     </section>
@@ -84,7 +86,7 @@
       <input type="file" class="fileInput" style="display: none;" multiple>
 
       <!-- 파일 선택을 위한 버튼 -->
-      <button class="uploadButton">파일 선택</button>
+      <button class="uploadButton">이미지 업로드</button>
 
 
       <footer class="profile-footer">
@@ -113,7 +115,7 @@
       <div class="modal-body">
 
         파일을 제출하시겠습니까?
-        <form th:action="@{/sidebar}" th:method="post">
+        <form th:action="@{/sidebar/{userName}(userName=${memberDTO.name})}" th:method="post">
           <input type="hidden" name="email" value="TT">
           <div class="box">
 
@@ -193,6 +195,22 @@
 
 </div>
 
+<div id="SearchModal" class="modal">
+  <div class="modal-content-search">
+    <form id="searchForm">
+      <input type="text" id="searchInput" placeholder="검색어 입력...">
+      <button type="submit">검색</button>
+    </form>
+    <div class="searchResult">
+
+    </div>
+  </div>
+  </div>
+
+</div>
+
+
+
 
 </html>
 
@@ -270,18 +288,41 @@
     divArea.append(str);
   }
 
-  $(document).ready(function() {
+
+  $(function (){
+    $(document).on('click', '.search-name', function (){
+      $('#SearchModal').css('z-index', 1060).modal('show');
+    })
+  })
+  document.getElementById('searchForm').onsubmit = function(event) {
+    event.preventDefault();
+    var searchTerm = document.getElementById('searchInput').value;
+    console.log('검색어:', searchTerm);
+    var searchResult = "";
+    $.getJSON("/search/"+searchTerm +"/all", function (arr){
+      console.log(arr.name);
+      })
+
+    searchResult += '<p>Seonghun</p>';
+    searchResult += '<p>tts</p>';
+    $(".searchResult").html(searchResult);
+    // 여기에 검색 로직을 추가할 수 있습니다.
+  }
+
+
+  $(function (){
     var commentBox = document.querySelector('#comment-box');
     var userEmail, postId;
     userEmail = document.getElementById('userEmail').textContent;
     userName = document.getElementById('userName').textContent;
     loadEmail = document.getElementById('loadEmail').textContent;
-    $('img').click(function() {
+    $('.post-list-img').click(function() {
       $('#myModal').modal('show');
       var imageUrl = $(this).data('url');
       var imageId = $(this).data('id');
       postId = $(this).data('pid');
       var str = '<img src=\"/display?fileName='+imageUrl+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+      console.log(imageUrl);
       // th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
       $(".modal-content-post-imagebox").html(str);
       // console.log(imageId);
@@ -289,6 +330,7 @@
       // console.log(postId);
       $.getJSON("/reply/"+postId +"/all", function (arr){
         var str = "";
+        console.log("Reply Value Test : ", arr);
         // console.log(arr);
 
 

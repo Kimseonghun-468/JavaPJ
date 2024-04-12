@@ -3,11 +3,15 @@ package com.skhkim.instaclone.service;
 import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.ClubMemberRole;
+import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,5 +42,18 @@ public class LoginServiceImpl implements LoginService{
         //save entity
         //return email.
         return clubMember.getEmail();
+    }
+    @Override
+    public ClubMemberDTO getClubMemberSearch(String name){
+        ClubMember result = clubMemberRepository.findByName(name);
+        if(result != null){
+            return entityToDTO(result);
+        }
+        else{
+            return ClubMemberDTO.builder().build();
+        }
+
+//        List<ClubMember> result = clubMemberRepository.findByName(name);
+//        return result.stream().map(clubmemberName -> entityToDTO(clubmemberName)).collect(Collectors.toList());
     }
 }

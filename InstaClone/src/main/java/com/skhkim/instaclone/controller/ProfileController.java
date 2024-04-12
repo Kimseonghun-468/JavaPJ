@@ -35,12 +35,6 @@ public class ProfileController {
 
 
         String userEamil = postService.getEmailByUserName(name);
-//       club...getEamil()부분을  PathVariable name으로 해결할 수 는 있을까?
-//        Eamil은 name을 통해 조회할 수 있도록 하고,
-
-//        model.addAttribute("result", postService.getList(pageRequestDTO, clubAuthMemberDTO.getEmail()));
-//        model.addAttribute("memberDTO", clubAuthMemberDTO);
-//        model.addAttribute("postNum", postService.getPostNumber(clubAuthMemberDTO.getEmail()));
         model.addAttribute("result", postService.getList(pageRequestDTO, userEamil));
         model.addAttribute("memberDTO", clubAuthMemberDTO);
         model.addAttribute("userName", name);
@@ -49,13 +43,12 @@ public class ProfileController {
         return "sidebar";
     }
 
-    @PostMapping("/sidebar")
-    public String sidevar(PostDTO postDTO, RedirectAttributes redirectAttributes){
+    @PostMapping("/sidebar/{name}")
+    public String sidevar(@PathVariable("name") String name, PostDTO postDTO, RedirectAttributes redirectAttributes){
         log.info("PostDTO : " + postDTO);
-
         Long pno = postService.register(postDTO);
         redirectAttributes.addFlashAttribute("msg", pno);
-        return "redirect:/sidebar";
+        return "redirect:/sidebar/"+name;
     }
     @GetMapping("/midle")
     public void midle(){

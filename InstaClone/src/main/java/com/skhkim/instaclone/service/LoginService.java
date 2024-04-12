@@ -4,10 +4,13 @@ import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 public interface LoginService {
 
     boolean checkDuplication(ClubMemberDTO memberDTO);
     String register(ClubMemberDTO memberDTO);
+    ClubMemberDTO getClubMemberSearch(String name);
     default ClubMember dtoToEntity(ClubMemberDTO dto){
 
         ClubMember clubMember = ClubMember.builder()

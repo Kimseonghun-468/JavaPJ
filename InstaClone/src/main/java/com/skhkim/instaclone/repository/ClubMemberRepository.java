@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import com.skhkim.instaclone.entity.ClubMember;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ClubMemberRepository extends JpaRepository<ClubMember, String> {
@@ -14,6 +15,6 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
     @Query("select m from ClubMember m where m.fromSocial = :social and m.email =:email")
 
     Optional<ClubMember> findByEmail(String email, boolean social);
-
+    ClubMember findByName(String name);
     boolean existsByEmail(String email);
 }
