@@ -1,9 +1,11 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.ClubMemberDTO;
+import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.ReplyDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.service.LoginService;
+import com.skhkim.instaclone.service.ProfileService;
 import com.skhkim.instaclone.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/search")
@@ -22,14 +26,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SearchCotroller {
     private final LoginService loginService;
-    private final ReplyService replyService;
+    private final ProfileService profileService;
     @GetMapping("{name}/all")
-    public ResponseEntity<ClubMemberDTO> getList(@PathVariable("name") String name){
-        log.info("---------list-------------");
-        log.info("MNO : " + name);
-        ClubMemberDTO clubMemberDTOList = loginService.getClubMemberSearch(name);
-        log.info("member name : " + clubMemberDTOList);
-        return new ResponseEntity<>(clubMemberDTOList, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getList(@PathVariable("name") String name){
+        ClubMemberDTO clubMemberDTO = loginService.getClubMemberSearch(name);
+        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
+        Map<String, Object> response = new HashMap<>();
+        response.put("clubMemberDTO", clubMemberDTO);
+        response.put("profileImageDTO", profileImageDTO);
+        log.info("member name : " + clubMemberDTO);
+        log.info("ProfileImage DTO : " + profileImageDTO);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 //    @GetMapping("{name}")

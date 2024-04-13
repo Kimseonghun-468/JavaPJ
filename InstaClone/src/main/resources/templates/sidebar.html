@@ -42,14 +42,13 @@
       <div class="profile-summary">
         <div class="up-profile-picture">
           <input type="file" class="fileInput profile-Image-File" style="display: none;">
-<!--          <button class="uploadButton-profile">이미지 업로드</button>-->
           <img th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|"
                alt="Profile Picture" class="profile-picture uploadButton-profile">
         </div>
         <div class="profile-info">
           <h1 class="username">[[${userName}]]</h1>
           <div class="stats">
-            <span>게시물 [[${postNum}]]</span>₩
+            <span>게시물 [[${postNum}]]</span>
             <span>팔로워 0</span>
             <span>팔로우 0</span>
           </div>
@@ -390,12 +389,29 @@
     console.log('검색어:', searchTerm);
     var searchResult = "";
     $.getJSON("/search/"+searchTerm +"/all", function (arr){
-      console.log(arr.name);
-      })
+      console.log(arr);
+      console.log(arr.clubMemberDTO.email)
+      var path = arr.profileImageDTO.path;
+      var uuid = arr.profileImageDTO.uuid;
+      var imgName = arr.profileImageDTO.imgName;
+      var imageUrl = encodeURIComponent(path + "/" + uuid + "_" + imgName);
 
-    searchResult += '<p>Seonghun</p>';
-    searchResult += '<p>tts</p>';
-    $(".searchResult").html(searchResult);
+      if(arr.clubMemberDTO.name != null){
+        if(arr.profileImageDTO.path != null) {
+          searchResult += '<img src ="/display?fileName=' + imageUrl + '/"' +
+                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+        }
+        searchResult += '<p>'+arr.clubMemberDTO.name+'</p>';
+      }
+      else{
+        searchResult += '검색한 사용자가 없습니다.';
+      }
+      console.log("SearchResult : " + searchResult);
+
+      // 여기서, searchResult에 대해서 Ima src를 넣어주고, 이름을 넣어주고 하이퍼 링크 달아주면 된다.
+      //
+      $(".searchResult").html(searchResult);
+    })
     // 여기에 검색 로직을 추가할 수 있습니다.
   }
 
