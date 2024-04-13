@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.repository;
 
+import com.skhkim.instaclone.dto.ProfileImageDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ public class repositorytests {
 
     @Autowired
     private PostRepository postRepository;
+    private ProfileImageRepository profileImageRepository;
     @Test
     public void testListPage(){
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "pno"));
@@ -24,4 +26,8 @@ public class repositorytests {
             System.out.println(Arrays.toString(objects));
         }
     }
+//    @Test
+//    public void testProfileImage(){
+//        ProfileImageDTO =
+//    }
 }

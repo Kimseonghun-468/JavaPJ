@@ -41,7 +41,10 @@
     <header class="profile-header">
       <div class="profile-summary">
         <div class="up-profile-picture">
-          <img th:src="|/display?fileName=111.png/|" alt="Profile Picture" class="profile-picture">
+          <input type="file" class="fileInput profile-Image-File" style="display: none;">
+<!--          <button class="uploadButton-profile">이미지 업로드</button>-->
+          <img th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|"
+               alt="Profile Picture" class="profile-picture uploadButton-profile">
         </div>
         <div class="profile-info">
           <h1 class="username">[[${userName}]]</h1>
@@ -83,10 +86,10 @@
     <div class="temp3">
 <!--      <input name="uploadFiles" type="file" multiple>-->
       <!-- 파일 선택 입력 필드 -->
-      <input type="file" class="fileInput" style="display: none;" multiple>
+      <input type="file" class="fileInput post-Image-File" style="display: none;" multiple>
 
       <!-- 파일 선택을 위한 버튼 -->
-      <button class="uploadButton">이미지 업로드</button>
+      <button class="uploadButton-post">이미지 업로드</button>
 
 
       <footer class="profile-footer">
@@ -103,7 +106,7 @@
 </body>
 
 
-<div class="filemodal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+<div class="Post-File-Modal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -114,8 +117,8 @@
       </div>
       <div class="modal-body">
 
-        파일을 제출하시겠습니까?
-        <form th:action="@{/sidebar/{userName}(userName=${memberDTO.name})}" th:method="post">
+        포스트 파일을 제출하시겠습니까?
+        <form id="Post-Image" th:action="@{/sidebar/{userName}(userName=${memberDTO.name})}" th:method="post">
           <input type="hidden" name="email" value="TT">
           <div class="box">
 
@@ -124,11 +127,39 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary submitFile">제출</button>
+        <button type="button" class="btn btn-primary submitFile-Post">제출</button>
       </div>
     </div>
   </div>
 </div>
+
+<div class="Profile-File-Modal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">파일 제출</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        프로필 파일을 제출하시겠습니까?
+        <form id=Profile-Image th:action="@{/sidebar/profileImage/{userName}(userName=${memberDTO.name})}" th:method="post">
+          <input type="hidden" name="email" value="TT">
+          <div class="box">
+
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary submitFile-Profile">제출</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <div id="optionsModal" class="modal">
   <div class="reply-modal-content">
@@ -216,63 +247,122 @@
 
 <script>
   $(document).ready(function() {
-    $('.uploadButton').click(function() {
-      $('.fileInput').click();
-      console.log("?");
-    });
+    $('.uploadButton-post').click(function() {
+      $('.post-Image-File').click();
+      console.log("Post-Image");
 
-    $('.fileInput').on('change', function() {
-      if (this.files && this.files.length > 0) {
-        // 파일이 선택되면 모달을 표시
-        $('.filemodal').modal('show');
-        var formData = new FormData();
-        var inputFile = $("input[type='file']");
-        var files = inputFile[0].files;
-        for (var i = 0; i < files.length; i++){
-          console.log(files[i]);
-          formData.append("uploadFiles", files[i]);
-        }
 
-      }
-      $('.submitFile').click(function() {
-        // 제출 버튼 클릭 시 수행할 로직
-        $.ajax({
-          url: '/uploadAjax',
-          processData: false,
-          contentType: false,
-          data: formData,
-          type: 'POST',
-          dataType: 'json',
-          success: function (result) {
-            console.log(result);
-            // showUploadedImages(result)
-            var str = "";
-            result.forEach((item, index) => {
-              console.log(item);
-              str += "<input type='hidden' name='imageDTOList["+index+"].imgName' value='"+item['fileName'] +"'>";
-              str += "<input type='hidden' name='imageDTOList["+index+"].path' value='"+item['folderPath']+"'>";
-              str += "<input type='hidden' name='imageDTOList["+index+"].uuid' value='"+item['uuid']+"'>";
-              // console.log(item.fileName);
-              // console.log(item['fileName']);
-            })
-            console.log(str);
-            $(".box").html(str);
-            $("form").submit();
-
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus)
+      $('.post-Image-File').on('change', function() {
+        if (this.files && this.files.length > 0) {
+          // 파일이 선택되면 모달을 표시
+          $('.Post-File-Modal').modal('show');
+          var formData = new FormData();
+          var inputFile = $("input.post-Image-File");
+          var files = inputFile[0].files;
+          console.log("TTT : " + files[0]);
+          for (var i = 0; i < files.length; i++){
+            console.log(files[i]);
+            formData.append("uploadFiles", files[i]);
           }
-        });
 
-        alert('파일이 제출되었습니다.');
-        console.log(inputFile);
-        $('.filemodal').modal('hide');
+        }
+        $('.submitFile-Post').click(function() {
+          // 제출 버튼 클릭 시 수행할 로직
+          $.ajax({
+            url: '/uploadAjax',
+            processData: false,
+            contentType: false,
+            data: formData,
+            type: 'POST',
+            dataType: 'json',
+            success: function (result) {
+              console.log(result);
+              // showUploadedImages(result)
+              var str = "";
+              result.forEach((item, index) => {
+                console.log(item);
+                str += "<input type='hidden' name='imageDTOList["+index+"].imgName' value='"+item['fileName'] +"'>";
+                str += "<input type='hidden' name='imageDTOList["+index+"].path' value='"+item['folderPath']+"'>";
+                str += "<input type='hidden' name='imageDTOList["+index+"].uuid' value='"+item['uuid']+"'>";
+                // console.log(item.fileName);
+                // console.log(item['fileName']);
+              })
+              console.log(str);
+              $(".box").html(str);
+              $("#Post-Image").submit();
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.log(textStatus)
+            }
+          });
+
+          alert('포스트 파일이 제출되었습니다.');
+          console.log(inputFile);
+          $('.Post-File-Modal').modal('hide');
+        });
       });
     });
-
-
   });
+
+  $(document).ready(function() {
+    $('.uploadButton-profile').click(function () {
+      $('.profile-Image-File').click();
+      console.log("profile-image");
+
+      $('.profile-Image-File').on('change', function() {
+        if (this.files && this.files.length > 0) {
+          // 파일이 선택되면 모달을 표시
+          $('.Profile-File-Modal').modal('show');
+          var formData = new FormData();
+          var inputFile = $("input.profile-Image-File");
+          var files = inputFile[0].files;
+          console.log(files[0]);
+          formData.append("uploadFiles", files[0]);
+        }
+        $('.submitFile-Profile').click(function() {
+          // 제출 버튼 클릭 시 수행할 로직
+          $.ajax({
+            url: '/uploadAjax',
+            processData: false,
+            contentType: false,
+            data: formData,
+            type: 'POST',
+            dataType: 'json',
+            success: function (result) {
+              console.log(result);
+              // showUploadedImages(result)
+              userName = document.getElementById('userName').textContent;
+              var str = "";
+              result.forEach((item, index) => {
+                console.log(item);
+                str += "<input type='hidden' name='imgName' value='" + item['fileName'] + "'>";
+                str += "<input type='hidden' name='path' value='" + item['folderPath'] + "'>";
+                str += "<input type='hidden' name='uuid' value='" + item['uuid'] + "'>";
+                str += "<input type='hidden' name='userName' value='" + userName + "'>";
+
+                // console.log(item.fileName);
+                // console.log(item['fileName']);
+              })
+              console.log(str);
+              $(".box").html(str);
+              $("#Profile-Image").submit();
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.log(textStatus)
+            }
+          });
+
+          alert('프로필 파일이 제출되었습니다.');
+          console.log(inputFile);
+          $('.filemodal').modal('hide');
+
+        });
+      });
+    });
+  });
+
   function showUploadedImages(arr){
     console.log(arr);
     var divArea = $(".uploadResult");

@@ -2,8 +2,13 @@ package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.PageRequestDTO;
 import com.skhkim.instaclone.dto.PostDTO;
+import com.skhkim.instaclone.dto.PostImageDTO;
+import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.entity.PostImage;
+import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.PostService;
+import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProfileController {
 
     private final PostService postService;
+    private final ProfileService profileService;
     @GetMapping("/profile")
     public void profile(){
         log.info("Profile...-----");
@@ -28,14 +34,18 @@ public class ProfileController {
     }
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/sidebar/{name}")
-    public String sidebar(@PathVariable("name") String name, PageRequestDTO pageRequestDTO, @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO, Model model){
+    public String sidebar(@PathVariable("name") String name, PageRequestDTO pageRequestDTO,
+                          @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
+
+                          Model model){
         log.info("Sidebar...----");
         log.info("PageRequest DTO : " + pageRequestDTO);
         log.info("Sidebar name: " + name);
-
-
         String userEamil = postService.getEmailByUserName(name);
+        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
+
         model.addAttribute("result", postService.getList(pageRequestDTO, userEamil));
+        model.addAttribute("profileImageDTO", profileImageDTO);
         model.addAttribute("memberDTO", clubAuthMemberDTO);
         model.addAttribute("userName", name);
         model.addAttribute("userEmail", userEamil);
@@ -50,6 +60,19 @@ public class ProfileController {
         redirectAttributes.addFlashAttribute("msg", pno);
         return "redirect:/sidebar/"+name;
     }
+
+    @PostMapping("/sidebar/profileImage/{name}")
+    public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO, RedirectAttributes redirectAttributes){
+        log.info("Profile Image DTO : " + profileImageDTO);
+        Long pfino = profileService.register(profileImageDTO);
+        redirectAttributes.addFlashAttribute("msg", pfino);
+        return "redirect:/sidebar/"+name;
+    }
+
+
+    // 내일 할일
+    // 여기에, /profile/{name}으로
+
     @GetMapping("/midle")
     public void midle(){
         log.info("midle...----");
