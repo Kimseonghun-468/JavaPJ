@@ -42,8 +42,13 @@
       <div class="profile-summary">
         <div class="up-profile-picture">
           <input type="file" class="fileInput profile-Image-File" style="display: none;">
-          <img th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|"
+          <img th:if ="${profileImageDTO.path != null}"
+                  th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|"
                alt="Profile Picture" class="profile-picture uploadButton-profile">
+          <img th:if ="${profileImageDTO.path == null}"
+               th:src ="|/display?fileName=outprofile.png|"
+               alt="Profile Picture" class="profile-picture uploadButton-profile">
+
         </div>
         <div class="profile-info">
           <h1 class="username">[[${userName}]]</h1>
@@ -401,15 +406,18 @@
           searchResult += '<img src ="/display?fileName=' + imageUrl + '/"' +
                   ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
         }
-        searchResult += '<p>'+arr.clubMemberDTO.name+'</p>';
+        else{
+          searchResult += '<img src = "/display?fileName=outprofile.png/"' +
+                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+        }
+        searchResult += '<a href="/sidebar/' + arr.clubMemberDTO.name + '"' +
+                ' class=comment-bold>' + arr.clubMemberDTO.name + '</a>';
       }
       else{
         searchResult += '검색한 사용자가 없습니다.';
       }
       console.log("SearchResult : " + searchResult);
 
-      // 여기서, searchResult에 대해서 Ima src를 넣어주고, 이름을 넣어주고 하이퍼 링크 달아주면 된다.
-      //
       $(".searchResult").html(searchResult);
     })
     // 여기에 검색 로직을 추가할 수 있습니다.
