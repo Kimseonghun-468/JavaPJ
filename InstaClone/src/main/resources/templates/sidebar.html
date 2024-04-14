@@ -9,9 +9,10 @@
 </head>
 
 <body>
-<span id="userEmail" style="display: none;">[[${memberDTO.email}]]</span>
-<span id="loadEmail" style="display: none;">[[${userEmail}]]</span>
-<span id="userName" style="display: none;">[[${memberDTO.name}]]</span>
+<span id="userEmail" type="hideen" style="display: none;">[[${memberDTO.email}]]</span>
+<span id="loadEmail" type="hideen" style="display: none;">[[${userEmail}]]</span>
+<span id="userName" type="hideen" style="display: none;">[[${memberDTO.name}]]</span>
+<span id="loadName" type="hideen"  style="display: none;">[[${userName}]]</span>
 <div class="temp">
 
   <div class="sidebar">
@@ -172,14 +173,22 @@
     </div>
   </div>
 </div>
-
 </div>
-<div id="myModal" class="modal">
 
+<div id="profileImageModal" class="modal">
   <!-- Modal content -->
   <div class="modal-content-post">
     <div class="modal-content-post-imagebox">
-    <img th:src="|/display?fileName=111.png/|" alt="Profile Picture" class="post-image">
+<!--      <img th:src="|/display?fileName=111.png/|" alt="Profile Picture" class="post-image">-->
+    </div>
+  </div>
+</div>
+
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content-post">
+    <div class="modal-content-post-imagebox">
+<!--      <img th:src="|/display?fileName=111.png/|" alt="Profile Picture" class="post-image">-->
     </div>
 <!--    여기에 img BOX를 추가하는 식-->
     <div class="comment-section">
@@ -415,6 +424,21 @@
     // 여기에 검색 로직을 추가할 수 있습니다.
   }
 
+  $(function (){
+    $(".profile-picture").click(function (){
+      var userName = $('#userName').text();
+      var loadName = $('#loadName').text();
+      if (userName != loadName) {
+        $('#profileImageModal').modal('show');
+        var imageUrl = $(this).attr('src');
+        var str = '<img src=\"' + imageUrl + '/\"' +
+                ' alt=\"Profile Picture\" class=\"post-image\">'
+        console.log(imageUrl);
+        console.log("imageurl str : " + str);
+        $(".modal-content-post-imagebox").html(str);
+      }
+    })
+  })
 
   $(function (){
     var commentBox = document.querySelector('#comment-box');
