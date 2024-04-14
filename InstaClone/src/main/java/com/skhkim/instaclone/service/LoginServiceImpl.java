@@ -38,22 +38,16 @@ public class LoginServiceImpl implements LoginService{
 
         clubMember.changePassword(discriptedPassword);
         clubMemberRepository.save(clubMember);
-        //dtotoentity
-        //save entity
-        //return email.
         return clubMember.getEmail();
     }
     @Override
-    public ClubMemberDTO getClubMemberSearch(String name){
+    public ClubMemberDTO getClubMemberSearch(String name) {
         ClubMember result = clubMemberRepository.findByName(name);
-        if(result != null){
-            return entityToDTO(result);
-        }
-        else{
-            return ClubMemberDTO.builder().build();
-        }
-
-//        List<ClubMember> result = clubMemberRepository.findByName(name);
-//        return result.stream().map(clubmemberName -> entityToDTO(clubmemberName)).collect(Collectors.toList());
+        return result != null ? entityToDTO(result) : ClubMemberDTO.builder().build();
+    }
+    @Override
+    public boolean getUserExist(String name){
+        ClubMember result = clubMemberRepository.findByName(name);
+        return result != null;
     }
 }

@@ -11,6 +11,8 @@ public interface LoginService {
     boolean checkDuplication(ClubMemberDTO memberDTO);
     String register(ClubMemberDTO memberDTO);
     ClubMemberDTO getClubMemberSearch(String name);
+
+    boolean getUserExist(String name);
     default ClubMember dtoToEntity(ClubMemberDTO dto){
 
         ClubMember clubMember = ClubMember.builder()

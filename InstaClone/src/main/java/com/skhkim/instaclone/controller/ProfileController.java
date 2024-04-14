@@ -1,12 +1,10 @@
 package com.skhkim.instaclone.controller;
 
-import com.skhkim.instaclone.dto.PageRequestDTO;
-import com.skhkim.instaclone.dto.PostDTO;
-import com.skhkim.instaclone.dto.PostImageDTO;
-import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
+import com.skhkim.instaclone.service.LoginService;
 import com.skhkim.instaclone.service.PostService;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +25,7 @@ public class ProfileController {
 
     private final PostService postService;
     private final ProfileService profileService;
+    private final LoginService loginService;
     @GetMapping("/profile")
     public void profile(){
         log.info("Profile...-----");
@@ -43,13 +42,14 @@ public class ProfileController {
         log.info("Sidebar name: " + name);
         String userEamil = postService.getEmailByUserName(name);
         ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
-
+        model.addAttribute("userExist", loginService.getUserExist(name));
         model.addAttribute("result", postService.getList(pageRequestDTO, userEamil));
         model.addAttribute("profileImageDTO", profileImageDTO);
         model.addAttribute("memberDTO", clubAuthMemberDTO);
         model.addAttribute("userName", name);
         model.addAttribute("userEmail", userEamil);
         model.addAttribute("postNum", postService.getPostNumber(userEamil));
+//        Member Table 조회해서 Name에 없으면 redirect 없는 페이지쪽으로 넘기고,
         return "sidebar";
     }
 
@@ -69,9 +69,6 @@ public class ProfileController {
         return "redirect:/sidebar/"+name;
     }
 
-
-    // 내일 할일
-    // 여기에, /profile/{name}으로
 
     @GetMapping("/midle")
     public void midle(){

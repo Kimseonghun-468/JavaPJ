@@ -31,82 +31,80 @@
     <a class="menu-item">
       <p class="profile-name">프로필</p>
     </a>
-    <!-- 여기에 추가 메뉴 아이템을 넣을 수 있습니다 -->
   </div>
 
 
-  <section class="temp2">
-  <main>
-    <div class="temp4">
-    <header class="profile-header">
-      <div class="profile-summary">
-        <div class="up-profile-picture">
-          <input type="file" class="fileInput profile-Image-File" style="display: none;">
-          <img th:if ="${profileImageDTO.path != null}"
-                  th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|"
-               alt="Profile Picture" class="profile-picture uploadButton-profile">
-          <img th:if ="${profileImageDTO.path == null}"
-               th:src ="|/display?fileName=outprofile.png|"
-               alt="Profile Picture" class="profile-picture uploadButton-profile">
+  <section class="temp2" th:if ="${userExist == True}">
+    <main>
+      <div class="temp4">
+        <header class="profile-header">
+          <div class="profile-summary">
+            <div class="up-profile-picture">
+              <input type="file" th:if="${memberDTO.name == userName}"
+                     class="fileInput profile-Image-File" style="display: none;">
+              <img th:if ="${profileImageDTO.path != null}"
+                   th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|"
+                   alt="Profile Picture" class="profile-picture uploadButton-profile">
+              <img th:if ="${profileImageDTO.path == null}"
+                   th:src ="|/display?fileName=outprofile.png|"
+                   alt="Profile Picture" class="profile-picture uploadButton-profile">
 
-        </div>
-        <div class="profile-info">
-          <h1 class="username">[[${userName}]]</h1>
-          <div class="stats">
-            <span>게시물 [[${postNum}]]</span>
-            <span>팔로워 0</span>
-            <span>팔로우 0</span>
+            </div>
+            <div class="profile-info">
+              <h1 class="username">[[${userName}]]</h1>
+              <div class="stats">
+                <span>게시물 [[${postNum}]]</span>
+                <span>팔로워 0</span>
+                <span>팔로우 0</span>
+              </div>
+            </div>
           </div>
-          <button class="edit-profile-btn">프로필 편집</button>
-        </div>
-      </div>
-    </header>
+        </header>
 
-    <section class="profile-content">
-      <nav class="profile-navigation">
+        <section class="profile-content">
+          <nav class="profile-navigation">
 
-        <a href="#" class="active au_c">게시물</a>
-        <a href="#">저장됨</a>
-        <a href="#">태그됨</a>
-      </nav>
-      <div class="post-grid">
-        <!-- Post items will go here -->
-        <div class="post-item " th:each="dto : ${result.dtoList}">
-          <td><img class = "post-list-img"
-                   th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
-                   th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
-                   th:data-url="|${dto.imageDTOList[0].getImageURL()}|"
-                   th:data-id="${dto.imageDTOList[0].pino}"
-                   th:data-pid="${dto.pno}" width="200" height="200"
-                   ></td>
-        </div>
+            <a href="#" class="active au_c">게시물</a>
+            <a href="#">저장됨</a>
+            <a href="#">태그됨</a>
+          </nav>
+          <div class="post-grid">
+            <!-- Post items will go here -->
+            <div class="post-item " th:each="dto : ${result.dtoList}">
+              <td><img class = "post-list-img"
+                       th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
+                       th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
+                       th:data-url="|${dto.imageDTOList[0].getImageURL()}|"
+                       th:data-id="${dto.imageDTOList[0].pino}"
+                       th:data-pid="${dto.pno}" width="200" height="200"
+              ></td>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
-  </div>
-  </main>
+    </main>
 
 
     <div class="up-temp3">
-    <div class="temp3">
-<!--      <input name="uploadFiles" type="file" multiple>-->
-      <!-- 파일 선택 입력 필드 -->
-      <input type="file" class="fileInput post-Image-File" style="display: none;" multiple>
+      <div class="temp3">
+        <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
+        <button th:if="${memberDTO.name == userName}" class="uploadButton-post">이미지 업로드</button>
 
-      <!-- 파일 선택을 위한 버튼 -->
-      <button class="uploadButton-post">이미지 업로드</button>
-
-
-      <footer class="profile-footer">
-        <ul class="footer-links">
-          <li><a href="#">Meta</a></li>
-          <!-- Other footer links -->
-        </ul>
-        <span>© 2023 Instagram from Meta</span>
-      </footer>
-    </div>
+        <footer class="profile-footer">
+          <ul class="footer-links">
+            <li><a href="#">Meta</a></li>
+            <!-- Other footer links -->
+          </ul>
+          <span>© 2023 Instagram from Meta</span>
+        </footer>
+      </div>
     </div>
   </section>
+  <div class ="temp2 temp4 logo" th:unless="${userExist}">
+    <p>페이지를 찾을 수 없습니다.</p>
+    <a th:href="@{/sidebar/{name}(name=${memberDTO.name})}">돌아가기</a>
   </div>
+</div>
 </body>
 
 
@@ -162,8 +160,6 @@
     </div>
   </div>
 </div>
-
-
 
 <div id="optionsModal" class="modal">
   <div class="reply-modal-content">
@@ -243,10 +239,6 @@
   </div>
 
 </div>
-
-
-
-
 </html>
 
 <script>
