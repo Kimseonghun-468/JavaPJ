@@ -4,6 +4,7 @@ import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
+import com.skhkim.instaclone.service.FriendShipService;
 import com.skhkim.instaclone.service.LoginService;
 import com.skhkim.instaclone.service.PostService;
 import com.skhkim.instaclone.service.ProfileService;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @Log4j2
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class ProfileController {
     private final PostService postService;
     private final ProfileService profileService;
     private final LoginService loginService;
+    private final FriendShipService friendShipService;
     @GetMapping("/profile")
     public void profile(){
         log.info("Profile...-----");
@@ -42,6 +46,9 @@ public class ProfileController {
         log.info("Sidebar name: " + name);
         String userEamil = postService.getEmailByUserName(name);
         ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
+
+        String friendshipStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getEmail(), userEamil);
+        model.addAttribute("friendshipStatus", friendshipStatus);
         model.addAttribute("userExist", loginService.getUserExist(name));
         model.addAttribute("result", postService.getList(pageRequestDTO, userEamil));
         model.addAttribute("profileImageDTO", profileImageDTO);
@@ -87,4 +94,6 @@ public class ProfileController {
 
         log.info("What!");
     }
+
+
 }

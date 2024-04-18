@@ -7,8 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = "post")
-
 public class ProfileImage extends BaseEntity{
 
     @Id
@@ -16,12 +14,8 @@ public class ProfileImage extends BaseEntity{
     private Long pfino;
 
     private String userName;
+    private String userEmail;
     private String uuid;
     private String imgName;
     private String path;
-
-
-
-
-
 }

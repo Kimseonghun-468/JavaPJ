@@ -27,18 +27,33 @@ import java.util.Map;
 public class SearchCotroller {
     private final LoginService loginService;
     private final ProfileService profileService;
-    @GetMapping("{name}/all")
-    public ResponseEntity<Map<String, Object>> getList(@PathVariable("name") String name){
-        ClubMemberDTO clubMemberDTO = loginService.getClubMemberSearch(name);
-        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
-        Map<String, Object> response = new HashMap<>();
-        response.put("clubMemberDTO", clubMemberDTO);
-        response.put("profileImageDTO", profileImageDTO);
-        log.info("member name : " + clubMemberDTO);
-        log.info("ProfileImage DTO : " + profileImageDTO);
-
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Map<String, Object>> getListByName(@PathVariable("name") String name){
+        ClubMemberDTO clubMemberDTO = loginService.getClubMemberSearchbyName(name);
+        Map<String, Object> response = getClubMemberDTOAndProfileImageDTO(clubMemberDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Map<String, Object>> getListByEmail(@PathVariable("email") String email){
+        ClubMemberDTO clubMemberDTO = loginService.getClubMemberSearchbyEmail(email);
+        Map<String, Object> response = getClubMemberDTOAndProfileImageDTO(clubMemberDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    private Map<String, Object> getClubMemberDTOAndProfileImageDTO
+            (ClubMemberDTO clubMemberDTO){
+
+        String clubMemberEmail = clubMemberDTO.getEmail();
+        String clubMemberName = clubMemberDTO.getName();
+        ProfileImageDTO profileImageDTO = profileService.getProfileImage(clubMemberName);
+        Map<String, Object> response = new HashMap<>();
+        response.put("clubMemberEmail", clubMemberEmail);
+        response.put("clubMemberName", clubMemberName);
+        response.put("profileImageDTO", profileImageDTO);
+        return response;
+    }
+
+
 
 //    @GetMapping("{name}")
 //    public ResponseEntity<List<ClubMemberDTO>> getSearchList(@PathVariable("name") String name){

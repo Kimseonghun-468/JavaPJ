@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class ClubUserDetailsService implements UserDetailsService {
 //    @Override
 //    public UserDetails loadUserBy
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
         log.info("ClubUserDetailsService loadUserbyUsername " + username);
 

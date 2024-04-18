@@ -14,6 +14,7 @@ public interface ProfileService {
     Long register(ProfileImageDTO profileImageDTO);
 
     ProfileImageDTO getProfileImage(String name);
+    List<FriendShipProfileDTO> getProfileImageList(List<FriendShipDTO> friendShipDTOList);
     default ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = ProfileImage.builder()
@@ -21,6 +22,7 @@ public interface ProfileService {
                 .path(profileImageDTO.getPath())
                 .uuid(profileImageDTO.getUuid())
                 .imgName(profileImageDTO.getImgName())
+                .userEmail(profileImageDTO.getUserEmail())
                 .build();
 
         return profileImage;
@@ -31,11 +33,10 @@ public interface ProfileService {
                 .pfino(profileImage.getPfino())
                 .userName(profileImage.getUserName())
                 .imgName(profileImage.getImgName())
+                .userEmail(profileImage.getUserEmail())
                 .path(profileImage.getPath())
                 .uuid(profileImage.getUuid())
                 .build();
-
-
         return profileImageDTO;
     }
 }

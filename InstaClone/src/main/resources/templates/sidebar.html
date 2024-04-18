@@ -26,11 +26,11 @@
     <a href="#3" class="menu-item">
       <span class="icon">&#8962;</span>홈3
     </a>
-    <a href="#4" class="menu-item">
-      <span class="icon">&#8962;</span>홈4
-    </a>
     <a class="menu-item">
-      <p class="profile-name">프로필</p>
+      <span class="friendship-list">알림</span>
+    </a>
+    <a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" class="menu-item">
+      <span class="profile-name">프로필</span>
     </a>
   </div>
 
@@ -55,8 +55,17 @@
               <h1 class="username">[[${userName}]]</h1>
               <div class="stats">
                 <span>게시물 [[${postNum}]]</span>
-                <span>팔로워 0</span>
-                <span>팔로우 0</span>
+                <span>친구 0</span>
+<!--                button을 누르면, js에서 ajax로 친구 요청 api 호출, 친구요청 완료 하고, Friendshipstatus만 변경해주면 되는데,  -->
+                <span id="follow-status">
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='Notting'}" class="request-Follow follow">친구 요청</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" class="request-Delete follow">친구 상태</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" class="request-Accept follow">친구 수락</button>
+
+                </span>
+
+
               </div>
             </div>
           </div>
@@ -84,7 +93,6 @@
         </section>
       </div>
     </main>
-
 
     <div class="up-temp3">
       <div class="temp3">
@@ -247,6 +255,16 @@
   </div>
   </div>
 
+  <div id="friendShip-Modal" class="modal">
+    <div class="modal-content-search">
+
+      <div id="frinedshipList">
+
+      </div>
+    </div>
+  </div>
+
+
 </div>
 </html>
 
@@ -345,6 +363,7 @@
                 str += "<input type='hidden' name='path' value='" + item['folderPath'] + "'>";
                 str += "<input type='hidden' name='uuid' value='" + item['uuid'] + "'>";
                 str += "<input type='hidden' name='userName' value='" + userName + "'>";
+                str += "<input type='hidden' name='userEmail' value='" + '[[${memberDTO.email}]]' + "'>";
 
                 // console.log(item.fileName);
                 // console.log(item['fileName']);
@@ -368,6 +387,23 @@
     });
   });
 
+
+  $(function (){
+    $(".request-Follow").click(function (){
+      console.log("request-follow");
+      var name = '[[${userName}]]';
+      console.log(name);// 여기 페이지 자체의 username
+      $.ajax({
+        url: '/friendShip/'+name,
+        type: 'POST',
+        dataType: 'text',
+        success: function (arr){
+          console.log(arr);
+          self.location.reload();
+        }
+      })
+    });
+  });
   function showUploadedImages(arr){
     console.log(arr);
     var divArea = $(".uploadResult");
@@ -394,15 +430,15 @@
     var searchTerm = document.getElementById('searchInput').value;
     console.log('검색어:', searchTerm);
     var searchResult = "";
-    $.getJSON("/search/"+searchTerm +"/all", function (arr){
+    $.getJSON("/search/name/"+searchTerm, function (arr){
       console.log(arr);
-      console.log(arr.clubMemberDTO.email)
+      console.log(arr.clubMemberEmail)
       var path = arr.profileImageDTO.path;
       var uuid = arr.profileImageDTO.uuid;
       var imgName = arr.profileImageDTO.imgName;
       var imageUrl = encodeURIComponent(path + "/" + uuid + "_" + imgName);
 
-      if(arr.clubMemberDTO.name != null){
+      if(arr.clubMemberName != null){
         if(arr.profileImageDTO.path != null) {
           searchResult += '<img src ="/display?fileName=' + imageUrl + '/"' +
                   ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
@@ -411,8 +447,8 @@
           searchResult += '<img src = "/display?fileName=outprofile.png/"' +
                   ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
         }
-        searchResult += '<a href="/sidebar/' + arr.clubMemberDTO.name + '"' +
-                ' class=comment-bold>' + arr.clubMemberDTO.name + '</a>';
+        searchResult += '<a href="/sidebar/' + arr.clubMemberName + '"' +
+                ' class=comment-bold>' + arr.clubMemberName + '</a>';
       }
       else{
         searchResult += '검색한 사용자가 없습니다.';
@@ -421,8 +457,86 @@
 
       $(".searchResult").html(searchResult);
     })
-    // 여기에 검색 로직을 추가할 수 있습니다.
   }
+
+  $(function () {
+    $(".friendship-list").click(function (){
+      console.log("FriendSHop-Modal")
+      $('#friendShip-Modal').modal('show');
+      var loginEmail = '[[${memberDTO.email}]]';
+      console.log(loginEmail);
+      $.ajax({
+        url: '/friendShip/getFriendShipList',
+        type: "POST",
+        data: {loginEmail : loginEmail},
+        dataType: "JSON",
+        success: function (result){
+          if(result.length > 0) {
+            console.log(result);
+            console.log(JSON.stringify(result));
+            $.ajax({
+              url: '/profileImage/all',
+              type: "POST",
+              data: JSON.stringify(result),
+              dataType: "JSON",
+              contentType: "application/json; charset=utf-8",
+              success: function (profileImageDTOList){
+                console.log(profileImageDTOList);
+                var friendShipResult = "";
+                $.each(profileImageDTOList, function (idx, friendShipProfileDTO){
+                  console.log(friendShipProfileDTO);
+                  if(friendShipProfileDTO.path != null) {
+                    friendShipResult +='<div>'
+                    friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
+                            ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                    friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.friendName + '"' +
+                            ' class=comment-bold>' + friendShipProfileDTO.friendName + '</a>';
+                    friendShipResult +=  "<button data-name ="+friendShipProfileDTO.friendEmail+ " class='request-Accept follow'>친구 수락</button>"
+                    // 여기에 버튼 달아야함..
+                    friendShipResult +='</div>'
+                  }
+                  else {
+                    friendShipResult += '<div>'
+                    friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
+                            ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                    friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.friendName + '"' +
+                            ' class=comment-bold>' + friendShipProfileDTO.friendName + '</a>';
+                    friendShipResult +=  "<button data-name ="+friendShipProfileDTO.friendEmail+ " class='request-Accept follow'>친구 수락</button>"
+                    friendShipResult += '</div>'
+                  }
+                })
+                $("#frinedshipList").html(friendShipResult);
+              }
+            });
+          }
+          else{
+            console.log("Result List lenth : 0");
+            friendshipResult += '친구 요청 목록이 없습니다.';
+            $("#frinedshipList").html(friendshipResult);
+          }
+        }
+      })
+    })
+  })
+  $(function (){
+    $(document).on('click', '.request-Accept', function(){
+      console.log("TT@@@@@@@@@@@@@@@@@@@");
+      var loginEmail = '[[${memberDTO.email}]]';
+      var requesterEmail = $(this).attr('data-name');
+      console.log(loginEmail);
+      console.log(requesterEmail);
+      var data = {loginEmail:loginEmail, requesterEmail:requesterEmail};
+      $.ajax({
+        url: '/friendShip/acceptFriendShipRequest',
+        type: "POST",
+        data: data,
+        dataType: "JSON",
+        success: function (result) {
+          console.log(result)
+        }
+      })
+    })
+  })
 
   $(function (){
     $(".profile-picture").click(function (){
@@ -501,12 +615,6 @@
 
       };
       $('.send').off('click').on('click', handleSendButtonClick);
-    });
-    $(function() {
-      $(document).on('click', '.profile-name', function() {
-        console.log(userEmail);
-        window.location.href = '/sidebar/' + userName;
-      });
     });
     $(function() {
       // 이벤트 위임을 사용하여 동적으로 생성된 모든 '.reply-option'에 이벤트 핸들러를 바인딩

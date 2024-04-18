@@ -1,8 +1,6 @@
 package com.skhkim.instaclone.service;
 
-import com.skhkim.instaclone.dto.ClubMemberDTO;
-import com.skhkim.instaclone.dto.PostDTO;
-import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.entity.ProfileImage;
@@ -12,8 +10,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,6 @@ public class ProfileServieImpl implements ProfileService{
         return profileImage.getPfino();
     }
     @Override
-    @Transactional
     public ProfileImageDTO getProfileImage(String name){
 
         ProfileImage profileImage = profileImageRepository.findByUserName(name);
@@ -42,5 +41,13 @@ public class ProfileServieImpl implements ProfileService{
         else{
             return ProfileImageDTO.builder().build();
         }
+    }
+
+    @Override
+    public List<FriendShipProfileDTO> getProfileImageList(List<FriendShipDTO> friendShipDTOList){
+        List<FriendShipProfileDTO> friendShipProfileDTOS = profileImageRepository.findByExistProfile(friendShipDTOList.get(0).getUserEmail());
+        List<FriendShipProfileDTO> friendShipProfileDTOSNotIn = profileImageRepository.findByNotExistProfile(friendShipDTOList.get(0).getUserEmail());
+        friendShipProfileDTOS.addAll(friendShipProfileDTOSNotIn);
+        return friendShipProfileDTOS;
     }
 }

@@ -7,17 +7,17 @@ import lombok.NoArgsConstructor;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProfileImageDTO {
+public class FriendShipProfileDTO {
     private Long pfino;
     private String userName;
     private String userEmail;
+    private String friendEmail;
+    private String friendName;
     private String uuid;
     private String imgName;
     private String path;
@@ -38,5 +38,10 @@ public class ProfileImageDTO {
             e.printStackTrace();
         }
         return "";
+    }
+    public void setImageInfoToNull() {
+        uuid = null;
+        imgName = null;
+        path = null;
     }
 }

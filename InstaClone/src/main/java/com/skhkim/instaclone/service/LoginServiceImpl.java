@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +28,7 @@ public class LoginServiceImpl implements LoginService{
 
         boolean checkResult = clubMemberRepository.existsByEmail(memberDTO.getEmail());
         return checkResult;
+//        여기서 Name도 중복 처리를 해주도록 하자..
     }
 
     @Override
@@ -41,9 +43,14 @@ public class LoginServiceImpl implements LoginService{
         return clubMember.getEmail();
     }
     @Override
-    public ClubMemberDTO getClubMemberSearch(String name) {
+    public ClubMemberDTO getClubMemberSearchbyName(String name) {
         ClubMember result = clubMemberRepository.findByName(name);
         return result != null ? entityToDTO(result) : ClubMemberDTO.builder().build();
+    }
+    @Override
+    public ClubMemberDTO getClubMemberSearchbyEmail(String Email) {
+        Optional<ClubMember> result = clubMemberRepository.findByEmail(Email);
+        return result.isPresent() ? entityToDTO(result.get()) : ClubMemberDTO.builder().build();
     }
     @Override
     public boolean getUserExist(String name){

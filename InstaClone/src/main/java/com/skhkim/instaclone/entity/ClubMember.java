@@ -3,7 +3,9 @@ package com.skhkim.instaclone.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -23,6 +25,9 @@ public class ClubMember extends BaseEntity{
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     private Set<ClubMemberRole> roleSet = new HashSet<>();
+
+    @OneToMany(mappedBy = "clubMember")
+    private List<FriendShip> friendshipList = new ArrayList<>();
 
     public void addMemberRole(ClubMemberRole clubMemberRole){
         roleSet.add(clubMemberRole);
