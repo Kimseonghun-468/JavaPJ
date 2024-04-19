@@ -1,27 +1,24 @@
 package com.example.chatting.Entity;
-public class ChatMessage {
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@ToString(exclude = "chatRoom")
+public class ChatMessage extends BaseEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;
+
     private String name;
+    private String senderId;
     private String content;
-
-    public ChatMessage(String name, String content) {
-        this.name = name;
-        this.content = content;
-    }
-
-    // Getters and Setters
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 }

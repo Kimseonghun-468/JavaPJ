@@ -5,6 +5,9 @@
   <title>Chat Room</title>
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/stomp-websocket/lib/stomp.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div id="chatPage">
@@ -13,6 +16,35 @@
   <input type="text" id="messageInput" placeholder="Type a message..." />
   <button onclick="sendMessage()">Send</button>
 </div>
+
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal">
+  Open Chat Room
+</button>
+
+<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="chatModalLabel">Chat Room</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="messages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+          <!-- 메시지가 동적으로 여기에 표시됨 -->
+        </div>
+        <input type="text" id="messageInput-modal" placeholder="Type a message..." class="form-control mt-2">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </body>
 
 <script th:inline="javascript">
@@ -56,6 +88,15 @@
     document.getElementById('chatMessages').appendChild(messageElement);
   }
 
+  $(function () {
+    $(".btn-primary").click(function () {
+      $('#messageInput-modal').modal('show');
+    })
+  })
+
   window.addEventListener("load", connect);
   window.addEventListener("beforeunload", disconnect);
+
+
+// 이거 R
 </script>
