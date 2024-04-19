@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Room</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stomp-websocket/lib/stomp.min.js"></script>
+</head>
+<body>
+<div id="chatPage">
+  <input type="text" id="name" placeholder="Enter your name" />
+  <div id="chatMessages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc;"></div>
+  <input type="text" id="messageInput" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+</body>
+
+<script th:inline="javascript">
+  var stompClient = null;
+
+  function connect() {
+    var socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+      console.log('Connected: ' + frame);
+      stompClient.subscribe('/topic/public', function (chatMessage) {
+        showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content);
+        console.log("Subscribe : ", chatMessage);
+      });
+    });
+  }
+
+  function disconnect() {
+    if (stompClient !== null) {
+      stompClient.disconnect();
+    }
+    console.log("Disconnected");
+  }
+
+  function sendMessage() {
+    var messageContent = document.getElementById('messageInput').value.trim();
+    var name = document.getElementById('name').value.trim();
+    if(messageContent && stompClient) {
+      var chatMessage = {
+        name: name,
+        content: messageContent
+      };
+      stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+      document.getElementById('messageInput').value = '';
+    }
+  }
+
+  function showChatMessage(name, message) {
+    var messageElement = document.createElement('div');
+    messageElement.innerText = name + ": " + message;
+    document.getElementById('chatMessages').appendChild(messageElement);
+  }
+
+  window.addEventListener("load", connect);
+  window.addEventListener("beforeunload", disconnect);
+</script>
