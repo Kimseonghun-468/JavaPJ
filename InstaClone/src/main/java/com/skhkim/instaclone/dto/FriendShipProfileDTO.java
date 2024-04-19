@@ -18,6 +18,8 @@ public class FriendShipProfileDTO {
     private String userEmail;
     private String friendEmail;
     private String friendName;
+    private String fsuserName;
+    private String fsuserEmail;
     private String uuid;
     private String imgName;
     private String path;
@@ -38,10 +40,5 @@ public class FriendShipProfileDTO {
             e.printStackTrace();
         }
         return "";
-    }
-    public void setImageInfoToNull() {
-        uuid = null;
-        imgName = null;
-        path = null;
     }
 }

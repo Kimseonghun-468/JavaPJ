@@ -58,7 +58,7 @@
                 <span>친구 0</span>
 <!--                button을 누르면, js에서 ajax로 친구 요청 api 호출, 친구요청 완료 하고, Friendshipstatus만 변경해주면 되는데,  -->
                 <span id="follow-status">
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='Notting'}" class="request-Follow follow">친구 요청</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" class="request-Follow follow">친구 요청</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" class="request-Delete follow">친구 상태</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" class="request-Accept follow">친구 수락</button>
@@ -483,29 +483,33 @@
               success: function (profileImageDTOList){
                 console.log(profileImageDTOList);
                 var friendShipResult = "";
-                $.each(profileImageDTOList, function (idx, friendShipProfileDTO){
-                  console.log(friendShipProfileDTO);
-                  if(friendShipProfileDTO.path != null) {
-                    friendShipResult +='<div>'
-                    friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
-                            ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-                    friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.friendName + '"' +
-                            ' class=comment-bold>' + friendShipProfileDTO.friendName + '</a>';
-                    friendShipResult +=  "<button data-name ="+friendShipProfileDTO.friendEmail+ " class='request-Accept follow'>친구 수락</button>"
-                    // 여기에 버튼 달아야함..
-                    friendShipResult +='</div>'
-                  }
-                  else {
-                    friendShipResult += '<div>'
-                    friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
-                            ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-                    friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.friendName + '"' +
-                            ' class=comment-bold>' + friendShipProfileDTO.friendName + '</a>';
-                    friendShipResult +=  "<button data-name ="+friendShipProfileDTO.friendEmail+ " class='request-Accept follow'>친구 수락</button>"
-                    friendShipResult += '</div>'
-                  }
-                })
-                $("#frinedshipList").html(friendShipResult);
+                if(profileImageDTOList.length >0) {
+                  $.each(profileImageDTOList, function (idx, friendShipProfileDTO) {
+                    console.log(friendShipProfileDTO);
+                    if (friendShipProfileDTO.path != null) {
+                      friendShipResult += '<div>'
+                      friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
+                              ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                      friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.fsuserName + '"' +
+                              ' class=comment-bold>' + friendShipProfileDTO.fsuserName + '</a>';
+                      friendShipResult += "<button data-name =" + friendShipProfileDTO.fsuserEmail + " class='request-Accept follow'>친구 수락</button>"
+                      // 여기에 버튼 달아야함..
+                      friendShipResult += '</div>'
+                    } else {
+                      friendShipResult += '<div>'
+                      friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
+                              ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                      friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.fsuserName + '"' +
+                              ' class=comment-bold>' + friendShipProfileDTO.fsuserName + '</a>';
+                      friendShipResult += "<button data-name =" + friendShipProfileDTO.fsuserEmail + " class='request-Accept follow'>친구 수락</button>"
+                      friendShipResult += '</div>'
+                    }
+                  })
+                }
+                else
+                  friendShipResult += "친구 목록이 없습니다.";
+                  $("#frinedshipList").html(friendShipResult);
+
               }
             });
           }
@@ -520,7 +524,6 @@
   })
   $(function (){
     $(document).on('click', '.request-Accept', function(){
-      console.log("TT@@@@@@@@@@@@@@@@@@@");
       var loginEmail = '[[${memberDTO.email}]]';
       var requesterEmail = $(this).attr('data-name');
       console.log(loginEmail);
@@ -533,6 +536,7 @@
         dataType: "JSON",
         success: function (result) {
           console.log(result)
+          $('[data-name="' + requesterEmail + '"]').replaceWith('<span>친구 수락</span>');
         }
       })
     })

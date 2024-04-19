@@ -20,16 +20,21 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     List<ProfileImage> findByEmailsNotIn(@Param("emails") List<String> emails);
 
     @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
-            "(pi.pfino, pi.userName, pi.userEmail, fs.friendEmail,fs.friendName, pi.uuid, pi.imgName, pi.path)" +
+            "(pi.pfino, pi.userName, pi.userEmail, fs.friendEmail,fs.friendName, fs.userName,fs.userEmail , pi.uuid, pi.imgName, pi.path)" +
             "FROM FriendShip fs" +
-            " JOIN ProfileImage pi ON fs.friendEmail = pi.userEmail" +
-            " WHERE fs.userEmail =:loginEmail AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING")
+            " JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
+            " WHERE fs.friendEmail =:loginEmail " +
+            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
+            "AND fs.isFrom = true")
     List<FriendShipProfileDTO> findByExistProfile(@Param("loginEmail") String loginEmail);
     @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
-            "(pi.pfino, pi.userName, pi.userEmail, fs.friendEmail,fs.friendName , pi.uuid, pi.imgName, pi.path)" +
+            "(pi.pfino, pi.userName, pi.userEmail, fs.friendEmail,fs.friendName, fs.userName, fs.userEmail , pi.uuid, pi.imgName, pi.path)" +
             " FROM FriendShip fs"+
-            " LEFT JOIN ProfileImage pi ON fs.friendEmail = pi.userEmail" +
-            " WHERE fs.userEmail =:loginEmail AND pi.pfino is null")
+            " LEFT JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
+            " WHERE fs.friendEmail =:loginEmail " +
+            "AND pi.pfino is null " +
+            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
+            "AND fs.isFrom = true")
     List<FriendShipProfileDTO> findByNotExistProfile(@Param("loginEmail") String loginEmail);
     // join을 통해서 profileImage랑, FriendshipList를 같이 뽑는게 나을거 같기도 하고..
 }
