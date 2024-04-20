@@ -14,14 +14,15 @@ import java.util.List;
 public class ChatRoom {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> messages = new ArrayList<>();
     @Column(nullable = false)
-    private String userId1;
+    private String userName1;
 
     @Column(nullable = false)
-    private String userId2;
+    private String userName2;
+
+
 }

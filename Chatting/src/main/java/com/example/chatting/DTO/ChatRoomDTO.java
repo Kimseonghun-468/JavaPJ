@@ -13,8 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomDTO {
-    private Long id;
-    private List<ChatMessage> messages = new ArrayList<>();
-    private String userId1;
-    private String userId2;
+    private String id;
+    private String userName1;
+    private String userName2;
 }

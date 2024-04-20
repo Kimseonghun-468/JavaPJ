@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Chat Room</title>
+  <link th:href="@{/css/ChatCSS.css}" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/stomp-websocket/lib/stomp.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -13,32 +14,39 @@
 <div id="chatPage">
   <input type="text" id="name" placeholder="Enter your name" />
   <div id="chatMessages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc;"></div>
-  <input type="text" id="messageInput" placeholder="Type a message..." />
-  <button onclick="sendMessage()">Send</button>
+<!--  <input type="text" id="messageInput" placeholder="Type a message..." />-->
+  <button onclick="sendMessage('publicRoom')">Send</button>
 </div>
 
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal">
-  Open Chat Room
-</button>
+<div>
+  <input type="text" id="LoginUserName" placeholder="Enter Login User name" />
+  <input type="text" id="FriendUserName" placeholder="Enter Friend User name" />
+  <button type="button" id="modal-button"class="btn btn-primary" data-toggle="modal" data-target="#chatModal">
+    Open Chat Room
+  </button>
+</div>
+
+
 
 <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="chatModalLabel">Chat Room</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" id="close-modal-room" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <div id="messages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+        <div id="messages-modal" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: rgb(255, 255, 255);">
           <!-- 메시지가 동적으로 여기에 표시됨 -->
         </div>
-        <input type="text" id="messageInput-modal" placeholder="Type a message..." class="form-control mt-2">
+        <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="sendMessage()">Send</button>
+        <button type="button" id="send-button-modalroom">Send</button>
+<!--        <button onclick="sendMessage('publicRoom')">Send</button>-->
       </div>
     </div>
   </div>
@@ -50,34 +58,40 @@
 <script th:inline="javascript">
   var stompClient = null;
 
-  function connect() {
+  function connect(RoomID) {
     var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
       console.log('Connected: ' + frame);
-      stompClient.subscribe('/topic/public', function (chatMessage) {
+      stompClient.subscribe('/topic/chat/'+RoomID, function (chatMessage) {
         showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content);
-        console.log("Subscribe : ", chatMessage);
+        //시간은 chatmessage에서 dto로 받아올거긴 한데, 어떻게 받아와지는지 다시 확인.
       });
     });
+    console.log("Connect stomp Client : ", stompClient)
   }
 
   function disconnect() {
+    console.log("Disscunec?",stompClient)
     if (stompClient !== null) {
       stompClient.disconnect();
     }
     console.log("Disconnected");
   }
 
-  function sendMessage() {
+  function sendMessage(RoomID) {
+    console.log("Send Request Room id : ", RoomID);
     var messageContent = document.getElementById('messageInput').value.trim();
     var name = document.getElementById('name').value.trim();
+    console.log("Message Content! : ",messageContent);
     if(messageContent && stompClient) {
       var chatMessage = {
         name: name,
         content: messageContent
       };
-      stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+
+      console.log("Send Rquest Direction : ");
+      stompClient.send("/app/chat/"+RoomID, {}, JSON.stringify(chatMessage));
       document.getElementById('messageInput').value = '';
     }
   }
@@ -85,18 +99,63 @@
   function showChatMessage(name, message) {
     var messageElement = document.createElement('div');
     messageElement.innerText = name + ": " + message;
-    document.getElementById('chatMessages').appendChild(messageElement);
+    document.getElementById('messages-modal').appendChild(messageElement);
+    console.log('Message Element : ',messageElement);
   }
 
   $(function () {
-    $(".btn-primary").click(function () {
-      $('#messageInput-modal').modal('show');
+    var roomID = ""
+    $("#modal-button").click(function () {
+      console.log("Click Botten");
+      var loginUserName = $("#LoginUserName").val();
+      var friendUserName = $("#FriendUserName").val();
+
+      console.log("Login User Name: " + loginUserName);
+      console.log("Friend User Name: " + friendUserName);
+
+      // 여기서 loginUserName, friendUserName으로 ajax 요청 -> chatroom id get or create하기
+      $.ajax({
+        url: '/chat/getORCreateChatRoom',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {loginName : loginUserName, friendName :friendUserName},
+        success: function (chatRoomDTO){
+
+          roomID = chatRoomDTO.id;
+          connect(chatRoomDTO.id);
+
+          $.ajax({
+            url: '/chat/getChatListbyRoomID',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {roomID: roomID},
+            success: function (chatMessageDTOList){
+              console.log("ChatMessageDTOLIST : ",chatMessageDTOList);
+              $.each(chatMessageDTOList, function (idx, chatMessageDTO){
+                console.log(chatMessageDTO);
+                showChatMessage(chatMessageDTO.name, chatMessageDTO.content);
+              })
+              var messageElement = document.createElement('div');
+              messageElement.innerText = '-----이전 기록-----';
+              document.getElementById('messages-modal').appendChild(messageElement);
+            }
+          })
+        }
+      })
+      $('#chatModal').modal('show');
+
     })
+
+    $('#send-button-modalroom').click(function (){
+      console.log("Send-button-modalroom")
+      sendMessage(roomID);
+    })
+    $('#chatModal').on('hidden.bs.modal', function () {
+      document.getElementById('LoginUserName').value = ''
+      document.getElementById('FriendUserName').value = ''
+      document.getElementById('messages-modal').innerHTML = '';
+      console.log("Modal closed");
+      disconnect();
+    });
   })
-
-  window.addEventListener("load", connect);
-  window.addEventListener("beforeunload", disconnect);
-
-
-// 이거 R
 </script>
