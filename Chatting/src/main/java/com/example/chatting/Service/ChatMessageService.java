@@ -18,7 +18,6 @@ public interface ChatMessageService {
                 .name(chatMessage.getName())
                 .content(chatMessage.getContent())
                 .regDate(chatMessage.getRegDate())
-                .modDate(chatMessage.getModDate())
                 .build();
 
         return chatMessageDTO;

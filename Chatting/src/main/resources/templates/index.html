@@ -11,12 +11,12 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div id="chatPage">
-  <input type="text" id="name" placeholder="Enter your name" />
-  <div id="chatMessages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc;"></div>
-<!--  <input type="text" id="messageInput" placeholder="Type a message..." />-->
-  <button onclick="sendMessage('publicRoom')">Send</button>
-</div>
+<!--<div id="chatPage">-->
+<!--  <input type="text" id="name" placeholder="Enter your name" />-->
+<!--  <div id="chatMessages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc;"></div>-->
+<!--&lt;!&ndash;  <input type="text" id="messageInput" placeholder="Type a message..." />&ndash;&gt;-->
+<!--  <button onclick="sendMessage('publicRoom')">Send</button>-->
+<!--</div>-->
 
 
 <div>
@@ -42,6 +42,7 @@
         <div id="messages-modal" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: rgb(255, 255, 255);">
           <!-- 메시지가 동적으로 여기에 표시됨 -->
         </div>
+        <input type="text" id="name" placeholder="Enter your name" />
         <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
       </div>
       <div class="modal-footer">
@@ -57,6 +58,13 @@
 
 <script th:inline="javascript">
   var stompClient = null;
+  const options = {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: true,
+    timeZone: 'UTC'  // 서버 시간대가 UTC라고 가정
+  };
+  const formatter = new Intl.DateTimeFormat('en-GB', options);
 
   function connect(RoomID) {
     var socket = new SockJS('/ws');
@@ -64,8 +72,7 @@
     stompClient.connect({}, function (frame) {
       console.log('Connected: ' + frame);
       stompClient.subscribe('/topic/chat/'+RoomID, function (chatMessage) {
-        showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content);
-        //시간은 chatmessage에서 dto로 받아올거긴 한데, 어떻게 받아와지는지 다시 확인.
+        showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content, JSON.parse(chatMessage.body).regDate);
       });
     });
     console.log("Connect stomp Client : ", stompClient)
@@ -96,11 +103,15 @@
     }
   }
 
-  function showChatMessage(name, message) {
+  function showChatMessage(name, message, time) {
     var messageElement = document.createElement('div');
-    messageElement.innerText = name + ": " + message;
+    var formattedDateTime = formatter.format(new Date(time));
+    var showedTime = formattedDateTime.slice(21, 23)+" "+
+            formattedDateTime.slice(15, 17) +":" + formattedDateTime.slice(18, 20)
+    console.log(showedTime);
+    messageElement.innerText = name + ": " + message + " ------------ 시간 : " + showedTime;
     document.getElementById('messages-modal').appendChild(messageElement);
-    console.log('Message Element : ',messageElement);
+
   }
 
   $(function () {
@@ -123,23 +134,16 @@
 
           roomID = chatRoomDTO.id;
           connect(chatRoomDTO.id);
-
-          $.ajax({
-            url: '/chat/getChatListbyRoomID',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {roomID: roomID},
-            success: function (chatMessageDTOList){
-              console.log("ChatMessageDTOLIST : ",chatMessageDTOList);
-              $.each(chatMessageDTOList, function (idx, chatMessageDTO){
-                console.log(chatMessageDTO);
-                showChatMessage(chatMessageDTO.name, chatMessageDTO.content);
-              })
-              var messageElement = document.createElement('div');
-              messageElement.innerText = '-----이전 기록-----';
-              document.getElementById('messages-modal').appendChild(messageElement);
-            }
-          })
+          console.log(chatRoomDTO);
+          if(chatRoomDTO.messages.length > 0){
+            var chatMessageDTOList = chatRoomDTO.messages;
+            $.each(chatMessageDTOList, function (idx, chatMessageDTO){
+              showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
+            })
+            var messageElement = document.createElement('div');
+            messageElement.innerText = '-----이전 기록-----';
+            document.getElementById('messages-modal').appendChild(messageElement);
+          }
         }
       })
       $('#chatModal').modal('show');

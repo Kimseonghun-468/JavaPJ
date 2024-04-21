@@ -32,6 +32,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .name(chatMessageDTO.getName())
                 .content(chatMessageDTO.getContent())
                 .chatRoom(ChatRoom.builder().id(roomID).build())
+                .regDate(chatMessageDTO.getRegDate())
                 .build();
         chatMessageRepository.save(chatMessage);
 

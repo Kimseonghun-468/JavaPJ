@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.util.HtmlUtils;
 import lombok.extern.log4j.Log4j2;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +40,12 @@ public class ChatController {
         log.info("Room ID :"+ roomID);
         log.info("SendMessage !");
         ChatMessageDTO reuslt = ChatMessageDTO.builder()
-                .name(HtmlUtils.htmlEscape(chatMessageDTO.getName()))
-                .content(HtmlUtils.htmlEscape(chatMessageDTO.getContent()))
+                .name(chatMessageDTO.getName())
+                .content(chatMessageDTO.getContent())
+                .regDate(LocalDateTime.now())
                 .build();
-
         // dto result에 시간 넣는데, 시간 받아오는 방법 찾기
-        chatMessageService.register(chatMessageDTO, roomID);
+        chatMessageService.register(reuslt, roomID);
         return reuslt;
     }
 

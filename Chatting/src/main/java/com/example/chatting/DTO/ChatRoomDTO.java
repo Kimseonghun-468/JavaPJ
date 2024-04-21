@@ -16,4 +16,5 @@ public class ChatRoomDTO {
     private String id;
     private String userName1;
     private String userName2;
+    private List<ChatMessageDTO> messages = new ArrayList<>();
 }

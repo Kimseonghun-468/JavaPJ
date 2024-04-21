@@ -1,12 +1,15 @@
 package com.example.chatting.Service;
 
 import com.example.chatting.DTO.ChatRoomDTO;
+import com.example.chatting.Entity.ChatMessage;
 import com.example.chatting.Entity.ChatRoom;
 import com.example.chatting.Repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,6 +38,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         String roomID = getEmailsToId(loginName, friendName);
         ChatRoom chatRoom = ChatRoom.builder()
                 .id(roomID)
+                .messages(new ArrayList <ChatMessage>())
                 .userName1(loginName)
                 .userName2(friendName)
                 .build();

@@ -2,6 +2,9 @@ package com.example.chatting.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -9,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @ToString(exclude = "chatRoom")
-public class ChatMessage extends BaseEntity{
+public class ChatMessage{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cid;
@@ -19,6 +22,9 @@ public class ChatMessage extends BaseEntity{
     private ChatRoom chatRoom;
 
     private String name;
-    private String senderId;
     private String content;
+
+    @CreatedDate
+    @Column(name = "regdate", updatable = false)
+    private LocalDateTime regDate;
 }
