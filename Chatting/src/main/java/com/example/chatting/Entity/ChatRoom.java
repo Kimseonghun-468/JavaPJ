@@ -16,8 +16,6 @@ public class ChatRoom {
     @Id
     private String id;
 
-    @OneToMany(mappedBy = "chatRoom")
-    private List<ChatMessage> messages = new ArrayList<>();
     @Column(nullable = false)
     private String userName1;
 

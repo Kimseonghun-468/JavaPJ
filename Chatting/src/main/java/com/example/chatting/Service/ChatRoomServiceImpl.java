@@ -38,7 +38,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         String roomID = getEmailsToId(loginName, friendName);
         ChatRoom chatRoom = ChatRoom.builder()
                 .id(roomID)
-                .messages(new ArrayList <ChatMessage>())
                 .userName1(loginName)
                 .userName2(friendName)
                 .build();

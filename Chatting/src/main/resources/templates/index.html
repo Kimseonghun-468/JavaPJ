@@ -134,16 +134,23 @@
 
           roomID = chatRoomDTO.id;
           connect(chatRoomDTO.id);
-          console.log(chatRoomDTO);
-          if(chatRoomDTO.messages.length > 0){
-            var chatMessageDTOList = chatRoomDTO.messages;
-            $.each(chatMessageDTOList, function (idx, chatMessageDTO){
-              showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
-            })
-            var messageElement = document.createElement('div');
-            messageElement.innerText = '-----이전 기록-----';
-            document.getElementById('messages-modal').appendChild(messageElement);
-          }
+
+          $.ajax({
+            url: '/chat/getChatListbyRoomID',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {roomID: roomID},
+            success: function (chatMessageDTOList){
+              console.log("ChatMessageDTOLIST : ",chatMessageDTOList);
+              $.each(chatMessageDTOList, function (idx, chatMessageDTO){
+                console.log(chatMessageDTO);
+                showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
+              })
+              var messageElement = document.createElement('div');
+              messageElement.innerText = '-----이전 기록-----';
+              document.getElementById('messages-modal').appendChild(messageElement);
+            }
+          })
         }
       })
       $('#chatModal').modal('show');
