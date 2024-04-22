@@ -1,6 +1,8 @@
 package com.example.chatting.Controller;
 import com.example.chatting.DTO.ChatMessageDTO;
 import com.example.chatting.DTO.ChatRoomDTO;
+import com.example.chatting.DTO.PageRequestDTO;
+import com.example.chatting.DTO.PageResultDTO;
 import com.example.chatting.Entity.ChatMessage;
 import com.example.chatting.Entity.ChatRoom;
 import com.example.chatting.Service.ChatMessageService;
@@ -14,6 +16,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.util.HtmlUtils;
 import lombok.extern.log4j.Log4j2;
@@ -63,4 +66,19 @@ public class ChatController {
         List<ChatMessageDTO> chatMessageDTOList = chatMessageService.getChatMessageListByRoomID(roomID);
         return new ResponseEntity<>(chatMessageDTOList, HttpStatus.OK);
     }
+
+    @PostMapping("/chat/getChatListbyRoomIDPage")
+    public ResponseEntity<PageResultDTO> getChatListbyRoomIDPage(PageRequestDTO pageRequestDTO, String roomID){
+        PageResultDTO pageResultDTO = chatMessageService.getChatMessageListByRoomIDPage(pageRequestDTO, roomID);
+        return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
+    }
+
+//    @GetMapping("")
+//    public String index(PageRequestDTO pageRequestDTO){
+//        log.info("index Html Load!!");
+//        log.info("Page Request DTO : " + pageRequestDTO);
+//        String roomID = "1_2";
+//        PageResultDTO pageResultDTO = chatMessageService.getChatMessageListByRoomIDPage(pageRequestDTO, roomID);
+//        return "index";
+//    }
 }
