@@ -64,14 +64,14 @@
 
 <script th:inline="javascript">
   var stompClient = null;
-
+  var dayCheck = null
   const options = {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
     hour12: true,
-    timeZone: 'UTC'  // 서버 시간대가 UTC라고 가정
+    timeZone: "Asia/Seoul"  // 서버 시간대가 UTC라고 가정
   };
-  const formatter = new Intl.DateTimeFormat('en-GB', options);
+  const formatter = new Intl.DateTimeFormat('en-US', options);
 
   function connect(RoomID) {
     var socket = new SockJS('/ws');
@@ -113,20 +113,27 @@
   function showChatMessageReverse(name, message, time) {
     var messageElement = document.createElement('div');
     console.log(time);
+
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
-            formattedDateTime.slice(15, 17) +":" + formattedDateTime.slice(18, 20)
+            formattedDateTime.slice(12, 20)
     console.log(showedTime);
+    if (dayCheck != time.slice(0, 10)) {
+      var dayElement = document.createElement('h1');
+      dayElement.innerText = dayCheck;
+      document.getElementById('messages-box').prepend(dayElement);
+      dayCheck = time.slice(0, 10);
+    }
     messageElement.innerText = name + ": " + message + " ------------ 시간 : " + showedTime;
     document.getElementById('messages-box').prepend(messageElement);
-    // document.getElementById('messages-modal').appendChild(messageElement);
   }
   function showChatMessage(name, message, time){
     var messageElement = document.createElement('div');
     console.log(time);
     var formattedDateTime = formatter.format(new Date(time));
+    console.log(formattedDateTime);
     var showedTime = formattedDateTime.slice(21, 23)+" "+
-            formattedDateTime.slice(15, 17) +":" + formattedDateTime.slice(18, 20)
+            formattedDateTime.slice(12, 20)
     console.log(showedTime);
     messageElement.innerText = name + ": " + message + " ------------ 시간 : " + showedTime;
     document.getElementById('messages-box').appendChild(messageElement);
@@ -135,7 +142,8 @@
   $(function () {
     var roomID = ""
     var page = 1;
-    var totalPage = null;
+    var totalPage = null
+
     $("#modal-button").on('click',function () {
 
       console.log("Click Botten");
@@ -152,24 +160,26 @@
         dataType: 'JSON',
         data: {loginName : loginUserName, friendName :friendUserName},
         success: function (chatRoomDTO){
-
           roomID = chatRoomDTO.id;
-          connect(chatRoomDTO.id);
-          console.log("중첩 확인 ----------");
           $.ajax({
             url: '/chat/getChatListbyRoomIDPage?page=1',
             type: 'POST',
             dataType: 'JSON',
             data: {roomID: roomID},
             success: function (pageRequestChatDTO){
+              if(pageRequestChatDTO.dtoList.length > 0) {
+                dayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
+              }
               totalPage = pageRequestChatDTO.totalPage;
-              console.log("ChatMessageDTOLIST : ",pageRequestChatDTO);
+
               $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO){
                 showChatMessageReverse(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
+
               })
               var messageElement = document.createElement('div');
               messageElement.innerText = '-----이전 기록-----';
               document.getElementById('messages-box').appendChild(messageElement);
+
             }
           })
           $('#past-chat').off('click').on('click', function (){
@@ -188,11 +198,15 @@
                 }
               })
             }
+            else if(totalPage == page-1){
+              var dayElement = document.createElement('h1');
+              dayElement.innerText = dayCheck;
+              document.getElementById('messages-box').prepend(dayElement);
+            }
             else{
               alert("조회 할 목록이 없습니다.")
             }
           })
-
         }
       })
       console.log("What is that..");
@@ -211,8 +225,6 @@
       console.log("Modal closed");
       console.log("PAGE1 : !!"+ page);
       page = 1;
-      console.log("PAGE2 : !!"+ page);
-
       disconnect();
     });
   })
