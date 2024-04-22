@@ -22,7 +22,7 @@
 <div>
   <input type="text" id="LoginUserName" placeholder="Enter Login User name" />
   <input type="text" id="FriendUserName" placeholder="Enter Friend User name" />
-  <button type="button" id="modal-button"class="btn btn-primary" data-toggle="modal" data-target="#chatModal">
+  <button type="button" id="modal-button"class="btn btn-primary" data-toggle="modal">
     Open Chat Room
   </button>
 </div>
@@ -40,6 +40,12 @@
       </div>
       <div class="modal-body">
         <div id="messages-modal" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: rgb(255, 255, 255);">
+          <div class="modal-header">
+            <button class="past-button" id="past-chat">이전 기록</button>
+          </div>
+          <div class id="messages-box">
+
+          </div>
           <!-- 메시지가 동적으로 여기에 표시됨 -->
         </div>
         <input type="text" id="name" placeholder="Enter your name" />
@@ -58,6 +64,7 @@
 
 <script th:inline="javascript">
   var stompClient = null;
+
   const options = {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -103,20 +110,34 @@
     }
   }
 
-  function showChatMessage(name, message, time) {
+  function showChatMessageReverse(name, message, time) {
     var messageElement = document.createElement('div');
+    console.log(time);
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
             formattedDateTime.slice(15, 17) +":" + formattedDateTime.slice(18, 20)
     console.log(showedTime);
     messageElement.innerText = name + ": " + message + " ------------ 시간 : " + showedTime;
-    document.getElementById('messages-modal').appendChild(messageElement);
-
+    document.getElementById('messages-box').prepend(messageElement);
+    // document.getElementById('messages-modal').appendChild(messageElement);
+  }
+  function showChatMessage(name, message, time){
+    var messageElement = document.createElement('div');
+    console.log(time);
+    var formattedDateTime = formatter.format(new Date(time));
+    var showedTime = formattedDateTime.slice(21, 23)+" "+
+            formattedDateTime.slice(15, 17) +":" + formattedDateTime.slice(18, 20)
+    console.log(showedTime);
+    messageElement.innerText = name + ": " + message + " ------------ 시간 : " + showedTime;
+    document.getElementById('messages-box').appendChild(messageElement);
   }
 
   $(function () {
     var roomID = ""
-    $("#modal-button").click(function () {
+    var page = 1;
+    var totalPage = null;
+    $("#modal-button").on('click',function () {
+
       console.log("Click Botten");
       var loginUserName = $("#LoginUserName").val();
       var friendUserName = $("#FriendUserName").val();
@@ -134,25 +155,47 @@
 
           roomID = chatRoomDTO.id;
           connect(chatRoomDTO.id);
-
+          console.log("중첩 확인 ----------");
           $.ajax({
-            url: '/chat/getChatListbyRoomID',
+            url: '/chat/getChatListbyRoomIDPage?page=1',
             type: 'POST',
             dataType: 'JSON',
             data: {roomID: roomID},
-            success: function (chatMessageDTOList){
-              console.log("ChatMessageDTOLIST : ",chatMessageDTOList);
-              $.each(chatMessageDTOList, function (idx, chatMessageDTO){
-                console.log(chatMessageDTO);
-                showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
+            success: function (pageRequestChatDTO){
+              totalPage = pageRequestChatDTO.totalPage;
+              console.log("ChatMessageDTOLIST : ",pageRequestChatDTO);
+              $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO){
+                showChatMessageReverse(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
               })
               var messageElement = document.createElement('div');
               messageElement.innerText = '-----이전 기록-----';
-              document.getElementById('messages-modal').appendChild(messageElement);
+              document.getElementById('messages-box').appendChild(messageElement);
             }
           })
+          $('#past-chat').off('click').on('click', function (){
+            page += 1;
+            if(totalPage >= page) {
+              $.ajax({
+                url: '/chat/getChatListbyRoomIDPage?page=' + page,
+                type: 'POST',
+                dataType: 'JSON',
+                data: {roomID: roomID},
+                success: function (pageRequestChatDTO) {
+                  console.log("ChatMessageDTOLIST : ", pageRequestChatDTO);
+                  $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
+                    showChatMessageReverse(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
+                  })
+                }
+              })
+            }
+            else{
+              alert("조회 할 목록이 없습니다.")
+            }
+          })
+
         }
       })
+      console.log("What is that..");
       $('#chatModal').modal('show');
 
     })
@@ -164,8 +207,12 @@
     $('#chatModal').on('hidden.bs.modal', function () {
       document.getElementById('LoginUserName').value = ''
       document.getElementById('FriendUserName').value = ''
-      document.getElementById('messages-modal').innerHTML = '';
+      document.getElementById('messages-box').innerHTML = '';
       console.log("Modal closed");
+      console.log("PAGE1 : !!"+ page);
+      page = 1;
+      console.log("PAGE2 : !!"+ page);
+
       disconnect();
     });
   })

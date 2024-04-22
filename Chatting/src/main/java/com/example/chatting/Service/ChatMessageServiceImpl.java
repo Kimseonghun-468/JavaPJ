@@ -64,7 +64,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
                 (ChatMessage)arr[0])
         );
-        //이거 object 형식 Map(ob, st)인데, 지금은 그냥 dto gudtl
         return new PageResultDTO<>(result, fn);
     }
 }
