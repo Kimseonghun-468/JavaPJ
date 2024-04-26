@@ -18,7 +18,7 @@
   <div class="sidebar">
     <div class="logo">Instagram</div>
     <a class="menu-item">
-      <p class="search-name">검색</p>
+      <p id="search-user">검색</p>
     </a>
     <a href="#2" class="menu-item">
       <span class="icon">&#8962;</span>홈2
@@ -56,12 +56,11 @@
               <div class="stats">
                 <span>게시물 [[${postNum}]]</span>
                 <span>친구 0</span>
-<!--                button을 누르면, js에서 ajax로 친구 요청 api 호출, 친구요청 완료 하고, Friendshipstatus만 변경해주면 되는데,  -->
                 <span id="follow-status">
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" class="request-Follow follow">친구 요청</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" class="request-Delete follow">친구 상태</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" class="request-Accept follow">친구 수락</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" data-name='[[${userEmail}]]' class="request-Accept follow">친구 수락</button>
 
                 </span>
 
@@ -79,7 +78,6 @@
             <a href="#">태그됨</a>
           </nav>
           <div class="post-grid">
-            <!-- Post items will go here -->
             <div class="post-item " th:each="dto : ${result.dtoList}">
               <td><img class = "post-list-img"
                        th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
@@ -102,7 +100,6 @@
         <footer class="profile-footer">
           <ul class="footer-links">
             <li><a href="#">Meta</a></li>
-            <!-- Other footer links -->
           </ul>
           <span>© 2023 Instagram from Meta</span>
         </footer>
@@ -130,7 +127,6 @@
 
         포스트 파일을 제출하시겠습니까?
         <form id="Post-Image" th:action="@{/sidebar/{userName}(userName=${memberDTO.name})}" th:method="post">
-          <input type="hidden" name="email" value="TT">
           <div class="box">
 
           </div>
@@ -184,21 +180,16 @@
 </div>
 
 <div id="profileImageModal" class="modal">
-  <!-- Modal content -->
   <div class="modal-content-post">
     <div class="modal-content-post-imagebox">
-<!--      <img th:src="|/display?fileName=111.png/|" alt="Profile Picture" class="post-image">-->
     </div>
   </div>
 </div>
 
 <div id="myModal" class="modal">
-  <!-- Modal content -->
   <div class="modal-content-post">
     <div class="modal-content-post-imagebox">
-<!--      <img th:src="|/display?fileName=111.png/|" alt="Profile Picture" class="post-image">-->
     </div>
-<!--    여기에 img BOX를 추가하는 식-->
     <div class="comment-section">
       <div class="comment-header">
         <span class="comment-username">[[${userName}]]</span>
@@ -206,25 +197,11 @@
       </div>
       <div class="comment-title">
         <div class="comment-title-username comment-bold">
-          [[${userName}]]
         </div>
         <div class="comment-title-comment">
-          test Sample
         </div>
       </div>
       <div class="comment-body">
-        <div class="comment-body-reply">
-          <div class="comment-title-username">
-            [[${userName}]]
-          </div>
-
-        </div>
-        <div class="comment-body-reply">
-          <div class="comment-title-username">
-            [[${userName}]]
-          </div>
-
-        </div>
 
       </div>
       <div class="comment-footer">
@@ -269,141 +246,49 @@
 </html>
 
 <script>
-  $(document).ready(function() {
-    $('.uploadButton-post').click(function() {
-      $('.post-Image-File').click();
-      console.log("Post-Image");
+  function sendReplyRegisterRequset(postId, commentBox, userEmail) {
+    console.log(commentBox.value)
+    var data = {pno:postId, text:commentBox.value, email:userEmail};
+    console.log(data);
+    $.ajax({
+      url: '/reply/'+postId,
+      type: "POST",
+      data: JSON.stringify(data),
+      contentType: "application/json; charset=utf-8",
+      dataType:"text",
+      success: function (result){
+        console.log("result : " + result);
+        var replyArea = $(".comment-body");
+        replyArea.append('tt!!#$!@#@W!@');
+      }
+    })
+  };
+  function sendReplyDeleteRequest(rno){
+    $.ajax({
+      url: '/reply/'+rno+"/"+rno,
+      type: 'DELETE',
+      contentType: "application/json; charset=utf-8",
+      dataType: "text",
+      success: function (result){
+        console.log("result : " +result);
+        $('[data-rno="' + rno + '"]').closest('.comment-body-reply').remove();
+      }
+    })
+  }
 
-
-      $('.post-Image-File').on('change', function() {
-        if (this.files && this.files.length > 0) {
-          // 파일이 선택되면 모달을 표시
-          $('.Post-File-Modal').modal('show');
-          var formData = new FormData();
-          var inputFile = $("input.post-Image-File");
-          var files = inputFile[0].files;
-          console.log("TTT : " + files[0]);
-          for (var i = 0; i < files.length; i++){
-            console.log(files[i]);
-            formData.append("uploadFiles", files[i]);
-          }
-
-        }
-        $('.submitFile-Post').click(function() {
-          // 제출 버튼 클릭 시 수행할 로직
-          $.ajax({
-            url: '/uploadAjax',
-            processData: false,
-            contentType: false,
-            data: formData,
-            type: 'POST',
-            dataType: 'json',
-            success: function (result) {
-              console.log(result);
-              // showUploadedImages(result)
-              var str = "";
-              result.forEach((item, index) => {
-                console.log(item);
-                str += "<input type='hidden' name='imageDTOList["+index+"].imgName' value='"+item['fileName'] +"'>";
-                str += "<input type='hidden' name='imageDTOList["+index+"].path' value='"+item['folderPath']+"'>";
-                str += "<input type='hidden' name='imageDTOList["+index+"].uuid' value='"+item['uuid']+"'>";
-                // console.log(item.fileName);
-                // console.log(item['fileName']);
-              })
-              console.log(str);
-              $(".box").html(str);
-              $("#Post-Image").submit();
-
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-              console.log(textStatus)
-            }
-          });
-
-          alert('포스트 파일이 제출되었습니다.');
-          console.log(inputFile);
-          $('.Post-File-Modal').modal('hide');
-        });
+  function showReplyListInPost(postId){
+    $.getJSON("/reply/"+postId +"/all", function (arr){
+      var str = "";
+      var loginEmail = '[[${memberDTO.email}]]';
+      $.each(arr, function (idx, reply){
+        console.log(reply);
+        replyStr = createReplyhtmlbox(loginEmail, reply);
+        str += replyStr;
       });
-    });
-  });
+      $(".comment-body").html(str);
+    })
+  }
 
-  $(document).ready(function() {
-    $('.uploadButton-profile').click(function () {
-      $('.profile-Image-File').click();
-      console.log("profile-image");
-
-      $('.profile-Image-File').on('change', function() {
-        if (this.files && this.files.length > 0) {
-          // 파일이 선택되면 모달을 표시
-          $('.Profile-File-Modal').modal('show');
-          var formData = new FormData();
-          var inputFile = $("input.profile-Image-File");
-          var files = inputFile[0].files;
-          console.log(files[0]);
-          formData.append("uploadFiles", files[0]);
-        }
-        $('.submitFile-Profile').click(function() {
-          // 제출 버튼 클릭 시 수행할 로직
-          $.ajax({
-            url: '/uploadAjax',
-            processData: false,
-            contentType: false,
-            data: formData,
-            type: 'POST',
-            dataType: 'json',
-            success: function (result) {
-              console.log(result);
-              // showUploadedImages(result)
-              userName = document.getElementById('userName').textContent;
-              var str = "";
-              result.forEach((item, index) => {
-                console.log(item);
-                str += "<input type='hidden' name='imgName' value='" + item['fileName'] + "'>";
-                str += "<input type='hidden' name='path' value='" + item['folderPath'] + "'>";
-                str += "<input type='hidden' name='uuid' value='" + item['uuid'] + "'>";
-                str += "<input type='hidden' name='userName' value='" + userName + "'>";
-                str += "<input type='hidden' name='userEmail' value='" + '[[${memberDTO.email}]]' + "'>";
-
-                // console.log(item.fileName);
-                // console.log(item['fileName']);
-              })
-              console.log(str);
-              $(".box").html(str);
-              $("#Profile-Image").submit();
-
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-              console.log(textStatus)
-            }
-          });
-
-          alert('프로필 파일이 제출되었습니다.');
-          console.log(inputFile);
-          $('.filemodal').modal('hide');
-
-        });
-      });
-    });
-  });
-
-
-  $(function (){
-    $(".request-Follow").click(function (){
-      console.log("request-follow");
-      var name = '[[${userName}]]';
-      console.log(name);// 여기 페이지 자체의 username
-      $.ajax({
-        url: '/friendShip/'+name,
-        type: 'POST',
-        dataType: 'text',
-        success: function (arr){
-          console.log(arr);
-          self.location.reload();
-        }
-      })
-    });
-  });
   function showUploadedImages(arr){
     console.log(arr);
     var divArea = $(".uploadResult");
@@ -419,238 +304,311 @@
     divArea.append(str);
   }
 
-
-  $(function (){
-    $(document).on('click', '.search-name', function (){
-      $('#SearchModal').css('z-index', 1060).modal('show');
+  function createReplyhtmlbox(loginEmail, reply){
+    var str = "";
+    str += '<div class="comment-body-reply">';
+    str += '<div class="comment-title-username comment-bold">'
+    str += reply.name
+    str += '</div>'
+    str += '<div class="comment-title-comment">'
+    str += reply.text
+    str += '</div>'
+    if (loginEmail == reply.email) {
+      str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
+    }
+    str += '</div>'
+    return str
+  }
+  function sendFollowRequest(loadName){
+    $.ajax({
+      url: '/friendShip/' + loadName,
+      type: 'POST',
+      dataType: 'text',
+      success: function (arr){
+        console.log(arr);
+        self.location.reload();
+      }
     })
-  })
-  document.getElementById('searchForm').onsubmit = function(event) {
-    event.preventDefault();
-    var searchTerm = document.getElementById('searchInput').value;
-    console.log('검색어:', searchTerm);
-    var searchResult = "";
-    $.getJSON("/search/name/"+searchTerm, function (arr){
-      console.log(arr);
-      console.log(arr.clubMemberEmail)
-      var path = arr.profileImageDTO.path;
-      var uuid = arr.profileImageDTO.uuid;
-      var imgName = arr.profileImageDTO.imgName;
-      var imageUrl = encodeURIComponent(path + "/" + uuid + "_" + imgName);
+  }
 
-      if(arr.clubMemberName != null){
-        if(arr.profileImageDTO.path != null) {
-          searchResult += '<img src ="/display?fileName=' + imageUrl + '/"' +
-                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-        }
-        else{
-          searchResult += '<img src = "/display?fileName=outprofile.png/"' +
-                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-        }
-        searchResult += '<a href="/sidebar/' + arr.clubMemberName + '"' +
-                ' class=comment-bold>' + arr.clubMemberName + '</a>';
+  function createSearchInfohtmlbox(searchInfo){
+    var searchResult = "";
+    if(searchInfo.clubMemberName != null){
+      if(searchInfo.profileImageDTO.path != null) {
+        searchResult += '<img src ="/display?fileName=' + searchInfo.profileImageDTO.imageURL; + '/"' +
+        ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
       }
       else{
-        searchResult += '검색한 사용자가 없습니다.';
+        searchResult += '<img src = "/display?fileName=outprofile.png/"' +
+                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
       }
-      console.log("SearchResult : " + searchResult);
-
+      searchResult += '<a href="/sidebar/' + searchInfo.clubMemberName + '"' +
+              ' class=comment-bold>' + searchInfo.clubMemberName + '</a>';
+    }
+    else{
+      searchResult += '검색한 사용자가 없습니다.';
+    }
+    return searchResult;
+  }
+  function getSearchUserInfo(searchTerm){
+    $.getJSON("/search/name/"+searchTerm, function (searchInfo){
+      var searchResult = createSearchInfohtmlbox(searchInfo);
       $(".searchResult").html(searchResult);
     })
   }
 
-  $(function () {
-    $(".friendship-list").click(function (){
-      console.log("FriendSHop-Modal")
-      $('#friendShip-Modal').modal('show');
-      var loginEmail = '[[${memberDTO.email}]]';
-      console.log(loginEmail);
-      $.ajax({
-        url: '/friendShip/getFriendShipList',
-        type: "POST",
-        data: {loginEmail : loginEmail},
-        dataType: "JSON",
-        success: function (result){
-          if(result.length > 0) {
-            console.log(result);
-            console.log(JSON.stringify(result));
-            $.ajax({
-              url: '/profileImage/all',
-              type: "POST",
-              data: JSON.stringify(result),
-              dataType: "JSON",
-              contentType: "application/json; charset=utf-8",
-              success: function (profileImageDTOList){
-                console.log(profileImageDTOList);
-                var friendShipResult = "";
-                if(profileImageDTOList.length >0) {
-                  $.each(profileImageDTOList, function (idx, friendShipProfileDTO) {
-                    console.log(friendShipProfileDTO);
-                    if (friendShipProfileDTO.path != null) {
-                      friendShipResult += '<div>'
-                      friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
-                              ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-                      friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.fsuserName + '"' +
-                              ' class=comment-bold>' + friendShipProfileDTO.fsuserName + '</a>';
-                      friendShipResult += "<button data-name =" + friendShipProfileDTO.fsuserEmail + " class='request-Accept follow'>친구 수락</button>"
-                      // 여기에 버튼 달아야함..
-                      friendShipResult += '</div>'
-                    } else {
-                      friendShipResult += '<div>'
-                      friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
-                              ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-                      friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.fsuserName + '"' +
-                              ' class=comment-bold>' + friendShipProfileDTO.fsuserName + '</a>';
-                      friendShipResult += "<button data-name =" + friendShipProfileDTO.fsuserEmail + " class='request-Accept follow'>친구 수락</button>"
-                      friendShipResult += '</div>'
-                    }
-                  })
-                }
-                else
-                  friendShipResult += "친구 목록이 없습니다.";
-                  $("#frinedshipList").html(friendShipResult);
-
-              }
-            });
-          }
-          else{
-            console.log("Result List lenth : 0");
-            friendshipResult += '친구 요청 목록이 없습니다.';
-            $("#frinedshipList").html(friendshipResult);
-          }
+  function createFriendShipUserInfo(profileImageDTOList){
+    var friendShipResult = "";
+    if(profileImageDTOList.length >0) {
+      $.each(profileImageDTOList, function (idx, friendShipProfileDTO) {
+        console.log(friendShipProfileDTO);
+        if (friendShipProfileDTO.path != null) {
+          friendShipResult += '<div>'
+          friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
+                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.fsuserName + '"' +
+                  ' class=comment-bold>' + friendShipProfileDTO.fsuserName + '</a>';
+          friendShipResult += "<button data-name =" + friendShipProfileDTO.fsuserEmail + " class='request-Accept follow'>친구 수락</button>"
+          // 여기에 버튼 달아야함..
+          friendShipResult += '</div>'
+        } else {
+          friendShipResult += '<div>'
+          friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
+                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.fsuserName + '"' +
+                  ' class=comment-bold>' + friendShipProfileDTO.fsuserName + '</a>';
+          friendShipResult += "<button data-name =" + friendShipProfileDTO.fsuserEmail + " class='request-Accept follow'>친구 수락</button>"
+          friendShipResult += '</div>'
         }
       })
-    })
-  })
-  $(function (){
-    $(document).on('click', '.request-Accept', function(){
-      var loginEmail = '[[${memberDTO.email}]]';
-      var requesterEmail = $(this).attr('data-name');
-      console.log(loginEmail);
-      console.log(requesterEmail);
-      var data = {loginEmail:loginEmail, requesterEmail:requesterEmail};
-      $.ajax({
-        url: '/friendShip/acceptFriendShipRequest',
-        type: "POST",
-        data: data,
-        dataType: "JSON",
-        success: function (result) {
-          console.log(result)
-          $('[data-name="' + requesterEmail + '"]').replaceWith('<span>친구 수락</span>');
-        }
-      })
-    })
-  })
+    }
+    else
+      friendShipResult += "친구 요청 목록이 없습니다.";
+    return friendShipResult;
+  }
 
-  $(function (){
+  function showFriendProfileImageList(friendList){
+    $.ajax({
+      url: '/profileImage/all',
+      type: "POST",
+      data: JSON.stringify(friendList),
+      dataType: "JSON",
+      contentType: "application/json; charset=utf-8",
+      success: function (profileImageDTOList){
+        friendshipResult = createFriendShipUserInfo(profileImageDTOList);
+        $("#frinedshipList").html(friendshipResult);
+      }
+    });
+  }
+
+  function showFriendListInfo(loginEmail){
+    $.ajax({
+      url: '/friendShip/getFriendShipList',
+      type: "POST",
+      data: {loginEmail : loginEmail},
+      dataType: "JSON",
+      success: function (friendList){
+        if(friendList.length > 0) {
+          console.log(friendList);
+          console.log(JSON.stringify(friendList));
+          showFriendProfileImageList(friendList);
+        }
+        else{
+          console.log("Result List lenth : 0");
+          friendshipResult += '친구 요청 목록이 없습니다.';
+          $("#frinedshipList").html(friendshipResult);
+        }
+      }
+    })
+  }
+  function sendAcceptFriendShipRequest(loginEmail, requesterEmail){
+    var data = {loginEmail:loginEmail, requesterEmail:requesterEmail};
+    $.ajax({
+      url: '/friendShip/acceptFriendShipRequest',
+      type: "POST",
+      data: data,
+      dataType: "JSON",
+      success: function (result) {
+        console.log(result)
+        $('[data-name="' + requesterEmail + '"]').replaceWith('<span>친구 수락</span>');
+      }
+    })
+  }
+
+  function uploadImageAndPostRegisterRequset(formData){
+    $.ajax({
+      url: '/uploadAjax',
+      processData: false,
+      contentType: false,
+      data: formData,
+      type: 'POST',
+      dataType: 'json',
+      success: function (result) {
+        console.log(result);
+        var str = "";
+        $.each(result, function (idx, imageInfo) {
+          console.log(imageInfo);
+          str += "<input type='hidden' name='imageDTOList["+idx+"].imgName' value='"+imageInfo['fileName'] +"'>";
+          str += "<input type='hidden' name='imageDTOList["+idx+"].path' value='"+imageInfo['folderPath']+"'>";
+          str += "<input type='hidden' name='imageDTOList["+idx+"].uuid' value='"+imageInfo['uuid']+"'>";
+        });
+        console.log(str);
+        $(".box").html(str);
+        $("#Post-Image").submit();
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus)
+      }
+    });
+  }
+  function uploadImageAndProfileRegisterRequset(formData){
+    $.ajax({
+      url: '/uploadAjax',
+      processData: false,
+      contentType: false,
+      data: formData,
+      type: 'POST',
+      dataType: 'json',
+      success: function (result) {
+        console.log(result);
+        // showUploadedImages(result)
+        userName = document.getElementById('userName').textContent;
+        var str = "";
+        result.forEach((item, index) => {
+          console.log(item);
+          str += "<input type='hidden' name='imgName' value='" + item['fileName'] + "'>";
+          str += "<input type='hidden' name='path' value='" + item['folderPath'] + "'>";
+          str += "<input type='hidden' name='uuid' value='" + item['uuid'] + "'>";
+          str += "<input type='hidden' name='userName' value='" + userName + "'>";
+          str += "<input type='hidden' name='userEmail' value='" + '[[${memberDTO.email}]]' + "'>";
+        })
+        console.log(str);
+        $(".box").html(str);
+        $("#Profile-Image").submit();
+
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus)
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    $('.uploadButton-post').click(function() {
+      $('.post-Image-File').click().on('change', function() {
+        if (this.files && this.files.length > 0) {
+          $('.Post-File-Modal').modal('show');
+          var formData = new FormData();
+          var inputFile = $("input.post-Image-File");
+          var files = inputFile[0].files;
+          console.log("TTT : " + files[0]);
+          for (var i = 0; i < files.length; i++){
+            console.log(files[i]);
+            formData.append("uploadFiles", files[i]);
+          }
+        }
+        $('.submitFile-Post').click(function() {
+          uploadImageAndPostRegisterRequset(formData);
+          alert('포스트 파일이 제출되었습니다.');
+          console.log(inputFile);
+          $('.Post-File-Modal').modal('hide');
+        });
+      });
+    });
+
+    $('.uploadButton-profile').click(function () {
+      $('.profile-Image-File').click().on('change', function() {
+        if (this.files && this.files.length > 0) {
+          $('.Profile-File-Modal').modal('show');
+          var formData = new FormData();
+          var inputFile = $("input.profile-Image-File");
+          var files = inputFile[0].files;
+          console.log(files[0]);
+          formData.append("uploadFiles", files[0]);
+        }
+        $('.submitFile-Profile').click(function() {
+          uploadImageAndProfileRegisterRequset(formData);
+          alert('프로필 파일이 제출되었습니다.');
+          console.log(inputFile);
+          $('.filemodal').modal('hide');
+        });
+      });
+    });
+
     $(".profile-picture").click(function (){
-      var userName = $('#userName').text();
-      var loadName = $('#loadName').text();
+      var userName = '[[${memberDTO.name}]]';
+      var loadName = '[[${userName}]]';
       if (userName != loadName) {
         $('#profileImageModal').modal('show');
         var imageUrl = $(this).attr('src');
         var str = '<img src=\"' + imageUrl + '/\"' +
                 ' alt=\"Profile Picture\" class=\"post-image\">'
-        console.log(imageUrl);
-        console.log("imageurl str : " + str);
         $(".modal-content-post-imagebox").html(str);
       }
     })
-  })
+
+  });
 
   $(function (){
-    var commentBox = document.querySelector('#comment-box');
-    var userEmail, postId;
-    userEmail = document.getElementById('userEmail').textContent;
-    userName = document.getElementById('userName').textContent;
-    loadEmail = document.getElementById('loadEmail').textContent;
-    $('.post-list-img').click(function() {
-      $('#myModal').modal('show');
-      var imageUrl = $(this).data('url');
-      var imageId = $(this).data('id');
-      postId = $(this).data('pid');
-      var str = '<img src=\"/display?fileName='+imageUrl+'/\" alt=\"Profile Picture\" class=\"post-image\">';
-      console.log(imageUrl);
-      // th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
-      $(".modal-content-post-imagebox").html(str);
-      // console.log(imageId);
-      // console.log(imageUrl);
-      // console.log(postId);
-      $.getJSON("/reply/"+postId +"/all", function (arr){
-        var str = "";
-        console.log("Reply Value Test : ", arr);
-        // console.log(arr);
-
-
-        $.each(arr, function (idx, reply){
-          console.log(reply);
-          str += '<div class="comment-body-reply">';
-          str += '<div class="comment-title-username comment-bold">'
-          str += reply.name
-          str += '</div>'
-          str += '<div class="comment-title-comment">'
-          str += reply.text
-          str += '</div>'
-          if (userEmail == reply.email) {
-            str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
-          }
-          str += '</div>'
-
-        });
-        $(".comment-body").html(str);
-      })
-
-
-      function handleSendButtonClick() {
-        console.log(commentBox.value)
-        var data = {pno:postId, text:commentBox.value, email:userEmail};
-        console.log(data);
-        $.ajax({
-          url: '/reply/'+postId,
-          type: "POST",
-          data: JSON.stringify(data),
-          contentType: "application/json; charset=utf-8",
-          dataType:"text",
-          success: function (result){
-            console.log("result : " + result);
-            self.location.reload();
-          }
-        })
-
-      };
-      $('.send').off('click').on('click', handleSendButtonClick);
+    $(".request-Follow").click(function (){
+      var loadName = '[[${userName}]]';
+      sendFollowRequest(loadName);
     });
-    $(function() {
-      // 이벤트 위임을 사용하여 동적으로 생성된 모든 '.reply-option'에 이벤트 핸들러를 바인딩
-      $(document).on('click', '.reply-option', function() {
-        // 필요한 경우 여기에 클릭 이벤트에 대한 추가적인 로직을 넣을 수 있습니다.
-        var rno = $(this).data("rno");
-        $('#optionsModal').css('z-index', 1060).modal('show');
-        $('#remove-reply').click(function() {
-          console.log('삭제 버튼이 클릭되었습니다.');
-          console.log(rno);
 
-          $.ajax({
-            url: '/reply/'+rno+"/"+rno,
-            type: 'DELETE',
-            contentType: "application/json; charset=utf-8",
-            dataType: "text",
-            success: function (result){
-              console.log("result : " +result);
-              // self.location.reload();
-              $('[data-rno="' + rno + '"]').closest('.comment-body-reply').remove();
-            }
-          })
-          $('#optionsModal').modal('hide');
-        });
-        $('#cancel-reply').click(function() {
-          console.log('취소 버튼이 클릭되었습니다.');
-        });
-      });
-    });
+    $(document).on('click', '#search-user', function (){
+      $('#SearchModal').css('z-index', 1060).modal('show');
+
+      document.getElementById('searchForm').onsubmit = function(event) {
+        event.preventDefault();
+        var searchTerm = document.getElementById('searchInput').value;
+        getSearchUserInfo(searchTerm);
+      }
+    })
+
+    $(".friendship-list").click(function (){
+      $('#friendShip-Modal').modal('show');
+      var loginEmail = '[[${memberDTO.email}]]';
+      showFriendListInfo(loginEmail);
+    })
+
+    $(document).on('click', '.request-Accept', function(){
+      var loginEmail = '[[${memberDTO.email}]]';
+      var requesterEmail = $(this).attr('data-name');
+      sendAcceptFriendShipRequest(loginEmail, requesterEmail);
+    })
   });
 
 
+  $(function (){
+    var commentBox = document.querySelector('#comment-box');
+    var userEmail = '[[${memberDTO.email}]]';
+    var loadEmail = '[[${userEmail}]]';
+    $('.post-list-img').click(function() {
+      $('#myModal').modal('show');
+      var imageUrl = $(this).data('url');
+      var postId = $(this).data('pid');
+      var imageUrl = '<img src=\"/display?fileName='+imageUrl+'/\" alt=\"Profile Picture\" class=\"post-image\">';
 
+      $(".modal-content-post-imagebox").html(imageUrl);
+      showReplyListInPost(postId);
 
+      $('.send').off('click').on('click', function (){
+        sendReplyRegisterRequset(postId, commentBox, userEmail);
+      });
+    });
+
+    $(document).on('click', '.reply-option', function() {
+      console.log('reply-option event');
+      var rno = $(this).data("rno");
+      $('#optionsModal').css('z-index', 1060).modal('show');
+      $('#remove-reply').off('click').on('click', function(){
+        sendReplyDeleteRequest(rno);
+        $('#optionsModal').modal('hide');
+      });
+      $('#cancel-reply').off('click').on('click' ,function() {
+        $('#optionsModal').modal('hide');
+      });
+    });
+
+  });
 </script>
