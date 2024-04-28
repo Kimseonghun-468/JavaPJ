@@ -24,7 +24,8 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
             "FROM FriendShip fs" +
             " JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
             " WHERE fs.friendEmail =:loginEmail " +
-            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING")
+            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
+            "AND fs.isFrom = true")
     List<FriendShipProfileDTO> findByExistProfile(@Param("loginEmail") String loginEmail);
     @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
             "(pi.pfino, pi.userName, pi.userEmail, fs.friendEmail,fs.friendName, fs.userName, fs.userEmail , pi.uuid, pi.imgName, pi.path)" +
@@ -32,7 +33,9 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
             " LEFT JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
             " WHERE fs.friendEmail =:loginEmail " +
             "AND pi.pfino is null " +
-            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING")
+            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
+            "AND fs.isFrom = true")
     List<FriendShipProfileDTO> findByNotExistProfile(@Param("loginEmail") String loginEmail);
+    // join을 통해서 profileImage랑, FriendshipList를 같이 뽑는게 나을거 같기도 하고..
 }
 

@@ -9,10 +9,6 @@
 </head>
 
 <body>
-<span id="userEmail" type="hideen" style="display: none;">[[${memberDTO.email}]]</span>
-<span id="loadEmail" type="hideen" style="display: none;">[[${userEmail}]]</span>
-<span id="userName" type="hideen" style="display: none;">[[${memberDTO.name}]]</span>
-<span id="loadName" type="hideen"  style="display: none;">[[${userName}]]</span>
 <div class="temp">
 
   <div class="sidebar">
@@ -23,11 +19,11 @@
     <a href="#2" class="menu-item">
       <span class="icon">&#8962;</span>홈2
     </a>
-    <a href="#3" class="menu-item">
-      <span class="icon">&#8962;</span>홈3
+    <a class="menu-item">
+      <span class="friendship-accepted">친구 목록</span>
     </a>
     <a class="menu-item">
-      <span class="friendship-list">알림</span>
+      <span class="friendship-requested">친구 요청</span>
     </a>
     <a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" class="menu-item">
       <span class="profile-name">프로필</span>
@@ -61,10 +57,7 @@
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" class="request-Delete follow">친구 상태</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" data-name='[[${userEmail}]]' class="request-Accept follow">친구 수락</button>
-
                 </span>
-
-
               </div>
             </div>
           </div>
@@ -230,18 +223,24 @@
 
     </div>
   </div>
-  </div>
+</div>
 
-  <div id="friendShip-Modal" class="modal">
-    <div class="modal-content-search">
+<div id="friendShip-requestedModal" class="modal">
+  <div class="modal-content-search">
 
-      <div id="frinedshipList">
+    <div id="friendship-requestedList">
 
-      </div>
     </div>
   </div>
+</div>
+</div>
 
+<div id="friendShip-acceptedModal" class="modal">
+  <div class="modal-content-search">
+    <div id="friendship-acceptedList">
 
+    </div>
+  </div>
 </div>
 </html>
 
@@ -472,7 +471,7 @@
       success: function (result) {
         console.log(result);
         // showUploadedImages(result)
-        userName = document.getElementById('userName').textContent;
+        var userName = '[[${memberDTO.name}]]';
         var str = "";
         result.forEach((item, index) => {
           console.log(item);

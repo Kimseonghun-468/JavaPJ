@@ -13,6 +13,7 @@ public interface FriendShipService {
 
     String createFriendShip(String searchName);
     boolean checkDuplication(String requesterEmail, String accepterEmail);
+    List<FriendShipDTO> getFriendShipList(String eamil);
     List<FriendShipDTO> getFriendShipListStatusWaiting(String eamil);
     String checkFriendShip(String requesterEmail, String accepterEmail);
     String acceptFriendShip(String requesterEmail, String accepterEmail);
@@ -27,6 +28,8 @@ public interface FriendShipService {
                 .userName(dto.getUserName())
                 .friendName(dto.getFriendName())
                 .status(dto.getStatus())
+                .isFrom(dto.isFrom())
+                .counterpartId(dto.getCounterpartId())
                 .build();
 
 
@@ -42,6 +45,8 @@ public interface FriendShipService {
                 .friendEmail(friendShip.getFriendEmail())
                 .friendName(friendShip.getFriendName())
                 .status(friendShip.getStatus())
+                .isFrom(friendShip.isFrom())
+                .counterpartId(friendShip.getCounterpartId())
                 .build();
         return friendShipDTO;
     }

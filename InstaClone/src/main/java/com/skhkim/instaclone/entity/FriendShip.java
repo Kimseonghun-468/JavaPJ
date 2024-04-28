@@ -23,10 +23,15 @@ public class FriendShip extends BaseEntity{
     private String userName;
     private String friendName;
     private FriendShipStatus status;
+    private boolean isFrom;
+
+    private Long counterpartId;
 
     public void acceptFriendshipRequest() {
         status = FriendShipStatus.ACCEPT;
     }
-
+    public void setCounterpartId(Long id) {
+        counterpartId = id;
+    }
 
 }
