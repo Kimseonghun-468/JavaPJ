@@ -19,15 +19,5 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
     Optional<ClubMember> findByEmail(String email, boolean social);
     Optional<ClubMember> findByEmail(String eamil);
     ClubMember findByName(String name);
-
-    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.friendEmail =:email AND " +
-            "f.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING and f.isFrom =false ")
-    List<FriendShip> findByEmailStatusWaiting(String email);
-
-    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userEmail =:requesterEmail and f.friendEmail =:accepterEmail and f.isFrom =true")
-    Optional<FriendShip> findFriendshipsByEmail(@Param("requesterEmail") String requesterEmail, @Param("accepterEmail") String accepterEmail);
-
-    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userEmail =:requesterEmail and f.friendEmail =:accepterEmail and f.isFrom =false ")
-    Optional<FriendShip> findFriendshipsByEmailIsNotFrom(@Param("requesterEmail") String requesterEmail, @Param("accepterEmail") String accepterEmail);
     boolean existsByEmail(String email);
 }
