@@ -59,12 +59,6 @@ public class FriendShipServiceImpl implements FriendShipService{
             friendShipRepository.save(friendShipRequester);
             friendShipRepository.save(friendShipAccepter);
 
-            friendShipRequester.setCounterpartId(friendShipAccepter.getId());
-            friendShipAccepter.setCounterpartId(friendShipRequester.getId());
-
-            friendShipRepository.save(friendShipRequester);
-            friendShipRepository.save(friendShipAccepter);
-
             return "친구 요청 성공";
         }
         return "친구 상태이거나 요청중";
@@ -122,6 +116,13 @@ public class FriendShipServiceImpl implements FriendShipService{
             return "친구 추가 성공";
         }
         return "친구 추가 실패 - 친구 리스트가 없음";
+    }
+
+    @Override
+    public String deleteFriendShip(String requestEmail, String accepterEmail){
+        friendShipRepository.deleteByUserEmailAndFriendEmail(requestEmail, accepterEmail);
+        friendShipRepository.deleteByUserEmailAndFriendEmail(accepterEmail, requestEmail);
+        return "삭제";
     }
 
 }

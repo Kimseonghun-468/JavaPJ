@@ -44,10 +44,19 @@ public class ProfileServieImpl implements ProfileService{
     }
 
     @Override
-    public List<FriendShipProfileDTO> getProfileImageList(List<FriendShipDTO> friendShipDTOList){
-        List<FriendShipProfileDTO> friendShipProfileDTOS = profileImageRepository.findByExistProfile(friendShipDTOList.get(0).getFriendEmail());
-        List<FriendShipProfileDTO> friendShipProfileDTOSNotIn = profileImageRepository.findByNotExistProfile(friendShipDTOList.get(0).getFriendEmail());
+    public List<FriendShipProfileDTO> getProfileImageWaitingList(String loginEmail){
+        List<FriendShipProfileDTO> friendShipProfileDTOS = profileImageRepository.findByExistWaitingProfile(loginEmail);
+        List<FriendShipProfileDTO> friendShipProfileDTOSNotIn = profileImageRepository.findByNotExistWaitingProfile(loginEmail);
         friendShipProfileDTOS.addAll(friendShipProfileDTOSNotIn);
         return friendShipProfileDTOS;
     }
+
+    @Override
+    public List<FriendShipProfileDTO> getProfileImageAcceptedList(String loginEmail){
+        List<FriendShipProfileDTO> friendShipProfileDTOS = profileImageRepository.findByExistAcceptedProfile(loginEmail);
+        List<FriendShipProfileDTO> friendShipProfileDTOSNotIn = profileImageRepository.findByNotExistAcceptedProfile(loginEmail);
+        friendShipProfileDTOS.addAll(friendShipProfileDTOSNotIn);
+        return friendShipProfileDTOS;
+    }
+
 }

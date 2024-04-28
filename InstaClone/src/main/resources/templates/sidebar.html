@@ -16,8 +16,8 @@
     <a class="menu-item">
       <p id="search-user">검색</p>
     </a>
-    <a href="#2" class="menu-item">
-      <span class="icon">&#8962;</span>홈2
+    <a class="menu-item">
+      <span class="chatting-roomList">채팅 목록</span>
     </a>
     <a class="menu-item">
       <span class="friendship-accepted">친구 목록</span>
@@ -55,8 +55,8 @@
                 <span id="follow-status">
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" class="request-Follow follow">친구 요청</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" class="request-Delete follow">친구 상태</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" data-name='[[${userEmail}]]' class="request-Accept follow">친구 수락</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userEmail}" class="request-Delete-button follow">친구 삭제</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" th:data-name="${userEmail}" class="request-Accept-button follow">친구 수락</button>
                 </span>
               </div>
             </div>
@@ -356,7 +356,7 @@
     })
   }
 
-  function createFriendShipUserInfo(profileImageDTOList){
+  function createFriendShipAcceptedInfo(profileImageDTOList){
     var friendShipResult = "";
     if(profileImageDTOList.length >0) {
       $.each(profileImageDTOList, function (idx, friendShipProfileDTO) {
@@ -365,18 +365,18 @@
           friendShipResult += '<div>'
           friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
                   ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.fsuserName + '"' +
-                  ' class=comment-bold>' + friendShipProfileDTO.fsuserName + '</a>';
-          friendShipResult += "<button data-name =" + friendShipProfileDTO.fsuserEmail + " class='request-Accept follow'>친구 수락</button>"
+          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.userName + '"' +
+                  ' class=comment-bold>' + friendShipProfileDTO.userName + '</a>';
+          friendShipResult += "<button data-name =" + friendShipProfileDTO.userEmail + " class='request-Delete-button follow'>친구 삭제</button>"
           // 여기에 버튼 달아야함..
           friendShipResult += '</div>'
         } else {
           friendShipResult += '<div>'
           friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
                   ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.fsuserName + '"' +
-                  ' class=comment-bold>' + friendShipProfileDTO.fsuserName + '</a>';
-          friendShipResult += "<button data-name =" + friendShipProfileDTO.fsuserEmail + " class='request-Accept follow'>친구 수락</button>"
+          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.userName + '"' +
+                  ' class=comment-bold>' + friendShipProfileDTO.userName + '</a>';
+          friendShipResult += "<button data-name =" + friendShipProfileDTO.userEmail + " class='request-Delete-button follow'>친구 삭제</button>"
           friendShipResult += '</div>'
         }
       })
@@ -386,50 +386,88 @@
     return friendShipResult;
   }
 
-  function showFriendProfileImageList(friendList){
+  function createFriendShipWaitingInfo(profileImageDTOList){
+    var friendShipResult = "";
+    if(profileImageDTOList.length >0) {
+      $.each(profileImageDTOList, function (idx, friendShipProfileDTO) {
+        console.log(friendShipProfileDTO);
+        if (friendShipProfileDTO.path != null) {
+          friendShipResult += '<div>'
+          friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
+                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.userName + '"' +
+                  ' class=comment-bold>' + friendShipProfileDTO.userName + '</a>';
+          friendShipResult += "<button data-name =" + friendShipProfileDTO.userEmail + " class='request-Accept-button follow'>친구 수락</button>"
+          friendShipResult += '</div>'
+        } else {
+          friendShipResult += '<div>'
+          friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
+                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.userName + '"' +
+                  ' class=comment-bold>' + friendShipProfileDTO.userName + '</a>';
+          friendShipResult += "<button data-name =" + friendShipProfileDTO.userEmail + " class='request-Accept-button follow'>친구 수락</button>"
+          friendShipResult += '</div>'
+        }
+      })
+    }
+    else
+      friendShipResult += "친구 요청 목록이 없습니다.";
+    return friendShipResult;
+  }
+
+  function showFriendProfileWaitingImageList(loginEmail){
     $.ajax({
-      url: '/profileImage/all',
+      url: '/profileImage/waitingList',
       type: "POST",
-      data: JSON.stringify(friendList),
+      data: loginEmail,
       dataType: "JSON",
       contentType: "application/json; charset=utf-8",
       success: function (profileImageDTOList){
-        friendshipResult = createFriendShipUserInfo(profileImageDTOList);
-        $("#frinedshipList").html(friendshipResult);
+        friendshipResult = createFriendShipWaitingInfo(profileImageDTOList);
+        $("#friendship-requestedList").html(friendshipResult);
       }
     });
   }
-
-  function showFriendListInfo(loginEmail){
+  function showFriendProfileAcceptedImageList(loginEmail){
     $.ajax({
-      url: '/friendShip/getFriendShipList',
+      url: '/profileImage/acceptedList',
       type: "POST",
-      data: {loginEmail : loginEmail},
+      data: loginEmail,
       dataType: "JSON",
-      success: function (friendList){
-        if(friendList.length > 0) {
-          console.log(friendList);
-          console.log(JSON.stringify(friendList));
-          showFriendProfileImageList(friendList);
-        }
-        else{
-          console.log("Result List lenth : 0");
-          friendshipResult += '친구 요청 목록이 없습니다.';
-          $("#frinedshipList").html(friendshipResult);
-        }
+      contentType: "application/json; charset=utf-8",
+      success: function (profileImageDTOList){
+        friendshipResult = createFriendShipAcceptedInfo(profileImageDTOList);
+        $("#friendship-acceptedList").html(friendshipResult);
       }
-    })
+    });
   }
-  function sendAcceptFriendShipRequest(loginEmail, requesterEmail){
+  function sendAcceptFriendShipRequest(loginEmail, requesterEmail, $button){
     var data = {loginEmail:loginEmail, requesterEmail:requesterEmail};
     $.ajax({
       url: '/friendShip/acceptFriendShipRequest',
       type: "POST",
       data: data,
-      dataType: "JSON",
+      dataType: "TEXT",
       success: function (result) {
-        console.log(result)
-        $('[data-name="' + requesterEmail + '"]').replaceWith('<span>친구 수락</span>');
+        $button.text('친구 수락 완료');
+        $button.prop('disabled', true);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+      }
+    })
+  }
+
+  function sendDeleteFriendShipRequest(loginEmail, requesterEmail, $button){
+    var data = {loginEmail:loginEmail, requesterEmail:requesterEmail};
+    $.ajax({
+      url: '/friendShip/deleteFriendShipRequest',
+      type: "POST",
+      data: data,
+      dataType: "TEXT",
+      success: function (result){
+        $button.text("친구 삭제 완료");
+        $button.prop('disabled, true');
       }
     })
   }
@@ -564,16 +602,29 @@
       }
     })
 
-    $(".friendship-list").click(function (){
-      $('#friendShip-Modal').modal('show');
+    $(".friendship-requested").click(function (){
+      $('#friendShip-requestedModal').modal('show');
       var loginEmail = '[[${memberDTO.email}]]';
-      showFriendListInfo(loginEmail);
+      showFriendProfileWaitingImageList(loginEmail);
+    })
+    $(".friendship-accepted").click(function (){
+      $('#friendShip-acceptedModal').modal('show');
+      var loginEmail = '[[${memberDTO.email}]]';
+      showFriendProfileAcceptedImageList(loginEmail)
     })
 
-    $(document).on('click', '.request-Accept', function(){
+    $(document).on('click', '.request-Accept-button', function(){
       var loginEmail = '[[${memberDTO.email}]]';
       var requesterEmail = $(this).attr('data-name');
-      sendAcceptFriendShipRequest(loginEmail, requesterEmail);
+      var $button = $(this);
+      sendAcceptFriendShipRequest(loginEmail, requesterEmail, $button);
+    })
+
+    $(document).on('click', '.request-Delete-button', function (){
+      var loginEmail = '[[${memberDTO.email}]]';
+      var requesterEmail = $(this).attr('data-name');
+      var $button = $(this);
+      sendDeleteFriendShipRequest(loginEmail, requesterEmail, $button)
     })
   });
 

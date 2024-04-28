@@ -17,7 +17,7 @@ public interface FriendShipService {
     List<FriendShipDTO> getFriendShipListStatusWaiting(String eamil);
     String checkFriendShip(String requesterEmail, String accepterEmail);
     String acceptFriendShip(String requesterEmail, String accepterEmail);
-
+    String deleteFriendShip(String requestEmail, String accepterEmail);
     default FriendShip dtoToEntity(FriendShipDTO dto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FriendShip friendShip = FriendShip.builder()

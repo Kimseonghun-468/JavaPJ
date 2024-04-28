@@ -47,4 +47,12 @@ public class FriendShipController {
         return new ResponseEntity<>(friendShipDTOList, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/friendShip/deleteFriendShipRequest")
+    public ResponseEntity<String> deleteFriendShipRequest(String loginEmail, String requesterEmail){
+        log.info("Delete FriendShip Request");
+        String result = friendShipService.deleteFriendShip(requesterEmail, loginEmail);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

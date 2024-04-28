@@ -24,12 +24,19 @@ import java.util.List;
 public class ProfileImageController {
     private final ProfileService profileService;
 
-    @PostMapping("all")
+    @PostMapping("waitingList")
     public ResponseEntity<List<FriendShipProfileDTO>>
-    getProfileImagebyClubMember(@RequestBody List<FriendShipDTO> friendShipDTO){
-        log.info("FriendShip DTO :  ", friendShipDTO);
+    getProfileImagebyClubMember(@RequestBody String loginEmail){
         List<FriendShipProfileDTO> friendShipProfileDTOS =
-                profileService.getProfileImageList(friendShipDTO);
+                profileService.getProfileImageWaitingList(loginEmail);
+        return new ResponseEntity<>(friendShipProfileDTOS, HttpStatus.OK);
+    }
+
+    @PostMapping("acceptedList")
+    public ResponseEntity<List<FriendShipProfileDTO>>
+    getProfileImageAcceptedList(@RequestBody String loginEmail){
+        List<FriendShipProfileDTO> friendShipProfileDTOS =
+                profileService.getProfileImageAcceptedList(loginEmail);
         return new ResponseEntity<>(friendShipProfileDTOS, HttpStatus.OK);
     }
 
