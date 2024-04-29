@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 public class ChatRoomDTO {
     private String id;
-    private String userName1;
-    private String userName2;
+    private String userName;
+    private String friendName;
 }

@@ -17,10 +17,11 @@ public class ChatRoom {
     private String id;
 
     @Column(nullable = false)
-    private String userName1;
+    private String userName;
 
     @Column(nullable = false)
-    private String userName2;
+    private String friendName;
+
 
 
 }

@@ -14,6 +14,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
@@ -32,7 +33,6 @@ public class ChatController {
 //    @SendTo("/topic/chat/")
     public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO) {
         log.info("Room ID :"+ roomID);
-        log.info("SendMessage !");
         ChatMessageDTO reuslt = ChatMessageDTO.builder()
                 .name(chatMessageDTO.getName())
                 .content(chatMessageDTO.getContent())
@@ -62,5 +62,11 @@ public class ChatController {
     public ResponseEntity<PageResultDTO> getChatListbyRoomIDPage(PageRequestDTO pageRequestDTO, String roomID){
         PageResultDTO pageResultDTO = chatMessageService.getChatMessageListByRoomIDPage(pageRequestDTO, roomID);
         return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/getChatRoomListByName")
+    public ResponseEntity<List<String>> getChatRoomListByName(String loginEmail){
+        List<String> nameList = chatRoomService.getChatroomListByName(loginEmail);
+        return new ResponseEntity<>(nameList, HttpStatus.OK);
     }
 }
