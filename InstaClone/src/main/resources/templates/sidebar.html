@@ -8,6 +8,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link th:href="@{/css/carouselCustom.css}" rel="stylesheet">
 </head>
 
 <body>
@@ -57,9 +58,9 @@
                 <span id="follow-status">
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" class="request-Follow follow">친구 요청</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userEmail}" class="request-Delete-button follow">친구 삭제</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Delete-button follow">친구 삭제</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Chatroom-button follow">1:1 채팅하기</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" th:data-name="${userEmail}" class="request-Accept-button follow">친구 수락</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" th:data-name="${userName}" class="request-Accept-button follow">친구 수락</button>
                 </span>
               </div>
             </div>
@@ -176,14 +177,29 @@
 
 <div id="profileImageModal" class="modal">
   <div class="modal-content-post">
-    <div class="modal-content-post-imagebox">
+    <div class="modal-content-profile-imagebox">
     </div>
   </div>
 </div>
 
-<div id="myModal" class="modal">
+<div id="myModal" class="modal-custom">
   <div class="modal-content-post">
     <div class="modal-content-post-imagebox">
+
+
+      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <!--        <span class="sr-only">Previous</span>-->
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <!--        <span class="sr-only">Next</span>-->
+        </a>
+      </div>
     </div>
     <div class="comment-section">
       <div class="comment-header">
@@ -216,7 +232,7 @@
 </div>
 
 <div id="SearchModal" class="modal">
-  <div class="modal-content-search">
+  <div class="modal-content-custom">
     <form id="searchForm">
       <input type="text" id="searchInput" placeholder="검색어 입력...">
       <button type="submit">검색</button>
@@ -227,28 +243,29 @@
   </div>
 </div>
 
-<div id="friendShip-requestedModal" class="modal">
-  <div class="modal-content-search">
+<div id="friendShip-requestedModal" class="modal-custom">
+  <div class="modal-content-side-frame">
 
-    <div id="friendship-requestedList">
+    <div id="friendship-requestedList" class="side-border">
 
     </div>
   </div>
 </div>
 </div>
 
-<div id="friendShip-acceptedModal" class="modal">
-  <div class="modal-content-search">
-    <div id="friendship-acceptedList">
+<div id="friendShip-acceptedModal" class="modal-custom">
+  <div class="modal-content-side-frame">
+
+    <div id="friendship-acceptedList" class="side-border">
 
     </div>
   </div>
 </div>
 </html>
 
-<div id="chatroom-Modal" class="modal">
-  <div class="modal-content-search">
-    <div id="chatroom-List">
+<div id="chatroom-Modal" class="modal-custom">
+  <div class="modal-content-side-frame">
+    <div id="chatroom-List" class="side-border">
 
     </div>
   </div>
@@ -394,96 +411,92 @@
       $(".searchResult").html(searchResult);
     })
   }
-
-  function createFriendShipAcceptedInfo(profileImageDTOList){
-    var friendShipResult = "";
-    if(profileImageDTOList.length >0) {
-      $.each(profileImageDTOList, function (idx, friendShipProfileDTO) {
-        console.log(friendShipProfileDTO);
-        if (friendShipProfileDTO.path != null) {
-          friendShipResult += '<div>'
-          friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
-                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.userName + '"' +
-                  ' class=comment-bold>' + friendShipProfileDTO.userName + '</a>';
-          friendShipResult += "<button data-name =" + friendShipProfileDTO.userEmail + " class='request-Delete-button follow'>친구 삭제</button>"
-          friendShipResult += "<button data-name =" + friendShipProfileDTO.userName + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
-          // 여기에 버튼 달아야함..
-          friendShipResult += '</div>'
-        } else {
-          friendShipResult += '<div>'
-          friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
-                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.userName + '"' +
-                  ' class=comment-bold>' + friendShipProfileDTO.userName + '</a>';
-          friendShipResult += "<button data-name =" + friendShipProfileDTO.userEmail + " class='request-Delete-button follow'>친구 삭제</button>"
-          friendShipResult += "<button data-name =" + friendShipProfileDTO.userName + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
-          friendShipResult += '</div>'
-        }
-      })
+  function createFriendShipAcceptedInfo(profileAndFriendMap){
+    var Result = "";
+    console.log(profileAndFriendMap)
+    for (var i = 0; i < profileAndFriendMap.friendNameList.length ; i++) {
+      Result += '<div class="user-info-box">';
+      Result += '<div class="profile-box">';
+      if(profileAndFriendMap.profileImageList[i] ==null)
+        Result += '<img src = "/display?fileName=outprofile.png/"' +
+                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+      else
+        Result += '<img src ="/display?fileName=' + profileAndFriendMap.profileImageList[i].imageURL + '/"' +
+                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+      Result += '</div>';
+      Result += '<div class="user-name-box">'
+      Result += '<a href="/sidebar/' + profileAndFriendMap.friendNameList[i] + '"' +
+              ' class=comment-bold>' + profileAndFriendMap.friendNameList[i] + '</a>';
+      Result += '</div>';
+      Result += '<div class="user-friend-button-box2">';
+      Result += "<button data-name =" + profileAndFriendMap.friendNameList[i] + " class='request-Delete-button follow'>친구 삭제</button>"
+      Result += '</div>';
+      Result += '<div class="user-chat-button-box2">';
+      Result += "<button data-name =" + profileAndFriendMap.friendNameList[i] + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
+      Result += '</div>';
+      Result += '</div>';
     }
-    else
-      friendShipResult += "친구 요청 목록이 없습니다.";
-    return friendShipResult;
+    if (Result == "")
+      Result += "친구 요청 목록이 없습니다.";
+    return Result;
   }
 
-  function createFriendShipWaitingInfo(profileImageDTOList){
-    var friendShipResult = "";
-    if(profileImageDTOList.length >0) {
-      $.each(profileImageDTOList, function (idx, friendShipProfileDTO) {
-        console.log(friendShipProfileDTO);
-        if (friendShipProfileDTO.path != null) {
-          friendShipResult += '<div>'
-          friendShipResult += '<img src ="/display?fileName=' + friendShipProfileDTO.imageURL + '/"' +
-                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.userName + '"' +
-                  ' class=comment-bold>' + friendShipProfileDTO.userName + '</a>';
-          friendShipResult += "<button data-name =" + friendShipProfileDTO.userEmail + " class='request-Accept-button follow'>친구 수락</button>"
-          friendShipResult += '</div>'
-        } else {
-          friendShipResult += '<div>'
-          friendShipResult += '<img src = "/display?fileName=outprofile.png/"' +
-                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-          friendShipResult += '<a href="/sidebar/' + friendShipProfileDTO.userName + '"' +
-                  ' class=comment-bold>' + friendShipProfileDTO.userName + '</a>';
-          friendShipResult += "<button data-name =" + friendShipProfileDTO.userEmail + " class='request-Accept-button follow'>친구 수락</button>"
-          friendShipResult += '</div>'
-        }
-      })
+  function createFriendShipWaitingInfo(profileAndFriendMap){
+    var Result = "";
+    console.log(profileAndFriendMap)
+    for (var i = 0; i < profileAndFriendMap.friendNameList.length ; i++) {
+      Result += '<div class="user-info-box">';
+      Result += '<div class="profile-box">';
+      if(profileAndFriendMap.profileImageList[i] ==null)
+        Result += '<img src = "/display?fileName=outprofile.png/"' +
+                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+      else
+        Result += '<img src ="/display?fileName=' + profileAndFriendMap.profileImageList[i].imageURL + '/"' +
+                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+      Result += '</div>';
+      Result += '<div class="user-name-box">';
+      Result += '<a href="/sidebar/' + profileAndFriendMap.friendNameList[i] + '"' +
+              ' class=comment-bold>' + profileAndFriendMap.friendNameList[i] + '</a>';
+      Result += '</div>';
+      Result += '<div class="user-chat-button-box">';
+      Result += "<button data-name =" + profileAndFriendMap.friendNameList[i] + " class='request-Accept-button follow'>친구 수락</button>"
+      Result += '</div>';
+      Result += '</div>';
     }
-    else
-      friendShipResult += "친구 요청 목록이 없습니다.";
-    return friendShipResult;
+    if (Result == "")
+      Result += "친구 요청 목록이 없습니다.";
+    return Result;
   }
 
-  function showFriendProfileWaitingImageList(loginEmail){
+  function showFriendProfileWaitingImageList(loginName){
+    console.log(loginName);
     $.ajax({
       url: '/profileImage/waitingList',
       type: "POST",
-      data: loginEmail,
+      data: {loginName:loginName},
       dataType: "JSON",
-      contentType: "application/json; charset=utf-8",
-      success: function (profileImageDTOList){
-        friendshipResult = createFriendShipWaitingInfo(profileImageDTOList);
+      success: function (profileAndFriendMap){
+        console.log(profileAndFriendMap);
+        friendshipResult = createFriendShipWaitingInfo(profileAndFriendMap);
         $("#friendship-requestedList").html(friendshipResult);
       }
     });
   }
-  function showFriendProfileAcceptedImageList(loginEmail){
+  function showFriendProfileAcceptedImageList(loginName){
     $.ajax({
       url: '/profileImage/acceptedList',
       type: "POST",
-      data: loginEmail,
+      data: {loginName:loginName},
       dataType: "JSON",
-      contentType: "application/json; charset=utf-8",
-      success: function (profileImageDTOList){
-        friendshipResult = createFriendShipAcceptedInfo(profileImageDTOList);
+      success: function (profileAndFriendMap){
+        console.log(profileAndFriendMap);
+        friendshipResult = createFriendShipAcceptedInfo(profileAndFriendMap);
         $("#friendship-acceptedList").html(friendshipResult);
       }
     });
   }
-  function sendAcceptFriendShipRequest(loginEmail, requesterEmail, $button){
-    var data = {loginEmail:loginEmail, requesterEmail:requesterEmail};
+  function sendAcceptFriendShipRequest(loginName, requesterName, $button){
+    var data = {loginName:loginName, requesterName:requesterName};
     $.ajax({
       url: '/friendShip/acceptFriendShipRequest',
       type: "POST",
@@ -499,8 +512,8 @@
     })
   }
 
-  function sendDeleteFriendShipRequest(loginEmail, requesterEmail, $button){
-    var data = {loginEmail:loginEmail, requesterEmail:requesterEmail};
+  function sendDeleteFriendShipRequest(loginName, requesterName, $button){
+    var data = {loginName:loginName, requesterName:requesterName};
     $.ajax({
       url: '/friendShip/deleteFriendShipRequest',
       type: "POST",
@@ -633,7 +646,7 @@
         var imageUrl = $(this).attr('src');
         var str = '<img src=\"' + imageUrl + '/\"' +
                 ' alt=\"Profile Picture\" class=\"post-image\">'
-        $(".modal-content-post-imagebox").html(str);
+        $(".modal-content-profile-imagebox").html(str);
       }
     })
 
@@ -657,50 +670,62 @@
 
     $(".friendship-requested").click(function (){
       $('#friendShip-requestedModal').modal('show');
-      var loginEmail = '[[${memberDTO.email}]]';
-      showFriendProfileWaitingImageList(loginEmail);
+      var loginName = '[[${memberDTO.name}]]';
+      showFriendProfileWaitingImageList(loginName);
     })
     $(".friendship-accepted").click(function (){
       $('#friendShip-acceptedModal').modal('show');
-      var loginEmail = '[[${memberDTO.email}]]';
-      showFriendProfileAcceptedImageList(loginEmail)
+      var loginName = '[[${memberDTO.name}]]';
+      showFriendProfileAcceptedImageList(loginName)
     })
     $(".chatting-roomList").click(function (){
       $('#chatroom-Modal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
       console.log(loginName);
-      // showChatrromList(loginEmail)
+
       $.ajax({
-        url: "/chat/getChatRoomListByName",
+        url: "/chat/getChatRoomAndProfileImage",
         type: "POST",
-        data: {loginEmail:loginName},
+        data: {loginName: loginName},
         dataType: "JSON",
-        success: function (nameList){
-          roomListResult = "";
-          console.log(nameList);
-          $.each(nameList, function (idx, friendName){
-            roomListResult += '<div>';
-            roomListResult += '<a>'+friendName+'</a>'
-            roomListResult += "<button data-name =" + friendName + " class='request-Chatroom-button follow'>대화창 열기</button>"
-            roomListResult += '</div>';
-          })
-          $("#chatroom-List").html(roomListResult);
+        success: function (result){
+          console.log(result);
+          Result = "";
+          for (var i = 0; i < result.nameList.length; i++){
+            Result += '<div class="user-info-box">';
+            Result += '<div class="profile-box">';
+            if(result.profileImageList[i] != null)
+              Result += '<img src ="/display?fileName=' + result.profileImageList[i].imageURL + '/"' +
+                      ' alt="Profile Picture" class="profile-picture">';
+            else
+              Result += '<img src ="/display?fileName=outprofile.png/"' +
+                      ' alt="Profile Picture" class="profile-picture">'
+            Result += '</div>';
+            Result += '<div class ="user-name-box">';
+            Result += '<a class ="user-name">' +result.nameList[i]+'</a>';
+            Result += '</div>';
+            Result += '<div class ="user-chat-button-box">';
+            Result += '<button data-name =' + result.nameList[i] + ' class=\"request-Chatroom-button\">대화창 열기</button>'
+            Result += '</div>';
+            Result += '</div>';
+          }
+          $("#chatroom-List").html(Result);
         }
       })
     })
 
     $(document).on('click', '.request-Accept-button', function(){
-      var loginEmail = '[[${memberDTO.email}]]';
-      var requesterEmail = $(this).attr('data-name');
+      var loginName = '[[${memberDTO.name}]]';
+      var requesterName = $(this).attr('data-name');
       var $button = $(this);
-      sendAcceptFriendShipRequest(loginEmail, requesterEmail, $button);
+      sendAcceptFriendShipRequest(loginName, requesterName, $button);
     })
 
     $(document).on('click', '.request-Delete-button', function (){
-      var loginEmail = '[[${memberDTO.email}]]';
-      var requesterEmail = $(this).attr('data-name');
+      var loginName = '[[${memberDTO.name}]]';
+      var requesterName = $(this).attr('data-name');
       var $button = $(this);
-      sendDeleteFriendShipRequest(loginEmail, requesterEmail, $button)
+      sendDeleteFriendShipRequest(loginName, requesterName, $button)
     })
 
     var roomID = ""
@@ -869,9 +894,30 @@
       $('#myModal').modal('show');
       var imageUrl = $(this).data('url');
       var postId = $(this).data('pid');
-      var imageUrl = '<img src=\"/display?fileName='+imageUrl+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+      $.ajax({
+        url:'/post/postInfo',
+        type:"POST",
+        data: {pno:postId},
+        dataType:"JSON",
+        success: function (result){
+          console.log(result);
 
-      $(".modal-content-post-imagebox").html(imageUrl);
+          var carouselTag = "";
+          $.each(result.imageDTOList, function (idx, imageInfo){
+            if(idx ==0)
+              carouselTag += '<div class="carousel-item active">'
+            else
+              carouselTag += '<div class="carousel-item">'
+            carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+            carouselTag += '</div>';
+
+          })
+          $(".carousel-inner").html(carouselTag);
+
+        }
+      })
+
+      // $(".modal-content-post-imagebox").html(imageUrlUpload);
       showReplyListInPost(postId);
 
       $('.send').off('click').on('click', function (){

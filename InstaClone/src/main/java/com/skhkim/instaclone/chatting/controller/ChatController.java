@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Log4j2
@@ -48,15 +49,14 @@ public class ChatController {
         log.info("Login Name : " +loginName);
         log.info("Friend Name : " +friendName);
         ChatRoomDTO chatRoomDTO = chatRoomService.getORCreateChatRoomID(loginName, friendName);
-
         return new ResponseEntity<>(chatRoomDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/chat/getChatListbyRoomID")
-    public ResponseEntity<List<ChatMessageDTO>> getChatListbyRoomID(String roomID){
-        List<ChatMessageDTO> chatMessageDTOList = chatMessageService.getChatMessageListByRoomID(roomID);
-        return new ResponseEntity<>(chatMessageDTOList, HttpStatus.OK);
-    }
+//    @PostMapping("/chat/getChatListbyRoomID")
+//    public ResponseEntity<List<ChatMessageDTO>> getChatListbyRoomID(String roomID){
+//        List<ChatMessageDTO> chatMessageDTOList = chatMessageService.getChatMessageListByRoomID(roomID);
+//        return new ResponseEntity<>(chatMessageDTOList, HttpStatus.OK);
+//    }
 
     @PostMapping("/chat/getChatListbyRoomIDPage")
     public ResponseEntity<PageResultDTO> getChatListbyRoomIDPage(PageRequestDTO pageRequestDTO, String roomID){
@@ -64,9 +64,15 @@ public class ChatController {
         return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/chat/getChatRoomListByName")
-    public ResponseEntity<List<String>> getChatRoomListByName(String loginEmail){
-        List<String> nameList = chatRoomService.getChatroomListByName(loginEmail);
-        return new ResponseEntity<>(nameList, HttpStatus.OK);
+//    @PostMapping("/chat/getChatRoomListByName")
+//    public ResponseEntity<List<String>> getChatRoomListByName(String loginEmail){
+//        List<String> nameList = chatRoomService.getChatroomListByName(loginEmail);
+//        return new ResponseEntity<>(nameList, HttpStatus.OK);
+//    }
+
+    @PostMapping("/chat/getChatRoomAndProfileImage")
+    public ResponseEntity<Map<String, Object>> getChatroomAndProfileImageList(String loginName){
+        Map<String, Object> result = chatRoomService.getChatroomAndProfileImageByLoginName(loginName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

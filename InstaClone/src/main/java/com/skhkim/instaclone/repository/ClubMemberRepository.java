@@ -24,10 +24,10 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
             "f.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING and f.isFrom =false ")
     List<FriendShip> findByEmailStatusWaiting(String email);
 
-    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userEmail =:requesterEmail and f.friendEmail =:accepterEmail and f.isFrom =true")
-    Optional<FriendShip> findFriendshipsByEmail(@Param("requesterEmail") String requesterEmail, @Param("accepterEmail") String accepterEmail);
+    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userName =:requesterName and f.friendName =:accepterName and f.isFrom =true")
+    Optional<FriendShip> getFriendshipsByName(@Param("requesterName") String requesterName, @Param("accepterName") String accepterName);
 
-    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userEmail =:requesterEmail and f.friendEmail =:accepterEmail and f.isFrom =false ")
-    Optional<FriendShip> findFriendshipsByEmailIsNotFrom(@Param("requesterEmail") String requesterEmail, @Param("accepterEmail") String accepterEmail);
+    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userName =:requesterName and f.friendName =:accepterName and f.isFrom =false ")
+    Optional<FriendShip> getFriendshipsByNameIsNotFrom(@Param("requesterName") String requesterName, @Param("accepterName") String accepterName);
     boolean existsByEmail(String email);
 }

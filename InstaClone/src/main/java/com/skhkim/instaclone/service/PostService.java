@@ -23,6 +23,9 @@ public interface PostService {
 
     Long getPostNumber(String email);
     String getEmailByUserName(String userName);
+
+    PostDTO getPostWithAllImage(Long postID);
+
     default Map<String, Object> dtoToEntity(PostDTO postDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

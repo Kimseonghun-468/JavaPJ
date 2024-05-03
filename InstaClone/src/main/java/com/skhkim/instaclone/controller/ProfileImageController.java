@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/profileImage")
@@ -25,19 +27,19 @@ public class ProfileImageController {
     private final ProfileService profileService;
 
     @PostMapping("waitingList")
-    public ResponseEntity<List<FriendShipProfileDTO>>
-    getProfileImagebyClubMember(@RequestBody String loginEmail){
-        List<FriendShipProfileDTO> friendShipProfileDTOS =
-                profileService.getProfileImageWaitingList(loginEmail);
-        return new ResponseEntity<>(friendShipProfileDTOS, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>>
+    getProfileImagebyClubMember(String loginName){
+        Map<String, Object> profileAndFriendMap =
+                profileService.getWaitingFriendList(loginName);
+        return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
     }
 
     @PostMapping("acceptedList")
-    public ResponseEntity<List<FriendShipProfileDTO>>
-    getProfileImageAcceptedList(@RequestBody String loginEmail){
-        List<FriendShipProfileDTO> friendShipProfileDTOS =
-                profileService.getProfileImageAcceptedList(loginEmail);
-        return new ResponseEntity<>(friendShipProfileDTOS, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>>
+    getProfileImageAcceptedList(String loginName){
+        Map<String, Object> profileAndFriendMap =
+                profileService.getAcceptFriendList(loginName);
+        return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
     }
 
 }

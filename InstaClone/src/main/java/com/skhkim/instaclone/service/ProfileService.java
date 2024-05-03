@@ -14,8 +14,8 @@ public interface ProfileService {
     Long register(ProfileImageDTO profileImageDTO);
 
     ProfileImageDTO getProfileImage(String name);
-    List<FriendShipProfileDTO> getProfileImageWaitingList(String loginEmail);
-    List<FriendShipProfileDTO> getProfileImageAcceptedList(String loginEmail);
+    Map<String, Object> getWaitingFriendList(String loginName);
+    Map<String, Object> getAcceptFriendList(String loginName);
     default ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = ProfileImage.builder()

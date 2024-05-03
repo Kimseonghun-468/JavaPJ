@@ -19,40 +19,51 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Query("SELECT pi FROM ProfileImage pi WHERE pi.userEmail NOT IN :emails")
     List<ProfileImage> findByEmailsNotIn(@Param("emails") List<String> emails);
 
-    @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
-            "(pi.pfino, fs.userName,fs.userEmail, fs.friendEmail, fs.friendName, pi.uuid, pi.imgName, pi.path)" +
-            "FROM FriendShip fs" +
-            " JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
-            " WHERE fs.friendEmail =:loginEmail " +
+//    @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
+//            "(pi.pfino, fs.userName,fs.userEmail, fs.friendEmail, fs.friendName, pi.uuid, pi.imgName, pi.path)" +
+//            "FROM FriendShip fs" +
+//            " JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
+//            " WHERE fs.friendEmail =:loginEmail " +
+//            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
+//            "AND fs.isFrom = true")
+//    List<FriendShipProfileDTO> findByExistWaitingProfile(@Param("loginEmail") String loginEmail);
+//    @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
+//            "(pi.pfino, fs.userName, fs.userEmail, fs.friendEmail, fs.friendName, pi.uuid, pi.imgName, pi.path)" +
+//            " FROM FriendShip fs"+
+//            " LEFT JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
+//            " WHERE fs.friendEmail =:loginEmail " +
+//            "AND pi.pfino is null " +
+//            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
+//            "AND fs.isFrom = true")
+//    List<FriendShipProfileDTO> findByNotExistWaitingProfile(@Param("loginEmail") String loginEmail);
+
+    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi On fs.userName = pi.userName " +
+            "WHERE fs.friendName =:loginName " +
             "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
             "AND fs.isFrom = true")
-    List<FriendShipProfileDTO> findByExistWaitingProfile(@Param("loginEmail") String loginEmail);
-    @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
-            "(pi.pfino, fs.userName, fs.userEmail, fs.friendEmail, fs.friendName, pi.uuid, pi.imgName, pi.path)" +
-            " FROM FriendShip fs"+
-            " LEFT JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
-            " WHERE fs.friendEmail =:loginEmail " +
-            "AND pi.pfino is null " +
-            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
-            "AND fs.isFrom = true")
-    List<FriendShipProfileDTO> findByNotExistWaitingProfile(@Param("loginEmail") String loginEmail);
+    List<Object[]> getByWaitingList(@Param("loginName") String loginName);
 
-    @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
-            "(pi.pfino, fs.userName, fs.userEmail, fs.friendEmail, fs.friendName, pi.uuid, pi.imgName, pi.path)" +
-            " FROM FriendShip fs"+
-            " LEFT JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
-            " WHERE fs.friendEmail =:loginEmail " +
-            "AND pi.pfino is null " +
-            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT " +
-            "AND fs.friendEmail =:loginEmail")
-    List<FriendShipProfileDTO> findByNotExistAcceptedProfile(@Param("loginEmail") String loginEmail);
+    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.userName = pi.userName " +
+            "WHERE fs.friendName =:loginName " +
+            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
+    List<Object[]> getByAcceptList(@Param("loginName") String loginName);
 
-    @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
-            "(pi.pfino, fs.userName, fs.userEmail, fs.friendEmail, fs.friendName, pi.uuid, pi.imgName, pi.path)" +
-            " FROM FriendShip fs"+
-            " JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
-            " WHERE fs.friendEmail =:loginEmail " +
-            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
-    List<FriendShipProfileDTO> findByExistAcceptedProfile(@Param("loginEmail") String loginEmail);
+//    @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
+//            "(pi.pfino, fs.userName, fs.userEmail, fs.friendEmail, fs.friendName, pi.uuid, pi.imgName, pi.path)" +
+//            " FROM FriendShip fs"+
+//            " LEFT JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
+//            " WHERE fs.friendEmail =:loginEmail " +
+//            "AND pi.pfino is null " +
+//            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
+//    List<FriendShipProfileDTO> findByNotExistAcceptedProfile(@Param("loginEmail") String loginEmail);
+//
+//    @Query("SELECT new com.skhkim.instaclone.dto.FriendShipProfileDTO" +
+//            "(pi.pfino, fs.userName, fs.userEmail, fs.friendEmail, fs.friendName, pi.uuid, pi.imgName, pi.path)" +
+//            " FROM FriendShip fs"+
+//            " JOIN ProfileImage pi ON fs.userEmail = pi.userEmail" +
+//            " WHERE fs.friendEmail =:loginEmail " +
+//            "AND fs.status = com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
+//    List<FriendShipProfileDTO> findByExistAcceptedProfile(@Param("loginEmail") String loginEmail);
+
 }
 

@@ -55,7 +55,7 @@ public class FriendShipServiceImpl implements FriendShipService{
                 .isFrom(false)
                 .build();
 
-        if(checkDuplication(loginedClubMember.getEmail(), searchedClubMember.getEmail())) {
+        if(checkDuplication(loginedClubMember.getName(), searchedClubMember.getName())) {
             friendShipRepository.save(friendShipRequester);
             friendShipRepository.save(friendShipAccepter);
 
@@ -64,37 +64,17 @@ public class FriendShipServiceImpl implements FriendShipService{
         return "친구 상태이거나 요청중";
     }
     @Override
-    public boolean checkDuplication(String requesterEmail, String accepterEmail){
-        Optional<FriendShip> result = clubMemberRepository.findFriendshipsByEmail(requesterEmail, accepterEmail);
+    public boolean checkDuplication(String requesterName, String accepterName){
+        Optional<FriendShip> result = clubMemberRepository.getFriendshipsByName(requesterName, accepterName);
         return result.isEmpty();
     }
-
     @Override
-    public List<FriendShipDTO> getFriendShipList(String eamil){
-
-        Optional<ClubMember> clubMember = clubMemberRepository.findByEmail(eamil);
-        List<FriendShip> friendShip = clubMember.get().getFriendshipList();
-        List<FriendShipDTO> friendShipDTO = friendShip.stream().map
-                (friendShipList -> entityToDto(friendShipList)).collect(Collectors.toList());
-        return friendShipDTO;
-    }
-
-    @Override
-    public List<FriendShipDTO> getFriendShipListStatusWaiting(String email){
-
-        List<FriendShip> friendShip = clubMemberRepository.findByEmailStatusWaiting(email);
-        List<FriendShipDTO> friendShipDTO = friendShip.stream().map
-                (friendShipList -> entityToDto(friendShipList)).collect(Collectors.toList());
-        return friendShipDTO;
-    }
-
-    @Override
-    public String checkFriendShip(String requesterEmail, String accepterEmail){
-        if (requesterEmail==accepterEmail)
+    public String checkFriendShip(String requesterName, String accepterName){
+        if (requesterName==accepterName)
             return "Self";
-        Optional<FriendShip> friendShip = clubMemberRepository.findFriendshipsByEmail(requesterEmail, accepterEmail);
+        Optional<FriendShip> friendShip = clubMemberRepository.getFriendshipsByName(requesterName, accepterName);
         if (friendShip.isEmpty()){
-            Optional<FriendShip> friendShipIsNotFrom = clubMemberRepository.findFriendshipsByEmailIsNotFrom(requesterEmail, accepterEmail);
+            Optional<FriendShip> friendShipIsNotFrom = clubMemberRepository.getFriendshipsByNameIsNotFrom(requesterName, accepterName);
             if(friendShipIsNotFrom.isPresent() && friendShipIsNotFrom.get().getStatus() == FriendShipStatus.ACCEPT)
                 return "ACCEPT";
             return friendShipIsNotFrom.isPresent() ? "WAITACCEPT" : "NOTTING";
@@ -103,9 +83,9 @@ public class FriendShipServiceImpl implements FriendShipService{
     }
 
     @Override
-    public String acceptFriendShip(String requesterEmail, String accepterEmail){
-        Optional<FriendShip> accepterFriendShip = clubMemberRepository.findFriendshipsByEmail(requesterEmail, accepterEmail);
-        Optional<FriendShip> requesterFriendShip = clubMemberRepository.findFriendshipsByEmailIsNotFrom(accepterEmail, requesterEmail);
+    public String acceptFriendShip(String requesterName, String accepterName){
+        Optional<FriendShip> accepterFriendShip = clubMemberRepository.getFriendshipsByName(requesterName, accepterName);
+        Optional<FriendShip> requesterFriendShip = clubMemberRepository.getFriendshipsByNameIsNotFrom(accepterName, requesterName);
 
         if (accepterFriendShip.isPresent() && requesterFriendShip.isPresent()) {
             accepterFriendShip.get().acceptFriendshipRequest();
@@ -115,13 +95,13 @@ public class FriendShipServiceImpl implements FriendShipService{
             friendShipRepository.save(requesterFriendShip.get());
             return "친구 추가 성공";
         }
-        return "친구 추가 실패 - 친구 리스트가 없음";
+        return "친구 추가 실패 - 친구 리스트가 DB에 없음";
     }
 
     @Override
-    public String deleteFriendShip(String requestEmail, String accepterEmail){
-        friendShipRepository.deleteByUserEmailAndFriendEmail(requestEmail, accepterEmail);
-        friendShipRepository.deleteByUserEmailAndFriendEmail(accepterEmail, requestEmail);
+    public String deleteFriendShip(String requestName, String accepterName){
+        friendShipRepository.deleteByUserNameAndFriendName(requestName, accepterName);
+        friendShipRepository.deleteByUserNameAndFriendName(accepterName, requestName);
         return "삭제";
     }
 

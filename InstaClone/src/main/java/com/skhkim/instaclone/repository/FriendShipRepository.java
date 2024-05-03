@@ -10,6 +10,6 @@ public interface FriendShipRepository extends JpaRepository<FriendShip, Long> {
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM FriendShip fs WHERE fs.userEmail =:userEmail AND fs.friendEmail =:friendEmail")
-    void deleteByUserEmailAndFriendEmail(String userEmail, String friendEmail);
+    @Query("DELETE FROM FriendShip fs WHERE fs.userName =:userName AND fs.friendName =:friendName")
+    void deleteByUserNameAndFriendName(String userName, String friendName);
 }

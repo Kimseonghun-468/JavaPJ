@@ -3,13 +3,14 @@ package com.skhkim.instaclone.chatting.service;
 import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
+import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.entity.ProfileImage;
+import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,5 +67,36 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 return chatRoom.getFriendName();
         }).collect(Collectors.toList());
         return nameList;
+    }
+
+    @Override
+    public Map<String, Object> getChatroomAndProfileImageByLoginName(String loginName){
+        Map<String, Object> chatRoomAndProfileMap = new HashMap<>();
+
+        List<String> nameList = new ArrayList<>();
+        List<ProfileImage> profileImageList = new ArrayList<>();
+        List<Object[]> chatRoomAndProfileImageByUserName = chatRoomRepository.getChatroomAndProfileImageByUserName(loginName);
+        List<Object[]> chatRoomAndProfileImageByFriendName = chatRoomRepository.getChatroomAndProfileImageByFriendName(loginName);
+
+        chatRoomAndProfileImageByFriendName.forEach(arr ->{
+            nameList.add(((ChatRoom) arr[0]).getFriendName());
+            profileImageList.add(((ProfileImage) arr[1]));
+        });
+        chatRoomAndProfileImageByUserName.forEach(arr ->{
+            nameList.add(((ChatRoom) arr[0]).getUserName());
+            profileImageList.add(((ProfileImage) arr[1]));
+        });
+
+        List<ProfileImageDTO> profileImageDTOList =
+                profileImageList.stream().map(profileImage -> {
+                    if (profileImage ==null)
+                        return null;
+                    else
+                        return entityToDTOByProfileImage(profileImage);
+                }).collect(Collectors.toList());
+        chatRoomAndProfileMap.put("nameList", nameList);
+        chatRoomAndProfileMap.put("profileImageList", profileImageDTOList);
+
+        return chatRoomAndProfileMap;
     }
 }

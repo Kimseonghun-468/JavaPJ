@@ -15,10 +15,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +67,18 @@ public class PostServiceImpl implements PostService {
     public String getEmailByUserName(String userName){
 
         return postRepository.getEmail(userName);
+    }
+
+    @Override
+    public PostDTO getPostWithAllImage(Long postID){
+        List<Object[]> result = postRepository.getPostWithAll(postID);
+
+        Post post = (Post) result.get(0)[0];
+
+        List<PostImage> postImageList =  result.stream().map(arr -> {
+            return (PostImage) arr[1];
+        }).collect(Collectors.toList());
+
+        return entitiesToDTO(post, postImageList);
     }
 }

@@ -11,12 +11,14 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, String> {
     @Query("SELECT p, pi FROM Post p " +
             "LEFT OUTER JOIN PostImage pi ON pi.post = p " +
-//            "LEFT OUTER JOIN Reply r ON r.post = p " +
-            "WHERE p.clubMember.email = :email ")
-    Page<Object[]> getListPage(Pageable pageable, String email);
+            "WHERE p.clubMember.email = :email " +
+            "AND (pi.pino is null or pi.pino = (SELECT MIN(pi2.pino) FROM PostImage pi2 WHERE pi2.post = p))")
+    Page<Object[]>getListPage(Pageable pageable, String email);
 
-    @Query("SELECT count(pi) FROM Post p " +
-            "left outer join PostImage pi on pi.post = p " +
+    @Query("SELECT p, pi FROM Post p LEFT JOIN PostImage pi ON pi.post = p WHERE p.pno =:pno")
+    List<Object[]> getPostWithAll(Long pno);
+
+    @Query("SELECT count(p) FROM Post p " +
             "where p.clubMember.email = :email ")
     Long getPostCount(String email);
 

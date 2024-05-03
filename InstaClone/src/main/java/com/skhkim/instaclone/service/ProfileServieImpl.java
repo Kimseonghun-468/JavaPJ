@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.entity.FriendShip;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.entity.ProfileImage;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,19 +46,47 @@ public class ProfileServieImpl implements ProfileService{
     }
 
     @Override
-    public List<FriendShipProfileDTO> getProfileImageWaitingList(String loginEmail){
-        List<FriendShipProfileDTO> friendShipProfileDTOS = profileImageRepository.findByExistWaitingProfile(loginEmail);
-        List<FriendShipProfileDTO> friendShipProfileDTOSNotIn = profileImageRepository.findByNotExistWaitingProfile(loginEmail);
-        friendShipProfileDTOS.addAll(friendShipProfileDTOSNotIn);
-        return friendShipProfileDTOS;
+    public Map<String, Object> getWaitingFriendList(String loginName){
+        Map<String, Object> profileAndFriendMap = new HashMap<>();
+        List<String> friendNameList = new ArrayList<>();
+        List<Object[]> result = profileImageRepository.getByWaitingList(loginName);
+
+        result.forEach(arr->{
+            friendNameList.add(((FriendShip) arr[0]).getUserName());
+        });
+        List<ProfileImageDTO> profileImageDTOList = result.stream().map(arr -> {
+            if (arr[1] == null)
+                return null;
+            else
+                return entityToDTO((ProfileImage) arr[1]);
+        }
+        ).collect(Collectors.toList());
+
+        profileAndFriendMap.put("friendNameList", friendNameList);
+        profileAndFriendMap.put("profileImageList", profileImageDTOList);
+        return profileAndFriendMap;
     }
 
     @Override
-    public List<FriendShipProfileDTO> getProfileImageAcceptedList(String loginEmail){
-        List<FriendShipProfileDTO> friendShipProfileDTOS = profileImageRepository.findByExistAcceptedProfile(loginEmail);
-        List<FriendShipProfileDTO> friendShipProfileDTOSNotIn = profileImageRepository.findByNotExistAcceptedProfile(loginEmail);
-        friendShipProfileDTOS.addAll(friendShipProfileDTOSNotIn);
-        return friendShipProfileDTOS;
+    public Map<String, Object> getAcceptFriendList(String loginName){
+        Map<String, Object> profileAndFriendMap = new HashMap<>();
+        List<String> friendNameList = new ArrayList<>();
+        List<Object[]> result = profileImageRepository.getByAcceptList(loginName);
+
+        result.forEach(arr->{
+            friendNameList.add(((FriendShip) arr[0]).getUserName());
+        });
+        List<ProfileImageDTO> profileImageDTOList = result.stream().map(arr -> {
+                    if (arr[1] == null)
+                        return null;
+                    else
+                        return entityToDTO((ProfileImage) arr[1]);
+                }
+        ).collect(Collectors.toList());
+        profileAndFriendMap.put("friendNameList", friendNameList);
+        profileAndFriendMap.put("profileImageList", profileImageDTOList);
+
+        return profileAndFriendMap;
     }
 
 }
