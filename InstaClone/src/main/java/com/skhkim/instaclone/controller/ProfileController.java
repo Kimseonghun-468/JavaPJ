@@ -1,8 +1,6 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.*;
-import com.skhkim.instaclone.entity.PostImage;
-import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.FriendShipService;
 import com.skhkim.instaclone.service.LoginService;
@@ -18,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @Log4j2
@@ -37,20 +33,20 @@ public class ProfileController {
     }
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/sidebar/{name}")
-    public String sidebar(@PathVariable("name") String name, PageRequestDTO pageRequestDTO,
+    public String sidebar(@PathVariable("name") String name, PostPageRequestDTO postPageRequestDTO,
                           @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
 
                           Model model){
         log.info("Sidebar...----");
-        log.info("PageRequest DTO : " + pageRequestDTO);
+        log.info("PageRequest DTO : " + postPageRequestDTO);
         log.info("Sidebar name: " + name);
         String userEamil = postService.getEmailByUserName(name);
         ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
 
-        String friendshipStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getEmail(), userEamil);
+        String friendshipStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
         model.addAttribute("friendshipStatus", friendshipStatus);
         model.addAttribute("userExist", loginService.getUserExist(name));
-        model.addAttribute("result", postService.getList(pageRequestDTO, userEamil));
+        model.addAttribute("result", postService.getList(postPageRequestDTO, userEamil));
         model.addAttribute("profileImageDTO", profileImageDTO);
         model.addAttribute("memberDTO", clubAuthMemberDTO);
         model.addAttribute("userName", name);
@@ -88,9 +84,9 @@ public class ProfileController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/list")
-    public void list(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO, PageRequestDTO pageRequestDTO, Model model){
-        log.info("pageRequestDTO : " + pageRequestDTO);
-        model.addAttribute("result", postService.getList(pageRequestDTO, clubAuthMemberDTO.getEmail()));
+    public void list(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO, PostPageRequestDTO postPageRequestDTO, Model model){
+        log.info("pageRequestDTO : " + postPageRequestDTO);
+        model.addAttribute("result", postService.getList(postPageRequestDTO, clubAuthMemberDTO.getEmail()));
 
         log.info("What!");
     }

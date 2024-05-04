@@ -1,13 +1,12 @@
 package com.skhkim.instaclone.service;
 
-import com.skhkim.instaclone.dto.PageRequestDTO;
-import com.skhkim.instaclone.dto.PageResultDTO;
+import com.skhkim.instaclone.dto.PostPageRequestDTO;
+import com.skhkim.instaclone.dto.PostPageResultDTO;
 import com.skhkim.instaclone.dto.PostDTO;
 import com.skhkim.instaclone.dto.PostImageDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 
 public interface PostService {
 
-    PageResultDTO<PostDTO, Object[]> getList(PageRequestDTO pageRequestDTO, String email);
+    PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String email);
     Long register(PostDTO postDTO);
 
     Long getPostNumber(String email);

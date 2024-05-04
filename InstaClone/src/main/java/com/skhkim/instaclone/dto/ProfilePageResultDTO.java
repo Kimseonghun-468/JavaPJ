@@ -5,13 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Data
-public class PageResultDTO<DTO, EN> {
-    private List<DTO> dtoList;
+public class ProfilePageResultDTO<MAP, EN> {
+    private List<MAP> dtoList;
 
     private int totalPage;
     private int page;
@@ -20,7 +21,7 @@ public class PageResultDTO<DTO, EN> {
     private boolean prev, next;
     private List<Integer> pageList;
 
-    public PageResultDTO(Page<EN> result, Function<EN, DTO> fn){
+    public ProfilePageResultDTO(Page<EN> result, Function<EN, MAP> fn){
         dtoList = result.stream().map(fn).collect(Collectors.toList());
         totalPage = result.getTotalPages();
         makePageList(result.getPageable());

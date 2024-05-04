@@ -1,9 +1,6 @@
 package com.skhkim.instaclone.controller;
 
-import com.skhkim.instaclone.dto.ClubMemberDTO;
-import com.skhkim.instaclone.dto.FriendShipDTO;
-import com.skhkim.instaclone.dto.FriendShipProfileDTO;
-import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,13 +23,22 @@ import java.util.Objects;
 public class ProfileImageController {
     private final ProfileService profileService;
 
+//    @PostMapping("waitingList")
+//    public ResponseEntity<Map<String, Object>>
+//    getProfileImagebyClubMember(String loginName){
+//        Map<String, Object> profileAndFriendMap =
+//                profileService.getWaitingFriendList(loginName);
+//        return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
+//    }
+
     @PostMapping("waitingList")
-    public ResponseEntity<Map<String, Object>>
-    getProfileImagebyClubMember(String loginName){
-        Map<String, Object> profileAndFriendMap =
-                profileService.getWaitingFriendList(loginName);
+    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
+    getProfileImagebyClubMember(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
+        ProfilePageResultDTO<Map<String, Object>, Object[]> profileAndFriendMap =
+                profileService.getWaitingFriendListPage(profilePageRequestDTO, loginName);
         return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
     }
+
 
     @PostMapping("acceptedList")
     public ResponseEntity<Map<String, Object>>

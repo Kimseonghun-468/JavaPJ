@@ -428,6 +428,10 @@ main {
     overflow: scroll;
 }
 
+.paging-footer{
+
+}
+
 .modal-content-custom {
     background-color: #fefefe;
     margin: 0% auto;
@@ -504,5 +508,6 @@ main {
     border-left: 1px solid #dbdbdb;
     border-right: 1px solid #dbdbdb;
     border-bottom: 1px solid #dbdbdb;
+    margin-bottom: 5px;
 }
 

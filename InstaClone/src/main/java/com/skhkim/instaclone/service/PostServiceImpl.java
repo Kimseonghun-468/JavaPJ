@@ -1,7 +1,7 @@
 package com.skhkim.instaclone.service;
 
-import com.skhkim.instaclone.dto.PageRequestDTO;
-import com.skhkim.instaclone.dto.PageResultDTO;
+import com.skhkim.instaclone.dto.PostPageRequestDTO;
+import com.skhkim.instaclone.dto.PostPageResultDTO;
 import com.skhkim.instaclone.dto.PostDTO;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -47,15 +46,15 @@ public class PostServiceImpl implements PostService {
             return post.getPno();
     }
     @Override
-    public PageResultDTO<PostDTO, Object[]> getList(PageRequestDTO pageRequestDTO, String email){
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("pno").descending());
+    public PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String email){
+        Pageable pageable = postPageRequestDTO.getPageable(Sort.by("pno").descending());
 
         Page<Object[]> result = postRepository.getListPage(pageable, email);
         Function<Object[], PostDTO> fn = (arr -> entitiesToDTO(
                 (Post)arr[0],
                 (List<PostImage>)(Arrays.asList((PostImage)arr[1])))
         );
-        return new PageResultDTO<>(result, fn);
+        return new PostPageResultDTO<>(result, fn);
     }
     @Override
     public Long getPostNumber(String email){
