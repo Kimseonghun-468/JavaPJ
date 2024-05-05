@@ -81,7 +81,7 @@
                        th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
                        th:data-url="|${dto.imageDTOList[0].getImageURL()}|"
                        th:data-id="${dto.imageDTOList[0].pino}"
-                       th:data-pid="${dto.pno}" width="200" height="200"
+                       th:data-pid="${dto.pno}"
               ></td>
             </div>
           </div>
@@ -91,14 +91,19 @@
 
     <div class="up-temp3">
       <div class="temp3">
+        <ul class="pagination h-100 justify-content-center align-items-center" id="post-page">
+          <li th:class="'page-item ' + ${result.page == page?'active':''}"
+              th:each="page: ${result.pageList}">
+            <button class="page-link post-page-button" th:data-name="|${page}|">
+              [[${page}]]
+            </button>
+          </li>
+        </ul>
         <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
         <button th:if="${memberDTO.name == userName}" class="uploadButton-post">이미지 업로드</button>
 
         <footer class="profile-footer">
-          <ul class="footer-links">
-            <li><a href="#">Meta</a></li>
-          </ul>
-          <span>© 2023 Instagram from Meta</span>
+          <span>© 2024 Instagram Clone</span>
         </footer>
       </div>
     </div>
@@ -173,7 +178,6 @@
     </div>
   </div>
 </div>
-</div>
 
 <div id="profileImageModal" class="modal">
   <div class="modal-content-post">
@@ -244,12 +248,12 @@
 </div>
 
 <div id="friendShip-requestedModal" class="modal-custom">
-  <ul class="modal-content-side-frame">
+  <div class="modal-content-side-frame">
 
     <div id="friendship-requestedList" class="side-border">
 
     </div>
-    <ul class="pagination h-100 justify-content-center align-items-center" id="requestd-page">
+    <ul class="pagination h-100 justify-content-center align-items-center" id="requested-page">
       <li class="page-item active">
         <a class="page-link">1</a>
       </li>
@@ -259,7 +263,6 @@
     </ul>
   </div>
 </div>
-</div>
 
 <div id="friendShip-acceptedModal" class="modal-custom">
   <div class="modal-content-side-frame">
@@ -267,6 +270,9 @@
     <div id="friendship-acceptedList" class="side-border">
 
     </div>
+    <ul class="pagination h-100 justify-content-center align-items-center" id="accpeted-page">
+
+    </ul>
   </div>
 </div>
 </html>
@@ -276,9 +282,11 @@
     <div id="chatroom-List" class="side-border">
 
     </div>
+    <ul class="pagination h-100 justify-content-center align-items-center" id="chatroom-page">
+
+    </ul>
   </div>
 </div>
-</html>
 
 <div class="modal fade" id="chatMessageModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -312,6 +320,8 @@
 <script>
   var requestedPage = 1;
   var acceptedPage = 1;
+  var chatRoomPage = 1;
+  var postPage = 1;
   function sendReplyRegisterRequset(postId, commentBox, userEmail) {
     console.log(commentBox.value)
     var data = {pno:postId, text:commentBox.value, email:userEmail};
@@ -424,25 +434,25 @@
   function createFriendShipAcceptedInfo(profileAndFriendMap){
     var Result = "";
     console.log(profileAndFriendMap)
-    for (var i = 0; i < profileAndFriendMap.friendNameList.length ; i++) {
+    for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
-      if(profileAndFriendMap.profileImageList[i] ==null)
+      if(profileAndFriendMap.dtoList[i].profileImage ==null)
         Result += '<img src = "/display?fileName=outprofile.png/"' +
                 ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
       else
-        Result += '<img src ="/display?fileName=' + profileAndFriendMap.profileImageList[i].imageURL + '/"' +
+        Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
                 ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
       Result += '</div>';
       Result += '<div class="user-name-box">'
-      Result += '<a href="/sidebar/' + profileAndFriendMap.friendNameList[i] + '"' +
-              ' class=comment-bold>' + profileAndFriendMap.friendNameList[i] + '</a>';
+      Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
+              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
       Result += '</div>';
       Result += '<div class="user-friend-button-box2">';
-      Result += "<button data-name =" + profileAndFriendMap.friendNameList[i] + " class='request-Delete-button follow'>친구 삭제</button>"
+      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button follow'>친구 삭제</button>"
       Result += '</div>';
       Result += '<div class="user-chat-button-box2">';
-      Result += "<button data-name =" + profileAndFriendMap.friendNameList[i] + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
+      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
       Result += '</div>';
       Result += '</div>';
     }
@@ -477,16 +487,70 @@
     return Result;
   }
 
-  function showFriendProfileWaitingImageList(loginName, requestdPage){
+  function createChatroomListInfo(result){
+    Result = "";
+    console.log(result);
+    for (var i = 0; i < result.dtoList.length; i++){
+      Result += '<div class="user-info-box">';
+      Result += '<div class="profile-box">';
+      if(result.dtoList[i].profileImage != null)
+        Result += '<img src ="/display?fileName=' + result.dtoList[i].profileImage.imageURL + '/"' +
+                ' alt="Profile Picture" class="profile-picture">';
+      else
+        Result += '<img src ="/display?fileName=outprofile.png/"' +
+                ' alt="Profile Picture" class="profile-picture">'
+      Result += '</div>';
+      Result += '<div class ="user-name-box">';
+      Result += '<a class ="user-name">' +result.dtoList[i].friendName+'</a>';
+      Result += '</div>';
+      Result += '<div class ="user-chat-button-box">';
+      Result += '<button data-name =' + result.dtoList[i].friendName + ' class=\"request-Chatroom-button\">대화창 열기</button>'
+      Result += '</div>';
+      Result += '</div>';
+    }
+
+    return Result;
+  }
+  function showChatroomAndProfileImageList(loginName){
+    console.log(chatRoomPage);
+    $.ajax({
+      url: "/chat/getChatRoomAndProfileImagePage?Page=" + chatRoomPage,
+      type: "POST",
+      data: {loginName: loginName},
+      dataType: "JSON",
+      success: function (profileAndChatRoomMap){
+        var pageResult = "";
+        Result = createChatroomListInfo(profileAndChatRoomMap);
+        console.log(Result);
+        if (profileAndChatRoomMap.prev != false)
+          pageResult += '<button class="page-link chatroom-page-button" data-name="' + (profileAndChatRoomMap.start-1) + '">NEXT</button>'
+        $.each(profileAndChatRoomMap.pageList, function (idx, pageList){
+          if (chatRoomPage == pageList)
+            pageResult += '<li class="page-item active">';
+          else
+            pageResult += '<li class="page-item">';
+          pageResult += '<button class="page-link chatroom-page-button" data-name="' + pageList + '">' + pageList + '</button>'
+          pageResult += '</li>';
+        })
+        if (profileAndChatRoomMap.next != false)
+          pageResult += '<button class="page-link chatroom-page-button" data-name="' + (profileAndChatRoomMap.end+1) + '">NEXT</button>'
+
+        $("#chatroom-List").html(Result);
+        $("#chatroom-page").html(pageResult);
+      }
+    })
+  }
+
+  function showFriendProfileWaitingImageList(loginName, requestedPage){
     console.log(loginName);
     $.ajax({
-      url: '/profileImage/waitingList?page='+requestdPage,
+      url: '/profileImage/waitingList?page='+requestedPage,
       type: "POST",
       data: {loginName:loginName},
       dataType: "JSON",
       success: function (profileAndFriendMap){
         console.log(profileAndFriendMap)
-        pageResult = ""
+        var pageResult = ""
         friendshipResult = createFriendShipWaitingInfo(profileAndFriendMap);
         if (profileAndFriendMap.prev != false)
           pageResult += '<button class="page-link requested-page-button" data-name="' + (profileAndFriendMap.start-1) + '">NEXT</button>'
@@ -501,20 +565,34 @@
         if (profileAndFriendMap.next != false)
           pageResult += '<button class="page-link requested-page-button" data-name="' + (profileAndFriendMap.end+1) + '">NEXT</button>'
         $("#friendship-requestedList").html(friendshipResult);
-        $("#requestd-page").html(pageResult)
+        $("#requested-page").html(pageResult)
       }
     });
   }
-  function showFriendProfileAcceptedImageList(loginName){
+  function showFriendProfileAcceptedImageList(loginName, acceptedPage){
     $.ajax({
-      url: '/profileImage/acceptedList',
+      url: '/profileImage/acceptedList?page='+acceptedPage,
       type: "POST",
       data: {loginName:loginName},
       dataType: "JSON",
       success: function (profileAndFriendMap){
         console.log(profileAndFriendMap);
+        var pageResult = ""
         friendshipResult = createFriendShipAcceptedInfo(profileAndFriendMap);
+        if (profileAndFriendMap.prev != false)
+          pageResult += '<button class="page-link accepted-page-button" data-name="' + (profileAndFriendMap.start-1) + '">NEXT</button>'
+        $.each(profileAndFriendMap.pageList, function (idx, pageList){
+          if (acceptedPage == pageList)
+            pageResult += '<li class="page-item active">';
+          else
+            pageResult += '<li class="page-item">';
+          pageResult += '<button class="page-link accepted-page-button" data-name="' + pageList + '">' + pageList + '</button>'
+          pageResult += '</li>';
+        })
+        if (profileAndFriendMap.next != false)
+          pageResult += '<button class="page-link accepted-page-button" data-name="' + (profileAndFriendMap.end+1) + '">NEXT</button>'
         $("#friendship-acceptedList").html(friendshipResult);
+        $("#accpeted-page").html(pageResult)
       }
     });
   }
@@ -608,18 +686,6 @@
     });
   }
 
-  // function showChatroomList(loginEmail){
-  //   $.ajax({
-  //     url:,
-  //     type:,
-  //     data:,
-  //     dataType:,
-  //     success: function (result){
-  //
-  //     }
-  //   })
-  // }
-
   $(document).ready(function() {
     $('.uploadButton-post').click(function() {
       $('.post-Image-File').click().on('change', function() {
@@ -696,9 +762,9 @@
       $('#friendShip-requestedModal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
       showFriendProfileWaitingImageList(loginName, requestedPage);
-      $('#requestd-page').off('click').on('click', '.requested-page-button', function(){
-        var requestPage = $(this).attr('data-name');
-        requestedPage = requestPage;
+      $('#requested-page').off('click').on('click', '.requested-page-button', function(){
+        var presentPage = $(this).attr('data-name');
+        requestedPage = presentPage;
         showFriendProfileWaitingImageList(loginName, requestedPage);
       })
 
@@ -706,44 +772,65 @@
     $(".friendship-accepted").click(function (){
       $('#friendShip-acceptedModal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
-      showFriendProfileAcceptedImageList(loginName)
+      showFriendProfileAcceptedImageList(loginName, acceptedPage)
+      $('#accpeted-page').off('click').on('click', '.accepted-page-button', function (){
+        var presentPage = $(this).attr('data-name');
+        acceptedPage = presentPage;
+        showFriendProfileAcceptedImageList(loginName, acceptedPage);
+      })
     })
     $(".chatting-roomList").click(function (){
       $('#chatroom-Modal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
-      console.log(loginName);
-
-      $.ajax({
-        url: "/chat/getChatRoomAndProfileImage",
-        type: "POST",
-        data: {loginName: loginName},
-        dataType: "JSON",
-        success: function (result){
-          console.log(result);
-          Result = "";
-          for (var i = 0; i < result.nameList.length; i++){
-            Result += '<div class="user-info-box">';
-            Result += '<div class="profile-box">';
-            if(result.profileImageList[i] != null)
-              Result += '<img src ="/display?fileName=' + result.profileImageList[i].imageURL + '/"' +
-                      ' alt="Profile Picture" class="profile-picture">';
-            else
-              Result += '<img src ="/display?fileName=outprofile.png/"' +
-                      ' alt="Profile Picture" class="profile-picture">'
-            Result += '</div>';
-            Result += '<div class ="user-name-box">';
-            Result += '<a class ="user-name">' +result.nameList[i]+'</a>';
-            Result += '</div>';
-            Result += '<div class ="user-chat-button-box">';
-            Result += '<button data-name =' + result.nameList[i] + ' class=\"request-Chatroom-button\">대화창 열기</button>'
-            Result += '</div>';
-            Result += '</div>';
-          }
-          $("#chatroom-List").html(Result);
-        }
+      showChatroomAndProfileImageList(loginName);
+      $('#chatroom-page').off('click').on('click', '.chatroom-page-button', function (){
+        var presentPage = $(this).attr('data-name');
+        chatRoomPage = presentPage;
+        showChatroomAndProfileImageList(loginName);
       })
     })
 
+    $(".temp3").off('click').on('click', '.post-page-button', function (){
+      var loginName = '[[${memberDTO.name}]]';
+      var presentPage = $(this).attr('data-name');
+      postPage = presentPage;
+      $.ajax({
+        url: "/post/getPostInfo?page=" + postPage,
+        type: "POST",
+        data: {loginName:loginName},
+        dataType: "JSON",
+        success: function (result){
+          console.log(result);
+          var postResult = "";
+          var postPageResult = "";
+          $.each(result.dtoList, function (idx, dtoList){
+            postResult += '<div class="post-item">';
+            postResult += '<img class="post-list-img" ' +
+                    'src="/display?fileName=' + dtoList.imageDTOList[0].imageURL + '/"' +
+                    'data-url ="' + dtoList.imageDTOList[0].imageURL +'" ' +
+                    'data-id="' +dtoList.imageDTOList[0].pino + '"' +
+                    'data-pid="' + dtoList.pno + '">'
+            postResult += '</div>';
+          })
+          if (result.prev != false)
+            postPageResult += '<button class="page-link requested-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
+          $.each(result.pageList, function (idx, pageList){
+            if (postPage == pageList)
+              postPageResult += '<li class="page-item active">'
+            else
+              postPageResult += '<li class="page-item">'
+            postPageResult += '<button class="page-link post-page-button" ' +
+                    'data-name="' + pageList +'">' +pageList +'</button>'
+          })
+          if (result.prev != false)
+            postPageResult += '<button class="page-link post-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
+
+          $(".post-grid").html(postResult);
+          $("#post-page").html(postPageResult);
+        }
+      })
+
+    })
     $(document).on('click', '.request-Accept-button', function(){
       var loginName = '[[${memberDTO.name}]]';
       var requesterName = $(this).attr('data-name');
@@ -826,12 +913,9 @@
     }
     function showChatMessage(name, message, time){
       var messageElement = document.createElement('div');
-      console.log(time);
       var formattedDateTime = formatter.format(new Date(time));
-      console.log(formattedDateTime);
       var showedTime = formattedDateTime.slice(21, 23)+" "+
               formattedDateTime.slice(12, 20)
-      console.log(showedTime);
       messageElement.innerText = name + ": " + message + " ------------ 시간 : " + showedTime;
       document.getElementById('messages-box').appendChild(messageElement);
     }
@@ -847,7 +931,6 @@
         success: function (chatRoomDTO) {
           roomID = chatRoomDTO.id;
           connect(chatRoomDTO.id);
-          console.log("중복은 아니겠지;!!",roomID);
           $.ajax({
             url: '/chat/getChatListbyRoomIDPage?page=1',
             type: 'POST',
@@ -904,8 +987,6 @@
     })
 
     $('#chatMessageModal').on('hidden.bs.modal', function () {
-      // document.getElementById('LoginUserName').value = ''
-      // document.getElementById('FriendUserName').value = ''
       document.getElementById('messages-box').innerHTML = '';
       console.log("Modal closed");
       console.log("PAGE1 : !!"+ page);
@@ -921,12 +1002,12 @@
     var commentBox = document.querySelector('#comment-box');
     var userEmail = '[[${memberDTO.email}]]';
     var loadEmail = '[[${userEmail}]]';
-    $('.post-list-img').click(function() {
+    $(document).on('click', '.post-list-img',function() {
       $('#myModal').modal('show');
       var imageUrl = $(this).data('url');
       var postId = $(this).data('pid');
       $.ajax({
-        url:'/post/postInfo',
+        url:'/post/postInfoWithImage',
         type:"POST",
         data: {pno:postId},
         dataType:"JSON",

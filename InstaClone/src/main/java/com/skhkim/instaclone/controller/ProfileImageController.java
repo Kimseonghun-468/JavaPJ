@@ -41,10 +41,10 @@ public class ProfileImageController {
 
 
     @PostMapping("acceptedList")
-    public ResponseEntity<Map<String, Object>>
-    getProfileImageAcceptedList(String loginName){
-        Map<String, Object> profileAndFriendMap =
-                profileService.getAcceptFriendList(loginName);
+    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
+    getProfileImageAcceptedList(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
+        ProfilePageResultDTO<Map<String, Object>, Object[]> profileAndFriendMap =
+                profileService.getAcceptFriendListPage(profilePageRequestDTO, loginName);
         return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
     }
 

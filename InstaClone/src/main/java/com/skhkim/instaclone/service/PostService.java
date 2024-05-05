@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public interface PostService {
 
-    PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String email);
+    PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String name);
     Long register(PostDTO postDTO);
 
     Long getPostNumber(String email);

@@ -46,10 +46,10 @@ public class PostServiceImpl implements PostService {
             return post.getPno();
     }
     @Override
-    public PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String email){
+    public PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String name){
         Pageable pageable = postPageRequestDTO.getPageable(Sort.by("pno").descending());
 
-        Page<Object[]> result = postRepository.getListPage(pageable, email);
+        Page<Object[]> result = postRepository.getListPage(pageable, name);
         Function<Object[], PostDTO> fn = (arr -> entitiesToDTO(
                 (Post)arr[0],
                 (List<PostImage>)(Arrays.asList((PostImage)arr[1])))

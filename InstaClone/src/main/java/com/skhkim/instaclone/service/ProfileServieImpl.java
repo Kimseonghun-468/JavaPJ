@@ -90,6 +90,26 @@ public class ProfileServieImpl implements ProfileService{
     }
 
     @Override
+    public ProfilePageResultDTO<Map<String, Object>, Object[]>
+    getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
+        Pageable pageable = profilePageRequestDTO.getPageable(Sort.by("id"));
+        Page<Object[]> result = profileImageRepository.getByAcceptListPage(pageable, loginName);
+
+        Function<Object[], Map<String,Object>> fn = (arr ->{
+            Map<String, Object> profileAndFriendMap = new HashMap<>();
+            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getUserName());
+            if (arr[1] == null)
+                profileAndFriendMap.put("profileImage",null);
+            else
+                profileAndFriendMap.put("profileImage",entityToDTO((ProfileImage) arr[1]));
+
+            return profileAndFriendMap;
+        });
+        return new ProfilePageResultDTO<>(result, fn);
+    }
+
+
+    @Override
     public Map<String, Object> getAcceptFriendList(String loginName){
         Map<String, Object> profileAndFriendMap = new HashMap<>();
         List<String> friendNameList = new ArrayList<>();

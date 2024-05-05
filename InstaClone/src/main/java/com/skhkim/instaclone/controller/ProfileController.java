@@ -37,22 +37,17 @@ public class ProfileController {
                           @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
 
                           Model model){
-        log.info("Sidebar...----");
-        log.info("PageRequest DTO : " + postPageRequestDTO);
-        log.info("Sidebar name: " + name);
         String userEamil = postService.getEmailByUserName(name);
         ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
-
         String friendshipStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
         model.addAttribute("friendshipStatus", friendshipStatus);
         model.addAttribute("userExist", loginService.getUserExist(name));
-        model.addAttribute("result", postService.getList(postPageRequestDTO, userEamil));
+        model.addAttribute("result", postService.getList(postPageRequestDTO, name));
         model.addAttribute("profileImageDTO", profileImageDTO);
         model.addAttribute("memberDTO", clubAuthMemberDTO);
         model.addAttribute("userName", name);
         model.addAttribute("userEmail", userEamil);
         model.addAttribute("postNum", postService.getPostNumber(userEamil));
-//        Member Table 조회해서 Name에 없으면 redirect 없는 페이지쪽으로 넘기고,
         return "sidebar";
     }
 

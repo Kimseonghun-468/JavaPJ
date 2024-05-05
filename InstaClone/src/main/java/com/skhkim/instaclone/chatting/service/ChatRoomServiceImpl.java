@@ -4,13 +4,20 @@ import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
 import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.dto.ProfilePageResultDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,5 +105,34 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         chatRoomAndProfileMap.put("profileImageList", profileImageDTOList);
 
         return chatRoomAndProfileMap;
+    }
+
+    @Override
+    public ProfilePageResultDTO<Map<String, Object>, Object[]>
+            getChatroomAndProfileImageByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
+        Pageable pageable = profilePageRequestDTO.getPageable(Sort.by("id"));
+
+        Page<Object[]> chatRoomAndProfileImageByUserName = chatRoomRepository.getChatroomAndProfileImageByUserNamePage(pageable, loginName);
+        Page<Object[]> chatRoomAndProfileImageByFriendName = chatRoomRepository.getChatroomAndProfileImageByFriendNamePage(pageable, loginName);
+        int mergedTotalPage = chatRoomAndProfileImageByFriendName.getTotalPages() +
+                chatRoomAndProfileImageByUserName.getTotalPages();
+        List<Object[]> mergedContent = new ArrayList<>();
+        mergedContent.addAll(chatRoomAndProfileImageByUserName.getContent());
+        mergedContent.addAll(chatRoomAndProfileImageByFriendName.getContent());
+
+        Page<Object[]> mergedPage = new PageImpl<>(mergedContent, pageable, mergedTotalPage);
+
+        Function<Object[], Map<String, Object>> fn = (arr ->{
+            Map<String, Object> chatRoomAndProfileMap = new HashMap<>();
+            chatRoomAndProfileMap.put("friendName", ((String) arr[0]));
+
+            if(arr[1] == null)
+                chatRoomAndProfileMap.put("profileImage", null);
+            else
+                chatRoomAndProfileMap.put("profileImage", entityToDTOByProfileImage((ProfileImage) arr[1]));
+
+            return chatRoomAndProfileMap;
+        });
+        return new ProfilePageResultDTO<>(mergedPage, fn);
     }
 }

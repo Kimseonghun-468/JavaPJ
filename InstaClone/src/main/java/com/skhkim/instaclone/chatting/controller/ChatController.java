@@ -6,6 +6,9 @@ import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
+import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.dto.ProfilePageResultDTO;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -30,8 +33,6 @@ public class ChatController {
     private final ChatRoomService chatRoomService;
     @MessageMapping("/chat/{roomID}")
     @SendTo("/topic/chat/{roomID}")
-//    @MessageMapping("/chat/")
-//    @SendTo("/topic/chat/")
     public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO) {
         log.info("Room ID :"+ roomID);
         ChatMessageDTO reuslt = ChatMessageDTO.builder()
@@ -39,7 +40,6 @@ public class ChatController {
                 .content(chatMessageDTO.getContent())
                 .regDate(LocalDateTime.now())
                 .build();
-        // dto result에 시간 넣는데, 시간 받아오는 방법 찾기
         chatMessageService.register(reuslt, roomID);
         return reuslt;
     }
@@ -64,15 +64,15 @@ public class ChatController {
         return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
     }
 
-//    @PostMapping("/chat/getChatRoomListByName")
-//    public ResponseEntity<List<String>> getChatRoomListByName(String loginEmail){
-//        List<String> nameList = chatRoomService.getChatroomListByName(loginEmail);
-//        return new ResponseEntity<>(nameList, HttpStatus.OK);
-//    }
-
     @PostMapping("/chat/getChatRoomAndProfileImage")
     public ResponseEntity<Map<String, Object>> getChatroomAndProfileImageList(String loginName){
         Map<String, Object> result = chatRoomService.getChatroomAndProfileImageByLoginName(loginName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/getChatRoomAndProfileImagePage")
+    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getChatroomAndProfileImagePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
+        ProfilePageResultDTO<Map<String, Object>, Object[]> result = chatRoomService.getChatroomAndProfileImageByLoginNamePage(profilePageRequestDTO, loginName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

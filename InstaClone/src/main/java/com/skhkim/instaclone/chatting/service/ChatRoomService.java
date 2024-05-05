@@ -4,6 +4,8 @@ package com.skhkim.instaclone.chatting.service;
 import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.dto.ProfilePageResultDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public interface ChatRoomService {
     List<String> getChatroomListByName(String loginEmail);
 
     Map<String, Object> getChatroomAndProfileImageByLoginName(String loginName);
+    ProfilePageResultDTO<Map<String, Object>, Object[]> getChatroomAndProfileImageByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
 
     default ChatRoomDTO entityToDTO(ChatRoom chatRoom){
         ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
