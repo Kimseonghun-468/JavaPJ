@@ -23,7 +23,27 @@ main {
     top:0;
 
 }
-
+.upload-form{
+    overflow-y: auto;
+    height: calc(90% - 10px);
+}
+.upload-title-input{
+    height: 25%;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #dbdbdb;
+}
+.upload-comment-input{
+    height: 55%;
+    margin-bottom: 5px;
+}
+textarea {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    resize: vertical;
+    border: none;
+    outline: none;
+}
 /* 사이드바 컨테이너 스타일링 */
 .sidebar {
     width: 15%; /* 사이드바의 너비를 설정합니다 */
@@ -155,6 +175,7 @@ main {
 .post-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 5px;
     padding: 10px 0;
     height: calc(100% - 25px);
@@ -302,6 +323,7 @@ main {
 }
 .modal-content-post-imagebox{
     width: 65%;
+    background-color: #f8f8f8;
 }
 
 .post-image {
@@ -323,7 +345,7 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     border-bottom: 1px solid #dbdbdb;
     height: 10%;
 }
@@ -346,22 +368,42 @@ main {
 }
 
 .comment-title {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: #333333;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     height: 10%;
+    border-bottom: 1px solid #dbdbdb;
+}
+.comment-main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20%;
+    margin-bottom: 5px;
+    color: #333333;
+    border-bottom: 1px solid #dbdbdb;
 }
 .comment-title-username{
+    display: flex;
+    justify-content: center;
     width: 30%;
-
 }
 .comment-title-comment{
+    width: 60%;
+    word-wrap: anywhere;
+}
+.upload-form{
+
+}
+.comment-reply-comment{
     width: 60%;
 }
 
 .comment-body {
     overflow-y: auto;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     height: 40%;
 }
 
@@ -383,14 +425,15 @@ main {
     display: flex;
     border-top: 1px solid #cccccc;
     padding-top: 10px;
-    height: 10%;
+    height: calc(20% - 20px);
+    overflow: scroll;
 }
 
 .comment-input input {
-    flex: 1;
+    width: 100%;
     border: none;
-    padding: 10px;
-    margin-right: 10px;
+    outline: none;
+    padding: 5px;
 }
 
 .comment-input .send {
@@ -398,7 +441,8 @@ main {
 }
 
 .dots {
-    margin-left: 20px;
+    margin-left: 10px;
+    align-self: end;
 }
 .reply-modal-content {
     background-color: #fefefe; /* 모달 내용의 배경색 */
@@ -492,6 +536,13 @@ main {
     height: 170px;
 
 }
+.upload-button-box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(20% - 10px);
+}
 
 .user-friend-button-box2{
     display: flex;
@@ -517,3 +568,6 @@ main {
     margin-bottom: 5px;
 }
 
+.reply-option-modal{
+    background-color: rgba(0,0,0,0.4);
+}

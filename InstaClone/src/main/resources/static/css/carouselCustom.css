@@ -13,3 +13,12 @@
     width: 100%;
     height: 100%;
 }
+
+.carousel-control-next-icon{
+    background-color: #919191;
+    border-radius: 50%;
+}
+.carousel-control-prev-icon{
+    background-color: #919191;
+    border-radius: 50%;
+}

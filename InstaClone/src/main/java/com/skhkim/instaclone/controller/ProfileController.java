@@ -51,7 +51,7 @@ public class ProfileController {
         return "sidebar";
     }
 
-    @PostMapping("/sidebar/{name}")
+    @PostMapping("/sidebar/post/{name}")
     public String sidevar(@PathVariable("name") String name, PostDTO postDTO, RedirectAttributes redirectAttributes){
         log.info("PostDTO : " + postDTO);
         Long pno = postService.register(postDTO);

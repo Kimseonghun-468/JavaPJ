@@ -25,6 +25,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
     @Query("SELECT m.email FROM ClubMember m " +
             "WHERE m.name = :name ")
     String getEmail(String name);
+
+    Post findByPno(Long pno);
 }
 
 

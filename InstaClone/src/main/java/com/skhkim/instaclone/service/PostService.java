@@ -21,9 +21,11 @@ public interface PostService {
     Long register(PostDTO postDTO);
 
     Long getPostNumber(String email);
+    PostDTO getPostByID(Long pno);
     String getEmailByUserName(String userName);
 
     PostDTO getPostWithAllImage(Long postID);
+
 
     default Map<String, Object> dtoToEntity(PostDTO postDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -77,6 +79,19 @@ public interface PostService {
 
 //        postDTO.setAvg(avg);
 //        postDTO.setReviewCnt(reviewCnt.intValue());
+        return postDTO;
+    }
+
+    default PostDTO postToDTO(Post post){
+        PostDTO postDTO = PostDTO.builder()
+                .pno(post.getPno())
+                .email(post.getClubMember().getEmail())
+                .comment(post.getComment())
+                .title(post.getTitle())
+                .regDate(post.getRegDate())
+                .modDate(post.getRegDate())
+                .build();
+
         return postDTO;
     }
 }

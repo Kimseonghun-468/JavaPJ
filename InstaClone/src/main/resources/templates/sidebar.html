@@ -74,7 +74,7 @@
             <a href="#">저장됨</a>
             <a href="#">태그됨</a>
           </nav>
-          <div class="post-grid">
+          <div class="post-grid" id="post-grid-image-box">
             <div class="post-item " th:each="dto : ${result.dtoList}">
               <td><img class = "post-list-img"
                        th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
@@ -115,32 +115,6 @@
 </div>
 </body>
 
-<div class="Post-File-Modal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">파일 제출</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-
-        포스트 파일을 제출하시겠습니까?
-        <form id="Post-Image" th:action="@{/sidebar/{userName}(userName=${memberDTO.name})}" th:method="post">
-          <div class="box">
-
-          </div>
-          <button type="submit" class="btn btn-primary" style="display: none;">Submit</button>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary submitFile-Post">제출</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="Profile-File-Modal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -154,8 +128,7 @@
 
         프로필 파일을 제출하시겠습니까?
         <form id=Profile-Image th:action="@{/sidebar/profileImage/{userName}(userName=${memberDTO.name})}" th:method="post">
-          <input type="hidden" name="email" value="TT">
-          <div class="box">
+          <div id="profile-box">
 
           </div>
         </form>
@@ -167,7 +140,7 @@
   </div>
 </div>
 
-<div id="optionsModal" class="modal">
+<div id="optionsModal" class="modal reply-option-modal">
   <div class="reply-modal-content">
 
     <div class="reply-modal-body remove-reply">
@@ -181,7 +154,7 @@
 
 <div id="profileImageModal" class="modal">
   <div class="modal-content-post">
-    <div class="modal-content-profile-imagebox">
+    <div id="modal-content-profile-imagebox">
     </div>
   </div>
 </div>
@@ -189,10 +162,8 @@
 <div id="myModal" class="modal-custom">
   <div class="modal-content-post">
     <div class="modal-content-post-imagebox">
-
-
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
+        <div class="carousel-inner" id="carousel-image-box">
 
         </div>
         <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -210,29 +181,69 @@
         <span class="comment-username">[[${userName}]]</span>
         <span class="options">...</span>
       </div>
-      <div class="comment-title">
-        <div class="comment-title-username comment-bold">
-        </div>
-        <div class="comment-title-comment">
-        </div>
+      <div class="comment-title comment-bold" id="post-title">
+        tt
       </div>
-      <div class="comment-body">
+      <div class="comment-main" id="post-comment">
+        fawf
+      </div>
+      <div class="comment-body" id="reply-comment-body">
 
       </div>
-      <div class="comment-footer">
-        <span class="comment-date">2분 전</span>
-        <span class="comment-actions">
-      <span class="heart">♥</span>
-      <span class="comment">💬</span>
-    </span>
-      </div>
+
       <div class="comment-input">
         <input type="text" placeholder="댓글 달기..." id="comment-box">
-        <span class="send">➤</span>
+        <span id="reply-send">➤</span>
       </div>
     </div>
   </div>
 
+</div>
+
+
+<div id="post-upload-modal" class="modal-custom">
+  <div class="modal-content-post">
+    <div class="modal-content-post-imagebox">
+      <div id="uploadCarouselControls" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner" id = "upload-carousel-image-box">
+
+        </div>
+        <a class="carousel-control-prev" href="#uploadCarouselControls" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <!--        <span class="sr-only">Previous</span>-->
+        </a>
+        <a class="carousel-control-next" href="#uploadCarouselControls" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <!--        <span class="sr-only">Next</span>-->
+        </a>
+      </div>
+    </div>
+    <div class="comment-section">
+      <div class="comment-header">
+        <span class="comment-username">[[${userName}]]</span>
+        <span class="options">...</span>
+      </div>
+
+      <form class="upload-form" id=upload-form th:action="@{/sidebar/post/{userName}(userName=${memberDTO.name})}" th:method="post">
+        <div class="upload-title-input">
+          <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
+  <!--        <input type="text" placeholder="문구를 입력하세요..." id="upload-comment-box">-->
+        </div>
+        <div class="upload-comment-input">
+          <textarea class="text-field" placeholder="텍스트를 입력하세요..." name="comment"></textarea>
+
+        </div>
+        <div class="upload-button-box">
+            <input type="hidden" name="email" th:value="${memberDTO.email}">
+            <div id="upload-form-image-box">
+
+            </div>
+            <button type="button" class="btn btn-primary" id="upload-post-button">공유하기</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
 </div>
 
 <div id="SearchModal" class="modal">
@@ -241,7 +252,7 @@
       <input type="text" id="searchInput" placeholder="검색어 입력...">
       <button type="submit">검색</button>
     </form>
-    <div class="searchResult">
+    <div id="searchResult">
 
     </div>
   </div>
@@ -334,7 +345,7 @@
       dataType:"text",
       success: function (result){
         console.log("result : " + result);
-        var replyArea = $(".comment-body");
+        var replyArea = $("#reply-comment-body");
       }
     })
   };
@@ -360,7 +371,7 @@
         replyStr = createReplyhtmlbox(loginEmail, reply);
         str += replyStr;
       });
-      $(".comment-body").html(str);
+      $("#reply-comment-body").html(str);
     })
   }
 
@@ -428,7 +439,7 @@
   function getSearchUserInfo(searchTerm){
     $.getJSON("/search/name/"+searchTerm, function (searchInfo){
       var searchResult = createSearchInfohtmlbox(searchInfo);
-      $(".searchResult").html(searchResult);
+      $("#searchResult").html(searchResult);
     })
   }
   function createFriendShipAcceptedInfo(profileAndFriendMap){
@@ -639,15 +650,33 @@
       success: function (result) {
         console.log(result);
         var str = "";
+        var carouselTag = "";
         $.each(result, function (idx, imageInfo) {
           console.log(imageInfo);
           str += "<input type='hidden' name='imageDTOList["+idx+"].imgName' value='"+imageInfo['fileName'] +"'>";
           str += "<input type='hidden' name='imageDTOList["+idx+"].path' value='"+imageInfo['folderPath']+"'>";
           str += "<input type='hidden' name='imageDTOList["+idx+"].uuid' value='"+imageInfo['uuid']+"'>";
+
+          if(idx ==0)
+            carouselTag += '<div class="carousel-item active">'
+          else
+            carouselTag += '<div class="carousel-item">'
+          carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+          carouselTag += '</div>';
         });
         console.log(str);
-        $(".box").html(str);
-        $("#Post-Image").submit();
+        if(result.imageDTOList.length ==1){
+          $(".carousel-control-next").html("")
+          $(".carousel-control-prev").html("")
+        }
+        else{
+          $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
+          $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
+        }
+
+        $("#upload-form-image-box").html(str);
+        $("#upload-carousel-image-box").html(carouselTag);
+        return result;
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus)
@@ -676,7 +705,7 @@
           str += "<input type='hidden' name='userEmail' value='" + '[[${memberDTO.email}]]' + "'>";
         })
         console.log(str);
-        $(".box").html(str);
+        $("#profile-box").html(str);
         $("#Profile-Image").submit();
 
       },
@@ -690,7 +719,8 @@
     $('.uploadButton-post').click(function() {
       $('.post-Image-File').click().on('change', function() {
         if (this.files && this.files.length > 0) {
-          $('.Post-File-Modal').modal('show');
+          // $('.Post-File-Modal').modal('show');
+          $('#post-upload-modal').modal('show');
           var formData = new FormData();
           var inputFile = $("input.post-Image-File");
           var files = inputFile[0].files;
@@ -699,12 +729,15 @@
             console.log(files[i]);
             formData.append("uploadFiles", files[i]);
           }
-        }
-        $('.submitFile-Post').click(function() {
           uploadImageAndPostRegisterRequset(formData);
+
+        }
+        $('#upload-post-button').click(function() {
           alert('포스트 파일이 제출되었습니다.');
           console.log(inputFile);
+          $('#upload-form').submit();
           $('.Post-File-Modal').modal('hide');
+
         });
       });
     });
@@ -736,7 +769,7 @@
         var imageUrl = $(this).attr('src');
         var str = '<img src=\"' + imageUrl + '/\"' +
                 ' alt=\"Profile Picture\" class=\"post-image\">'
-        $(".modal-content-profile-imagebox").html(str);
+        $("#modal-content-profile-imagebox").html(str);
       }
     })
 
@@ -754,6 +787,8 @@
       document.getElementById('searchForm').onsubmit = function(event) {
         event.preventDefault();
         var searchTerm = document.getElementById('searchInput').value;
+        document.getElementById('searchInput').value = "";
+
         getSearchUserInfo(searchTerm);
       }
     })
@@ -825,7 +860,7 @@
           if (result.prev != false)
             postPageResult += '<button class="page-link post-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
 
-          $(".post-grid").html(postResult);
+          $("#post-grid-image-box").html(postResult);
           $("#post-page").html(postPageResult);
         }
       })
@@ -994,7 +1029,6 @@
       disconnect();
     });
 
-
   });
 
 
@@ -1015,6 +1049,9 @@
           console.log(result);
 
           var carouselTag = "";
+          var titleTag = "<div class='title-text'>" + result.title +"</div>";
+          var commentTag ="<div class='comment-text'>" + result.comment +"</div>";
+
           $.each(result.imageDTOList, function (idx, imageInfo){
             if(idx ==0)
               carouselTag += '<div class="carousel-item active">'
@@ -1024,15 +1061,25 @@
             carouselTag += '</div>';
 
           })
-          $(".carousel-inner").html(carouselTag);
+          if(result.imageDTOList.length ==1){
+            $(".carousel-control-next").html("")
+            $(".carousel-control-prev").html("")
+          }
+          else{
+            $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
+            $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
+          }
+
+          $("#post-title").html(titleTag)
+          $("#post-comment").html(commentTag)
+          $("#carousel-image-box").html(carouselTag);
 
         }
       })
-
-      // $(".modal-content-post-imagebox").html(imageUrlUpload);
       showReplyListInPost(postId);
 
-      $('.send').off('click').on('click', function (){
+      $('#reply-send').off('click').on('click', function (){
+        console.log(commentBox);
         sendReplyRegisterRequset(postId, commentBox, userEmail);
       });
     });
@@ -1040,7 +1087,7 @@
     $(document).on('click', '.reply-option', function() {
       console.log('reply-option event');
       var rno = $(this).data("rno");
-      $('#optionsModal').css('z-index', 1060).modal('show');
+      $('#optionsModal').css('z-index', 1051).modal('show');
       $('#remove-reply').off('click').on('click', function(){
         sendReplyDeleteRequest(rno);
         $('#optionsModal').modal('hide');

@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/post")
@@ -31,4 +29,10 @@ public class PostController {
         PostPageResultDTO<PostDTO, Object[]> result =  postService.getList(postPageRequestDTO, loginName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+    @GetMapping("/getPostInfobyID/{pno}")
+    public ResponseEntity<PostDTO> getPostInfoByID(@PathVariable("pno") Long pno){
+        PostDTO postDTO = postService.getPostByID(pno);
+        return new ResponseEntity<>(postDTO, HttpStatus.OK);
+    }
+
 }

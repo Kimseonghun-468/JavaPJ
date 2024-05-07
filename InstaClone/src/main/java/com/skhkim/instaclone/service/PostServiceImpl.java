@@ -67,6 +67,12 @@ public class PostServiceImpl implements PostService {
 
         return postRepository.getEmail(userName);
     }
+    @Override
+    public PostDTO getPostByID(Long pno){
+        Post post = postRepository.findByPno(pno);
+        PostDTO postDTO = postToDTO(post);
+        return postDTO;
+    }
 
     @Override
     public PostDTO getPostWithAllImage(Long postID){
