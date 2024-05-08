@@ -1,17 +1,19 @@
 package com.skhkim.instaclone.service;
 
-import com.skhkim.instaclone.dto.ClubMemberDTO;
-import com.skhkim.instaclone.entity.ClubMember;
-import com.skhkim.instaclone.entity.ClubMemberRole;
-import com.skhkim.instaclone.entity.Post;
+import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.entity.*;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +48,25 @@ public class LoginServiceImpl implements LoginService{
     public ClubMemberDTO getClubMemberSearchbyName(String name) {
         ClubMember result = clubMemberRepository.findByName(name);
         return result != null ? entityToDTO(result) : ClubMemberDTO.builder().build();
+    }
+    @Override
+    public ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name){
+        Pageable pageable = profilePageRequestDTO.getPageable(Sort.by("name"));
+        Page<Object[]> result = clubMemberRepository.findByNamePage(pageable, name);
+
+        Function<Object[], Map<String,Object>> fn = (arr ->{
+            Map<String, Object> profileAndSearchMap = new HashMap<>();
+            profileAndSearchMap.put("searchName",((ClubMember) arr[0]).getName());
+            if (arr[1] == null)
+                profileAndSearchMap.put("profileImage",null);
+            else
+                profileAndSearchMap.put("profileImage",entityToDTOByProfileImage((ProfileImage) arr[1]));
+
+            return profileAndSearchMap;
+        });
+        return new ProfilePageResultDTO<>(result, fn);
+
+
     }
     @Override
     public ClubMemberDTO getClubMemberSearchbyEmail(String Email) {

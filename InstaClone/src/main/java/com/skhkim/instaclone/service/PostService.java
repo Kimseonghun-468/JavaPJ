@@ -21,6 +21,7 @@ public interface PostService {
     Long register(PostDTO postDTO);
 
     Long getPostNumber(String email);
+
     PostDTO getPostByID(Long pno);
     String getEmailByUserName(String userName);
 

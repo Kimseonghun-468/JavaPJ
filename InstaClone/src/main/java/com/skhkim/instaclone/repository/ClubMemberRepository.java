@@ -1,6 +1,8 @@
 package com.skhkim.instaclone.repository;
 
 import com.skhkim.instaclone.entity.FriendShip;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +21,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
     Optional<ClubMember> findByEmail(String email, boolean social);
     Optional<ClubMember> findByEmail(String eamil);
     ClubMember findByName(String name);
-
+    boolean existsByEmail(String email);
     @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.friendEmail =:email AND " +
             "f.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING and f.isFrom =false ")
     List<FriendShip> findByEmailStatusWaiting(String email);
@@ -29,5 +31,8 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
 
     @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userName =:requesterName and f.friendName =:accepterName and f.isFrom =false ")
     Optional<FriendShip> getFriendshipsByNameIsNotFrom(@Param("requesterName") String requesterName, @Param("accepterName") String accepterName);
-    boolean existsByEmail(String email);
+
+    @Query("SELECT m, pi FROM ClubMember m LEFT JOIN ProfileImage pi ON m.name = pi.userName WHERE m.name like CONCAT('%', :searchTerm, '%')")
+    Page<Object[]> findByNamePage(Pageable pageable, @Param("searchTerm")String searchTerm);
+
 }

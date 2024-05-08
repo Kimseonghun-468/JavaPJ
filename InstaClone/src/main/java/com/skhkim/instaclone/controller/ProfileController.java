@@ -48,6 +48,7 @@ public class ProfileController {
         model.addAttribute("userName", name);
         model.addAttribute("userEmail", userEamil);
         model.addAttribute("postNum", postService.getPostNumber(userEamil));
+        model.addAttribute("friendNum", friendShipService.getFriendNum(name));
         return "sidebar";
     }
 

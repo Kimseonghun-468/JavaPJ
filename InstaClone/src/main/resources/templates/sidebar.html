@@ -54,7 +54,7 @@
               <h1 class="username">[[${userName}]]</h1>
               <div class="stats">
                 <span>게시물 [[${postNum}]]</span>
-                <span>친구 0</span>
+                <span>친구 [[${friendNum}]]</span>
                 <span id="follow-status">
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" class="request-Follow follow">친구 요청</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
@@ -246,15 +246,18 @@
   </div>
 </div>
 
-<div id="SearchModal" class="modal">
-  <div class="modal-content-custom">
+<div id="SearchModal" class="modal modal-custom">
+  <div class="modal-content-search">
     <form id="searchForm">
       <input type="text" id="searchInput" placeholder="검색어 입력...">
       <button type="submit">검색</button>
     </form>
-    <div id="searchResult">
+    <div id="searchResult" class="side-border">
 
     </div>
+    <ul class="pagination h-100 justify-content-center align-items-center" id="search-page">
+
+    </ul>
   </div>
 </div>
 
@@ -333,6 +336,7 @@
   var acceptedPage = 1;
   var chatRoomPage = 1;
   var postPage = 1;
+  var searchPage = 1;
   function sendReplyRegisterRequset(postId, commentBox, userEmail) {
     console.log(commentBox.value)
     var data = {pno:postId, text:commentBox.value, email:userEmail};
@@ -419,26 +423,52 @@
 
   function createSearchInfohtmlbox(searchInfo){
     var searchResult = "";
-    if(searchInfo.clubMemberName != null){
-      if(searchInfo.profileImageDTO.path != null) {
-        searchResult += '<img src ="/display?fileName=' + searchInfo.profileImageDTO.imageURL; + '/"' +
-        ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-      }
-      else{
+    for (var i = 0; i < searchInfo.dtoList.length; i++) {
+      searchResult += '<div class="user-info-box">';
+      searchResult += '<div class="profile-box">';
+      if (searchInfo.dtoList[i].profileImage != null) {
+        searchResult += '<img src ="/display?fileName=' + searchInfo.dtoList[i].profileImage.imageURL + '/"' +
+                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+      } else {
         searchResult += '<img src = "/display?fileName=outprofile.png/"' +
                 ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
       }
-      searchResult += '<a href="/sidebar/' + searchInfo.clubMemberName + '"' +
-              ' class=comment-bold>' + searchInfo.clubMemberName + '</a>';
+      searchResult += '</div>';
+      searchResult += '<div class="user-name-box">';
+      searchResult += '<a href="/sidebar/' + searchInfo.dtoList[i].searchName + '"' +
+              ' class=comment-bold>' + searchInfo.dtoList[i].searchName + '</a>';
+      searchResult += '</div>';
+      searchResult += '<div class="user-chat-button-box">';
+      searchResult += "<button data-name =" + searchInfo.dtoList[i].searchName + " class='request-Follow follow'>친구 요청</button>"
+      searchResult += '</div>';
+      searchResult += '</div>';
     }
-    else{
-      searchResult += '검색한 사용자가 없습니다.';
-    }
+    if (searchResult =="")
+      searchResult += "검색한 사용자가 없습니다."
     return searchResult;
   }
   function getSearchUserInfo(searchTerm){
-    $.getJSON("/search/name/"+searchTerm, function (searchInfo){
+    $.getJSON("/search/name/all/"+searchTerm+"?page="+searchPage, function (searchInfo){
+
+      console.log(searchInfo)
+      var pageResult = ""
       var searchResult = createSearchInfohtmlbox(searchInfo);
+      if (searchInfo.prev != false)
+        pageResult += '<button class="page-link search-page-button" data-name="' + (searchInfo.start-1) + '">NEXT</button>'
+      $.each(searchInfo.pageList, function (idx, pageList){
+        if (searchPage == pageList)
+          pageResult += '<li class="page-item active">';
+        else
+          pageResult += '<li class="page-item">';
+        pageResult += '<button class="page-link search-page-button" data-name="' + pageList + '">' + pageList + '</button>'
+        pageResult += '</li>';
+      })
+      if (searchInfo.next != false)
+        pageResult += '<button class="page-link search-page-button" data-name="' + (searchInfo.end+1) + '">NEXT</button>'
+
+
+
+      $("#search-page").html(pageResult);
       $("#searchResult").html(searchResult);
     })
   }
@@ -790,7 +820,18 @@
         document.getElementById('searchInput').value = "";
 
         getSearchUserInfo(searchTerm);
+        $('#search-page').off('click').on('click', '.search-page-button', function (){
+          var presentPage = $(this).attr('data-name');
+          searchPage = presentPage;
+          getSearchUserInfo(searchTerm);
+        })
       }
+      $('#SearchModal').on('hidden.bs.modal', function () {
+        searchPage = 1;
+
+        $("#search-page").html("");
+        $("#searchResult").html("");
+      });
     })
 
     $(".friendship-requested").click(function (){

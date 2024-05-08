@@ -33,4 +33,9 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
     @Query("SELECT cr.friendName ,pi FROM ChatRoom cr left join ProfileImage pi on cr.friendName = pi.userName " +
             "WHERE cr.userName = :loginName and cr.friendName != :loginName")
     Page<Object[]> getChatroomAndProfileImageByFriendNamePage(Pageable pageable, String loginName);
+
+    @Query("SELECT CASE WHEN cr.userName = :loginName THEN cr.friendName ELSE cr.userName END as userName, pi " +
+            "FROM ChatRoom cr LEFT JOIN ProfileImage pi ON (CASE WHEN cr.userName = :loginName THEN cr.friendName ELSE cr.userName END) = pi.userName " +
+            "WHERE (cr.userName = :loginName OR cr.friendName = :loginName) AND (cr.userName != cr.friendName)")
+    Page<Object[]> getChatroomAndProfileImage(Pageable pageable, String loginName);
 }

@@ -16,6 +16,8 @@ public interface FriendShipService {
     String checkFriendShip(String requesterEmail, String accepterEmail);
     String acceptFriendShip(String requesterEmail, String accepterEmail);
     String deleteFriendShip(String requestEmail, String accepterEmail);
+
+    Long getFriendNum(String name);
     default FriendShip dtoToEntity(FriendShipDTO dto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FriendShip friendShip = FriendShip.builder()

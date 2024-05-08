@@ -110,18 +110,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Override
     public ProfilePageResultDTO<Map<String, Object>, Object[]>
             getChatroomAndProfileImageByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
+
         Pageable pageable = profilePageRequestDTO.getPageable(Sort.by("id"));
-
-        Page<Object[]> chatRoomAndProfileImageByUserName = chatRoomRepository.getChatroomAndProfileImageByUserNamePage(pageable, loginName);
-        Page<Object[]> chatRoomAndProfileImageByFriendName = chatRoomRepository.getChatroomAndProfileImageByFriendNamePage(pageable, loginName);
-        int mergedTotalPage = chatRoomAndProfileImageByFriendName.getTotalPages() +
-                chatRoomAndProfileImageByUserName.getTotalPages();
-        List<Object[]> mergedContent = new ArrayList<>();
-        mergedContent.addAll(chatRoomAndProfileImageByUserName.getContent());
-        mergedContent.addAll(chatRoomAndProfileImageByFriendName.getContent());
-
-        Page<Object[]> mergedPage = new PageImpl<>(mergedContent, pageable, mergedTotalPage);
-
+        Page<Object[]> result = chatRoomRepository.getChatroomAndProfileImage(pageable, loginName);
         Function<Object[], Map<String, Object>> fn = (arr ->{
             Map<String, Object> chatRoomAndProfileMap = new HashMap<>();
             chatRoomAndProfileMap.put("friendName", ((String) arr[0]));
@@ -133,6 +124,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
             return chatRoomAndProfileMap;
         });
-        return new ProfilePageResultDTO<>(mergedPage, fn);
+        return new ProfilePageResultDTO<>(result, fn);
     }
 }

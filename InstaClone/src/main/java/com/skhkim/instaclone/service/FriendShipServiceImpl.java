@@ -105,4 +105,10 @@ public class FriendShipServiceImpl implements FriendShipService{
         return "삭제";
     }
 
+    @Override
+    public Long getFriendNum(String name){
+        return friendShipRepository.getFriendShipCount(name, FriendShipStatus.ACCEPT);
+
+    }
+
 }

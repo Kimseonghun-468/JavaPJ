@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.repository;
 
 import com.skhkim.instaclone.entity.FriendShip;
+import com.skhkim.instaclone.entity.FriendShipStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,4 +13,7 @@ public interface FriendShipRepository extends JpaRepository<FriendShip, Long> {
     @Transactional
     @Query("DELETE FROM FriendShip fs WHERE fs.userName =:userName AND fs.friendName =:friendName")
     void deleteByUserNameAndFriendName(String userName, String friendName);
+
+    @Query("SELECT count(fs) FROM FriendShip fs where fs.friendName = :name AND fs.status = :status")
+    Long getFriendShipCount(String name, FriendShipStatus status);
 }
