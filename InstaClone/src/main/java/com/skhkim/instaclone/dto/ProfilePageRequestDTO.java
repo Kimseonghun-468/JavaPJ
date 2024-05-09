@@ -17,11 +17,10 @@ public class ProfilePageRequestDTO {
     private String keyword;
     public ProfilePageRequestDTO(){
         this.page = 1;
-        this.size = 3;
+        this.size = 6;
 
     }
-    public Pageable getPageable(Sort sort){
-        return PageRequest.of(page -1, size, sort);
-
+    public Pageable getPageable(){
+        return PageRequest.of(page -1, size);
     }
 }

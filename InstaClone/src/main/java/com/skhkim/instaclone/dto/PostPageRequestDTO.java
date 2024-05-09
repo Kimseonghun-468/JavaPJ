@@ -20,8 +20,8 @@ public class PostPageRequestDTO {
         this.size = 6;
 
     }
-    public Pageable getPageable(Sort sort){
-        return PageRequest.of(page -1, size, sort);
+    public Pageable getPageable(){
+        return PageRequest.of(page -1, size);
 
     }
 }

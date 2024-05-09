@@ -51,7 +51,7 @@ public class LoginServiceImpl implements LoginService{
     }
     @Override
     public ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name){
-        Pageable pageable = profilePageRequestDTO.getPageable(Sort.by("name"));
+        Pageable pageable = profilePageRequestDTO.getPageable();
         Page<Object[]> result = clubMemberRepository.findByNamePage(pageable, name);
 
         Function<Object[], Map<String,Object>> fn = (arr ->{

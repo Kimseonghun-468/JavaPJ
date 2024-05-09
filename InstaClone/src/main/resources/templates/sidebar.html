@@ -54,9 +54,9 @@
               <h1 class="username">[[${userName}]]</h1>
               <div class="stats">
                 <span>게시물 [[${postNum}]]</span>
-                <span>친구 [[${friendNum}]]</span>
+                <span class="options" id="friend-List">친구 [[${friendNum}]]</span>
                 <span id="follow-status">
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" class="request-Follow follow">친구 요청</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" class="request-Follow-button follow">친구 요청</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Delete-button follow">친구 삭제</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Chatroom-button follow">1:1 채팅하기</button>
@@ -140,19 +140,31 @@
   </div>
 </div>
 
-<div id="optionsModal" class="modal reply-option-modal">
-  <div class="reply-modal-content">
+<div id="reply-option-modal" class="modal-custom">
+  <div class="option-modal-content">
 
-    <div class="reply-modal-body remove-reply">
+    <div class="option-modal-body">
       <h3 id="remove-reply">삭제</h3>
     </div>
-    <div class="reply-modal-footer close-reply">
+    <div class="option-modal-footer">
       <h3 id="cancel-reply">취소</h3>
     </div>
   </div>
 </div>
 
-<div id="profileImageModal" class="modal">
+<div id="post-option-modal" class="modal-custom">
+  <div class="option-modal-content">
+
+    <div class="option-modal-body">
+      <h3 id="remove-post">삭제</h3>
+    </div>
+    <div class="option-modal-footer">
+      <h3 id="cancel-post">취소</h3>
+    </div>
+  </div>
+</div>
+
+<div id="profileImageModal" class="modal-custom">
   <div class="modal-content-post">
     <div id="modal-content-profile-imagebox">
     </div>
@@ -179,7 +191,7 @@
     <div class="comment-section">
       <div class="comment-header">
         <span class="comment-username">[[${userName}]]</span>
-        <span class="options">...</span>
+        <span th:if="${memberDTO.name == userName}" class="options" id="post-option">...</span>
       </div>
       <div class="comment-title comment-bold" id="post-title">
         tt
@@ -221,7 +233,6 @@
     <div class="comment-section">
       <div class="comment-header">
         <span class="comment-username">[[${userName}]]</span>
-        <span class="options">...</span>
       </div>
 
       <form class="upload-form" id=upload-form th:action="@{/sidebar/post/{userName}(userName=${memberDTO.name})}" th:method="post">
@@ -284,7 +295,20 @@
     <div id="friendship-acceptedList" class="side-border">
 
     </div>
-    <ul class="pagination h-100 justify-content-center align-items-center" id="accpeted-page">
+    <ul class="pagination h-100 justify-content-center align-items-center" id="accepted-page">
+
+    </ul>
+  </div>
+</div>
+</html>
+
+<div id="frined-List-UserModal" class="modal-custom">
+  <div class="modal-content-side-frame" id="friend-list-UserModal">
+
+    <div id="friend-List-UserBox" class="side-border">
+
+    </div>
+    <ul class="pagination h-100 justify-content-center align-items-center" id="friend-List-page">
 
     </ul>
   </div>
@@ -337,9 +361,13 @@
   var chatRoomPage = 1;
   var postPage = 1;
   var searchPage = 1;
-  function sendReplyRegisterRequset(postId, commentBox, userEmail) {
+  var friendListPage = 1;
+  var frinedListTotalPage = 1;
+  var flag = true;
+  function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
     console.log(commentBox.value)
     var data = {pno:postId, text:commentBox.value, email:userEmail};
+    var tempReply = {name:userName, text:commentBox.value};
     console.log(data);
     $.ajax({
       url: '/reply/'+postId,
@@ -349,13 +377,16 @@
       dataType:"text",
       success: function (result){
         console.log("result : " + result);
+        replyResult = ""
         var replyArea = $("#reply-comment-body");
+        replyArea.append(createReplyhtmlbox(userName, tempReply));
+        $('#reply-comment-body').scrollTop($('#reply-comment-body')[0].scrollHeight);
       }
     })
   };
   function sendReplyDeleteRequest(rno){
     $.ajax({
-      url: '/reply/'+rno+"/"+rno,
+      url: '/reply/'+rno,
       type: 'DELETE',
       contentType: "application/json; charset=utf-8",
       dataType: "text",
@@ -365,14 +396,24 @@
       }
     })
   }
+  function sendPostDeleteRequest(pno){
+    $.ajax({
+      url: '/post/delete/' + pno,
+      type: 'DELETE',
+      success: function (result){
+        console.log(result)
+      }
+    })
+  }
 
   function showReplyListInPost(postId){
     $.getJSON("/reply/"+postId +"/all", function (arr){
       var str = "";
-      var loginEmail = '[[${memberDTO.email}]]';
+      var loginName = '[[${memberDTO.name}]]';;
+
       $.each(arr, function (idx, reply){
         console.log(reply);
-        replyStr = createReplyhtmlbox(loginEmail, reply);
+        replyStr = createReplyhtmlbox(loginName, reply);
         str += replyStr;
       });
       $("#reply-comment-body").html(str);
@@ -394,7 +435,7 @@
     divArea.append(str);
   }
 
-  function createReplyhtmlbox(loginEmail, reply){
+  function createReplyhtmlbox(loginName, reply){
     var str = "";
     str += '<div class="comment-body-reply">';
     str += '<div class="comment-title-username comment-bold">'
@@ -403,7 +444,7 @@
     str += '<div class="comment-title-comment">'
     str += reply.text
     str += '</div>'
-    if (loginEmail == reply.email) {
+    if (loginName == reply.name) {
       str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
     }
     str += '</div>'
@@ -439,7 +480,7 @@
               ' class=comment-bold>' + searchInfo.dtoList[i].searchName + '</a>';
       searchResult += '</div>';
       searchResult += '<div class="user-chat-button-box">';
-      searchResult += "<button data-name =" + searchInfo.dtoList[i].searchName + " class='request-Follow follow'>친구 요청</button>"
+      searchResult += "<button data-name =" + searchInfo.dtoList[i].searchName + " class='request-Follow-button follow'>친구 요청</button>"
       searchResult += '</div>';
       searchResult += '</div>';
     }
@@ -500,6 +541,42 @@
     if (Result == "")
       Result += "친구 요청 목록이 없습니다.";
     return Result;
+  }
+
+  function createFriendShipUserInfo(profileAndFriendMap){
+    var Result = "";
+    console.log(profileAndFriendMap)
+    for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
+      Result += '<div class="user-info-box">';
+      Result += '<div class="profile-box">';
+      if(profileAndFriendMap.dtoList[i].profileImage ==null)
+        Result += '<img src = "/display?fileName=outprofile.png/"' +
+                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+      else
+        Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
+                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+      Result += '</div>';
+      Result += '<div class="user-name-box">'
+      Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
+              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
+      Result += '</div>';
+      Result += '<div class="user-chat-button-box">';
+      if (profileAndFriendMap.dtoList[i].status == "WAITING")
+        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Cancel-button follow'>친구 대기</button>"
+      if (profileAndFriendMap.dtoList[i].status == "ACCEPT")
+        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='follow'>친구 상태</button>"
+      if (profileAndFriendMap.dtoList[i].status == "WAITACCEPT")
+        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Accept-button follow'>친구 수락</button>"
+      Result += '</div>';
+      Result += '</div>';
+    }
+    if (Result == "" && friendListPage ==1) {
+      Result += "친구 요청 목록이 없습니다.";
+      $('#friend-List-UserBox').append(Result);
+    }
+    else {
+      $('#friend-List-UserBox').append(Result);
+    }
   }
 
   function createFriendShipWaitingInfo(profileAndFriendMap){
@@ -633,10 +710,27 @@
         if (profileAndFriendMap.next != false)
           pageResult += '<button class="page-link accepted-page-button" data-name="' + (profileAndFriendMap.end+1) + '">NEXT</button>'
         $("#friendship-acceptedList").html(friendshipResult);
-        $("#accpeted-page").html(pageResult)
+        $("#accepted-page").html(pageResult)
       }
     });
   }
+
+  function showFriendProfileUserList(userName, loginName, friendListPage){
+
+    $.ajax({
+      url: '/profileImage/friendList?page='+friendListPage,
+      type: "POST",
+      data: {userName:userName, loginName:loginName},
+      dataType: "JSON",
+      success: function (profileAndFriendMap){
+        console.log(profileAndFriendMap);
+        var pageResult = ""
+        frinedListTotalPage = profileAndFriendMap.end;
+        createFriendShipUserInfo(profileAndFriendMap);
+      }
+    });
+  }
+
   function sendAcceptFriendShipRequest(loginName, requesterName, $button){
     var data = {loginName:loginName, requesterName:requesterName};
     console.log(loginName);
@@ -695,7 +789,7 @@
           carouselTag += '</div>';
         });
         console.log(str);
-        if(result.imageDTOList.length ==1){
+        if(result.length ==1){
           $(".carousel-control-next").html("")
           $(".carousel-control-prev").html("")
         }
@@ -745,11 +839,11 @@
     });
   }
 
-  $(document).ready(function() {
-    $('.uploadButton-post').click(function() {
+  $(function (){
+    $('.uploadButton-post').off('click').click(function() {
+      $('.post-Image-File').off('change');
       $('.post-Image-File').click().on('change', function() {
         if (this.files && this.files.length > 0) {
-          // $('.Post-File-Modal').modal('show');
           $('#post-upload-modal').modal('show');
           var formData = new FormData();
           var inputFile = $("input.post-Image-File");
@@ -770,6 +864,8 @@
 
         });
       });
+
+
     });
 
     $('.uploadButton-profile').click(function () {
@@ -803,11 +899,16 @@
       }
     })
 
+
+    $("#friend-List").click(function (){
+      console.log("Show Friend List")
+    })
   });
 
   $(function (){
-    $(".request-Follow").click(function (){
+    $(document).on('click', '.request-Follow-button', function (){
       var loadName = '[[${userName}]]';
+      console.log("@@@@@@@@@")
       sendFollowRequest(loadName);
     });
 
@@ -849,12 +950,74 @@
       $('#friendShip-acceptedModal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
       showFriendProfileAcceptedImageList(loginName, acceptedPage)
-      $('#accpeted-page').off('click').on('click', '.accepted-page-button', function (){
+      $('#accepted-page').off('click').on('click', '.accepted-page-button', function (){
         var presentPage = $(this).attr('data-name');
         acceptedPage = presentPage;
         showFriendProfileAcceptedImageList(loginName, acceptedPage);
       })
     })
+
+    $("#friend-List").click(function (){
+      $('#frined-List-UserModal').modal('show');
+      var userName = '[[${userName}]]';
+      var loginName = '[[${memberDTO.name}]]';
+
+      function showFriendProfileFirst(userName, loginName){
+        $.ajax({
+          url: "/profileImage/firstList",
+          type: "POST",
+          data: {userName:userName, loginName:loginName},
+          dataType: "JSON",
+          success: function (result){
+            console.log(result)
+
+            var Result = "";
+            Result += '<div class="user-info-box">';
+            Result += '<div class="profile-box">';
+            if(result.image ==null)
+              Result += '<img src = "/display?fileName=outprofile.png/"' +
+                      ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+            else
+              Result += '<img src ="/display?fileName=' + result.image.imageURL + '/"' +
+                      ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+            Result += '</div>';
+            Result += '<div class="user-name-box">'
+            Result += '<a href="/sidebar/' + result.name + '"' +
+                    ' class=comment-bold>' + result.name + '</a>';
+            Result += '</div>';
+            Result += '<div class="user-chat-button-box">';
+            Result += '</div>';
+            Result += '</div>';
+
+            if (result.name != null)
+              $('#friend-List-UserBox').prepend(Result);
+          }
+
+        })
+      }
+
+
+      showFriendProfileFirst(userName, loginName)
+      showFriendProfileUserList(userName, loginName, friendListPage)
+      const scrollContainer = document.getElementById('friend-list-UserModal');
+      scrollContainer.addEventListener('scroll', () => {
+        let val = scrollContainer.scrollHeight - scrollContainer.scrollTop
+        if (scrollContainer.clientHeight -15 <= val  &&  val <= scrollContainer.clientHeight +15) {
+          if (frinedListTotalPage >= friendListPage) {
+            friendListPage += 1
+            showFriendProfileUserList(userName, loginName, friendListPage)
+          }
+        }
+      });
+      // $('#friend-List-page').off('click').on('click', '.friend-page-button', function (){
+      //   var presentPage = $(this).attr('data-name');
+      //   friendListPage = presentPage
+      //   showFriendProfileUserList(userName, loginName, friendListPage)
+      // })
+
+
+    })
+
     $(".chatting-roomList").click(function (){
       $('#chatroom-Modal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
@@ -1076,6 +1239,7 @@
   $(function (){
     var commentBox = document.querySelector('#comment-box');
     var userEmail = '[[${memberDTO.email}]]';
+    var userName = '[[${memberDTO.name}]]';
     var loadEmail = '[[${userEmail}]]';
     $(document).on('click', '.post-list-img',function() {
       $('#myModal').modal('show');
@@ -1121,22 +1285,41 @@
 
       $('#reply-send').off('click').on('click', function (){
         console.log(commentBox);
-        sendReplyRegisterRequset(postId, commentBox, userEmail);
+        sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
+      });
+
+
+      $('#myModal').on('click', '#post-option', function (){
+        console.log('post-option event');
+        console.log(postId)
+        $('#post-option-modal').css('z-index', 1051).modal('show');
+        $('#remove-post').off('click').on('click', function (){
+          sendPostDeleteRequest(postId)
+          $('#post-option-modal').modal('hide');
+          $('#myModal').modal('hide')
+          alert("삭제가 완료되었습니다.")
+          self.location.reload();
+        });
+        $('#cancel-post').off('click').on('click', function (){
+          $('#post-option-modal').modal('hide');
+        })
+      })
+
+    });
+
+    $('#myModal').on('click', '.reply-option', function() {
+      console.log('reply-option event');
+      var rno = $(this).data("rno");
+      $('#reply-option-modal').css('z-index', 1051).modal('show');
+      $('#remove-reply').off('click').on('click', function(){
+        sendReplyDeleteRequest(rno);
+        $('#reply-option-modal').modal('hide');
+      });
+      $('#cancel-reply').off('click').on('click' ,function() {
+        $('#reply-option-modal').modal('hide');
       });
     });
 
-    $(document).on('click', '.reply-option', function() {
-      console.log('reply-option event');
-      var rno = $(this).data("rno");
-      $('#optionsModal').css('z-index', 1051).modal('show');
-      $('#remove-reply').off('click').on('click', function(){
-        sendReplyDeleteRequest(rno);
-        $('#optionsModal').modal('hide');
-      });
-      $('#cancel-reply').off('click').on('click' ,function() {
-        $('#optionsModal').modal('hide');
-      });
-    });
 
   });
 </script>

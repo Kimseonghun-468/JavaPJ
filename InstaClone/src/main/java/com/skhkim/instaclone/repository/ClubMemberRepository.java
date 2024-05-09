@@ -17,14 +17,10 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
 
     @EntityGraph(attributePaths = {"roleSet"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("select m from ClubMember m where m.fromSocial = :social and m.email =:email")
-
     Optional<ClubMember> findByEmail(String email, boolean social);
     Optional<ClubMember> findByEmail(String eamil);
     ClubMember findByName(String name);
     boolean existsByEmail(String email);
-    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.friendEmail =:email AND " +
-            "f.status = com.skhkim.instaclone.entity.FriendShipStatus.WAITING and f.isFrom =false ")
-    List<FriendShip> findByEmailStatusWaiting(String email);
 
     @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userName =:requesterName and f.friendName =:accepterName and f.isFrom =true")
     Optional<FriendShip> getFriendshipsByName(@Param("requesterName") String requesterName, @Param("accepterName") String accepterName);

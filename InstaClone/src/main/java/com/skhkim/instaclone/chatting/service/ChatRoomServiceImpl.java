@@ -111,7 +111,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public ProfilePageResultDTO<Map<String, Object>, Object[]>
             getChatroomAndProfileImageByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
 
-        Pageable pageable = profilePageRequestDTO.getPageable(Sort.by("id"));
+        Pageable pageable = profilePageRequestDTO.getPageable();
         Page<Object[]> result = chatRoomRepository.getChatroomAndProfileImage(pageable, loginName);
         Function<Object[], Map<String, Object>> fn = (arr ->{
             Map<String, Object> chatRoomAndProfileMap = new HashMap<>();

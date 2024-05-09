@@ -313,6 +313,7 @@ textarea {
     padding: 0;
     border: 1px solid #888;
     width: 85%;
+    height: 80%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
@@ -402,9 +403,8 @@ textarea {
     border-bottom: 1px solid #dbdbdb;
 }
 .comment-title-username{
-    display: flex;
-    justify-content: center;
     width: 30%;
+    padding-left: 10px;
 }
 .comment-title-comment{
     width: 60%;
@@ -460,7 +460,7 @@ textarea {
     margin-left: 10px;
     align-self: end;
 }
-.reply-modal-content {
+.option-modal-content {
     background-color: #fefefe; /* 모달 내용의 배경색 */
     margin: 15% auto; /* 중앙 정렬 */
     padding: 20px; /* 패딩으로 내용과 경계 사이 여백 제공 */
@@ -468,7 +468,7 @@ textarea {
     width: 40%; /* 너비 */
 }
 
-.reply-modal-body h3 {
+.option-modal-body h3 {
     color: #ff0000; /* 버튼 색상 변경 */
     font-size: 16px; /* 텍스트 크기 변경 */
     cursor: pointer; /* 마우스 오버시 포인터 변경 */
@@ -476,7 +476,7 @@ textarea {
 
 }
 
-.reply-modal-footer h3 {
+.option-modal-footer h3 {
     text-align: center; /* 텍스트를 오른쪽 정렬 */
     font-size: 16px; /* 텍스트 크기 변경 */
     cursor: pointer; /* 마우스 오버시 포인터 변경 */

@@ -7,6 +7,7 @@ import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.repository.PostImageRepository;
 import com.skhkim.instaclone.repository.PostRepository;
+import com.skhkim.instaclone.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
+    private final ReplyRepository replyRepository;
 
     @Override
     @Transactional
@@ -47,7 +49,7 @@ public class PostServiceImpl implements PostService {
     }
     @Override
     public PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String name){
-        Pageable pageable = postPageRequestDTO.getPageable(Sort.by("pno").descending());
+        Pageable pageable = postPageRequestDTO.getPageable();
 
         Page<Object[]> result = postRepository.getListPage(pageable, name);
         Function<Object[], PostDTO> fn = (arr -> entitiesToDTO(
@@ -85,5 +87,11 @@ public class PostServiceImpl implements PostService {
         }).collect(Collectors.toList());
 
         return entitiesToDTO(post, postImageList);
+    }
+    @Override
+    public void removePost(Long pno){
+        replyRepository.deleteByPostPno(pno);
+        postImageRepository.deleteByPostPno(pno);
+        postRepository.deleteByPno(pno);
     }
 }

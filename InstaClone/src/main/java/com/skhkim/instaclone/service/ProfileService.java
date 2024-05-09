@@ -18,6 +18,9 @@ public interface ProfileService {
     Map<String, Object> getAcceptFriendList(String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
+    ProfilePageResultDTO<Map<String, Object>, Object[]> getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName);
+
+    Map<String, Object> getFirstUser(String userName, String loginName);
     default ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = ProfileImage.builder()

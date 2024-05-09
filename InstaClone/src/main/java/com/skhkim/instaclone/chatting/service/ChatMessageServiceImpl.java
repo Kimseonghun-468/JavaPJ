@@ -61,7 +61,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPage(PageRequestDTO pageRequestDTO, String roomID){
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("cid").descending());
+        Pageable pageable = pageRequestDTO.getPageable();
         Page<Object[]> result = chatMessageRepository.findByChatRoomId(pageable, roomID);
         Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
                 (ChatMessage)arr[0])

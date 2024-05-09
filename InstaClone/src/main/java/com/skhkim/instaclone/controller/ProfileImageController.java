@@ -48,4 +48,18 @@ public class ProfileImageController {
         return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
     }
 
+    @PostMapping("friendList")
+    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
+    getProfileImageFriendList(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
+        ProfilePageResultDTO<Map<String, Object>, Object[]> profileAndFriendMap =
+                profileService.getFriendListPage(profilePageRequestDTO, userName, loginName);
+        return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
+    }
+
+    @PostMapping("firstList")
+    public ResponseEntity<Map<String, Object>> getProfileFirst(String userName, String loginName){
+        Map<String, Object> resultMap = profileService.getFirstUser(userName, loginName);
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    }
+
 }

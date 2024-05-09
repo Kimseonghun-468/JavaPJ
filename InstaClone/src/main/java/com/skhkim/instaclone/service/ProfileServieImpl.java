@@ -2,6 +2,7 @@ package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.FriendShip;
+import com.skhkim.instaclone.entity.FriendShipStatus;
 import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -71,7 +69,7 @@ public class ProfileServieImpl implements ProfileService{
     @Override
     public ProfilePageResultDTO<Map<String, Object>, Object[]>
     getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
-        Pageable pageable = profilePageRequestDTO.getPageable(Sort.by("id"));
+        Pageable pageable = profilePageRequestDTO.getPageable();
 
         Page<Object[]> result = profileImageRepository.getByWaitingListPage(pageable, loginName);
 
@@ -92,7 +90,7 @@ public class ProfileServieImpl implements ProfileService{
     @Override
     public ProfilePageResultDTO<Map<String, Object>, Object[]>
     getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
-        Pageable pageable = profilePageRequestDTO.getPageable(Sort.by("id"));
+        Pageable pageable = profilePageRequestDTO.getPageable();
         Page<Object[]> result = profileImageRepository.getByAcceptListPage(pageable, loginName);
 
         Function<Object[], Map<String,Object>> fn = (arr ->{
@@ -106,6 +104,53 @@ public class ProfileServieImpl implements ProfileService{
             return profileAndFriendMap;
         });
         return new ProfilePageResultDTO<>(result, fn);
+    }
+
+    @Override
+    public ProfilePageResultDTO<Map<String, Object>, Object[]>
+    getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
+        Pageable pageable = profilePageRequestDTO.getPageable();
+        Page<Object[]> result = profileImageRepository.getFriendListPage(pageable, userName, loginName);
+
+        Function<Object[], Map<String,Object>> fn = (arr ->{
+            Map<String, Object> profileAndFriendMap = new HashMap<>();
+            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getUserName());
+            if (arr[1] == null)
+                profileAndFriendMap.put("profileImage",null);
+            else
+                profileAndFriendMap.put("profileImage",entityToDTO((ProfileImage) arr[1]));
+
+            if (arr[2] == null)
+                profileAndFriendMap.put("status", "NOTTING");
+            else if (((FriendShip) arr[2]).getStatus() == FriendShipStatus.ACCEPT)
+                profileAndFriendMap.put("status", "ACCEPT");
+            else if (((FriendShip) arr[2]).getStatus() == FriendShipStatus.WAITING && ((FriendShip) arr[2]).isFrom() == false)
+                profileAndFriendMap.put("status", "WAITING");
+            else if (((FriendShip) arr[2]).getStatus() == FriendShipStatus.WAITING && ((FriendShip) arr[2]).isFrom() == true)
+                profileAndFriendMap.put("status", "WAITACCEPT");
+
+            return profileAndFriendMap;
+        });
+        return new ProfilePageResultDTO<>(result, fn);
+    }
+    @Override
+    public Map<String, Object> getFirstUser(String userName, String loginName){
+        List<Object[]> result = profileImageRepository.getFriendFirst(userName, loginName);
+        Map<String , Object> resultMap = new HashMap<>();
+//        FriendShip friendShip = (FriendShip) result.get(0)[0];
+
+        if (result.size() == 0){
+            resultMap.put("name", null);
+            resultMap.put("image",null);
+        }
+        else{
+            if (result.get(0)[1] != null)
+                resultMap.put("image", ((ProfileImage) result.get(0)[1]));
+            else
+                resultMap.put("image", null);
+            resultMap.put("name", ((FriendShip) result.get(0)[0]).getUserName());
+        }
+        return resultMap;
     }
 
 
