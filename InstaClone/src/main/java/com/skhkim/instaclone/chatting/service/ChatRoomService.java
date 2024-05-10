@@ -15,17 +15,21 @@ import java.util.Optional;
 public interface ChatRoomService {
 
     ChatRoomDTO getORCreateChatRoomID(String loginName, String friendName);
-    ChatRoom createChatRoomID(String loginName, String friendName);
-    List<String> getChatroomListByName(String loginEmail);
-
-    Map<String, Object> getChatroomAndProfileImageByLoginName(String loginName);
+    ChatRoom createChatRoomID(List<String> sortedID);
+//    List<String> getChatroomListByName(String loginEmail);
+    void registerLastChatTime(String roomID, String comment);
+//    Map<String, Object> getChatroomAndProfileImageByLoginName(String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getChatroomAndProfileImageByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
-
+    void updateChatroomDisConnectTime(String roomID, String loginName);
     default ChatRoomDTO entityToDTO(ChatRoom chatRoom){
         ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
                 .id(chatRoom.getId())
-                .userName(chatRoom.getUserName())
-                .friendName(chatRoom.getFriendName())
+                .userName1(chatRoom.getUserName1())
+                .userName2(chatRoom.getUserName2())
+                .lastChat(chatRoom.getLastChat())
+                .lastChatTime(chatRoom.getLastChatTime())
+                .lastDisConnect1(chatRoom.getLastDisConnect1())
+                .lastDisConnect2(chatRoom.getLastDisConnect2())
                 .build();
         return chatRoomDTO;
     }

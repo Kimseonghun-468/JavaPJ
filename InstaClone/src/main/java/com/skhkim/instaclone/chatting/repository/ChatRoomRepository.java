@@ -12,30 +12,12 @@ import java.util.Optional;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
     @Query("SELECT cr FROM ChatRoom cr WHERE cr.id = :namesToId")
-    Optional<ChatRoom> getChatIdbyEmails(@Param("namesToId") String namesToId);
+    Optional<ChatRoom> getChatIdbyNames(@Param("namesToId") String namesToId);
 
-    @Query("SELECT cr FROM ChatRoom cr WHERE cr.userName =:loginName" +
-            " or cr.friendName =:loginName")
-    List<ChatRoom> getChatRoomsListByName(@Param("loginName") String loginName);
 
-    @Query("SELECT cr ,pi FROM ChatRoom cr left join ProfileImage pi on cr.userName = pi.userName " +
-            "WHERE cr.userName != :loginName and cr.friendName = :loginName")
-    List<Object[]> getChatroomAndProfileImageByUserName(String loginName);
 
-    @Query("SELECT cr ,pi FROM ChatRoom cr left join ProfileImage pi on cr.friendName = pi.userName " +
-            "WHERE cr.userName = :loginName and cr.friendName != :loginName")
-    List<Object[]> getChatroomAndProfileImageByFriendName(String loginName);
-
-    @Query("SELECT cr.userName ,pi FROM ChatRoom cr left join ProfileImage pi on cr.userName = pi.userName " +
-            "WHERE cr.userName != :loginName and cr.friendName = :loginName")
-    Page<Object[]> getChatroomAndProfileImageByUserNamePage(Pageable pageable, String loginName);
-
-    @Query("SELECT cr.friendName ,pi FROM ChatRoom cr left join ProfileImage pi on cr.friendName = pi.userName " +
-            "WHERE cr.userName = :loginName and cr.friendName != :loginName")
-    Page<Object[]> getChatroomAndProfileImageByFriendNamePage(Pageable pageable, String loginName);
-
-    @Query("SELECT CASE WHEN cr.userName = :loginName THEN cr.friendName ELSE cr.userName END as userName, pi " +
-            "FROM ChatRoom cr LEFT JOIN ProfileImage pi ON (CASE WHEN cr.userName = :loginName THEN cr.friendName ELSE cr.userName END) = pi.userName " +
-            "WHERE (cr.userName = :loginName OR cr.friendName = :loginName) AND (cr.userName != cr.friendName)")
+    @Query("SELECT CASE WHEN cr.userName1 = :loginName THEN cr.userName2 ELSE cr.userName1 END as userName, pi " +
+            "FROM ChatRoom cr LEFT JOIN ProfileImage pi ON (CASE WHEN cr.userName1 = :loginName THEN cr.userName2 ELSE cr.userName1 END) = pi.userName " +
+            "WHERE (cr.userName1 = :loginName OR cr.userName2 = :loginName) AND (cr.userName1 != cr.userName2)")
     Page<Object[]> getChatroomAndProfileImage(Pageable pageable, String loginName);
 }

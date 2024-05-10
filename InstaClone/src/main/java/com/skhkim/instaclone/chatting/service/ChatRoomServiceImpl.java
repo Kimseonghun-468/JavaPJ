@@ -3,22 +3,18 @@ package com.skhkim.instaclone.chatting.service;
 import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
-import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.ProfilePageResultDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
-import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,25 +25,23 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Override
     public ChatRoomDTO getORCreateChatRoomID(String loginName, String friendName){
 
-        String checkId = getNamesToId(loginName, friendName);
-        Optional<ChatRoom> chatRoom = chatRoomRepository.getChatIdbyEmails(checkId);
+        List<String> sortedID = getNamesToId(loginName, friendName);
+        Optional<ChatRoom> chatRoom = chatRoomRepository.getChatIdbyNames(sortedID.get(2));
         if(chatRoom.isEmpty()){
-            ChatRoom createdChatRoom = createChatRoomID(loginName, friendName);
-            ChatRoomDTO createdChatRoomDTO = entityToDTO(createdChatRoom);
-            return createdChatRoomDTO;
+            ChatRoom createdChatRoom = createChatRoomID(sortedID);
+            return entityToDTO(createdChatRoom);
         }
         else{
-            ChatRoomDTO chatRoomDTO = entityToDTO(chatRoom.get());
-            return chatRoomDTO;
+            return entityToDTO(chatRoom.get());
         }
     }
     @Override
-    public ChatRoom createChatRoomID(String loginName, String friendName){
-        String roomID = getNamesToId(loginName, friendName);
+    public ChatRoom createChatRoomID(List<String> sortedID){
+        String roomID = sortedID.get(2);
         ChatRoom chatRoom = ChatRoom.builder()
                 .id(roomID)
-                .userName(loginName)
-                .friendName(friendName)
+                .userName1(sortedID.get(0))
+                .userName2(sortedID.get(1))
                 .build();
         chatRoomRepository.save(chatRoom);
 
@@ -55,56 +49,20 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
 
-    private String getNamesToId(String loginName, String friendName){
-        if(loginName.compareTo(friendName) < 0 )
-            return loginName + "_" + friendName;
-        else
-            return friendName + "_" + loginName;
-    }
-    // 여기서 중복된건 걸러야함
-
-    @Override
-    public List<String> getChatroomListByName(String loginName){
-        List<ChatRoom> chatRoomList = chatRoomRepository.getChatRoomsListByName(loginName);
-        List<String> nameList = chatRoomList.stream().map(chatRoom -> {
-            if(!chatRoom.getUserName().equals(loginName)){
-                return chatRoom.getUserName();
-            }
-            else
-                return chatRoom.getFriendName();
-        }).collect(Collectors.toList());
-        return nameList;
-    }
-
-    @Override
-    public Map<String, Object> getChatroomAndProfileImageByLoginName(String loginName){
-        Map<String, Object> chatRoomAndProfileMap = new HashMap<>();
-
-        List<String> nameList = new ArrayList<>();
-        List<ProfileImage> profileImageList = new ArrayList<>();
-        List<Object[]> chatRoomAndProfileImageByUserName = chatRoomRepository.getChatroomAndProfileImageByUserName(loginName);
-        List<Object[]> chatRoomAndProfileImageByFriendName = chatRoomRepository.getChatroomAndProfileImageByFriendName(loginName);
-
-        chatRoomAndProfileImageByFriendName.forEach(arr ->{
-            nameList.add(((ChatRoom) arr[0]).getFriendName());
-            profileImageList.add(((ProfileImage) arr[1]));
-        });
-        chatRoomAndProfileImageByUserName.forEach(arr ->{
-            nameList.add(((ChatRoom) arr[0]).getUserName());
-            profileImageList.add(((ProfileImage) arr[1]));
-        });
-
-        List<ProfileImageDTO> profileImageDTOList =
-                profileImageList.stream().map(profileImage -> {
-                    if (profileImage ==null)
-                        return null;
-                    else
-                        return entityToDTOByProfileImage(profileImage);
-                }).collect(Collectors.toList());
-        chatRoomAndProfileMap.put("nameList", nameList);
-        chatRoomAndProfileMap.put("profileImageList", profileImageDTOList);
-
-        return chatRoomAndProfileMap;
+    private List<String> getNamesToId(String loginName, String friendName){
+        List<String> sortedID = new ArrayList<>();
+        if(loginName.compareTo(friendName) < 0 ) {
+            sortedID.add(loginName);
+            sortedID.add(friendName);
+            sortedID.add(loginName+ "_" + friendName);
+            return sortedID;
+        }
+        else {
+            sortedID.add(friendName);
+            sortedID.add(loginName);
+            sortedID.add(friendName + "_" + loginName);
+            return sortedID;
+        }
     }
 
     @Override
@@ -115,7 +73,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Page<Object[]> result = chatRoomRepository.getChatroomAndProfileImage(pageable, loginName);
         Function<Object[], Map<String, Object>> fn = (arr ->{
             Map<String, Object> chatRoomAndProfileMap = new HashMap<>();
-            chatRoomAndProfileMap.put("friendName", ((String) arr[0]));
+            chatRoomAndProfileMap.put("friendName", (arr[0]));
 
             if(arr[1] == null)
                 chatRoomAndProfileMap.put("profileImage", null);
@@ -125,5 +83,28 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             return chatRoomAndProfileMap;
         });
         return new ProfilePageResultDTO<>(result, fn);
+    }
+    @Override
+    public void registerLastChatTime(String roomID, String comment){
+        Optional<ChatRoom> result = chatRoomRepository.getChatIdbyNames(roomID);
+        if (result.isPresent()){
+            ChatRoom chatRoom = result.get();
+            chatRoom.setLastChat(comment);
+            chatRoom.setLastChatTime(LocalDateTime.now());
+            chatRoomRepository.save(chatRoom);
+        }
+    }
+    @Override
+    public void updateChatroomDisConnectTime(String roomID, String loginName){
+        Optional<ChatRoom> result = chatRoomRepository.getChatIdbyNames(roomID);
+        String[] userNameList = roomID.split("_");
+        if (result.isPresent()){
+            ChatRoom chatRoom = result.get();
+            if (loginName.equals(userNameList[0]))
+                chatRoom.setLastDisConnect1(LocalDateTime.now());
+            else
+                chatRoom.setLastDisConnect2(LocalDateTime.now());
+            chatRoomRepository.save(chatRoom);
+        }
     }
 }

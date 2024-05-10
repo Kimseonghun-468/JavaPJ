@@ -4,12 +4,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString
 public class ChatRoom {
 
@@ -17,10 +21,17 @@ public class ChatRoom {
     private String id;
 
     @Column(nullable = false)
-    private String userName;
+    private String userName1;
 
     @Column(nullable = false)
-    private String friendName;
+    private String userName2;
+
+    private LocalDateTime lastDisConnect1;
+    private LocalDateTime lastDisConnect2;
+    private LocalDateTime lastChatTime;
+    private String lastChat;
+
+
 
 
 

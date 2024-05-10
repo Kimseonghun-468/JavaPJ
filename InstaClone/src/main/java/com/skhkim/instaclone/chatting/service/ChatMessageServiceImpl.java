@@ -59,7 +59,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         else
             return Collections.emptyList();
     }
-
+    @Override
     public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPage(PageRequestDTO pageRequestDTO, String roomID){
         Pageable pageable = pageRequestDTO.getPageable();
         Page<Object[]> result = chatMessageRepository.findByChatRoomId(pageable, roomID);
@@ -68,4 +68,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         );
         return new PageResultDTO<>(result, fn);
     }
+
+
 }

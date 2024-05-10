@@ -41,6 +41,8 @@ public class ChatController {
                 .regDate(LocalDateTime.now())
                 .build();
         chatMessageService.register(reuslt, roomID);
+        chatRoomService.registerLastChatTime(roomID, chatMessageDTO.getContent());
+        // register Room ID를 통해 chatMessageDTO.getcontent랑, LocalDattime.now 두개.
         return reuslt;
     }
 
@@ -64,15 +66,21 @@ public class ChatController {
         return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/chat/getChatRoomAndProfileImage")
-    public ResponseEntity<Map<String, Object>> getChatroomAndProfileImageList(String loginName){
-        Map<String, Object> result = chatRoomService.getChatroomAndProfileImageByLoginName(loginName);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+//    @PostMapping("/chat/getChatRoomAndProfileImage")
+//    public ResponseEntity<Map<String, Object>> getChatroomAndProfileImageList(String loginName){
+//        Map<String, Object> result = chatRoomService.getChatroomAndProfileImageByLoginName(loginName);
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
 
     @PostMapping("/chat/getChatRoomAndProfileImagePage")
     public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getChatroomAndProfileImagePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
         ProfilePageResultDTO<Map<String, Object>, Object[]> result = chatRoomService.getChatroomAndProfileImageByLoginNamePage(profilePageRequestDTO, loginName);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/updateDisConnectTime")
+    public ResponseEntity<String> getTest(String roomID, String loginName){
+        chatRoomService.updateChatroomDisConnectTime(roomID, loginName);
+        return new ResponseEntity<>("성공", HttpStatus.OK);
     }
 }

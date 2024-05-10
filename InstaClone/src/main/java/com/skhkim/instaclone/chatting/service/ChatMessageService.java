@@ -14,6 +14,7 @@ public interface ChatMessageService {
     ChatMessageDTO getNewChatMessageDTO(String name, String content);
     List<ChatMessageDTO> getChatMessageListByRoomID(String roomID);
 
+
     PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPage(PageRequestDTO pageRequestDTO, String roomID);
     default ChatMessageDTO entityToDTO(ChatMessage chatMessage){
 

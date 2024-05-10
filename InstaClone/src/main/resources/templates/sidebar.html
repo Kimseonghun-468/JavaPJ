@@ -1110,10 +1110,23 @@
     }
 
     function disconnect() {
+      var loginName = '[[${memberDTO.name}]]';
       console.log("Disscunec?",stompClient)
       if (stompClient !== null) {
         stompClient.disconnect();
       }
+      console.log(roomID);
+      // 여기서 룸 아이디에 disconnect 타임 조회 해버리기
+      $.ajax({
+        url: "/chat/updateDisConnectTime",
+        type: "POST",
+        data: {roomID:roomID, loginName:loginName},
+        dataType: "JSON",
+        success: function (result){
+          console.log(result);
+        }
+
+      })
       console.log("Disconnected");
     }
 

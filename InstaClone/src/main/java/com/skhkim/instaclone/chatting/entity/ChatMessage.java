@@ -24,7 +24,11 @@ public class ChatMessage{
     private String name;
     private String content;
 
+    private boolean readStatus;
+
     @CreatedDate
     @Column(name = "regdate", updatable = false)
     private LocalDateTime regDate;
+
+
 }
