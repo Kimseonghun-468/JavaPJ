@@ -49,7 +49,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
 
-    private List<String> getNamesToId(String loginName, String friendName){
+    @Override
+    public List<String> getNamesToId(String loginName, String friendName){
         List<String> sortedID = new ArrayList<>();
         if(loginName.compareTo(friendName) < 0 ) {
             sortedID.add(loginName);

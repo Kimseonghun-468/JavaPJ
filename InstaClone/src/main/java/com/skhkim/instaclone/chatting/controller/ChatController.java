@@ -4,10 +4,13 @@ import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.dto.PageResultDTO;
+import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
+import com.skhkim.instaclone.chatting.event.WebSocketEventListener;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.ProfilePageResultDTO;
+import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -31,19 +34,34 @@ public class ChatController {
 
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
+    private final ChatRoomSessionManager chatRoomSessionManager;
     @MessageMapping("/chat/{roomID}")
     @SendTo("/topic/chat/{roomID}")
     public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO) {
         log.info("Room ID :"+ roomID);
+        boolean readStatus;
+        if (chatRoomSessionManager.getRoomJoinNum(roomID) == 2)
+            readStatus = true;
+        else
+            readStatus = false;
         ChatMessageDTO reuslt = ChatMessageDTO.builder()
                 .name(chatMessageDTO.getName())
                 .content(chatMessageDTO.getContent())
                 .regDate(LocalDateTime.now())
+                .readStatus(readStatus)
                 .build();
         chatMessageService.register(reuslt, roomID);
         chatRoomService.registerLastChatTime(roomID, chatMessageDTO.getContent());
-        // register Room ID를 통해 chatMessageDTO.getcontent랑, LocalDattime.now 두개.
+
         return reuslt;
+    }
+
+    @MessageMapping("/chat/accessLoad/{roomID}")
+    @SendTo("/topic/chat/accessLoad/{roomID}")
+    public String accessLoad(@DestinationVariable String roomID, String loginName) {
+        log.info(roomID);
+        log.info(loginName);
+        return loginName;
     }
 
     @PostMapping("/chat/getORCreateChatRoom")
@@ -51,6 +69,8 @@ public class ChatController {
         log.info("Login Name : " +loginName);
         log.info("Friend Name : " +friendName);
         ChatRoomDTO chatRoomDTO = chatRoomService.getORCreateChatRoomID(loginName, friendName);
+        List<String> roomID = chatRoomService.getNamesToId(loginName, friendName);
+        chatMessageService.updateChatMessagesReadStatus(roomID.get(2), friendName);
         return new ResponseEntity<>(chatRoomDTO, HttpStatus.OK);
     }
 

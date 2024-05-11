@@ -326,32 +326,19 @@
   </div>
 </div>
 
-<div class="modal fade" id="chatMessageModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="chatModalLabel">Chat Room</h5>
-        <button type="button" id="close-modal-room" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div id="messages-modal" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: rgb(255, 255, 255);">
-          <div class="modal-header">
-            <button class="past-button" id="past-chat">이전 기록</button>
-          </div>
-          <div class id="messages-box">
+<div class="modal-custom" id="chatMessageModal">
+  <div class="modal-content-message-frame">
+  <div class="modal-body">
+    <div id="messages-modal" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: rgb(255, 255, 255);">
+      <div class id="messages-box">
 
-          </div>
-          <!-- 메시지가 동적으로 여기에 표시됨 -->
-        </div>
-        <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="send-button-modalroom">Send</button>
-        <!--        <button onclick="sendMessage('publicRoom')">Send</button>-->
       </div>
     </div>
+    <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
+    <div class="modal-footer">
+      <button type="button" id="send-button-modalroom">Send</button>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -364,11 +351,23 @@
   var friendListPage = 1;
   var frinedListTotalPage = 1;
   var flag = true;
+  var roomID = ""
+  var chatPage = 1;
+  var chatTotalPage = null;
+  var stompClient = null;
+  var afterDayCheck = null;
+  var beforeDayCheck = null;
+  var chatFlag = true;
+  const options = {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: true,
+    timeZone: "Asia/Seoul"  // 서버 시간대가 UTC라고 가정
+  };
+  const formatter = new Intl.DateTimeFormat('en-US', options);
   function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
-    console.log(commentBox.value)
     var data = {pno:postId, text:commentBox.value, email:userEmail};
     var tempReply = {name:userName, text:commentBox.value};
-    console.log(data);
     $.ajax({
       url: '/reply/'+postId,
       type: "POST",
@@ -376,7 +375,6 @@
       contentType: "application/json; charset=utf-8",
       dataType:"text",
       success: function (result){
-        console.log("result : " + result);
         replyResult = ""
         var replyArea = $("#reply-comment-body");
         replyArea.append(createReplyhtmlbox(userName, tempReply));
@@ -401,7 +399,6 @@
       url: '/post/delete/' + pno,
       type: 'DELETE',
       success: function (result){
-        console.log(result)
       }
     })
   }
@@ -412,7 +409,6 @@
       var loginName = '[[${memberDTO.name}]]';;
 
       $.each(arr, function (idx, reply){
-        console.log(reply);
         replyStr = createReplyhtmlbox(loginName, reply);
         str += replyStr;
       });
@@ -421,7 +417,6 @@
   }
 
   function showUploadedImages(arr){
-    console.log(arr);
     var divArea = $(".uploadResult");
     var str = "";
 
@@ -430,7 +425,6 @@
       str += "<img src='/display?fileName=" + arr[i].thumbnailURL + "'>";
       str += "<button class='removeBtn' data-name='" + arr[i].imageURL + "'>Remove</button>";
       str += "</div>";
-      console.log(str);
     }
     divArea.append(str);
   }
@@ -456,7 +450,6 @@
       type: 'POST',
       dataType: 'text',
       success: function (arr){
-        console.log(arr);
         self.location.reload();
       }
     })
@@ -491,7 +484,6 @@
   function getSearchUserInfo(searchTerm){
     $.getJSON("/search/name/all/"+searchTerm+"?page="+searchPage, function (searchInfo){
 
-      console.log(searchInfo)
       var pageResult = ""
       var searchResult = createSearchInfohtmlbox(searchInfo);
       if (searchInfo.prev != false)
@@ -515,7 +507,6 @@
   }
   function createFriendShipAcceptedInfo(profileAndFriendMap){
     var Result = "";
-    console.log(profileAndFriendMap)
     for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
@@ -545,7 +536,6 @@
 
   function createFriendShipUserInfo(profileAndFriendMap){
     var Result = "";
-    console.log(profileAndFriendMap)
     for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
@@ -607,7 +597,6 @@
 
   function createChatroomListInfo(result){
     Result = "";
-    console.log(result);
     for (var i = 0; i < result.dtoList.length; i++){
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
@@ -639,7 +628,6 @@
       success: function (profileAndChatRoomMap){
         var pageResult = "";
         Result = createChatroomListInfo(profileAndChatRoomMap);
-        console.log(Result);
         if (profileAndChatRoomMap.prev != false)
           pageResult += '<button class="page-link chatroom-page-button" data-name="' + (profileAndChatRoomMap.start-1) + '">NEXT</button>'
         $.each(profileAndChatRoomMap.pageList, function (idx, pageList){
@@ -838,7 +826,211 @@
       }
     });
   }
+  function showFriendProfileFirst(userName, loginName){
+    $.ajax({
+      url: "/profileImage/firstList",
+      type: "POST",
+      data: {userName:userName, loginName:loginName},
+      dataType: "JSON",
+      success: function (result){
+        console.log(result)
 
+        var Result = "";
+        Result += '<div class="user-info-box">';
+        Result += '<div class="profile-box">';
+        if(result.image ==null)
+          Result += '<img src = "/display?fileName=outprofile.png/"' +
+                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+        else
+          Result += '<img src ="/display?fileName=' + result.image.imageURL + '/"' +
+                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+        Result += '</div>';
+        Result += '<div class="user-name-box">'
+        Result += '<a href="/sidebar/' + result.name + '"' +
+                ' class=comment-bold>' + result.name + '</a>';
+        Result += '</div>';
+        Result += '<div class="user-chat-button-box">';
+        Result += '</div>';
+        Result += '</div>';
+
+        if (result.name != null)
+          $('#friend-List-UserBox').prepend(Result);
+      }
+
+    })
+  }
+  function createChatMessagesTag(name, message, showedTime, readStatus){
+    var tag = "";
+    tag += '<div class="message-frame">'
+    tag += '<div class="message-name">';
+    tag += name;
+    tag += '</div>'
+    tag += '<div class="message-comment">';
+    tag += message;
+    tag += '</div>'
+    tag += '<div class="message-time">';
+    tag += showedTime;
+    tag += '</div>'
+    if (readStatus == true) {
+      tag += '<div class="status-true">';
+      tag += "읽음"
+      tag += '</div>'
+    }
+    else{
+      tag += '<div class="status-false">';
+      tag += "읽지 않음";
+      tag += '</div>';
+    }
+    tag += '</div>'
+
+    return tag;
+  }
+  function debounce(func, wait) {
+    let timeout;
+    return function () {
+      clearTimeout(timeout);
+      timeout = setTimeout(func, wait);
+    }
+  }
+
+
+  function sendMessage(RoomID) {
+    var messageContent = document.getElementById('messageInput').value.trim();
+    var name = '[[${memberDTO.name}]]';
+    if(messageContent && stompClient) {
+      var chatMessage = {
+        name: name,
+        content: messageContent
+      };
+      stompClient.send("/app/chat/"+RoomID, {}, JSON.stringify(chatMessage));
+      document.getElementById('messageInput').value = '';
+    }
+  }
+  function showChatMessage(name, message, time, readStatus, reverse) {
+    var messageElement = document.createElement('div');
+    var formattedDateTime = formatter.format(new Date(time));
+    var showedTime = formattedDateTime.slice(21, 23)+" "+
+            formattedDateTime.slice(12, 20)
+    tag = createChatMessagesTag(name, message, showedTime, readStatus);
+
+    if (beforeDayCheck != time.slice(0, 10) && reverse == true) {
+      $('#messages-box').prepend('<h1>' + beforeDayCheck +'</h1>');
+      beforeDayCheck = time.slice(0, 10);
+    }
+    if (afterDayCheck != time.slice(0, 10) && reverse == false){
+      afterDayCheck = time.slice(0, 10);
+      $('#messages-box').append('<h1>' + afterDayCheck +'</h1>');
+    }
+
+    if (reverse==true)
+      $('#messages-box').prepend(tag);
+    else {
+      $('#messages-box').append(tag);
+      $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
+    }
+
+  }
+  function connect(RoomID) {
+    var socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    var connectPromise = new Promise((resolve, reject) => {
+      stompClient.connect({'roomId': RoomID}, function (frame) {
+        stompClient.subscribe('/topic/chat/'+RoomID, function (chatMessage) {
+          showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content,
+                  JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false);
+        });
+        stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, function (result){
+          console.log(result.body)
+          if (result.body != '[[${memberDTO.name}]]'){
+            $('.status-false').text("읽음");
+          }
+        })
+        resolve();
+      }, function (erorr){
+        reject();
+      });
+    });
+    connectPromise.then(()=>{
+      var loginName = '[[${memberDTO.name}]]';
+      stompClient.send("/app/chat/accessLoad/"+roomID, {}, loginName);
+    })
+  }
+  function disconnect(RoomID) {
+    var loginName = '[[${memberDTO.name}]]';
+    if (stompClient !== null) {
+      stompClient.disconnect({'roomId': RoomID});
+    }
+    // 여기서 룸 아이디에 disconnect 타임 조회 해버리기
+    $.ajax({
+      url: "/chat/updateDisConnectTime",
+      type: "POST",
+      data: {roomID:roomID, loginName:loginName},
+      dataType: "JSON",
+      success: function (result){
+        console.log("Disconnected");
+      }
+    })
+  }
+  function showChatInfo(roomID){
+    $.ajax({
+      url: '/chat/getChatListbyRoomIDPage?page=' + chatPage,
+      type: 'POST',
+      dataType: 'JSON',
+      data: {roomID: roomID},
+      success: function (pageRequestChatDTO) {
+        if (pageRequestChatDTO.dtoList.length > 0) {
+          beforeDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
+          afterDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
+          console.log(afterDayCheck)
+        }
+        chatTotalPage = pageRequestChatDTO.totalPage;
+
+        $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
+          showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true);
+        })
+        chatPage +=1
+        $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
+        async function chatScrollPaging() {
+          if (scrollContainer.scrollTop ==0) {
+            $('#messages-modal').scrollTop(10);
+          }
+
+          if (scrollContainer.scrollTop >=5 &&  scrollContainer.scrollTop <= 200){
+            if (chatTotalPage >= chatPage && chatFlag) {
+              chatFlag = false
+              await showChatInfo2(roomID);
+              chatFlag =true
+            }
+          }
+        }
+        const scrollContainer = document.getElementById('messages-modal');
+        scrollContainer.addEventListener('scroll', debounce(chatScrollPaging,300));
+
+      }
+    })
+  }
+  async function showChatInfo2(roomID){
+    try {
+      const response = await $.ajax({
+        url: '/chat/getChatListbyRoomIDPage?page=' + chatPage,
+        type: 'POST',
+        dataType: 'JSON',
+        data: {roomID: roomID},
+      })
+      chatPage += 1
+      $.each(response.dtoList, function (idx, chatMessageDTO) {
+        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true);
+      })
+      if (chatPage == chatTotalPage +1)
+        if (response.dtoList.length != 0){
+          console.log(response.dtoList)
+          var lastTime = response.dtoList[response.dtoList.length-1].regDate.slice(0, 10);
+          $('#messages-box').prepend('<h1>' + lastTime +'</h1>')
+        }
+    } catch (error){
+      throw error;
+    }
+  }
   $(function (){
     $('.uploadButton-post').off('click').click(function() {
       $('.post-Image-File').off('change');
@@ -897,11 +1089,6 @@
                 ' alt=\"Profile Picture\" class=\"post-image\">'
         $("#modal-content-profile-imagebox").html(str);
       }
-    })
-
-
-    $("#friend-List").click(function (){
-      console.log("Show Friend List")
     })
   });
 
@@ -962,41 +1149,6 @@
       var userName = '[[${userName}]]';
       var loginName = '[[${memberDTO.name}]]';
 
-      function showFriendProfileFirst(userName, loginName){
-        $.ajax({
-          url: "/profileImage/firstList",
-          type: "POST",
-          data: {userName:userName, loginName:loginName},
-          dataType: "JSON",
-          success: function (result){
-            console.log(result)
-
-            var Result = "";
-            Result += '<div class="user-info-box">';
-            Result += '<div class="profile-box">';
-            if(result.image ==null)
-              Result += '<img src = "/display?fileName=outprofile.png/"' +
-                      ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-            else
-              Result += '<img src ="/display?fileName=' + result.image.imageURL + '/"' +
-                      ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
-            Result += '</div>';
-            Result += '<div class="user-name-box">'
-            Result += '<a href="/sidebar/' + result.name + '"' +
-                    ' class=comment-bold>' + result.name + '</a>';
-            Result += '</div>';
-            Result += '<div class="user-chat-button-box">';
-            Result += '</div>';
-            Result += '</div>';
-
-            if (result.name != null)
-              $('#friend-List-UserBox').prepend(Result);
-          }
-
-        })
-      }
-
-
       showFriendProfileFirst(userName, loginName)
       showFriendProfileUserList(userName, loginName, friendListPage)
       const scrollContainer = document.getElementById('friend-list-UserModal');
@@ -1009,12 +1161,6 @@
           }
         }
       });
-      // $('#friend-List-page').off('click').on('click', '.friend-page-button', function (){
-      //   var presentPage = $(this).attr('data-name');
-      //   friendListPage = presentPage
-      //   showFriendProfileUserList(userName, loginName, friendListPage)
-      // })
-
 
     })
 
@@ -1085,96 +1231,10 @@
       sendDeleteFriendShipRequest(loginName, requesterName, $button)
     })
 
-    var roomID = ""
-    var page = 1;
-    var totalPage = null
-    var stompClient = null;
-    var dayCheck = null
-    const options = {
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-      hour12: true,
-      timeZone: "Asia/Seoul"  // 서버 시간대가 UTC라고 가정
-    };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    function connect(RoomID) {
-      var socket = new SockJS('/ws');
-      stompClient = Stomp.over(socket);
-      stompClient.connect({}, function (frame) {
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/chat/'+RoomID, function (chatMessage) {
-          showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content, JSON.parse(chatMessage.body).regDate);
-        });
-      });
-      console.log("Connect stomp Client : ", stompClient)
-    }
-
-    function disconnect() {
-      var loginName = '[[${memberDTO.name}]]';
-      console.log("Disscunec?",stompClient)
-      if (stompClient !== null) {
-        stompClient.disconnect();
-      }
-      console.log(roomID);
-      // 여기서 룸 아이디에 disconnect 타임 조회 해버리기
-      $.ajax({
-        url: "/chat/updateDisConnectTime",
-        type: "POST",
-        data: {roomID:roomID, loginName:loginName},
-        dataType: "JSON",
-        success: function (result){
-          console.log(result);
-        }
-
-      })
-      console.log("Disconnected");
-    }
-
-    function sendMessage(RoomID) {
-      console.log("Send Request Room id : ", RoomID);
-      var messageContent = document.getElementById('messageInput').value.trim();
-      var name = '[[${memberDTO.name}]]';
-      console.log("Message Content! : ",messageContent);
-      if(messageContent && stompClient) {
-        var chatMessage = {
-          name: name,
-          content: messageContent
-        };
-
-        console.log("Send Rquest Direction : ");
-        stompClient.send("/app/chat/"+RoomID, {}, JSON.stringify(chatMessage));
-        document.getElementById('messageInput').value = '';
-      }
-    }
-    function showChatMessageReverse(name, message, time) {
-      var messageElement = document.createElement('div');
-      console.log(time);
-
-      var formattedDateTime = formatter.format(new Date(time));
-      var showedTime = formattedDateTime.slice(21, 23)+" "+
-              formattedDateTime.slice(12, 20)
-      console.log(showedTime);
-      if (dayCheck != time.slice(0, 10)) {
-        var dayElement = document.createElement('h1');
-        dayElement.innerText = dayCheck;
-        document.getElementById('messages-box').prepend(dayElement);
-        dayCheck = time.slice(0, 10);
-      }
-      messageElement.innerText = name + ": " + message + " ------------ 시간 : " + showedTime;
-      document.getElementById('messages-box').prepend(messageElement);
-    }
-    function showChatMessage(name, message, time){
-      var messageElement = document.createElement('div');
-      var formattedDateTime = formatter.format(new Date(time));
-      var showedTime = formattedDateTime.slice(21, 23)+" "+
-              formattedDateTime.slice(12, 20)
-      messageElement.innerText = name + ": " + message + " ------------ 시간 : " + showedTime;
-      document.getElementById('messages-box').appendChild(messageElement);
-    }
-
     $(document).on('click', '.request-Chatroom-button', function (){
       var loginName = '[[${memberDTO.name}]]';
       var requesterName = $(this).attr('data-name');
+      $('#chatMessageModal').css('z-index', 1052).modal('show');
       $.ajax({
         url: '/chat/getORCreateChatRoom',
         type: 'POST',
@@ -1183,54 +1243,9 @@
         success: function (chatRoomDTO) {
           roomID = chatRoomDTO.id;
           connect(chatRoomDTO.id);
-          $.ajax({
-            url: '/chat/getChatListbyRoomIDPage?page=1',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {roomID: roomID},
-            success: function (pageRequestChatDTO) {
-              if (pageRequestChatDTO.dtoList.length > 0) {
-                dayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
-              }
-              totalPage = pageRequestChatDTO.totalPage;
-
-              $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
-                showChatMessageReverse(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
-
-              })
-              var messageElement = document.createElement('div');
-              messageElement.innerText = '-----이전 기록-----';
-              document.getElementById('messages-box').appendChild(messageElement);
-            }
-          })
-          $('#past-chat').off('click').on('click', function () {
-            page += 1;
-            if (totalPage >= page) {
-              $.ajax({
-                url: '/chat/getChatListbyRoomIDPage?page=' + page,
-                type: 'POST',
-                dataType: 'JSON',
-                data: {roomID: roomID},
-                success: function (pageRequestChatDTO) {
-                  console.log("ChatMessageDTOLIST : ", pageRequestChatDTO);
-                  $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
-                    showChatMessageReverse(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate);
-                  })
-                }
-              })
-            }
-            else if (totalPage == page - 1) {
-              var dayElement = document.createElement('h1');
-              dayElement.innerText = dayCheck;
-              document.getElementById('messages-box').prepend(dayElement);
-            }
-            else {
-              alert("조회 할 목록이 없습니다.")
-            }
-          })
+          showChatInfo(roomID);
         }
       })
-      $('#chatMessageModal').modal('show');
     })
 
     $('#send-button-modalroom').click(function (){
@@ -1241,9 +1256,8 @@
     $('#chatMessageModal').on('hidden.bs.modal', function () {
       document.getElementById('messages-box').innerHTML = '';
       console.log("Modal closed");
-      console.log("PAGE1 : !!"+ page);
-      page = 1;
-      disconnect();
+      chatPage = 1;
+      disconnect(roomID);
     });
 
   });
@@ -1264,8 +1278,6 @@
         data: {pno:postId},
         dataType:"JSON",
         success: function (result){
-          console.log(result);
-
           var carouselTag = "";
           var titleTag = "<div class='title-text'>" + result.title +"</div>";
           var commentTag ="<div class='comment-text'>" + result.comment +"</div>";
@@ -1303,8 +1315,6 @@
 
 
       $('#myModal').on('click', '#post-option', function (){
-        console.log('post-option event');
-        console.log(postId)
         $('#post-option-modal').css('z-index', 1051).modal('show');
         $('#remove-post').off('click').on('click', function (){
           sendPostDeleteRequest(postId)

@@ -6,6 +6,7 @@ import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.repository.ChatMessageRepository;
+import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class ChatMessageServiceImpl implements ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Override
     public ChatMessageDTO getNewChatMessageDTO(String name, String content){
@@ -40,11 +43,26 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .name(chatMessageDTO.getName())
                 .content(chatMessageDTO.getContent())
                 .chatRoom(ChatRoom.builder().id(roomID).build())
+                .readStatus(chatMessageDTO.isReadStatus())
                 .regDate(chatMessageDTO.getRegDate())
                 .build();
         chatMessageRepository.save(chatMessage);
 
         return chatMessage.getCid();
+    }
+    @Override
+    public void updateChatMessagesReadStatus(String roomID, String userName){
+        Optional<ChatRoom> result = chatRoomRepository.getChatIdbyNames(roomID);
+        if (result.isPresent()){
+            ChatRoom chatRoom = result.get();
+            if (chatRoom.getUserName1().equals(userName))
+                chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userName, chatRoom.getLastDisConnect2());
+            else
+                chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userName, chatRoom.getLastDisConnect1());
+        }
+
+
+
     }
 
     @Override

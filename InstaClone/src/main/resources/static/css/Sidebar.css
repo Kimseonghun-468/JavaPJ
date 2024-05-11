@@ -587,3 +587,36 @@ textarea {
 .reply-option-modal{
     background-color: rgba(0,0,0,0.4);
 }
+
+.modal-content-message-frame {
+    background-color: #fefefe;
+    margin: 0% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    max-height: 85%;
+    overflow: scroll;
+}
+
+.message-frame {
+    display: flex;
+    height: 40px;
+}
+
+.message-time {
+    width: 20%;
+}
+
+.message-comment{
+    width: 40%;
+}
+.message-name{
+    width: 20%;
+    padding-left: 5px;
+}
+.status-true {
+    width: 15%;
+}
+.status-false {
+    width: 15%;
+}

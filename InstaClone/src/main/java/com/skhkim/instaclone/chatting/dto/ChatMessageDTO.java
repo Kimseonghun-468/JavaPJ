@@ -14,4 +14,6 @@ public class ChatMessageDTO {
     private String name;
     private String content;
     private LocalDateTime regDate;
+
+    private boolean readStatus;
 }

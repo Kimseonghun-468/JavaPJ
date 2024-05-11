@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public interface ChatRoomService {
 
+    List<String> getNamesToId(String loginName, String friendName);
     ChatRoomDTO getORCreateChatRoomID(String loginName, String friendName);
     ChatRoom createChatRoomID(List<String> sortedID);
 //    List<String> getChatroomListByName(String loginEmail);

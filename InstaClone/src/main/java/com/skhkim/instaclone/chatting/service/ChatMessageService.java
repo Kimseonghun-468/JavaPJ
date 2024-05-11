@@ -14,6 +14,7 @@ public interface ChatMessageService {
     ChatMessageDTO getNewChatMessageDTO(String name, String content);
     List<ChatMessageDTO> getChatMessageListByRoomID(String roomID);
 
+    void updateChatMessagesReadStatus(String roomID, String userName);
 
     PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPage(PageRequestDTO pageRequestDTO, String roomID);
     default ChatMessageDTO entityToDTO(ChatMessage chatMessage){
@@ -23,6 +24,7 @@ public interface ChatMessageService {
                 .name(chatMessage.getName())
                 .content(chatMessage.getContent())
                 .regDate(chatMessage.getRegDate())
+                .readStatus(chatMessage.isReadStatus())
                 .build();
 
         return chatMessageDTO;
