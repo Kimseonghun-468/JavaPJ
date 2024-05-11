@@ -329,8 +329,9 @@ textarea {
     border: 1px solid #888;
     width: 85%;
     min-height: 40%;
-    max-height: 85%;
+    max-height: 80%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    overflow: scroll;
 
 }
 .search-list{
@@ -618,5 +619,19 @@ textarea {
     width: 15%;
 }
 .status-false {
+    width: 15%;
+}
+.last-chat-comment{
+    width: 20%;
+}
+.last-chat-time{
+    width: 10%;
+}
+.not-read-num{
+    width: 5%;
+    display: flex;
+    justify-content: center;
+}
+.user-chat-button-box3{
     width: 15%;
 }

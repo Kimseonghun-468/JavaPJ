@@ -14,10 +14,8 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
     @Query("SELECT cr FROM ChatRoom cr WHERE cr.id = :namesToId")
     Optional<ChatRoom> getChatIdbyNames(@Param("namesToId") String namesToId);
 
-
-
-    @Query("SELECT CASE WHEN cr.userName1 = :loginName THEN cr.userName2 ELSE cr.userName1 END as userName, pi " +
+    @Query("SELECT CASE WHEN cr.userName1 = :loginName THEN cr.userName2 ELSE cr.userName1 END as userName, cr.lastChat, cr.lastChatTime, pi " +
             "FROM ChatRoom cr LEFT JOIN ProfileImage pi ON (CASE WHEN cr.userName1 = :loginName THEN cr.userName2 ELSE cr.userName1 END) = pi.userName " +
-            "WHERE (cr.userName1 = :loginName OR cr.userName2 = :loginName) AND (cr.userName1 != cr.userName2)")
+            "WHERE (cr.userName1 = :loginName OR cr.userName2 = :loginName) AND (cr.userName1 != cr.userName2) ORDER BY cr.lastChatTime DESC ")
     Page<Object[]> getChatroomAndProfileImage(Pageable pageable, String loginName);
 }

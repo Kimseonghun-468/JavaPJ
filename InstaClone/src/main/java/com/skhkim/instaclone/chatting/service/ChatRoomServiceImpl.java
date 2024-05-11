@@ -75,11 +75,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Function<Object[], Map<String, Object>> fn = (arr ->{
             Map<String, Object> chatRoomAndProfileMap = new HashMap<>();
             chatRoomAndProfileMap.put("friendName", (arr[0]));
+            chatRoomAndProfileMap.put("lastChat", (arr[1]));
+            chatRoomAndProfileMap.put("lastChatTime", (arr[2]));
 
-            if(arr[1] == null)
+            if(arr[3] == null)
                 chatRoomAndProfileMap.put("profileImage", null);
             else
-                chatRoomAndProfileMap.put("profileImage", entityToDTOByProfileImage((ProfileImage) arr[1]));
+                chatRoomAndProfileMap.put("profileImage", entityToDTOByProfileImage((ProfileImage) arr[3]));
 
             return chatRoomAndProfileMap;
         });

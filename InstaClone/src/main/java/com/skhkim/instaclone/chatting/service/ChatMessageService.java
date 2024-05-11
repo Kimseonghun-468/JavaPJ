@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface ChatMessageService {
 
+    Long getNotReadNum(String loginName, String friendName);
     Long register(ChatMessageDTO chatMessageDTO, String roomID);
     ChatMessageDTO getNewChatMessageDTO(String name, String content);
     List<ChatMessageDTO> getChatMessageListByRoomID(String roomID);

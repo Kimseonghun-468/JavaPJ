@@ -17,7 +17,7 @@ public class ProfilePageRequestDTO {
     private String keyword;
     public ProfilePageRequestDTO(){
         this.page = 1;
-        this.size = 6;
+        this.size = 3;
 
     }
     public Pageable getPageable(){

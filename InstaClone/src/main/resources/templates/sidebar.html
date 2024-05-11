@@ -302,7 +302,7 @@
 </div>
 </html>
 
-<div id="frined-List-UserModal" class="modal-custom">
+<div id="friend-List-UserModal" class="modal-custom">
   <div class="modal-content-side-frame" id="friend-list-UserModal">
 
     <div id="friend-List-UserBox" class="side-border">
@@ -349,8 +349,9 @@
   var postPage = 1;
   var searchPage = 1;
   var friendListPage = 1;
-  var frinedListTotalPage = 1;
+  var frinenListTotalPage = 1;
   var flag = true;
+  var friendFlag = true;
   var roomID = ""
   var chatPage = 1;
   var chatTotalPage = null;
@@ -358,6 +359,8 @@
   var afterDayCheck = null;
   var beforeDayCheck = null;
   var chatFlag = true;
+  var loginName = '[[${memberDTO.name}]]'
+  var userName = '[[${userName}]]';
   const options = {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -389,7 +392,6 @@
       contentType: "application/json; charset=utf-8",
       dataType: "text",
       success: function (result){
-        console.log("result : " +result);
         $('[data-rno="' + rno + '"]').closest('.comment-body-reply').remove();
       }
     })
@@ -595,9 +597,22 @@
     return Result;
   }
 
+   function getNotReadMessageNum(friendName, loginName) {
+     $.ajax({
+       url: "/chat/getNotReadNum",
+       type: "POST",
+       dataType: "JSON",
+       data: {loginName: loginName, friendName: friendName},
+       success: function (result){
+         $('#num-'+friendName).html(result);
+       }
+     })
+
+   }
   function createChatroomListInfo(result){
     Result = "";
     for (var i = 0; i < result.dtoList.length; i++){
+      getNotReadMessageNum(result.dtoList[i].friendName, loginName)
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
       if(result.dtoList[i].profileImage != null)
@@ -610,7 +625,15 @@
       Result += '<div class ="user-name-box">';
       Result += '<a class ="user-name">' +result.dtoList[i].friendName+'</a>';
       Result += '</div>';
-      Result += '<div class ="user-chat-button-box">';
+      Result += '<div class ="last-chat-comment">';
+      Result += result.dtoList[i].lastChat;
+      Result += '</div>';
+      Result += '<div class ="last-chat-time">';
+      Result += result.dtoList[i].lastChatTime.slice(5,10) + " " + " " + result.dtoList[i].lastChatTime.slice(11, 16);
+      Result += '</div>';
+      Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].friendName + '">';
+      Result += '</div>';
+      Result += '<div class ="user-chat-button-box3">';
       Result += '<button data-name =' + result.dtoList[i].friendName + ' class=\"request-Chatroom-button\">대화창 열기</button>'
       Result += '</div>';
       Result += '</div>';
@@ -619,7 +642,6 @@
     return Result;
   }
   function showChatroomAndProfileImageList(loginName){
-    console.log(chatRoomPage);
     $.ajax({
       url: "/chat/getChatRoomAndProfileImagePage?Page=" + chatRoomPage,
       type: "POST",
@@ -648,14 +670,12 @@
   }
 
   function showFriendProfileWaitingImageList(loginName, requestedPage){
-    console.log(loginName);
     $.ajax({
       url: '/profileImage/waitingList?page='+requestedPage,
       type: "POST",
       data: {loginName:loginName},
       dataType: "JSON",
       success: function (profileAndFriendMap){
-        console.log(profileAndFriendMap)
         var pageResult = ""
         friendshipResult = createFriendShipWaitingInfo(profileAndFriendMap);
         if (profileAndFriendMap.prev != false)
@@ -682,7 +702,6 @@
       data: {loginName:loginName},
       dataType: "JSON",
       success: function (profileAndFriendMap){
-        console.log(profileAndFriendMap);
         var pageResult = ""
         friendshipResult = createFriendShipAcceptedInfo(profileAndFriendMap);
         if (profileAndFriendMap.prev != false)
@@ -703,25 +722,23 @@
     });
   }
 
-  function showFriendProfileUserList(userName, loginName, friendListPage){
-
-    $.ajax({
-      url: '/profileImage/friendList?page='+friendListPage,
-      type: "POST",
-      data: {userName:userName, loginName:loginName},
-      dataType: "JSON",
-      success: function (profileAndFriendMap){
-        console.log(profileAndFriendMap);
-        var pageResult = ""
-        frinedListTotalPage = profileAndFriendMap.end;
-        createFriendShipUserInfo(profileAndFriendMap);
-      }
-    });
+  async function showFriendProfileUserList(userName, loginName, friendListPage){
+    try {
+      const response = await $.ajax({
+        url: '/profileImage/friendList?page=' + friendListPage,
+        type: "POST",
+        data: {userName: userName, loginName: loginName},
+        dataType: "JSON",
+      })
+      friendListTotalPage = response.end;
+      createFriendShipUserInfo(response);
+    } catch (error){
+      throw error;
+    }
   }
 
   function sendAcceptFriendShipRequest(loginName, requesterName, $button){
     var data = {loginName:loginName, requesterName:requesterName};
-    console.log(loginName);
     $.ajax({
       url: '/friendShip/acceptFriendShipRequest',
       type: "POST",
@@ -760,11 +777,9 @@
       type: 'POST',
       dataType: 'json',
       success: function (result) {
-        console.log(result);
         var str = "";
         var carouselTag = "";
         $.each(result, function (idx, imageInfo) {
-          console.log(imageInfo);
           str += "<input type='hidden' name='imageDTOList["+idx+"].imgName' value='"+imageInfo['fileName'] +"'>";
           str += "<input type='hidden' name='imageDTOList["+idx+"].path' value='"+imageInfo['folderPath']+"'>";
           str += "<input type='hidden' name='imageDTOList["+idx+"].uuid' value='"+imageInfo['uuid']+"'>";
@@ -776,7 +791,6 @@
           carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
           carouselTag += '</div>';
         });
-        console.log(str);
         if(result.length ==1){
           $(".carousel-control-next").html("")
           $(".carousel-control-prev").html("")
@@ -804,19 +818,16 @@
       type: 'POST',
       dataType: 'json',
       success: function (result) {
-        console.log(result);
         // showUploadedImages(result)
         var userName = '[[${memberDTO.name}]]';
         var str = "";
         result.forEach((item, index) => {
-          console.log(item);
           str += "<input type='hidden' name='imgName' value='" + item['fileName'] + "'>";
           str += "<input type='hidden' name='path' value='" + item['folderPath'] + "'>";
           str += "<input type='hidden' name='uuid' value='" + item['uuid'] + "'>";
           str += "<input type='hidden' name='userName' value='" + userName + "'>";
           str += "<input type='hidden' name='userEmail' value='" + '[[${memberDTO.email}]]' + "'>";
         })
-        console.log(str);
         $("#profile-box").html(str);
         $("#Profile-Image").submit();
 
@@ -833,8 +844,6 @@
       data: {userName:userName, loginName:loginName},
       dataType: "JSON",
       success: function (result){
-        console.log(result)
-
         var Result = "";
         Result += '<div class="user-info-box">';
         Result += '<div class="profile-box">';
@@ -894,6 +903,7 @@
   }
 
 
+
   function sendMessage(RoomID) {
     var messageContent = document.getElementById('messageInput').value.trim();
     var name = '[[${memberDTO.name}]]';
@@ -940,7 +950,6 @@
                   JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false);
         });
         stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, function (result){
-          console.log(result.body)
           if (result.body != '[[${memberDTO.name}]]'){
             $('.status-false').text("읽음");
           }
@@ -981,7 +990,6 @@
         if (pageRequestChatDTO.dtoList.length > 0) {
           beforeDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
           afterDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
-          console.log(afterDayCheck)
         }
         chatTotalPage = pageRequestChatDTO.totalPage;
 
@@ -989,22 +997,13 @@
           showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true);
         })
         chatPage +=1
-        $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
-        async function chatScrollPaging() {
-          if (scrollContainer.scrollTop ==0) {
-            $('#messages-modal').scrollTop(10);
-          }
-
-          if (scrollContainer.scrollTop >=5 &&  scrollContainer.scrollTop <= 200){
-            if (chatTotalPage >= chatPage && chatFlag) {
-              chatFlag = false
-              await showChatInfo2(roomID);
-              chatFlag =true
-            }
+        if (pageRequestChatDTO.end ==1){
+          if(pageRequestChatDTO.dtoList.length != 0){
+            var lastTime = pageRequestChatDTO.dtoList[pageRequestChatDTO.dtoList.length-1].regDate.slice(0, 10);
+            $('#messages-box').prepend('<h1>' + lastTime +'</h1>')
           }
         }
-        const scrollContainer = document.getElementById('messages-modal');
-        scrollContainer.addEventListener('scroll', debounce(chatScrollPaging,300));
+        $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
 
       }
     })
@@ -1023,7 +1022,6 @@
       })
       if (chatPage == chatTotalPage +1)
         if (response.dtoList.length != 0){
-          console.log(response.dtoList)
           var lastTime = response.dtoList[response.dtoList.length-1].regDate.slice(0, 10);
           $('#messages-box').prepend('<h1>' + lastTime +'</h1>')
         }
@@ -1040,9 +1038,7 @@
           var formData = new FormData();
           var inputFile = $("input.post-Image-File");
           var files = inputFile[0].files;
-          console.log("TTT : " + files[0]);
           for (var i = 0; i < files.length; i++){
-            console.log(files[i]);
             formData.append("uploadFiles", files[i]);
           }
           uploadImageAndPostRegisterRequset(formData);
@@ -1050,7 +1046,6 @@
         }
         $('#upload-post-button').click(function() {
           alert('포스트 파일이 제출되었습니다.');
-          console.log(inputFile);
           $('#upload-form').submit();
           $('.Post-File-Modal').modal('hide');
 
@@ -1067,13 +1062,11 @@
           var formData = new FormData();
           var inputFile = $("input.profile-Image-File");
           var files = inputFile[0].files;
-          console.log(files[0]);
           formData.append("uploadFiles", files[0]);
         }
         $('.submitFile-Profile').click(function() {
           uploadImageAndProfileRegisterRequset(formData);
           alert('프로필 파일이 제출되었습니다.');
-          console.log(inputFile);
           $('.filemodal').modal('hide');
         });
       });
@@ -1095,7 +1088,6 @@
   $(function (){
     $(document).on('click', '.request-Follow-button', function (){
       var loadName = '[[${userName}]]';
-      console.log("@@@@@@@@@")
       sendFollowRequest(loadName);
     });
 
@@ -1143,27 +1135,39 @@
         showFriendProfileAcceptedImageList(loginName, acceptedPage);
       })
     })
-
-    $("#friend-List").click(function (){
-      $('#frined-List-UserModal').modal('show');
-      var userName = '[[${userName}]]';
-      var loginName = '[[${memberDTO.name}]]';
-
-      showFriendProfileFirst(userName, loginName)
-      showFriendProfileUserList(userName, loginName, friendListPage)
-      const scrollContainer = document.getElementById('friend-list-UserModal');
-      scrollContainer.addEventListener('scroll', () => {
+    $(function () {
+      async function friendScrollPaging(){
+        const scrollContainer = document.getElementById('friend-list-UserModal');
         let val = scrollContainer.scrollHeight - scrollContainer.scrollTop
         if (scrollContainer.clientHeight -15 <= val  &&  val <= scrollContainer.clientHeight +15) {
-          if (frinedListTotalPage >= friendListPage) {
+          if (friendListTotalPage >= friendListPage && friendFlag) {
+            friendFlag = false
             friendListPage += 1
-            showFriendProfileUserList(userName, loginName, friendListPage)
+            await showFriendProfileUserList(userName, loginName, friendListPage)
+            friendFlag = true
           }
         }
-      });
+      }
+      const debouncedPaging = debounce(friendScrollPaging,300);
+      const scrollContainer = document.getElementById('friend-list-UserModal');
+      $("#friend-List").click(function () {
+        $('#friend-List-UserModal').modal('show');
+        var userName = '[[${userName}]]';
+        var loginName = '[[${memberDTO.name}]]';
 
-    })
+        showFriendProfileFirst(userName, loginName)
+        showFriendProfileUserList(userName, loginName, friendListPage)
+        scrollContainer.addEventListener('scroll', debouncedPaging);
 
+      })
+      $('#friend-List-UserModal').on('hidden.bs.modal', function () {
+        friendListPage = 1;
+        friendListTotalPage = null;
+        $('#friend-List-UserBox').html("");
+        scrollContainer.removeEventListener('scroll', debouncedPaging);
+
+      })
+    });
     $(".chatting-roomList").click(function (){
       $('#chatroom-Modal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
@@ -1185,7 +1189,6 @@
         data: {loginName:loginName},
         dataType: "JSON",
         success: function (result){
-          console.log(result);
           var postResult = "";
           var postPageResult = "";
           $.each(result.dtoList, function (idx, dtoList){
@@ -1220,7 +1223,6 @@
       var loginName = '[[${memberDTO.name}]]';
       var requesterName = $(this).attr('data-name');
       var $button = $(this);
-      console.log("!!!!뺴애액");
       sendAcceptFriendShipRequest(loginName, requesterName, $button);
     })
 
@@ -1231,34 +1233,51 @@
       sendDeleteFriendShipRequest(loginName, requesterName, $button)
     })
 
-    $(document).on('click', '.request-Chatroom-button', function (){
-      var loginName = '[[${memberDTO.name}]]';
-      var requesterName = $(this).attr('data-name');
-      $('#chatMessageModal').css('z-index', 1052).modal('show');
-      $.ajax({
-        url: '/chat/getORCreateChatRoom',
-        type: 'POST',
-        dataType: 'JSON',
-        data: {loginName: loginName, friendName: requesterName},
-        success: function (chatRoomDTO) {
-          roomID = chatRoomDTO.id;
-          connect(chatRoomDTO.id);
-          showChatInfo(roomID);
+    $(function (){
+      async function chatScrollPaging() {
+        if (scrollContainer.scrollTop ==0) {
+          $('#messages-modal').scrollTop(10);
         }
+
+        if (scrollContainer.scrollTop >=5 &&  scrollContainer.scrollTop <= 200){
+          if (chatTotalPage >= chatPage && chatFlag) {
+            chatFlag = false
+            await showChatInfo2(roomID);
+            chatFlag =true
+          }
+        }
+      }
+      const scrollContainer = document.getElementById('messages-modal');
+      const debouncedPaging = debounce(chatScrollPaging,300);
+      $(document).on('click', '.request-Chatroom-button', function (){
+        var loginName = '[[${memberDTO.name}]]';
+        var requesterName = $(this).attr('data-name');
+        $('#chatMessageModal').css('z-index', 1052).modal('show');
+        $.ajax({
+          url: '/chat/getORCreateChatRoom',
+          type: 'POST',
+          dataType: 'JSON',
+          data: {loginName: loginName, friendName: requesterName},
+          success: function (chatRoomDTO) {
+            roomID = chatRoomDTO.id;
+            connect(chatRoomDTO.id);
+            showChatInfo(roomID);
+            scrollContainer.addEventListener('scroll', debouncedPaging);
+          }
+        })
+      })
+      $('#chatMessageModal').on('hidden.bs.modal', function () {
+        document.getElementById('messages-box').innerHTML = '';
+        chatPage = 1;
+        disconnect(roomID);
+        scrollContainer.removeEventListener('scroll', debouncedPaging);
+      });
+
+
+      $('#send-button-modalroom').click(function (){
+        sendMessage(roomID);
       })
     })
-
-    $('#send-button-modalroom').click(function (){
-      console.log("Send-button-modalroom")
-      sendMessage(roomID);
-    })
-
-    $('#chatMessageModal').on('hidden.bs.modal', function () {
-      document.getElementById('messages-box').innerHTML = '';
-      console.log("Modal closed");
-      chatPage = 1;
-      disconnect(roomID);
-    });
 
   });
 
@@ -1309,7 +1328,6 @@
       showReplyListInPost(postId);
 
       $('#reply-send').off('click').on('click', function (){
-        console.log(commentBox);
         sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
       });
 

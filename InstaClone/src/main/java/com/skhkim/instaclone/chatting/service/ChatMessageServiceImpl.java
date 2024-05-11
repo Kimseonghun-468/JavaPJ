@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -60,9 +61,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             else
                 chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userName, chatRoom.getLastDisConnect1());
         }
-
-
-
     }
 
     @Override
@@ -87,5 +85,27 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return new PageResultDTO<>(result, fn);
     }
 
+    @Override
+    public Long getNotReadNum(String loginName, String friendName){
+        String roomID = getNamesToId(loginName, friendName).get(2);
+        Long resultNum = chatMessageRepository.getNotReadNum(roomID, friendName);
+        return resultNum;
+    }
+
+    public List<String> getNamesToId(String loginName, String friendName){
+        List<String> sortedID = new ArrayList<>();
+        if(loginName.compareTo(friendName) < 0 ) {
+            sortedID.add(loginName);
+            sortedID.add(friendName);
+            sortedID.add(loginName+ "_" + friendName);
+            return sortedID;
+        }
+        else {
+            sortedID.add(friendName);
+            sortedID.add(loginName);
+            sortedID.add(friendName + "_" + loginName);
+            return sortedID;
+        }
+    }
 
 }

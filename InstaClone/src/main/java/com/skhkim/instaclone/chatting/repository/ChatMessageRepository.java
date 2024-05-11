@@ -26,4 +26,6 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     int updateByChatRoomIdAndDisConnectTime(String roomID, String userName, LocalDateTime disConnectTime);
 
 
+    @Query("SELECT count(cm) FROM ChatMessage cm WHERE cm.chatRoom.id =:roomID AND cm.name = :friendName AND cm.readStatus = false ")
+    Long getNotReadNum(String roomID ,String friendName);
 }

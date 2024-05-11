@@ -99,8 +99,14 @@ public class ChatController {
     }
 
     @PostMapping("/chat/updateDisConnectTime")
-    public ResponseEntity<String> getTest(String roomID, String loginName){
+    public ResponseEntity<String> updateDisconnectTime(String roomID, String loginName){
         chatRoomService.updateChatroomDisConnectTime(roomID, loginName);
         return new ResponseEntity<>("성공", HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/getNotReadNum")
+    public ResponseEntity<Long> getNotReadNum(String loginName, String friendName){
+        Long resultNum = chatMessageService.getNotReadNum(loginName, friendName);
+        return new ResponseEntity<>(resultNum, HttpStatus.OK);
     }
 }
