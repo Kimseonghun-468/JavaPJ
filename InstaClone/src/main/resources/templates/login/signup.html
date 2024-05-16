@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link th:href="@{/css/LoginForm.css}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="main-container">
+    <div class="container">
+        <h2>회원가입을 위해<br>정보를 입력해주세요.</h2>
+        <form id="signup-form" action="/login/signup" method="POST">
+        <label for="email">
+            <div class="sub-check">* 이메일
+                <button class="button-check" id="button-check-email" type="button">중복 체크</button>
+            </div>
+            <input type="email" id="email" name="email"><br><br>
+        </label>
+        <label for="name">
+            <div class="sub-check">* 이름
+                <button class="button-check" id="button-check-name" type="button">중복 체크</button>
+            </div>
+            <input type="text" id="name" name="name"><br><br>
+        </label>
+        <label for="password">* 비밀번호<br>
+            <input class="pw" id="password" type="password" name="password" autocomplete="new-password"><br><br>
+        </label>
+        <label for="password">* 비밀번호 확인<br>
+            <input class="pw" id="password-check" type="password"><br><br> </label>
+
+        <br><br>
+        </form>
+        <button id ='tt' class="button-signup">가입하기</button>
+
+    </div>
+</div>
+</body>
+
+</html>
+<script>
+    var passwordFlag = false
+    var emailFlag = false;
+    var nameFlag = false
+    $('#tt').click(function (){
+        var password = $('#password').val()
+        var passwordCheck = $('#password-check').val()
+        if (password == passwordCheck){
+            passwordFlag = true;
+        }
+        else
+            passwordFlag = false
+        if (emailFlag == false || nameFlag ==false) {
+            alert("중복 체크를 완료해주세요.")
+        }
+        else if (password == "" || passwordCheck == "") {
+            console.log(emailFlag)
+            console.log(nameFlag)
+            alert("비밀번호를 입력해주세요.")
+        }
+        else if(passwordFlag == false){
+            alert("비밀번호를 다시 입력해주세요")
+        }
+
+        if(emailFlag && nameFlag && passwordFlag){
+            $('#signup-form').submit();
+        }
+
+    })
+    $('#button-check-email').click(function (){
+        var email = $('#email').val()
+        if (email.indexOf("@") == -1){
+            emailFlag = false;
+            alert("이메일 양식을 지켜주세요")
+            $('#button-check-email').text("체크 실패");
+        }
+        else {
+            $.ajax({
+                url: "/login/checkEmail",
+                type: "POST",
+                data: {email: email},
+                success: function (result) {
+                    console.log(result)
+                    if (!result) {
+                        emailFlag = true;
+                        $('#button-check-email').text("체크 완료");
+                    } else {
+                        emailFlag = false
+                        $('#button-check-email').text("체크 실패");
+                    }
+                }
+            })
+        }
+    })
+    $('#button-check-name').click(function (){
+        var name = $('#name').val()
+        $.ajax({
+            url: "/login/checkName",
+            type :"POST",
+            data: {name :name},
+            success: function (result){
+                console.log(result)
+                if (!result) {
+                    nameFlag = true;
+                    $('#button-check-name').text("체크 완료")
+                }
+                else {
+                    nameFlag = false;
+                    $('#button-check-name').text("체크 실패")
+                }
+            }
+        })
+    })
+
+
+</script>

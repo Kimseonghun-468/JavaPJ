@@ -20,7 +20,13 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
     Optional<ClubMember> findByEmail(String email, boolean social);
     Optional<ClubMember> findByEmail(String eamil);
     ClubMember findByName(String name);
+
     boolean existsByEmail(String email);
+    boolean existsByName(String name);
+
+
+    @Query("SELECT CASE WHEN count(m) > 0 THEN TRUE ELSE FALSE END from ClubMember m WHERE m.name = :name AND m.email =:email")
+    boolean existsByNameAndEmail(String name, String email);
 
     @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userName =:requesterName and f.friendName =:accepterName and f.isFrom =true")
     Optional<FriendShip> getFriendshipsByName(@Param("requesterName") String requesterName, @Param("accepterName") String accepterName);

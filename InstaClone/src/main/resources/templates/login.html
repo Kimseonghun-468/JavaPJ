@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인</title>
+  <link th:href="@{/css/LoginForm.css}" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="main-container">
+  <div class="container">
+    <div class="login-container">
+      <h2>로그인 </h2>
+      <div class="error-space">
+        <a th:if ="${loginError}">로그인 정보가 틀렸습니다.</a>
+        <a th:if="${logoutFlag}">로그아웃 하셨습니다.</a>
+      </div>
+    </div>
+    <form id="login-form" action="/login" method="POST">
+      <label for="email">
+        <div class="sub-check">* 이메일
+        </div>
+        <input type="email" id="email" name="username"><br><br>
+      </label>
+      <label for="password">* 비밀번호<br>
+        <input class="pw" id="password" type="password" name="password" autocomplete="new-password"><br><br>
+      </label>
+
+    <button id ='tt' class="button-signup">로그인 하기</button>
+      <br><br>
+      <h1>Login with OAuth 2.0</h1>
+    <a href="/oauth2/authorization/google">Google</a>
+    </form>
+  </div>
+</div>
+</body>
+
+</html>

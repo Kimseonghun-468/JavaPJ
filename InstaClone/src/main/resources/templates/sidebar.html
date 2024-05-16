@@ -91,7 +91,7 @@
 
     <div class="up-temp3">
       <div class="temp3">
-        <ul class="pagination h-100 justify-content-center align-items-center" id="post-page">
+        <ul class="pagination justify-content-center align-items-center" id="post-page">
           <li th:class="'page-item ' + ${result.page == page?'active':''}"
               th:each="page: ${result.pageList}">
             <button class="page-link post-page-button" th:data-name="|${page}|">

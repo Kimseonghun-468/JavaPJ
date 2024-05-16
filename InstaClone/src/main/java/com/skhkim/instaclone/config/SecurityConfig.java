@@ -30,18 +30,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         log.info("-------------_Filter chin-------------");
 
-//        http.authorizeHttpRequests((auth -> {
-//            auth.requestMatchers("/sample/all").permitAll();
-//            auth.requestMatchers("/sample/member").hasAnyAuthority("ROLE_USER", "OAUTH2_USER");
-//        }));
-
-        http.formLogin(Customizer.withDefaults());
+        http.formLogin((formLgoin)->formLgoin.loginPage("/login"));
         http.formLogin((formLogin) -> formLogin.successHandler(clubLoginFormSuccessHandler()));
-//        http.formLogin((formLgoin)->formLgoin.loginPage("/member/signup"));
+
         http.csrf((csrf)-> csrf.disable());
-        http.logout(Customizer.withDefaults());
+//        http.logout(Customizer.withDefaults());
 
 //        http.oauth2Login(Customizer.withDefaults())
+        http.oauth2Login(oauth2Login -> oauth2Login.loginPage("/login/auth"));
         http.oauth2Login(oauth2Login -> oauth2Login.successHandler(clubLoginSuccessHandler()));
         http.rememberMe(rememberMe-> {rememberMe.tokenValiditySeconds(60*60);
         });

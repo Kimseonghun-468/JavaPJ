@@ -53,18 +53,16 @@ public class ProfileController {
     }
 
     @PostMapping("/sidebar/post/{name}")
-    public String sidevar(@PathVariable("name") String name, PostDTO postDTO, RedirectAttributes redirectAttributes){
+    public String sidevar(@PathVariable("name") String name, PostDTO postDTO){
         log.info("PostDTO : " + postDTO);
         Long pno = postService.register(postDTO);
-        redirectAttributes.addFlashAttribute("msg", pno);
         return "redirect:/sidebar/"+name;
     }
 
     @PostMapping("/sidebar/profileImage/{name}")
-    public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO, RedirectAttributes redirectAttributes){
+    public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO){
         log.info("Profile Image DTO : " + profileImageDTO);
         Long pfino = profileService.register(profileImageDTO);
-        redirectAttributes.addFlashAttribute("msg", pfino);
         return "redirect:/sidebar/"+name;
     }
 
@@ -85,6 +83,12 @@ public class ProfileController {
         model.addAttribute("result", postService.getList(postPageRequestDTO, clubAuthMemberDTO.getEmail()));
 
         log.info("What!");
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("")
+    public String defaultPage(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO){
+        return "redirect:/sidebar/"+clubAuthMemberDTO.getName();
     }
 
 

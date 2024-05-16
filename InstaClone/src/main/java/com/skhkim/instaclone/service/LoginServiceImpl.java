@@ -27,10 +27,8 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public boolean checkDuplication(ClubMemberDTO memberDTO){
         log.info("Club member DTO in Duplication : " + memberDTO);
-
-        boolean checkResult = clubMemberRepository.existsByEmail(memberDTO.getEmail());
+        boolean checkResult = clubMemberRepository.existsByNameAndEmail(memberDTO.getName(),memberDTO.getEmail());
         return checkResult;
-//        여기서 Name도 중복 처리를 해주도록 하자..
     }
 
     @Override
@@ -77,5 +75,15 @@ public class LoginServiceImpl implements LoginService{
     public boolean getUserExist(String name){
         ClubMember result = clubMemberRepository.findByName(name);
         return result != null;
+    }
+
+    @Override
+    public boolean checkName(String name){
+        return clubMemberRepository.existsByName(name);
+    }
+
+    @Override
+    public boolean checkEmail(String email){
+        return clubMemberRepository.existsByEmail(email);
     }
 }

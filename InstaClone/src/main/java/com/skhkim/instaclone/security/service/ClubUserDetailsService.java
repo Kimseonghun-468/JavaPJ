@@ -23,6 +23,7 @@ public class ClubUserDetailsService implements UserDetailsService {
     private final ClubMemberRepository clubMemberRepository;
 //    @Override
 //    public UserDetails loadUserBy
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
@@ -35,10 +36,6 @@ public class ClubUserDetailsService implements UserDetailsService {
         }
 
         ClubMember clubMember = result.get();
-
-        log.info("-------------");
-        log.info(clubMember);
-
         ClubAuthMemberDTO clubAuthMember = new ClubAuthMemberDTO(
                 clubMember.getEmail(),
                 clubMember.getPassword(),
@@ -51,3 +48,6 @@ public class ClubUserDetailsService implements UserDetailsService {
         return clubAuthMember;
     }
 }
+
+// post를 /login으로 보내고 , name = name, name = password로 보내면, 자동으로 userDetailService의 Overide loadUserByUserName에 들어가게 된다..
+

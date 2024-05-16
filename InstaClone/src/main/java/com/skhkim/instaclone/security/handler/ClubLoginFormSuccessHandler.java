@@ -28,17 +28,8 @@ public class ClubLoginFormSuccessHandler implements AuthenticationSuccessHandler
                                         Authentication authentication)
             throws IOException, ServletException{
 
-        log.info("----------------------");
-        log.info("onAuthenticationSuccess");
-
         ClubAuthMemberDTO authMember = (ClubAuthMemberDTO)authentication.getPrincipal();
-
-        boolean fromSocial = authMember.isFromSocial();
-        boolean passwordResult = passwordEncoder.matches("seonghun", authMember.getPassword());
-        log.info("What is that!!2" + passwordResult + fromSocial);
-        if(!fromSocial && passwordResult){
-            redirectStrategy.sendRedirect(request, response, "/sidebar");
-        }
+        redirectStrategy.sendRedirect(request, response, "/sidebar/"+authMember.getName());
     }
 
 
