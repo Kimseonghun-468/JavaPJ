@@ -122,11 +122,11 @@ public class ProfileServieImpl implements ProfileService{
 
             if (arr[2] == null)
                 profileAndFriendMap.put("status", "NOTTING");
-            else if (((FriendShip) arr[2]).getStatus() == FriendShipStatus.ACCEPT)
+            else if (arr[2] == FriendShipStatus.ACCEPT)
                 profileAndFriendMap.put("status", "ACCEPT");
-            else if (((FriendShip) arr[2]).getStatus() == FriendShipStatus.WAITING && ((FriendShip) arr[2]).isFrom() == false)
+            else if (arr[2] == FriendShipStatus.WAITING && (!(boolean) arr[3]))
                 profileAndFriendMap.put("status", "WAITING");
-            else if (((FriendShip) arr[2]).getStatus() == FriendShipStatus.WAITING && ((FriendShip) arr[2]).isFrom() == true)
+            else if (arr[2] == FriendShipStatus.WAITING && ((boolean) arr[3]))
                 profileAndFriendMap.put("status", "WAITACCEPT");
 
             return profileAndFriendMap;

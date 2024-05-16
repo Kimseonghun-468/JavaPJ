@@ -56,7 +56,7 @@
                 <span>게시물 [[${postNum}]]</span>
                 <span class="options" id="friend-List">친구 [[${friendNum}]]</span>
                 <span id="follow-status">
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" class="request-Follow-button follow">친구 요청</button>
+                  <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" th:data-name="${userName}" class="request-Follow-button follow">친구 요청</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Delete-button follow">친구 삭제</button>
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Chatroom-button follow">1:1 채팅하기</button>
@@ -446,13 +446,14 @@
     str += '</div>'
     return str
   }
-  function sendFollowRequest(loadName){
+  function sendFollowRequest(name, $button){
     $.ajax({
-      url: '/friendShip/' + loadName,
+      url: '/friendShip/' + name,
       type: 'POST',
       dataType: 'text',
       success: function (arr){
-        self.location.reload();
+        $button.text("친구 요청 완료");
+        $button.prop("disabled", true);
       }
     })
   }
@@ -538,6 +539,7 @@
 
   function createFriendShipUserInfo(profileAndFriendMap){
     var Result = "";
+    console.log(profileAndFriendMap)
     for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
@@ -553,10 +555,14 @@
               ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
       Result += '</div>';
       Result += '<div class="user-chat-button-box">';
+      console.log(profileAndFriendMap.dtoList[i].status)
+
+      if (profileAndFriendMap.dtoList[i].status == "NOTTING")
+        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Follow-button follow'>친구 요청</button>"
       if (profileAndFriendMap.dtoList[i].status == "WAITING")
         Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Cancel-button follow'>친구 대기</button>"
       if (profileAndFriendMap.dtoList[i].status == "ACCEPT")
-        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='follow'>친구 상태</button>"
+        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button'>친구 삭제</button>"
       if (profileAndFriendMap.dtoList[i].status == "WAITACCEPT")
         Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Accept-button follow'>친구 수락</button>"
       Result += '</div>';
@@ -1088,7 +1094,9 @@
   $(function (){
     $(document).on('click', '.request-Follow-button', function (){
       var loadName = '[[${userName}]]';
-      sendFollowRequest(loadName);
+      var name = $(this).attr('data-name');
+      var $button = $(this);
+      sendFollowRequest(name, $button);
     });
 
     $(document).on('click', '#search-user', function (){
@@ -1180,13 +1188,12 @@
     })
 
     $(".temp3").off('click').on('click', '.post-page-button', function (){
-      var loginName = '[[${memberDTO.name}]]';
       var presentPage = $(this).attr('data-name');
       postPage = presentPage;
       $.ajax({
         url: "/post/getPostInfo?page=" + postPage,
         type: "POST",
-        data: {loginName:loginName},
+        data: {userName:userName},
         dataType: "JSON",
         success: function (result){
           var postResult = "";

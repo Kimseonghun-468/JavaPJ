@@ -37,14 +37,14 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
             "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
     Page<Object[]> getByAcceptListPage(Pageable pageable, @Param("loginName") String loginName);
 
-    @Query("SELECT fs1, pi, fs2 " +
+    @Query("SELECT fs1, pi, fs2.status, fs2.isFrom " +
             "FROM FriendShip fs1 " +
             "LEFT JOIN FriendShip fs2 ON (fs1.userName = fs2.userName AND fs2.friendName = :loginName) " +
             "OR (fs1.userName = :loginName AND fs2.userName = :userName AND fs2.friendName = :loginName) " +
             "LEFT JOIN ProfileImage pi ON fs1.userName = pi.userName " +
             "WHERE fs1.friendName =:userName " +
             "AND fs1.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT AND fs1.userName != :loginName " +
-            "ORDER BY fs2.status")
+            "ORDER BY fs2.status DESC, fs1.userName")
     Page<Object[]> getFriendListPage(Pageable pageable, @Param("userName") String userName, @Param("loginName") String loginName);
 
     @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.userName = pi.userName " +

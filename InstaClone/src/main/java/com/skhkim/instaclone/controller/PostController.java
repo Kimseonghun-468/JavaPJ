@@ -25,8 +25,8 @@ public class PostController {
     }
 
     @PostMapping("/getPostInfo")
-    public ResponseEntity<PostPageResultDTO<PostDTO, Object[]>> getPostInfo(PostPageRequestDTO postPageRequestDTO, String loginName){
-        PostPageResultDTO<PostDTO, Object[]> result =  postService.getList(postPageRequestDTO, loginName);
+    public ResponseEntity<PostPageResultDTO<PostDTO, Object[]>> getPostInfo(PostPageRequestDTO postPageRequestDTO, String userName){
+        PostPageResultDTO<PostDTO, Object[]> result =  postService.getList(postPageRequestDTO, userName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @GetMapping("/getPostInfobyID/{pno}")
