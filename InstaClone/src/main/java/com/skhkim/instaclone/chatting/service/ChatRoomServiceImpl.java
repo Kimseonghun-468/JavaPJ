@@ -42,6 +42,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
                 .id(roomID)
                 .userName1(sortedID.get(0))
                 .userName2(sortedID.get(1))
+                .lastDisConnect1(LocalDateTime.now())
+                .lastDisConnect2(LocalDateTime.now())
                 .build();
         chatRoomRepository.save(chatRoom);
 

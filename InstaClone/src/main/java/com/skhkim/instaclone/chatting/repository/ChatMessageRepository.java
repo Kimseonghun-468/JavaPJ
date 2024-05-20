@@ -16,8 +16,15 @@ import java.util.Optional;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     Optional<List<ChatMessage>> findByChatRoomId(String roomID);
 
-    @Query("SELECT cm, cm.cid FROM ChatMessage cm WHERE cm.chatRoom.id =:roomID ORDER BY cm.cid DESC")
-    Page<Object[]> findByChatRoomId(Pageable pageable, @Param("roomID") String roomID);
+    @Query("SELECT cm, cm.cid FROM ChatMessage cm WHERE cm.chatRoom.id =:roomID AND cm.chatRoom.lastDisConnect1 >= cm.regDate ORDER BY cm.cid DESC")
+    Page<Object[]> findByChatRoomIdInfixBefore(Pageable pageable, @Param("roomID") String roomID);
+    @Query("SELECT cm, cm.cid FROM ChatMessage cm WHERE cm.chatRoom.id =:roomID AND cm.chatRoom.lastDisConnect2 >= cm.regDate ORDER BY cm.cid DESC")
+    Page<Object[]> findByChatRoomIdPostfixBefore(Pageable pageable, @Param("roomID") String roomID);
+
+    @Query("SELECT cm, cm.cid FROM ChatMessage cm WHERE cm.chatRoom.id =:roomID AND cm.chatRoom.lastDisConnect1 < cm.regDate ORDER BY cm.cid")
+    Page<Object[]> findByChatRoomIdInfixAfter(Pageable pageable, @Param("roomID") String roomID);
+    @Query("SELECT cm, cm.cid FROM ChatMessage cm WHERE cm.chatRoom.id =:roomID AND cm.chatRoom.lastDisConnect2 < cm.regDate ORDER BY cm.cid")
+    Page<Object[]> findByChatRoomIdPostfixAfter(Pageable pageable, @Param("roomID") String roomID);
 
     // 시간 이후의 것들 전부 조회
     @Modifying

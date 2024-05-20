@@ -29,6 +29,7 @@ public class ProfileServieImpl implements ProfileService{
     public Long register(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = dtoToEntity(profileImageDTO);
+        profileImageRepository.deleteByUserName(profileImage.getUserName());
         profileImageRepository.save(profileImage);
 
         return profileImage.getPfino();

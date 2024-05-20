@@ -313,7 +313,6 @@
     </ul>
   </div>
 </div>
-</html>
 
 <div id="chatroom-Modal" class="modal-custom">
   <div class="modal-content-side-frame">
@@ -350,11 +349,14 @@
   var searchPage = 1;
   var friendListPage = 1;
   var frinenListTotalPage = 1;
-  var flag = true;
+  var chatPage = 1;
+  var chatAfterPage = 1;
+  var chatTotalPage = null;
+  var chatTotalAfterPage = null;
+  // var flag = true;
   var friendFlag = true;
   var roomID = ""
-  var chatPage = 1;
-  var chatTotalPage = null;
+
   var stompClient = null;
   var afterDayCheck = null;
   var beforeDayCheck = null;
@@ -922,7 +924,7 @@
       document.getElementById('messageInput').value = '';
     }
   }
-  function showChatMessage(name, message, time, readStatus, reverse) {
+  function showChatMessage(name, message, time, readStatus, reverse, live) {
     var messageElement = document.createElement('div');
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
@@ -942,7 +944,10 @@
       $('#messages-box').prepend(tag);
     else {
       $('#messages-box').append(tag);
-      $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
+      if(live ==true) {
+        $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
+        console.log("live!");
+      }
     }
 
   }
@@ -953,7 +958,7 @@
       stompClient.connect({'roomId': RoomID}, function (frame) {
         stompClient.subscribe('/topic/chat/'+RoomID, function (chatMessage) {
           showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content,
-                  JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false);
+                  JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false, true);
         });
         stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, function (result){
           if (result.body != '[[${memberDTO.name}]]'){
@@ -986,45 +991,87 @@
       }
     })
   }
-  function showChatInfo(roomID){
+
+  function showChatInfoAfter(roomID, loginName){
     $.ajax({
-      url: '/chat/getChatListbyRoomIDPage?page=' + chatPage,
+      url: '/chat/getChatListByRoomIDPageAfter?page=' + chatAfterPage,
       type: 'POST',
       dataType: 'JSON',
-      data: {roomID: roomID},
+      data: {roomID: roomID, loginName:loginName},
       success: function (pageRequestChatDTO) {
+        console.log(pageRequestChatDTO)
         if (pageRequestChatDTO.dtoList.length > 0) {
-          beforeDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
           afterDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
         }
-        chatTotalPage = pageRequestChatDTO.totalPage;
+        chatTotalAfterPage = pageRequestChatDTO.totalPage;
 
         $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
-          showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true);
+          showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
         })
-        chatPage +=1
-        if (pageRequestChatDTO.end ==1){
-          if(pageRequestChatDTO.dtoList.length != 0){
-            var lastTime = pageRequestChatDTO.dtoList[pageRequestChatDTO.dtoList.length-1].regDate.slice(0, 10);
-            $('#messages-box').prepend('<h1>' + lastTime +'</h1>')
-          }
-        }
-        $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
-
+        chatAfterPage +=1
+        $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight + (280 - 300 - pageRequestChatDTO.dtoList.length*40));
+        // maessage 7 (280), clientHeight (300)
+        console.log("After!")
       }
     })
   }
-  async function showChatInfo2(roomID){
+
+  async function showChatInfoAfter2(roomID, loginName){
     try {
       const response = await $.ajax({
-        url: '/chat/getChatListbyRoomIDPage?page=' + chatPage,
+        url: '/chat/getChatListByRoomIDPageAfter?page=' + chatAfterPage,
         type: 'POST',
         dataType: 'JSON',
-        data: {roomID: roomID},
+        data: {roomID: roomID, loginName:loginName},
+      })
+      chatAfterPage += 1
+      $.each(response.dtoList, function (idx, chatMessageDTO) {
+        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
+      })
+    } catch (error){
+      throw error;
+    }
+  }
+
+async function showChatInfoBefore(roomID, loginName){
+    try {
+      const response = await $.ajax({
+        url: '/chat/getChatListByRoomIDPageBefore?page=' + chatPage,
+        type: 'POST',
+        dataType: 'JSON',
+        data: {roomID: roomID, loginName: loginName}
+      });
+      if (response.dtoList.length > 0) {
+        beforeDayCheck = response.dtoList[0].regDate.slice(0, 10);
+      }
+      chatTotalPage = response.totalPage;
+
+      $.each(response.dtoList, function (idx, chatMessageDTO) {
+        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
+      })
+      chatPage += 1
+      if (response.end == 1) {
+        if (response.dtoList.length != 0) {
+          var lastTime = response.dtoList[response.dtoList.length - 1].regDate.slice(0, 10);
+          $('#messages-box').prepend('<h1>' + lastTime + '</h1>')
+        }
+      }
+      $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
+    }catch (error){
+      throw error;
+    }
+  }
+  async function showChatInfoBefore2(roomID, loginName){
+    try {
+      const response = await $.ajax({
+        url: '/chat/getChatListByRoomIDPageBefore?page=' + chatPage,
+        type: 'POST',
+        dataType: 'JSON',
+        data: {roomID: roomID, loginName:loginName},
       })
       chatPage += 1
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true);
+        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
       })
       if (chatPage == chatTotalPage +1)
         if (response.dtoList.length != 0){
@@ -1201,9 +1248,9 @@
           $.each(result.dtoList, function (idx, dtoList){
             postResult += '<div class="post-item">';
             postResult += '<img class="post-list-img" ' +
-                    'src="/display?fileName=' + dtoList.imageDTOList[0].imageURL + '/"' +
+                    'src="/display?fileName=' + dtoList.imageDTOList[0].imageURL + '/" ' +
                     'data-url ="' + dtoList.imageDTOList[0].imageURL +'" ' +
-                    'data-id="' +dtoList.imageDTOList[0].pino + '"' +
+                    'data-id="' +dtoList.imageDTOList[0].pino + '" ' +
                     'data-pid="' + dtoList.pno + '">'
             postResult += '</div>';
           })
@@ -1241,7 +1288,7 @@
     })
 
     $(function (){
-      async function chatScrollPaging() {
+      async function chatScrollPagingUp() {
         if (scrollContainer.scrollTop ==0) {
           $('#messages-modal').scrollTop(10);
         }
@@ -1249,35 +1296,53 @@
         if (scrollContainer.scrollTop >=5 &&  scrollContainer.scrollTop <= 200){
           if (chatTotalPage >= chatPage && chatFlag) {
             chatFlag = false
-            await showChatInfo2(roomID);
+            await showChatInfoBefore2(roomID, loginName);
             chatFlag =true
           }
         }
       }
+      async function chatScrollPagingDown() {
+        let val = scrollContainer.scrollHeight - scrollContainer.scrollTop;
+        if (scrollContainer.clientHeight -1 <= val  &&  val <= scrollContainer.clientHeight +1) {
+          if (chatTotalPage >= chatPage && chatFlag) {
+            chatFlag = false
+            await showChatInfoAfter2(roomID, loginName);
+            chatFlag =true
+
+          }
+        }
+      }
       const scrollContainer = document.getElementById('messages-modal');
-      const debouncedPaging = debounce(chatScrollPaging,300);
+      const debouncedPagingUp = debounce(chatScrollPagingUp,300);
+      const debouncedPagingDown = debounce(chatScrollPagingDown, 300);
       $(document).on('click', '.request-Chatroom-button', function (){
         var loginName = '[[${memberDTO.name}]]';
         var requesterName = $(this).attr('data-name');
         $('#chatMessageModal').css('z-index', 1052).modal('show');
-        $.ajax({
-          url: '/chat/getORCreateChatRoom',
-          type: 'POST',
-          dataType: 'JSON',
-          data: {loginName: loginName, friendName: requesterName},
-          success: function (chatRoomDTO) {
-            roomID = chatRoomDTO.id;
-            connect(chatRoomDTO.id);
-            showChatInfo(roomID);
-            scrollContainer.addEventListener('scroll', debouncedPaging);
-          }
-        })
+        async function getChatRoom(){
+         const chatRoomDTO = await $.ajax({
+            url: '/chat/getORCreateChatRoom',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {loginName: loginName, friendName: requesterName},
+          })
+          roomID = chatRoomDTO.id;
+          connect(chatRoomDTO.id);
+          await showChatInfoBefore(roomID, loginName);
+          showChatInfoAfter(roomID, loginName);
+          scrollContainer.addEventListener('scroll', debouncedPagingDown)
+          scrollContainer.addEventListener('scroll', debouncedPagingUp);
+        }
+        getChatRoom()
+
       })
       $('#chatMessageModal').on('hidden.bs.modal', function () {
         document.getElementById('messages-box').innerHTML = '';
         chatPage = 1;
+        chatAfterPage = 1;
         disconnect(roomID);
-        scrollContainer.removeEventListener('scroll', debouncedPaging);
+        scrollContainer.removeEventListener('scroll', debouncedPagingUp);
+        scrollContainer.removeEventListener('scroll', debouncedPagingDown);
       });
 
 

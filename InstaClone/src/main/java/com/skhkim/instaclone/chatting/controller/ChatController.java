@@ -5,13 +5,10 @@ import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
-import com.skhkim.instaclone.chatting.event.WebSocketEventListener;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.ProfilePageResultDTO;
-import jakarta.servlet.http.HttpSession;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -20,7 +17,6 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
@@ -44,16 +40,16 @@ public class ChatController {
             readStatus = true;
         else
             readStatus = false;
-        ChatMessageDTO reuslt = ChatMessageDTO.builder()
+        ChatMessageDTO result = ChatMessageDTO.builder()
                 .name(chatMessageDTO.getName())
                 .content(chatMessageDTO.getContent())
                 .regDate(LocalDateTime.now())
                 .readStatus(readStatus)
                 .build();
-        chatMessageService.register(reuslt, roomID);
+        chatMessageService.register(result, roomID);
         chatRoomService.registerLastChatTime(roomID, chatMessageDTO.getContent());
 
-        return reuslt;
+        return result;
     }
 
     @MessageMapping("/chat/accessLoad/{roomID}")
@@ -74,23 +70,17 @@ public class ChatController {
         return new ResponseEntity<>(chatRoomDTO, HttpStatus.OK);
     }
 
-//    @PostMapping("/chat/getChatListbyRoomID")
-//    public ResponseEntity<List<ChatMessageDTO>> getChatListbyRoomID(String roomID){
-//        List<ChatMessageDTO> chatMessageDTOList = chatMessageService.getChatMessageListByRoomID(roomID);
-//        return new ResponseEntity<>(chatMessageDTOList, HttpStatus.OK);
-//    }
-
-    @PostMapping("/chat/getChatListbyRoomIDPage")
-    public ResponseEntity<PageResultDTO> getChatListbyRoomIDPage(PageRequestDTO pageRequestDTO, String roomID){
-        PageResultDTO pageResultDTO = chatMessageService.getChatMessageListByRoomIDPage(pageRequestDTO, roomID);
+    @PostMapping("/chat/getChatListByRoomIDPageBefore")
+    public ResponseEntity<PageResultDTO> getChatListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, String roomID, String loginName){
+        PageResultDTO pageResultDTO = chatMessageService.getChatMessageListByRoomIDPageBefore(pageRequestDTO, roomID, loginName);
         return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
     }
 
-//    @PostMapping("/chat/getChatRoomAndProfileImage")
-//    public ResponseEntity<Map<String, Object>> getChatroomAndProfileImageList(String loginName){
-//        Map<String, Object> result = chatRoomService.getChatroomAndProfileImageByLoginName(loginName);
-//        return new ResponseEntity<>(result, HttpStatus.OK);
-//    }
+    @PostMapping("/chat/getChatListByRoomIDPageAfter")
+    public ResponseEntity<PageResultDTO> getChatListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, String roomID, String loginName) {
+        PageResultDTO pageResultDTO = chatMessageService.getChatMessageListByRoomIDPageAfter(pageRequestDTO, roomID, loginName);
+        return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
+    }
 
     @PostMapping("/chat/getChatRoomAndProfileImagePage")
     public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getChatroomAndProfileImagePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){

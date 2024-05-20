@@ -11,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,9 +30,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public ChatMessageDTO getNewChatMessageDTO(String name, String content){
-
-        ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder().build();
-        return chatMessageDTO;
+        return ChatMessageDTO.builder().build();
     }
 
     @Override
@@ -76,20 +72,43 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             return Collections.emptyList();
     }
     @Override
-    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPage(PageRequestDTO pageRequestDTO, String roomID){
+    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, String roomID, String loginName){
         Pageable pageable = pageRequestDTO.getPageable();
-        Page<Object[]> result = chatMessageRepository.findByChatRoomId(pageable, roomID);
         Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
                 (ChatMessage)arr[0])
         );
+        Page<Object[]> result;
+        if (roomID.split("_")[0].equals(loginName)){
+            result = chatMessageRepository.findByChatRoomIdInfixBefore(pageable, roomID);
+        }
+        else{
+            result = chatMessageRepository.findByChatRoomIdPostfixBefore(pageable, roomID);
+        }
+
+        return new PageResultDTO<>(result, fn);
+    }
+
+    @Override
+    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, String roomID, String loginName){
+        Pageable pageable = pageRequestDTO.getPageable();
+        Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
+                (ChatMessage)arr[0])
+        );
+        Page<Object[]> result;
+        if (roomID.split("_")[0].equals(loginName)){
+            result = chatMessageRepository.findByChatRoomIdInfixAfter(pageable, roomID);
+        }
+        else{
+            result = chatMessageRepository.findByChatRoomIdPostfixAfter(pageable, roomID);
+        }
+
         return new PageResultDTO<>(result, fn);
     }
 
     @Override
     public Long getNotReadNum(String loginName, String friendName){
         String roomID = getNamesToId(loginName, friendName).get(2);
-        Long resultNum = chatMessageRepository.getNotReadNum(roomID, friendName);
-        return resultNum;
+        return chatMessageRepository.getNotReadNum(roomID, friendName);
     }
 
     public List<String> getNamesToId(String loginName, String friendName){
@@ -98,14 +117,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             sortedID.add(loginName);
             sortedID.add(friendName);
             sortedID.add(loginName+ "_" + friendName);
-            return sortedID;
         }
         else {
             sortedID.add(friendName);
             sortedID.add(loginName);
             sortedID.add(friendName + "_" + loginName);
-            return sortedID;
         }
+        return sortedID;
     }
 
 }

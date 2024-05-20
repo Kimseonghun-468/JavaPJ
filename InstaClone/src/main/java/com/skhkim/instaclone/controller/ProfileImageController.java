@@ -23,14 +23,6 @@ import java.util.Objects;
 public class ProfileImageController {
     private final ProfileService profileService;
 
-//    @PostMapping("waitingList")
-//    public ResponseEntity<Map<String, Object>>
-//    getProfileImagebyClubMember(String loginName){
-//        Map<String, Object> profileAndFriendMap =
-//                profileService.getWaitingFriendList(loginName);
-//        return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
-//    }
-
     @PostMapping("waitingList")
     public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
     getProfileImagebyClubMember(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
