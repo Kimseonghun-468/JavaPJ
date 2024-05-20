@@ -541,7 +541,6 @@
 
   function createFriendShipUserInfo(profileAndFriendMap){
     var Result = "";
-    console.log(profileAndFriendMap)
     for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
@@ -946,7 +945,6 @@
       $('#messages-box').append(tag);
       if(live ==true) {
         $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
-        console.log("live!");
       }
     }
 
@@ -999,7 +997,6 @@
       dataType: 'JSON',
       data: {roomID: roomID, loginName:loginName},
       success: function (pageRequestChatDTO) {
-        console.log(pageRequestChatDTO)
         if (pageRequestChatDTO.dtoList.length > 0) {
           afterDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
         }
@@ -1011,7 +1008,6 @@
         chatAfterPage +=1
         $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight + (280 - 300 - pageRequestChatDTO.dtoList.length*40));
         // maessage 7 (280), clientHeight (300)
-        console.log("After!")
       }
     })
   }
@@ -1043,6 +1039,7 @@ async function showChatInfoBefore(roomID, loginName){
       });
       if (response.dtoList.length > 0) {
         beforeDayCheck = response.dtoList[0].regDate.slice(0, 10);
+        afterDayCheck = response.dtoList[0].regDate.slice(0, 10);
       }
       chatTotalPage = response.totalPage;
 
