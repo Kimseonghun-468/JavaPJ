@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public interface ProfileService {
     Long register(ProfileImageDTO profileImageDTO);
-
+    void deleteByName(String name);
     ProfileImageDTO getProfileImage(String name);
     Map<String, Object> getWaitingFriendList(String loginName);
     Map<String, Object> getAcceptFriendList(String loginName);

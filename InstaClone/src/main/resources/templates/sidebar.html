@@ -164,6 +164,18 @@
   </div>
 </div>
 
+<div id="profile-option-modal" class="modal-custom">
+  <div class="option-modal-content">
+
+    <div class="option-modal-body">
+      <h3 id="upload-profile-image">등록</h3>
+    </div>
+    <div class="option-modal-footer">
+      <h3 id="cancel-profile-image">삭제</h3>
+    </div>
+  </div>
+</div>
+
 <div id="profileImageModal" class="modal-custom">
   <div class="modal-content-post">
     <div id="modal-content-profile-imagebox">
@@ -467,10 +479,10 @@
       searchResult += '<div class="profile-box">';
       if (searchInfo.dtoList[i].profileImage != null) {
         searchResult += '<img src ="/display?fileName=' + searchInfo.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                ' alt="Profile Picture" class="profile-picture">'
       } else {
         searchResult += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                ' alt="Profile Picture" class="profile-picture">'
       }
       searchResult += '</div>';
       searchResult += '<div class="user-name-box">';
@@ -516,10 +528,10 @@
       Result += '<div class="profile-box">';
       if(profileAndFriendMap.dtoList[i].profileImage ==null)
         Result += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                ' alt="Profile Picture" class="profile-picture">'
       else
         Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
       Result += '<div class="user-name-box">'
       Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
@@ -546,10 +558,10 @@
       Result += '<div class="profile-box">';
       if(profileAndFriendMap.dtoList[i].profileImage ==null)
         Result += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                ' alt="Profile Picture" class="profile-picture">'
       else
         Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
       Result += '<div class="user-name-box">'
       Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
@@ -585,10 +597,10 @@
       Result += '<div class="profile-box">';
       if(profileAndFriendMap.dtoList[i].profileImage ==null)
         Result += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                ' alt="Profile Picture" class="profile-picture">'
       else
         Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
       Result += '<div class="user-name-box">';
       Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
@@ -856,10 +868,10 @@
         Result += '<div class="profile-box">';
         if(result.image ==null)
           Result += '<img src = "/display?fileName=outprofile.png/"' +
-                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                  ' alt="Profile Picture" class="profile-picture">'
         else
           Result += '<img src ="/display?fileName=' + result.image.imageURL + '/"' +
-                  ' alt="Profile Picture" class="profile-picture uploadButton-profile">'
+                  ' alt="Profile Picture" class="profile-picture">'
         Result += '</div>';
         Result += '<div class="user-name-box">'
         Result += '<a href="/sidebar/' + result.name + '"' +
@@ -1101,26 +1113,58 @@ async function showChatInfoBefore(roomID, loginName){
 
         });
       });
-
-
     });
+    $('.uploadButton-profile').click(function (){
+      $('#profile-option-modal').modal('show');
+      $('#upload-profile-image').click(function () {
+        $('.profile-Image-File').click().on('change', function () {
+          if (this.files && this.files.length > 0) {
+            $('.Profile-File-Modal').css('z-index', 1060).modal('show');
+            var formData = new FormData();
+            var inputFile = $("input.profile-Image-File");
+            var files = inputFile[0].files;
+            formData.append("uploadFiles", files[0]);
+          }
+          $('.submitFile-Profile').click(function () {
+            uploadImageAndProfileRegisterRequset(formData);
+            alert('프로필 파일이 제출되었습니다.');
+            $('.filemodal').modal('hide');
+          });
+        })
+      })
+      $('#cancel-profile-image').click(function (){
+        console.log("삭제")
+        var loginName = '[[${memberDTO.name}]]';
+        $.ajax({
+          url:"profileImage/deleteProfile",
+          type:"POST",
+          data:{userName:loginName},
+          success: function (){
+            self.location.reload();
+          }
+        })
+        // $('#profile-option-modal').modal('hide');
 
-    $('.uploadButton-profile').click(function () {
-      $('.profile-Image-File').click().on('change', function() {
-        if (this.files && this.files.length > 0) {
-          $('.Profile-File-Modal').modal('show');
-          var formData = new FormData();
-          var inputFile = $("input.profile-Image-File");
-          var files = inputFile[0].files;
-          formData.append("uploadFiles", files[0]);
-        }
-        $('.submitFile-Profile').click(function() {
-          uploadImageAndProfileRegisterRequset(formData);
-          alert('프로필 파일이 제출되었습니다.');
-          $('.filemodal').modal('hide');
-        });
-      });
-    });
+
+      })
+    })
+
+    // $('.uploadButton-profile').click(function () {
+    //   $('.profile-Image-File').click().on('change', function() {
+    //     if (this.files && this.files.length > 0) {
+    //       $('.Profile-File-Modal').modal('show');
+    //       var formData = new FormData();
+    //       var inputFile = $("input.profile-Image-File");
+    //       var files = inputFile[0].files;
+    //       formData.append("uploadFiles", files[0]);
+    //     }
+    //     $('.submitFile-Profile').click(function() {
+    //       uploadImageAndProfileRegisterRequset(formData);
+    //       alert('프로필 파일이 제출되었습니다.');
+    //       $('.filemodal').modal('hide');
+    //     });
+    //   });
+    // });
 
     $(".profile-picture").click(function (){
       var userName = '[[${memberDTO.name}]]';

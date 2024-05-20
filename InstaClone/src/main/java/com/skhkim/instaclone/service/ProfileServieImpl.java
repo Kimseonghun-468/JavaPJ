@@ -66,6 +66,11 @@ public class ProfileServieImpl implements ProfileService{
         profileAndFriendMap.put("profileImageList", profileImageDTOList);
         return profileAndFriendMap;
     }
+    @Override
+    @Transactional
+    public void deleteByName(String name){
+        profileImageRepository.deleteByUserName(name);
+    }
 
     @Override
     public ProfilePageResultDTO<Map<String, Object>, Object[]>

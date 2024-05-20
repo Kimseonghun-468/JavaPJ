@@ -28,9 +28,17 @@
 
     <button id ='tt' class="button-signup">로그인 하기</button>
       <br><br>
-      <h1>Login with OAuth 2.0</h1>
+      <h1>Social Login</h1>
     <a href="/oauth2/authorization/google">Google</a>
+
     </form>
+    <br><Br>
+    <script>
+      function redirectToLogin() {
+      window.location.href = "/login/signup";  // 원하는 URL로 변경
+    }
+    </script>
+    <button class="button-signup" onclick="redirectToLogin()">회원 가입</button>
   </div>
 </div>
 </body>
@@ -39,12 +47,29 @@
 
 <script>
   $(document).ready(function() {
+    var logoutFlag = '[[${logoutFlag}]]';
+    function setCookie(name, value, hours) {
+      var expires = "";
+      if (hours) {
+        var date = new Date();
+        date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    function deleteCookie(name) {
+      document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+    if (logoutFlag =='true'){
+      deleteCookie("Authorization")
+    }
     $('#login-form').submit(function(event) {
       event.preventDefault(); // 폼의 기본 제출 동작을 방지합니다.
 
       // var formData = {
       var username =$('#email').val()
       var password = $('#password').val()
+
       // };
       // console.log(formData)
 
@@ -60,16 +85,8 @@
           }
           else {
             localStorage.setItem("Authorization", "Bearer " + response.token)
-            function setCookie(name, value, days) {
-              var expires = "";
-              if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-              }
-              document.cookie = name + "=" + (value || "") + expires + "; path=/";
-            }
-            setCookie("Authorization", "Bearer " + response.token, 1);
+
+            setCookie("Authorization", "Bearer " + response.token, 2);
             window.location.href = '/sidebar/'+response.name;
           }
         },

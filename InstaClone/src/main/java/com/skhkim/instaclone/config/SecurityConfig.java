@@ -25,67 +25,39 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    private final JwtUtils tokenProvider;
-
-    public SecurityConfig(JwtUtils tokenProvider) {
-        this.tokenProvider = tokenProvider;
-    }
-
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         log.info("-------------_Filter chin-------------");
 
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.formLogin((formLgoin)->formLgoin.loginPage("/login"));
+        http.formLogin((formLgoin) -> formLgoin.loginPage("/login"));
         http.formLogin((formLogin) -> formLogin.successHandler(clubLoginFormSuccessHandler()));
         http.formLogin((formlogin) -> formlogin.failureHandler(failHandler()));
-
-        http.csrf((csrf)-> csrf.disable());
-//        http.logout(Customizer.withDefaults());
-
-//        http.oauth2Login(Customizer.withDefaults())
-        http.oauth2Login(oauth2Login -> oauth2Login.loginPage("/login/auth"));
-//        http.oauth2Login(oauth2Login -> oauth2Login.successHandler(clubLoginSuccessHandler()));
-        http.rememberMe(rememberMe-> {rememberMe.tokenValiditySeconds(60*60);
-        });
-
+        http.csrf((csrf) -> csrf.disable());
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
+        http.oauth2Login(Customizer.withDefaults());
+        http.oauth2Login((oauth2Login) -> oauth2Login.loginPage("/login/auth"));
+        http.oauth2Login(oauth2Login -> oauth2Login.successHandler(clubLoginSuccessHandler()));
         return http.build();
     }
+
     @Bean
-    public ClubLoginSuccessHandler clubLoginSuccessHandler(){
+    public ClubLoginSuccessHandler clubLoginSuccessHandler() {
         return new ClubLoginSuccessHandler(passwordEncoder());
     }
+
     @Bean
-    public ClubLoginFormSuccessHandler clubLoginFormSuccessHandler(){
+    public ClubLoginFormSuccessHandler clubLoginFormSuccessHandler() {
         return new ClubLoginFormSuccessHandler(passwordEncoder());
     }
-
     @Bean
-    public FailHandler failHandler(){
+    public FailHandler failHandler() {
         return new FailHandler();
     }
-    @Bean
-    public JwtFilter jwtAuthenticationFilter() {
-        return new JwtFilter();
-    }
-
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsManager() {
-//        UserDetails user = User.builder()
-//                .username("user1")
-//                .password(passwordEncoder().encode("1111"))
-//                .roles("USER")
-//                .build();
-//        return new InMemoryUserDetailsManager(user);
-//    }
-
 }
 

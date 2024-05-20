@@ -54,4 +54,10 @@ public class ProfileImageController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
+    @PostMapping("deleteProfile")
+    public ResponseEntity<String> deleteByName(String userName){
+        profileService.deleteByName(userName);
+        return new ResponseEntity<>("삭제 완료", HttpStatus.OK);
+    }
+
 }

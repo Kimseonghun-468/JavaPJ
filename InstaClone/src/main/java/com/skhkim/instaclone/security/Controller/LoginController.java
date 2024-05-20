@@ -24,11 +24,10 @@ public class LoginController {
 
     private final LoginService loginService;
     @GetMapping("/signup")
-    public String loginPage(String error, Model model){
+    public void loginPage(String error, Model model){
         if ( error != null ){
             model.addAttribute("signUpError", true);
         }
-        return "/login/signup";
     }
     @PostMapping("/checkEmail")
     public ResponseEntity<Boolean> checkEmail(String email) {
@@ -57,13 +56,12 @@ public class LoginController {
 
     }
     @GetMapping("")
-    public String test(String error, String logout, Model model){
+    public void test(String error, String logout, Model model){
         if ( error != null ){
             model.addAttribute("loginError", true);
         }
-        if (logout != null){
+        if (logout != null) {
             model.addAttribute("logoutFlag", true);
         }
-        return "login";
     }
 }
