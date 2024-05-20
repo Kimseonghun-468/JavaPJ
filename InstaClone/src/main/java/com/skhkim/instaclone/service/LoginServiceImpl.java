@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
@@ -85,5 +86,14 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public boolean checkEmail(String email){
         return clubMemberRepository.existsByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public ClubMemberDTO getClubMemberByName(String name){
+        ClubMember clubMember = clubMemberRepository.findByName(name);
+        ClubMemberDTO clubMemberDTO = entityToDTO(clubMember);
+
+        return clubMemberDTO;
     }
 }

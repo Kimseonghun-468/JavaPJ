@@ -26,7 +26,9 @@ public class ChatRoom {
     @Column(nullable = false)
     private String userName2;
 
+    @Column(nullable = false)
     private LocalDateTime lastDisConnect1;
+    @Column(nullable = false)
     private LocalDateTime lastDisConnect2;
     private LocalDateTime lastChatTime;
     private String lastChat;

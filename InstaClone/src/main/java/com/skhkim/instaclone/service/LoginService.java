@@ -11,6 +11,8 @@ import java.util.Map;
 
 public interface LoginService {
 
+    ClubMemberDTO getClubMemberByName(String name);
+
     boolean checkName(String name);
     boolean checkEmail(String email);
     boolean checkDuplication(ClubMemberDTO memberDTO);

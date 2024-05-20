@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = "roleSet")
 public class ClubMember extends BaseEntity{
     @Id
     private String email;
@@ -22,7 +22,7 @@ public class ClubMember extends BaseEntity{
     private String name;
     private boolean fromSocial;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private Set<ClubMemberRole> roleSet = new HashSet<>();
 

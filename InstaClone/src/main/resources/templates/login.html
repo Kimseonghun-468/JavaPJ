@@ -11,7 +11,7 @@
   <div class="container">
     <div class="login-container">
       <h2>로그인 </h2>
-      <div class="error-space">
+      <div class="error-space" id="error-space">
         <a th:if ="${loginError}">로그인 정보가 틀렸습니다.</a>
         <a th:if="${logoutFlag}">로그아웃 하셨습니다.</a>
       </div>
@@ -36,3 +36,47 @@
 </body>
 
 </html>
+
+<script>
+  $(document).ready(function() {
+    $('#login-form').submit(function(event) {
+      event.preventDefault(); // 폼의 기본 제출 동작을 방지합니다.
+
+      // var formData = {
+      var username =$('#email').val()
+      var password = $('#password').val()
+      // };
+      // console.log(formData)
+
+      $.ajax({
+        type: 'POST',
+        url: '/login',
+        data: {username:username, password: password},
+        success: function(response) {
+          console.log(response)
+          if (response.token == "error") {
+            console.log("로그인 실패")
+            window.location.href = '/login?error';
+          }
+          else {
+            localStorage.setItem("Authorization", "Bearer " + response.token)
+            function setCookie(name, value, days) {
+              var expires = "";
+              if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+              }
+              document.cookie = name + "=" + (value || "") + expires + "; path=/";
+            }
+            setCookie("Authorization", "Bearer " + response.token, 1);
+            window.location.href = '/sidebar/'+response.name;
+          }
+        },
+        error: function(error) {
+          console.error('Error:', error);
+        }
+      });
+    });
+  });
+</script>

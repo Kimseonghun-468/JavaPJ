@@ -10,6 +10,7 @@
 <div class="main-container">
     <div class="container">
         <h2>회원가입을 위해<br>정보를 입력해주세요.</h2>
+        <a th:if ="${signUpError}" style="color: red">(회원 가입 실패) 이메일 or 이름이 중복되었습니다.</a>
         <form id="signup-form" action="/login/signup" method="POST">
         <label for="email">
             <div class="sub-check">* 이메일

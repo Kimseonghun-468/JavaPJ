@@ -24,11 +24,12 @@ public class LoginController {
 
     private final LoginService loginService;
     @GetMapping("/signup")
-    public String loginPage(){
+    public String loginPage(String error, Model model){
+        if ( error != null ){
+            model.addAttribute("signUpError", true);
+        }
         return "/login/signup";
     }
-
-
     @PostMapping("/checkEmail")
     public ResponseEntity<Boolean> checkEmail(String email) {
         return new ResponseEntity<>(loginService.checkEmail(email), HttpStatus.OK);
@@ -40,23 +41,19 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public String singupMember(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
-                               ClubMemberDTO memberDTO){
-        log.info("@@@@@@@@@@");
-        log.info("authDTO : " +clubAuthMemberDTO);
+    public String singupMember(ClubMemberDTO memberDTO){
         log.info("memberDTO : " + memberDTO);
-
         boolean checkResult = loginService.checkDuplication(memberDTO);
-
         log.info("checkResult : " + checkResult);
         if(checkResult){
             log.info("이름이나 이메일이 중복");
+            return "redirect:/login/signup?error";
         }
-
         else{
             loginService.register(memberDTO);
+            return "redirect:/login";
         }
-        return "redirect:/login";
+
 
     }
     @GetMapping("")

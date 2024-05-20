@@ -1,7 +1,6 @@
 package com.skhkim.instaclone.security.dto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
@@ -23,20 +22,23 @@ public class ClubAuthMemberDTO extends User implements OAuth2User {
     private boolean fromSocial;
 
     private Map<String, Object> attr;
-
-    public ClubAuthMemberDTO(String username, String password,
+    public ClubAuthMemberDTO(String userEmail, String password,
+                             String userName,
                              boolean fromSocial, Collection<? extends GrantedAuthority> authorities,
-                             Map<String, Object> attr){
-        this(username, password, fromSocial, authorities);
-        this.password = password;
+                             Map<String, Object> attr) {
+        super(userEmail, password, authorities);
+        this.name = userName;
+        this.fromSocial = fromSocial;
         this.attr = attr;
     }
-    public ClubAuthMemberDTO(String username, String password,
-                             boolean fromSocial, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
-        this.email = username;
-        this.password = password; // 이거.. User.password로 박히는데 왜지..
-        this.fromSocial = fromSocial;
+
+    public ClubAuthMemberDTO(String userEmail, String password,
+                             String userName,
+                             Collection<? extends GrantedAuthority> authorities) {
+        super(userEmail, password, authorities);
+        this.name = userName;
+        this.password = password;
+        this.email = userEmail;
     }
     @Override
     public Map<String, Object> getAttributes() {
