@@ -23,7 +23,7 @@ WORKDIR /app
 
 # Copy the JAR file from the builder stage
 COPY --from=builder /app/build/libs/*.jar app.jar
-
+COPY ./data/outprofile.png /Users/gimseonghun/JavaPJ/InstaClone/data/outprofile.png
 # Expose the application port
 EXPOSE 8080
 

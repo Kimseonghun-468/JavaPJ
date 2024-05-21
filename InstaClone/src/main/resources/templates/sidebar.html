@@ -384,7 +384,6 @@
   const formatter = new Intl.DateTimeFormat('en-US', options);
   function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
     var data = {pno:postId, text:commentBox.value, email:userEmail};
-    var tempReply = {name:userName, text:commentBox.value};
     $.ajax({
       url: '/reply/'+postId,
       type: "POST",
@@ -392,9 +391,11 @@
       contentType: "application/json; charset=utf-8",
       dataType:"text",
       success: function (result){
+        var tempReply = {name:userName, text:commentBox.value, rno:result};
         replyResult = ""
         var replyArea = $("#reply-comment-body");
         replyArea.append(createReplyhtmlbox(userName, tempReply));
+        $('#comment-box').val('');
         $('#reply-comment-body').scrollTop($('#reply-comment-body')[0].scrollHeight);
       }
     })
