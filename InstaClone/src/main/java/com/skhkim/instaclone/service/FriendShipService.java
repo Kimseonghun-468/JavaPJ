@@ -22,11 +22,8 @@ public interface FriendShipService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FriendShip friendShip = FriendShip.builder()
                 .id(dto.getId())
-                .clubMember(ClubMember.builder().email(authentication.getName()).build())
-                .userEmail(dto.getUserEmail())
-                .friendEmail(dto.getFriendEmail())
-                .userName(dto.getUserName())
-                .friendName(dto.getFriendName())
+                .clubMemberUser(ClubMember.builder().email(authentication.getName()).build())
+                .clubMemberFriend(ClubMember.builder().email(dto.getFriendEmail()).build())
                 .status(dto.getStatus())
                 .isFrom(dto.isFrom())
                 .build();
@@ -39,10 +36,10 @@ public interface FriendShipService {
 
         FriendShipDTO friendShipDTO = FriendShipDTO.builder()
                 .id(friendShip.getId())
-                .userEmail(friendShip.getUserEmail())
-                .userName(friendShip.getUserName())
-                .friendEmail(friendShip.getFriendEmail())
-                .friendName(friendShip.getFriendName())
+                .userEmail(friendShip.getClubMemberUser().getEmail())
+                .userName(friendShip.getClubMemberUser().getName())
+                .friendEmail(friendShip.getClubMemberFriend().getEmail())
+                .friendName(friendShip.getClubMemberFriend().getName())
                 .status(friendShip.getStatus())
                 .isFrom(friendShip.isFrom())
                 .build();

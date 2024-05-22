@@ -547,8 +547,6 @@
       Result += '</div>';
       Result += '</div>';
     }
-    if (Result == "")
-      Result += "친구 요청 목록이 없습니다.";
     return Result;
   }
 
@@ -582,13 +580,7 @@
       Result += '</div>';
       Result += '</div>';
     }
-    if (Result == "" && friendListPage ==1) {
-      Result += "친구 요청 목록이 없습니다.";
       $('#friend-List-UserBox').append(Result);
-    }
-    else {
-      $('#friend-List-UserBox').append(Result);
-    }
   }
 
   function createFriendShipWaitingInfo(profileAndFriendMap){
@@ -612,8 +604,6 @@
       Result += '</div>';
       Result += '</div>';
     }
-    if (Result == "")
-      Result += "친구 요청 목록이 없습니다.";
     return Result;
   }
 

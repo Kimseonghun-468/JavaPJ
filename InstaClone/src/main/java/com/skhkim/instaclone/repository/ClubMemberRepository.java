@@ -28,10 +28,10 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
     @Query("SELECT CASE WHEN count(m) > 0 THEN TRUE ELSE FALSE END from ClubMember m WHERE m.name = :name AND m.email =:email")
     boolean existsByNameAndEmail(String name, String email);
 
-    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userName =:requesterName and f.friendName =:accepterName and f.isFrom =true")
+    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.clubMemberUser.name =:requesterName and f.clubMemberFriend.name =:accepterName and f.isFrom =true")
     Optional<FriendShip> getFriendshipsByName(@Param("requesterName") String requesterName, @Param("accepterName") String accepterName);
 
-    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.userName =:requesterName and f.friendName =:accepterName and f.isFrom =false ")
+    @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.clubMemberUser.name =:requesterName and f.clubMemberFriend.name =:accepterName and f.isFrom =false ")
     Optional<FriendShip> getFriendshipsByNameIsNotFrom(@Param("requesterName") String requesterName, @Param("accepterName") String accepterName);
 
     @Query("SELECT m, pi FROM ClubMember m LEFT JOIN ProfileImage pi ON m.name = pi.clubMember.name WHERE m.name like CONCAT('%', :searchTerm, '%')")

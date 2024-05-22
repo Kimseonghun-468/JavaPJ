@@ -36,21 +36,15 @@ public class FriendShipServiceImpl implements FriendShipService{
         ClubMember loginedClubMember = clubMemberRepository.findByName(loginedUserName);
         // 보내는 요청이랑 받은 요청 모두 필요하니 2개씩 저장
         FriendShip friendShipRequester = FriendShip.builder()
-                .clubMember(loginedClubMember)
-                .userEmail(loginedClubMember.getEmail())
-                .friendEmail(searchedClubMember.getEmail())
-                .userName(loginedClubMember.getName())
-                .friendName(searchedClubMember.getName())
+                .clubMemberUser(loginedClubMember)
+                .clubMemberFriend(searchedClubMember)
                 .status(FriendShipStatus.WAITING)
                 .isFrom(true)
                 .build();
         // 받는 요청
         FriendShip friendShipAccepter = FriendShip.builder()
-                .clubMember(searchedClubMember)
-                .userEmail(searchedClubMember.getEmail())
-                .userName(searchedClubMember.getName())
-                .friendEmail(loginedClubMember.getEmail())
-                .friendName(loginedClubMember.getName())
+                .clubMemberUser(searchedClubMember)
+                .clubMemberFriend(loginedClubMember)
                 .status(FriendShipStatus.WAITING)
                 .isFrom(false)
                 .build();

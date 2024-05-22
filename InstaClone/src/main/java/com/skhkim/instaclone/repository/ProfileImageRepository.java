@@ -21,40 +21,40 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Transactional
     @Query("DELETE FROM ProfileImage pi WHERE pi.clubMember.name =:userName")
     void deleteByUserName(String userName);
-    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi On fs.userName = pi.clubMember.name " +
-            "WHERE fs.friendName =:loginName " +
+    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi On fs.clubMemberUser.name = pi.clubMember.name " +
+            "WHERE fs.clubMemberFriend.name =:loginName " +
             "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
             "AND fs.isFrom = true")
     List<Object[]> getByWaitingList(@Param("loginName") String loginName);
 
-    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.userName = pi.clubMember.name " +
-            "WHERE fs.friendName =:loginName " +
+    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
+            "WHERE fs.clubMemberFriend.name =:loginName " +
             "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
     List<Object[]> getByAcceptList(@Param("loginName") String loginName);
 
-    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi On fs.userName = pi.clubMember.name " +
-            "WHERE fs.friendName =:loginName " +
+    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi On fs.clubMemberUser.name = pi.clubMember.name " +
+            "WHERE fs.clubMemberFriend.name =:loginName " +
             "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
             "AND fs.isFrom = true")
     Page<Object[]> getByWaitingListPage(Pageable pageable, @Param("loginName") String loginName);
 
-    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.userName = pi.clubMember.name " +
-            "WHERE fs.friendName =:loginName " +
+    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
+            "WHERE fs.clubMemberFriend.name =:loginName " +
             "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
     Page<Object[]> getByAcceptListPage(Pageable pageable, @Param("loginName") String loginName);
 
     @Query("SELECT fs1, pi, fs2.status, fs2.isFrom " +
             "FROM FriendShip fs1 " +
-            "LEFT JOIN FriendShip fs2 ON (fs1.userName = fs2.userName AND fs2.friendName = :loginName) " +
-            "OR (fs1.userName = :loginName AND fs2.userName = :userName AND fs2.friendName = :loginName) " +
-            "LEFT JOIN ProfileImage pi ON fs1.userName = pi.clubMember.name " +
-            "WHERE fs1.friendName =:userName " +
-            "AND fs1.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT AND fs1.userName != :loginName " +
-            "ORDER BY fs2.status DESC, fs1.userName")
+            "LEFT JOIN FriendShip fs2 ON (fs1.clubMemberUser.name = fs2.clubMemberUser.name AND fs2.clubMemberFriend.name = :loginName) " +
+            "OR (fs1.clubMemberUser.name = :loginName AND fs2.clubMemberUser.name = :userName AND fs2.clubMemberFriend.name = :loginName) " +
+            "LEFT JOIN ProfileImage pi ON fs1.clubMemberUser.name = pi.clubMember.name " +
+            "WHERE fs1.clubMemberFriend.name =:userName " +
+            "AND fs1.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT AND fs1.clubMemberUser.name != :loginName " +
+            "ORDER BY fs2.status DESC, fs1.clubMemberUser.name")
     Page<Object[]> getFriendListPage(Pageable pageable, @Param("userName") String userName, @Param("loginName") String loginName);
 
-    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.userName = pi.clubMember.name " +
-            "WHERE fs.friendName =:userName AND fs.userName =:loginName")
+    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
+            "WHERE fs.clubMemberFriend.name =:userName AND fs.clubMemberUser.name =:loginName")
     List<Object[]> getFriendFirst(String userName, String loginName);
 
 }

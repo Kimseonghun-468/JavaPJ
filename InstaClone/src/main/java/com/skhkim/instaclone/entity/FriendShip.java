@@ -15,13 +15,12 @@ public class FriendShip extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private ClubMember clubMember;
+    @JoinColumn(name = "user_info")
+    private ClubMember clubMemberUser;
 
-    private String userEmail;
-    private String friendEmail;
-    private String userName;
-    private String friendName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "friend_info")
+    private ClubMember clubMemberFriend;
     private FriendShipStatus status;
     private boolean isFrom;
 

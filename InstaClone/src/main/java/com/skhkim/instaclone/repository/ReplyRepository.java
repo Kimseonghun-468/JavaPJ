@@ -18,7 +18,7 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     @Query("DELETE FROM Reply r WHERE r.post.pno = :pno")
     void deleteByPostPno(Long pno);
 
-    @Query("DELETE FROM FriendShip fs WHERE fs.userName =:userName AND fs.friendName =:friendName")
+    @Query("DELETE FROM FriendShip fs WHERE fs.clubMemberUser.name =:userName AND fs.clubMemberFriend.name =:friendName")
     void deleteByUserNameAndFriendName(String userName, String friendName);
 
 }

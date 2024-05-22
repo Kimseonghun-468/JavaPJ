@@ -52,7 +52,7 @@ public class ProfileServieImpl implements ProfileService{
         List<String> friendNameList = new ArrayList<>();
         List<Object[]> result = profileImageRepository.getByWaitingList(loginName);
         result.forEach(arr->{
-            friendNameList.add(((FriendShip) arr[0]).getUserName());
+            friendNameList.add(((FriendShip) arr[0]).getClubMemberUser().getName());
         });
         List<ProfileImageDTO> profileImageDTOList = result.stream().map(arr -> {
             if (arr[1] == null)
@@ -81,7 +81,7 @@ public class ProfileServieImpl implements ProfileService{
 
         Function<Object[], Map<String,Object>> fn = (arr ->{
             Map<String, Object> profileAndFriendMap = new HashMap<>();
-            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getUserName());
+            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
             if (arr[1] == null)
                 profileAndFriendMap.put("profileImage",null);
             else
@@ -101,7 +101,7 @@ public class ProfileServieImpl implements ProfileService{
 
         Function<Object[], Map<String,Object>> fn = (arr ->{
             Map<String, Object> profileAndFriendMap = new HashMap<>();
-            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getUserName());
+            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
             if (arr[1] == null)
                 profileAndFriendMap.put("profileImage",null);
             else
@@ -120,7 +120,7 @@ public class ProfileServieImpl implements ProfileService{
 
         Function<Object[], Map<String,Object>> fn = (arr ->{
             Map<String, Object> profileAndFriendMap = new HashMap<>();
-            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getUserName());
+            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
             if (arr[1] == null)
                 profileAndFriendMap.put("profileImage",null);
             else
@@ -154,7 +154,7 @@ public class ProfileServieImpl implements ProfileService{
                 resultMap.put("image", ((ProfileImage) result.get(0)[1]));
             else
                 resultMap.put("image", null);
-            resultMap.put("name", ((FriendShip) result.get(0)[0]).getUserName());
+            resultMap.put("name", ((FriendShip) result.get(0)[0]).getClubMemberUser().getName());
         }
         return resultMap;
     }
@@ -167,7 +167,7 @@ public class ProfileServieImpl implements ProfileService{
         List<Object[]> result = profileImageRepository.getByAcceptList(loginName);
 
         result.forEach(arr->{
-            friendNameList.add(((FriendShip) arr[0]).getUserName());
+            friendNameList.add(((FriendShip) arr[0]).getClubMemberUser().getName());
         });
         List<ProfileImageDTO> profileImageDTOList = result.stream().map(arr -> {
                     if (arr[1] == null)

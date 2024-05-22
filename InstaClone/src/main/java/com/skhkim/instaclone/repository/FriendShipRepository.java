@@ -11,9 +11,9 @@ public interface FriendShipRepository extends JpaRepository<FriendShip, Long> {
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM FriendShip fs WHERE fs.userName =:userName AND fs.friendName =:friendName")
+    @Query("DELETE FROM FriendShip fs WHERE fs.clubMemberUser.name =:userName AND fs.clubMemberFriend.name =:friendName")
     void deleteByUserNameAndFriendName(String userName, String friendName);
 
-    @Query("SELECT count(fs) FROM FriendShip fs where fs.friendName = :name AND fs.status = :status")
+    @Query("SELECT count(fs) FROM FriendShip fs where fs.clubMemberFriend.name = :name AND fs.status = :status")
     Long getFriendShipCount(String name, FriendShipStatus status);
 }
