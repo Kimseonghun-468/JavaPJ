@@ -17,16 +17,14 @@ public interface ChatRoomService {
     List<String> getNamesToId(String loginName, String friendName);
     ChatRoomDTO getORCreateChatRoomID(String loginName, String friendName);
     ChatRoom createChatRoomID(List<String> sortedID);
-//    List<String> getChatroomListByName(String loginEmail);
     void registerLastChatTime(String roomID, String comment);
-//    Map<String, Object> getChatroomAndProfileImageByLoginName(String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getChatroomAndProfileImageByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     void updateChatroomDisConnectTime(String roomID, String loginName);
     default ChatRoomDTO entityToDTO(ChatRoom chatRoom){
         ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
                 .id(chatRoom.getId())
-                .userName1(chatRoom.getUserName1())
-                .userName2(chatRoom.getUserName2())
+                .userName1(chatRoom.getClubMemberUser1().getName())
+                .userName2(chatRoom.getClubMemberUser2().getName())
                 .lastChat(chatRoom.getLastChat())
                 .lastChatTime(chatRoom.getLastChatTime())
                 .lastDisConnect1(chatRoom.getLastDisConnect1())

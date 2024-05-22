@@ -52,7 +52,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         Optional<ChatRoom> result = chatRoomRepository.getChatIdbyNames(roomID);
         if (result.isPresent()){
             ChatRoom chatRoom = result.get();
-            if (chatRoom.getUserName1().equals(userName))
+            if (chatRoom.getClubMemberUser1().getName().equals(userName))
                 chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userName, chatRoom.getLastDisConnect2());
             else
                 chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userName, chatRoom.getLastDisConnect1());

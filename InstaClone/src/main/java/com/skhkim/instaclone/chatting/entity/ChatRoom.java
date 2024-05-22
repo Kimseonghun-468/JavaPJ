@@ -1,10 +1,8 @@
 package com.skhkim.instaclone.chatting.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.skhkim.instaclone.entity.ClubMember;
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -14,17 +12,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"clubMemberUser1", "clubMemberUser2"})
 public class ChatRoom {
 
     @Id
     private String id;
 
-    @Column(nullable = false)
-    private String userName1;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ClubMember clubMemberUser1;
 
-    @Column(nullable = false)
-    private String userName2;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ClubMember clubMemberUser2;
 
     @Column(nullable = false)
     private LocalDateTime lastDisConnect1;

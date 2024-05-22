@@ -5,7 +5,9 @@ import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.ProfilePageResultDTO;
+import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.ProfileImage;
+import com.skhkim.instaclone.repository.ClubMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ import java.util.function.Function;
 public class ChatRoomServiceImpl implements ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final ClubMemberRepository clubMemberRepository;
     @Override
     public ChatRoomDTO getORCreateChatRoomID(String loginName, String friendName){
 
@@ -38,10 +41,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Override
     public ChatRoom createChatRoomID(List<String> sortedID){
         String roomID = sortedID.get(2);
+        ClubMember user1 = clubMemberRepository.findByName(sortedID.get(0));
+        ClubMember user2 = clubMemberRepository.findByName(sortedID.get(1));
         ChatRoom chatRoom = ChatRoom.builder()
                 .id(roomID)
-                .userName1(sortedID.get(0))
-                .userName2(sortedID.get(1))
+                .clubMemberUser1(user1)
+                .clubMemberUser2(user2)
                 .lastDisConnect1(LocalDateTime.now())
                 .lastDisConnect2(LocalDateTime.now())
                 .build();

@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = "clubMember")
+@ToString(exclude = {"clubMemberUser", "clubMemberFriend"})
 public class FriendShip extends BaseEntity{
 
     @Id
