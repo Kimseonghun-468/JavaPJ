@@ -35,14 +35,9 @@ public class SearchCotroller {
         Map<String, Object> response = getClubMemberDTOAndProfileImageDTO(clubMemberDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-/*    @GetMapping("/name/all/{name}")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, @PathVariable("name") String name){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> result = loginService.getClubMemberSearchbyNameAll(profilePageRequestDTO, name);
-        return new ResponseEntity<>(result,HttpStatus.OK);
-    }*/
     @GetMapping("/name/all/{name}")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, @PathVariable("name") String name){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> result = loginService.getClubMemberSearchbyNameAll(profilePageRequestDTO, name);
+    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, @PathVariable("name") String name, String user){
+        ProfilePageResultDTO<Map<String, Object>, Object[]> result = loginService.getClubMemberSearchbyNameAll(profilePageRequestDTO, name, user);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 

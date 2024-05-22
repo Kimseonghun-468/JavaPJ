@@ -18,7 +18,7 @@ public interface LoginService {
     boolean checkDuplication(ClubMemberDTO memberDTO);
     String register(ClubMemberDTO memberDTO);
     ClubMemberDTO getClubMemberSearchbyName(String name);
-    ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name);
+    ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name, String userName);
     ClubMemberDTO getClubMemberSearchbyEmail(String Email);
     boolean getUserExist(String name);
     default ClubMember dtoToEntity(ClubMemberDTO dto){

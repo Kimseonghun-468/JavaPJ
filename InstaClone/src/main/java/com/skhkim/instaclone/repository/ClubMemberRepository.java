@@ -34,7 +34,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
     @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.clubMemberUser.name =:requesterName and f.clubMemberFriend.name =:accepterName and f.isFrom =false ")
     Optional<FriendShip> getFriendshipsByNameIsNotFrom(@Param("requesterName") String requesterName, @Param("accepterName") String accepterName);
 
-    @Query("SELECT m, pi FROM ClubMember m LEFT JOIN ProfileImage pi ON m.name = pi.clubMember.name WHERE m.name like CONCAT('%', :searchTerm, '%')")
-    Page<Object[]> findByNamePage(Pageable pageable, @Param("searchTerm")String searchTerm);
+    @Query("SELECT m, pi FROM ClubMember m LEFT JOIN ProfileImage pi ON m.name = pi.clubMember.name WHERE m.name like CONCAT('%', :searchTerm, '%') AND m.name != :userName")
+    Page<Object[]> findByNamePage(Pageable pageable, @Param("searchTerm")String searchTerm, String userName);
 
 }

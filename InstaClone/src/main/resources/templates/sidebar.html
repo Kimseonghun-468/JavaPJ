@@ -17,7 +17,7 @@
   <div class="sidebar">
     <div class="logo">Instagram</div>
     <a class="menu-item">
-      <p id="search-user">검색</p>
+      <span id="search-user">검색</span>
     </a>
     <a class="menu-item">
       <span class="chatting-roomList">채팅 목록</span>
@@ -30,6 +30,9 @@
     </a>
     <a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" class="menu-item">
       <span class="profile-name">프로필</span>
+    </a>
+    <a th:href="@{/userinfo/{name}(name=${memberDTO.name})}" class="menu-item">
+      <span>회원 정보</span>
     </a>
   </div>
 
@@ -499,7 +502,8 @@
     return searchResult;
   }
   function getSearchUserInfo(searchTerm){
-    $.getJSON("/search/name/all/"+searchTerm+"?page="+searchPage, function (searchInfo){
+    var loginName = '[[${memberDTO.name}]]';
+    $.getJSON("/search/name/all/"+searchTerm+"?page="+searchPage+"&user="+loginName, function (searchInfo){
 
       var pageResult = ""
       var searchResult = createSearchInfohtmlbox(searchInfo);
@@ -1107,40 +1111,40 @@ async function showChatInfoBefore(roomID, loginName){
         });
       });
     });
-    $('.uploadButton-profile').click(function (){
+    $('.uploadButton-profile').off('click').on('click', function () {
       $('#profile-option-modal').modal('show');
-      $('#upload-profile-image').click(function () {
-        $('.profile-Image-File').click().on('change', function () {
+
+      $('#upload-profile-image').off('click').on('click', function () {
+        $('.profile-Image-File').off('change').click().on('change', function () {
           if (this.files && this.files.length > 0) {
             $('.Profile-File-Modal').css('z-index', 1060).modal('show');
             var formData = new FormData();
             var inputFile = $("input.profile-Image-File");
             var files = inputFile[0].files;
             formData.append("uploadFiles", files[0]);
+
+            $('.submitFile-Profile').off('click').on('click', function () {
+              uploadImageAndProfileRegisterRequset(formData);
+              alert('프로필 파일이 제출되었습니다.');
+              $('.filemodal').modal('hide');
+            });
           }
-          $('.submitFile-Profile').click(function () {
-            uploadImageAndProfileRegisterRequset(formData);
-            alert('프로필 파일이 제출되었습니다.');
-            $('.filemodal').modal('hide');
-          });
-        })
-      })
-      $('#cancel-profile-image').click(function (){
-        console.log("삭제")
+        });
+      });
+
+      $('#cancel-profile-image').off('click').on('click', function () {
+        console.log("삭제");
         var loginName = '[[${memberDTO.name}]]';
         $.ajax({
-          url:"profileImage/deleteProfile",
-          type:"POST",
-          data:{userName:loginName},
-          success: function (){
+          url: "/profileImage/deleteProfile",
+          type: "POST",
+          data: { userName: loginName },
+          success: function () {
             self.location.reload();
           }
-        })
-        // $('#profile-option-modal').modal('hide');
-
-
-      })
-    })
+        });
+      });
+    });
 
     // $('.uploadButton-profile').click(function () {
     //   $('.profile-Image-File').click().on('change', function() {

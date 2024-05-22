@@ -49,9 +49,9 @@ public class LoginServiceImpl implements LoginService{
         return result != null ? entityToDTO(result) : ClubMemberDTO.builder().build();
     }
     @Override
-    public ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name){
+    public ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name, String userName){
         Pageable pageable = profilePageRequestDTO.getPageable();
-        Page<Object[]> result = clubMemberRepository.findByNamePage(pageable, name);
+        Page<Object[]> result = clubMemberRepository.findByNamePage(pageable, name, userName);
 
         Function<Object[], Map<String,Object>> fn = (arr ->{
             Map<String, Object> profileAndSearchMap = new HashMap<>();
