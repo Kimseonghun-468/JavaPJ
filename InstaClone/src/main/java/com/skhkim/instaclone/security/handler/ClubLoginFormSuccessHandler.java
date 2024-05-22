@@ -41,7 +41,7 @@ public class ClubLoginFormSuccessHandler implements AuthenticationSuccessHandler
             throws IOException, ServletException {
 
         ClubAuthMemberDTO authMember = (ClubAuthMemberDTO) authentication.getPrincipal();
-        String token = jwtUtils.generateToken(authMember.getName());
+        String token = jwtUtils.generateToken(authMember.getEmail());
 
         // JSON 객체 생성
         Map<String, String> responseData = new HashMap<>();

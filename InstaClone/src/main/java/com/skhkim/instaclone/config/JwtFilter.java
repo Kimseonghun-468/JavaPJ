@@ -33,16 +33,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
         }
 //        final String authorizationHeader = request.getHeader("Authorization");
-        String username = null;
+        String email = null;
         String jwt = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);
+            email = jwtUtil.extractUsername(jwt);
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            ClubMemberDTO clubMemberDTO = loginService.getClubMemberByName(username);
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            ClubMemberDTO clubMemberDTO = loginService.getClubMemberSearchbyEmail(email);
             ClubAuthMemberDTO clubAuthMember = new ClubAuthMemberDTO(
                     clubMemberDTO.getEmail(),
                     clubMemberDTO.getPassword(),
@@ -50,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     clubMemberDTO.getRoleSet().stream().map(role ->
                             new SimpleGrantedAuthority("ROLE_"+role.name())).collect(Collectors.toSet())
             );
-            if (jwtUtil.validateToken(jwt, clubMemberDTO.getName())) {
+            if (jwtUtil.validateToken(jwt, clubMemberDTO.getEmail())) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         clubAuthMember, null, clubAuthMember.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

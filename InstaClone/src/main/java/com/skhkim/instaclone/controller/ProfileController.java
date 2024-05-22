@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @Log4j2
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('USER')")
 public class ProfileController {
 
     private final PostService postService;
@@ -86,7 +87,7 @@ public class ProfileController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("")
+    @GetMapping({"", "/sidebar","/sidebar/"})
     public String defaultPage(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO){
         return "redirect:/sidebar/"+clubAuthMemberDTO.getName();
     }

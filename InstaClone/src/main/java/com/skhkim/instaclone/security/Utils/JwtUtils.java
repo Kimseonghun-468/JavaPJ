@@ -12,9 +12,9 @@ public class JwtUtils {
     private String secretKey = "64461f01e1af406da538b9c48d801ce59142452199ff112fb5404c8e7e98e3ff"; // 보안을 위해 복잡한 키 사용 권장
 
 
-    public String generateToken(String username) {
+    public String generateToken(String email) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10시간 후 만료
                 .signWith(SignatureAlgorithm.HS256, secretKey)
