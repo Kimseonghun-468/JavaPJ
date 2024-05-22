@@ -24,11 +24,10 @@ public interface ProfileService {
     default ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = ProfileImage.builder()
-                .userName(profileImageDTO.getUserName())
+                .clubMember(ClubMember.builder().email(profileImageDTO.getUserEmail()).build())
                 .path(profileImageDTO.getPath())
                 .uuid(profileImageDTO.getUuid())
                 .imgName(profileImageDTO.getImgName())
-                .userEmail(profileImageDTO.getUserEmail())
                 .build();
 
         return profileImage;
@@ -37,9 +36,9 @@ public interface ProfileService {
 
         ProfileImageDTO profileImageDTO = ProfileImageDTO.builder()
                 .pfino(profileImage.getPfino())
-                .userName(profileImage.getUserName())
+                .userName(profileImage.getClubMember().getName())
                 .imgName(profileImage.getImgName())
-                .userEmail(profileImage.getUserEmail())
+                .userEmail(profileImage.getClubMember().getEmail())
                 .path(profileImage.getPath())
                 .uuid(profileImage.getUuid())
                 .build();

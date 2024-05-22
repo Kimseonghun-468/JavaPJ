@@ -1,10 +1,7 @@
 package com.skhkim.instaclone.config;
 
-import com.nimbusds.oauth2.sdk.auth.JWTAuthentication;
-import com.skhkim.instaclone.security.Utils.JwtUtils;
 import com.skhkim.instaclone.security.handler.ClubLoginFormSuccessHandler;
 import com.skhkim.instaclone.security.handler.FailHandler;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @Log4j2
-//@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
     @Bean

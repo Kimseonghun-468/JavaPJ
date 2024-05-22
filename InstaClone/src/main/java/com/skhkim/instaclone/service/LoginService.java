@@ -52,9 +52,9 @@ public interface LoginService {
     default ProfileImageDTO entityToDTOByProfileImage(ProfileImage profileImage){
         ProfileImageDTO profileImageDTO = ProfileImageDTO.builder()
                 .pfino(profileImage.getPfino())
-                .userName(profileImage.getUserName())
+                .userName(profileImage.getClubMember().getName())
                 .imgName(profileImage.getImgName())
-                .userEmail(profileImage.getUserEmail())
+                .userEmail(profileImage.getClubMember().getEmail())
                 .path(profileImage.getPath())
                 .uuid(profileImage.getUuid())
                 .build();
