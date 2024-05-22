@@ -5,6 +5,8 @@ import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
+import com.skhkim.instaclone.chatting.entity.ChatRoom;
+import com.skhkim.instaclone.entity.ClubMember;
 
 import java.util.List;
 
@@ -23,7 +25,8 @@ public interface ChatMessageService {
 
         ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder()
                 .cid(chatMessage.getCid())
-                .name(chatMessage.getName())
+                .name(chatMessage.getClubMember().getName())
+                .email(chatMessage.getClubMember().getEmail())
                 .content(chatMessage.getContent())
                 .regDate(chatMessage.getRegDate())
                 .readStatus(chatMessage.isReadStatus())
@@ -32,10 +35,14 @@ public interface ChatMessageService {
         return chatMessageDTO;
     }
 
-    default ChatMessage dtoToEntity(ChatMessageDTO chatMessageDTO){
+    default ChatMessage dtoToEntity(ChatMessageDTO chatMessageDTO, String roomID){
         ChatMessage chatMessage = ChatMessage.builder()
-                .name(chatMessageDTO.getName())
+                .cid(chatMessageDTO.getCid())
+                .clubMember(ClubMember.builder().email(chatMessageDTO.getEmail()).build())
                 .content(chatMessageDTO.getContent())
+                .chatRoom(ChatRoom.builder().id(roomID).build())
+                .readStatus(chatMessageDTO.isReadStatus())
+                .regDate(chatMessageDTO.getRegDate())
                 .build();
 
         return chatMessage;

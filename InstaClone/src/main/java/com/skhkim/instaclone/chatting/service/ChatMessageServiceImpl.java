@@ -35,16 +35,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public Long register(ChatMessageDTO chatMessageDTO, String roomID){
-        ChatMessage chatMessage = ChatMessage.builder()
-                .cid(chatMessageDTO.getCid())
-                .name(chatMessageDTO.getName())
-                .content(chatMessageDTO.getContent())
-                .chatRoom(ChatRoom.builder().id(roomID).build())
-                .readStatus(chatMessageDTO.isReadStatus())
-                .regDate(chatMessageDTO.getRegDate())
-                .build();
+        ChatMessage chatMessage = dtoToEntity(chatMessageDTO, roomID);
         chatMessageRepository.save(chatMessage);
-
         return chatMessage.getCid();
     }
     @Override

@@ -33,7 +33,7 @@ public class ChatController {
     private final ChatRoomSessionManager chatRoomSessionManager;
     @MessageMapping("/chat/{roomID}")
     @SendTo("/topic/chat/{roomID}")
-    public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO) {
+    public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO, String email) {
         log.info("Room ID :"+ roomID);
         boolean readStatus;
         if (chatRoomSessionManager.getRoomJoinNum(roomID) == 2)
@@ -42,6 +42,7 @@ public class ChatController {
             readStatus = false;
         ChatMessageDTO result = ChatMessageDTO.builder()
                 .name(chatMessageDTO.getName())
+                .email(chatMessageDTO.getEmail())
                 .content(chatMessageDTO.getContent())
                 .regDate(LocalDateTime.now())
                 .readStatus(readStatus)

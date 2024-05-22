@@ -917,10 +917,12 @@
   function sendMessage(RoomID) {
     var messageContent = document.getElementById('messageInput').value.trim();
     var name = '[[${memberDTO.name}]]';
+    var email = '[[${memberDTO.email}]]';
     if(messageContent && stompClient) {
       var chatMessage = {
         name: name,
-        content: messageContent
+        content: messageContent,
+        email: email
       };
       stompClient.send("/app/chat/"+RoomID, {}, JSON.stringify(chatMessage));
       document.getElementById('messageInput').value = '';

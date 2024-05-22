@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class ChatMessageDTO {
     private Long cid;
     private String name;
+    private String email;
     private String content;
     private LocalDateTime regDate;
 
