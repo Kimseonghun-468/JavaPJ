@@ -1111,8 +1111,8 @@ async function showChatInfoBefore(roomID, loginName){
       });
     });
     $('.uploadButton-profile').off('click').on('click', function () {
-      $('#profile-option-modal').modal('show');
-
+      if (loginName == userName)
+        $('#profile-option-modal').modal('show');
       $('#upload-profile-image').off('click').on('click', function () {
         $('.profile-Image-File').off('change').click().on('change', function () {
           if (this.files && this.files.length > 0) {
