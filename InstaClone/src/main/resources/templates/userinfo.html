@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
   <link th:href="@{/css/Sidebar.css}" rel="stylesheet">
+  <link th:href="@{/css/UserInfoChagne.css}" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/stomp-websocket/lib/stomp.min.js"></script>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <link th:href="@{/css/carouselCustom.css}" rel="stylesheet">
+
   <title>프로필</title>
 </head>
 
@@ -38,7 +39,7 @@
   </div>
 
 
-  <section class="temp2" th:if ="${userExist == True}">
+  <section class="temp2" th:if ="${userExist == True && memberDTO.name == userName}">
     <main>
       <div class="temp4">
         <header class="profile-header">
@@ -59,63 +60,154 @@
               <div class="stats">
                 <span>게시물 [[${postNum}]]</span>
                 <span class="options" id="friend-List">친구 [[${friendNum}]]</span>
-                <span id="follow-status">
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" th:data-name="${userName}" class="request-Follow-button follow">친구 요청</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Delete-button follow">친구 삭제</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Chatroom-button follow">1:1 채팅하기</button>
-                  <button th:if="${memberDTO.name != userName && friendshipStatus =='WAITACCEPT'}" th:data-name="${userName}" class="request-Accept-button follow">친구 수락</button>
-                </span>
               </div>
             </div>
           </div>
         </header>
+        <div class="user-info-change-box">
+          <form id="id-change-form" action="/login/changeName" method="POST">
+            <input type="text" name="loadName" th:value="${memberDTO.name}" style="display: none;">
+          <div class="id-change-box">
+            <div class="id-block1">
+              <a>이름 변경</a>
+            </div>
 
-        <section class="profile-content">
-          <nav class="profile-navigation">
-
-            <a href="#" class="active au_c">게시물</a>
-          </nav>
-          <div class="post-grid" id="post-grid-image-box">
-            <div class="post-item " th:each="dto : ${result.dtoList}">
-              <td><img class = "post-list-img"
-                       th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
-                       th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
-                       th:data-url="|${dto.imageDTOList[0].getImageURL()}|"
-                       th:data-id="${dto.imageDTOList[0].pino}"
-                       th:data-pid="${dto.pno}"
-              ></td>
+            <div class="id-block2">
+              <div class="form-group">
+                <div class="form-group-info">
+                  <a>이메일</a>
+                </div>
+                <div class="form-group-value">
+                  <input type="text" th:value="${memberDTO.email}" disabled>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="form-group-info">
+                  <a>이름</a>
+                  <button class="button-check" id="button-check-name" type="button">중복 체크</button>
+                </div>
+                <div class="form-group-value">
+                  <input type="text" id="name" name="name" th:value="${memberDTO.name}">
+                  <a th:if ="${nameChangeError}" style="color: red">(변경 실패) 이름이 중복되었습니다.</a>
+                </div>
+              </div>
+              <div class="form-actions ac-h1">
+                <button type="button" class="submit-name">저장 하기</button>
+              </div>
             </div>
           </div>
-        </section>
+          </form>
+          <form id="ps-change-form" action="/login/changePassword" method="POST">
+            <input type="text" name="name" th:value="${memberDTO.name}" style="display: none;">
+          <div class="ps-change-box">
+            <div class="ps-block1">
+              <a>비밀번호 변경</a>
+            </div>
+
+            <div class="ps-block2">
+              <div class="form-group">
+                <div class="form-group-info">
+                  <a>현재 비밀번호</a>
+                </div>
+                <div class="form-group-value">
+                  <input type="password" id="password" name="password" autocomplete="new-password">
+                  <a th:if ="${psError}" style="color: red">(변경 실패) 비밀번호가 틀렸습니다.</a>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="form-group-info">
+                  <a>새 비밀번호</a>
+                </div>
+                <div class="form-group-value">
+                  <input type="password" id="new-password" name="newPassword" autocomplete="new-password">
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="form-group-info">
+                  <a>새 비밀번호 확인</a>
+                </div>
+                <div class="form-group-value">
+                  <input type="password" id="new-password-check" autocomplete="new-password">
+                </div>
+              </div>
+              <div class="form-actions ac-h2">
+                <button type="button" class="submit-password">저장 하기</button>
+              </div>
+            </div>
+          </div>
+          </form>
+        </div>
       </div>
     </main>
 
     <div class="up-temp3">
       <div class="temp3">
-        <ul class="pagination justify-content-center align-items-center" id="post-page">
-          <li th:class="'page-item ' + ${result.page == page?'active':''}"
-              th:each="page: ${result.pageList}">
-            <button class="page-link post-page-button" th:data-name="|${page}|">
-              [[${page}]]
-            </button>
-          </li>
-        </ul>
-        <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
-        <button th:if="${memberDTO.name == userName}" class="uploadButton-post">이미지 업로드</button>
-
         <footer class="profile-footer">
           <span>© 2024 Instagram Clone</span>
         </footer>
       </div>
     </div>
   </section>
-  <div class ="temp2 temp4 logo" th:unless="${userExist}">
+  <div class ="temp2 temp4 logo" th:unless="${userExist || memberDTO.name == userName}">
     <p>페이지를 찾을 수 없습니다.</p>
     <a th:href="@{/sidebar/{name}(name=${memberDTO.name})}">돌아가기</a>
   </div>
 </div>
 </body>
+
+<script>
+  var nameFlag = false;
+  var passwordCheckFlag = false;
+  $('#button-check-name').click(function (){
+    var name = $('#name').val()
+    $.ajax({
+      url: "/login/checkName",
+      type :"POST",
+      data: {name :name},
+      success: function (result){
+        console.log(result)
+        if (!result) {
+          nameFlag = true;
+          $('#button-check-name').text("체크 완료")
+        }
+        else {
+          nameFlag = false;
+          $('#button-check-name').text("체크 실패")
+        }
+      }
+    })
+  })
+  $('.submit-name').click(function (){
+    if (nameFlag == true){
+      $('#id-change-form').submit();
+      console.log("Submit!!Name")
+    }
+    else
+      alert("중복 체크를 완료해주세요.")
+  })
+  $('.submit-password').click(function (){
+    var password = $('#password').val()
+    var newPassword = $('#new-password').val()
+    var newPasswordCheck = $('#new-password-check').val()
+
+
+    if(newPassword == newPasswordCheck && password != "" && newPassword !=""){
+      passwordCheckFlag = true;
+    }
+    if(passwordCheckFlag){
+      console.log("Change PS!")
+      $('#ps-change-form').submit();
+    }
+    if(password =="" || newPassword =="" || newPasswordCheck ==""){
+      alert("비밀번호를 입력해주세요")
+    }
+    else if(passwordCheckFlag == false){
+      alert("새 비밀번호를 다시 확인해주세요")
+    }
+
+
+  })
+</script>
 
 <div class="Profile-File-Modal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -142,30 +234,6 @@
   </div>
 </div>
 
-<div id="reply-option-modal" class="modal-custom">
-  <div class="option-modal-content">
-
-    <div class="option-modal-body">
-      <h3 id="remove-reply">삭제</h3>
-    </div>
-    <div class="option-modal-footer">
-      <h3 id="cancel-reply">취소</h3>
-    </div>
-  </div>
-</div>
-
-<div id="post-option-modal" class="modal-custom">
-  <div class="option-modal-content">
-
-    <div class="option-modal-body">
-      <h3 id="remove-post">삭제</h3>
-    </div>
-    <div class="option-modal-footer">
-      <h3 id="cancel-post">취소</h3>
-    </div>
-  </div>
-</div>
-
 <div id="profile-option-modal" class="modal-custom">
   <div class="option-modal-content">
 
@@ -174,13 +242,6 @@
     </div>
     <div class="option-modal-footer">
       <h3 id="cancel-profile-image">삭제</h3>
-    </div>
-  </div>
-</div>
-
-<div id="profileImageModal" class="modal-custom">
-  <div class="modal-content-post">
-    <div id="modal-content-profile-imagebox">
     </div>
   </div>
 </div>
@@ -252,18 +313,18 @@
       <form class="upload-form" id=upload-form th:action="@{/sidebar/post/{userName}(userName=${memberDTO.name})}" th:method="post">
         <div class="upload-title-input">
           <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
-  <!--        <input type="text" placeholder="문구를 입력하세요..." id="upload-comment-box">-->
+          <!--        <input type="text" placeholder="문구를 입력하세요..." id="upload-comment-box">-->
         </div>
         <div class="upload-comment-input">
           <textarea class="text-field" placeholder="텍스트를 입력하세요..." name="comment"></textarea>
 
         </div>
         <div class="upload-button-box">
-            <input type="hidden" name="email" th:value="${memberDTO.email}">
-            <div id="upload-form-image-box">
+          <input type="hidden" name="email" th:value="${memberDTO.email}">
+          <div id="upload-form-image-box">
 
-            </div>
-            <button type="button" class="btn btn-primary" id="upload-post-button">공유하기</button>
+          </div>
+          <button type="button" class="btn btn-primary" id="upload-post-button">공유하기</button>
         </div>
 
       </form>
@@ -341,19 +402,21 @@
 
 <div class="modal-custom" id="chatMessageModal">
   <div class="modal-content-message-frame">
-  <div class="modal-body">
-    <div id="messages-modal" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: rgb(255, 255, 255);">
-      <div class id="messages-box">
+    <div class="modal-body">
+      <div id="messages-modal" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: rgb(255, 255, 255);">
+        <div class id="messages-box">
 
+        </div>
+      </div>
+      <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
+      <div class="modal-footer">
+        <button type="button" id="send-button-modalroom">Send</button>
       </div>
     </div>
-    <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
-    <div class="modal-footer">
-      <button type="button" id="send-button-modalroom">Send</button>
-    </div>
-  </div>
   </div>
 </div>
+
+
 
 <script>
   var requestedPage = 1;
@@ -384,85 +447,7 @@
     timeZone: "Asia/Seoul"  // 서버 시간대가 UTC라고 가정
   };
   const formatter = new Intl.DateTimeFormat('en-US', options);
-  function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
-    var data = {pno:postId, text:commentBox.value, email:userEmail};
-    $.ajax({
-      url: '/reply/'+postId,
-      type: "POST",
-      data: JSON.stringify(data),
-      contentType: "application/json; charset=utf-8",
-      dataType:"text",
-      success: function (result){
-        var tempReply = {name:userName, text:commentBox.value, rno:result};
-        replyResult = ""
-        var replyArea = $("#reply-comment-body");
-        replyArea.append(createReplyhtmlbox(userName, tempReply));
-        $('#comment-box').val('');
-        $('#reply-comment-body').scrollTop($('#reply-comment-body')[0].scrollHeight);
-      }
-    })
-  };
-  function sendReplyDeleteRequest(rno){
-    $.ajax({
-      url: '/reply/'+rno,
-      type: 'DELETE',
-      contentType: "application/json; charset=utf-8",
-      dataType: "text",
-      success: function (result){
-        $('[data-rno="' + rno + '"]').closest('.comment-body-reply').remove();
-      }
-    })
-  }
-  function sendPostDeleteRequest(pno){
-    $.ajax({
-      url: '/post/delete/' + pno,
-      type: 'DELETE',
-      success: function (result){
-      }
-    })
-  }
 
-  function showReplyListInPost(postId){
-    $.getJSON("/reply/"+postId +"/all", function (arr){
-      var str = "";
-      var loginName = '[[${memberDTO.name}]]';;
-
-      $.each(arr, function (idx, reply){
-        replyStr = createReplyhtmlbox(loginName, reply);
-        str += replyStr;
-      });
-      $("#reply-comment-body").html(str);
-    })
-  }
-
-  function showUploadedImages(arr){
-    var divArea = $(".uploadResult");
-    var str = "";
-
-    for (var i = 0; i < arr.length; i++) {
-      str += "<div>";
-      str += "<img src='/display?fileName=" + arr[i].thumbnailURL + "'>";
-      str += "<button class='removeBtn' data-name='" + arr[i].imageURL + "'>Remove</button>";
-      str += "</div>";
-    }
-    divArea.append(str);
-  }
-
-  function createReplyhtmlbox(loginName, reply){
-    var str = "";
-    str += '<div class="comment-body-reply">';
-    str += '<div class="comment-title-username comment-bold">'
-    str += reply.name
-    str += '</div>'
-    str += '<div class="comment-title-comment">'
-    str += reply.text
-    str += '</div>'
-    if (loginName == reply.name) {
-      str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
-    }
-    str += '</div>'
-    return str
-  }
   function sendFollowRequest(name, $button){
     $.ajax({
       url: '/friendShip/' + name,
@@ -540,7 +525,7 @@
       Result += '<div class="user-name-box">'
       Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
               ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
-              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
+      ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
       Result += '</div>';
       Result += '<div class="user-friend-button-box2">';
       Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button follow'>친구 삭제</button>"
@@ -583,7 +568,7 @@
       Result += '</div>';
       Result += '</div>';
     }
-      $('#friend-List-UserBox').append(Result);
+    $('#friend-List-UserBox').append(Result);
   }
 
   function createFriendShipWaitingInfo(profileAndFriendMap){
@@ -610,18 +595,18 @@
     return Result;
   }
 
-   function getNotReadMessageNum(friendName, loginName) {
-     $.ajax({
-       url: "/chat/getNotReadNum",
-       type: "POST",
-       dataType: "JSON",
-       data: {loginName: loginName, friendName: friendName},
-       success: function (result){
-         $('#num-'+friendName).html(result);
-       }
-     })
+  function getNotReadMessageNum(friendName, loginName) {
+    $.ajax({
+      url: "/chat/getNotReadNum",
+      type: "POST",
+      dataType: "JSON",
+      data: {loginName: loginName, friendName: friendName},
+      success: function (result){
+        $('#num-'+friendName).html(result);
+      }
+    })
 
-   }
+  }
   function createChatroomListInfo(result){
     Result = "";
     for (var i = 0; i < result.dtoList.length; i++){
@@ -781,47 +766,6 @@
     })
   }
 
-  function uploadImageAndPostRegisterRequset(formData){
-    $.ajax({
-      url: '/uploadAjax',
-      processData: false,
-      contentType: false,
-      data: formData,
-      type: 'POST',
-      dataType: 'json',
-      success: function (result) {
-        var str = "";
-        var carouselTag = "";
-        $.each(result, function (idx, imageInfo) {
-          str += "<input type='hidden' name='imageDTOList["+idx+"].imgName' value='"+imageInfo['fileName'] +"'>";
-          str += "<input type='hidden' name='imageDTOList["+idx+"].path' value='"+imageInfo['folderPath']+"'>";
-          str += "<input type='hidden' name='imageDTOList["+idx+"].uuid' value='"+imageInfo['uuid']+"'>";
-
-          if(idx ==0)
-            carouselTag += '<div class="carousel-item active">'
-          else
-            carouselTag += '<div class="carousel-item">'
-          carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
-          carouselTag += '</div>';
-        });
-        if(result.length ==1){
-          $(".carousel-control-next").html("")
-          $(".carousel-control-prev").html("")
-        }
-        else{
-          $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
-          $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
-        }
-
-        $("#upload-form-image-box").html(str);
-        $("#upload-carousel-image-box").html(carouselTag);
-        return result;
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus)
-      }
-    });
-  }
   function uploadImageAndProfileRegisterRequset(formData){
     $.ajax({
       url: '/uploadAjax',
@@ -932,7 +876,6 @@
     }
   }
   function showChatMessage(name, message, time, readStatus, reverse, live) {
-    var messageElement = document.createElement('div');
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
             formattedDateTime.slice(12, 20)
@@ -1037,7 +980,7 @@
     }
   }
 
-async function showChatInfoBefore(roomID, loginName){
+  async function showChatInfoBefore(roomID, loginName){
     try {
       const response = await $.ajax({
         url: '/chat/getChatListByRoomIDPageBefore?page=' + chatPage,
@@ -1088,28 +1031,6 @@ async function showChatInfoBefore(roomID, loginName){
     }
   }
   $(function (){
-    $('.uploadButton-post').off('click').click(function() {
-      $('.post-Image-File').off('change');
-      $('.post-Image-File').click().on('change', function() {
-        if (this.files && this.files.length > 0) {
-          $('#post-upload-modal').modal('show');
-          var formData = new FormData();
-          var inputFile = $("input.post-Image-File");
-          var files = inputFile[0].files;
-          for (var i = 0; i < files.length; i++){
-            formData.append("uploadFiles", files[i]);
-          }
-          uploadImageAndPostRegisterRequset(formData);
-
-        }
-        $('#upload-post-button').click(function() {
-          alert('포스트 파일이 제출되었습니다.');
-          $('#upload-form').submit();
-          $('.Post-File-Modal').modal('hide');
-
-        });
-      });
-    });
     $('.uploadButton-profile').off('click').on('click', function () {
       $('#profile-option-modal').modal('show');
 
@@ -1145,34 +1066,6 @@ async function showChatInfoBefore(roomID, loginName){
       });
     });
 
-    // $('.uploadButton-profile').click(function () {
-    //   $('.profile-Image-File').click().on('change', function() {
-    //     if (this.files && this.files.length > 0) {
-    //       $('.Profile-File-Modal').modal('show');
-    //       var formData = new FormData();
-    //       var inputFile = $("input.profile-Image-File");
-    //       var files = inputFile[0].files;
-    //       formData.append("uploadFiles", files[0]);
-    //     }
-    //     $('.submitFile-Profile').click(function() {
-    //       uploadImageAndProfileRegisterRequset(formData);
-    //       alert('프로필 파일이 제출되었습니다.');
-    //       $('.filemodal').modal('hide');
-    //     });
-    //   });
-    // });
-
-    $(".profile-picture").click(function (){
-      var userName = '[[${memberDTO.name}]]';
-      var loadName = '[[${userName}]]';
-      if (userName != loadName) {
-        $('#profileImageModal').modal('show');
-        var imageUrl = $(this).attr('src');
-        var str = '<img src=\"' + imageUrl + '/\"' +
-                ' alt=\"Profile Picture\" class=\"post-image\">'
-        $("#modal-content-profile-imagebox").html(str);
-      }
-    })
   });
 
   $(function (){
@@ -1271,45 +1164,6 @@ async function showChatInfoBefore(roomID, loginName){
       })
     })
 
-    $(".temp3").off('click').on('click', '.post-page-button', function (){
-      var presentPage = $(this).attr('data-name');
-      postPage = presentPage;
-      $.ajax({
-        url: "/post/getPostInfo?page=" + postPage,
-        type: "POST",
-        data: {userName:userName},
-        dataType: "JSON",
-        success: function (result){
-          var postResult = "";
-          var postPageResult = "";
-          $.each(result.dtoList, function (idx, dtoList){
-            postResult += '<div class="post-item">';
-            postResult += '<img class="post-list-img" ' +
-                    'src="/display?fileName=' + dtoList.imageDTOList[0].imageURL + '/" ' +
-                    'data-url ="' + dtoList.imageDTOList[0].imageURL +'" ' +
-                    'data-id="' +dtoList.imageDTOList[0].pino + '" ' +
-                    'data-pid="' + dtoList.pno + '">'
-            postResult += '</div>';
-          })
-          if (result.prev != false)
-            postPageResult += '<button class="page-link requested-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
-          $.each(result.pageList, function (idx, pageList){
-            if (postPage == pageList)
-              postPageResult += '<li class="page-item active">'
-            else
-              postPageResult += '<li class="page-item">'
-            postPageResult += '<button class="page-link post-page-button" ' +
-                    'data-name="' + pageList +'">' +pageList +'</button>'
-          })
-          if (result.prev != false)
-            postPageResult += '<button class="page-link post-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
-
-          $("#post-grid-image-box").html(postResult);
-          $("#post-page").html(postPageResult);
-        }
-      })
-
-    })
     $(document).on('click', '.request-Accept-button', function(){
       var loginName = '[[${memberDTO.name}]]';
       var requesterName = $(this).attr('data-name');
@@ -1357,7 +1211,7 @@ async function showChatInfoBefore(roomID, loginName){
         var requesterName = $(this).attr('data-name');
         $('#chatMessageModal').css('z-index', 1052).modal('show');
         async function getChatRoom(){
-         const chatRoomDTO = await $.ajax({
+          const chatRoomDTO = await $.ajax({
             url: '/chat/getORCreateChatRoom',
             type: 'POST',
             dataType: 'JSON',
@@ -1391,85 +1245,4 @@ async function showChatInfoBefore(roomID, loginName){
   });
 
 
-  $(function (){
-    var commentBox = document.querySelector('#comment-box');
-    var userEmail = '[[${memberDTO.email}]]';
-    var userName = '[[${memberDTO.name}]]';
-    var loadEmail = '[[${userEmail}]]';
-    $(document).on('click', '.post-list-img',function() {
-      $('#myModal').modal('show');
-      var imageUrl = $(this).data('url');
-      var postId = $(this).data('pid');
-      $.ajax({
-        url:'/post/postInfoWithImage',
-        type:"POST",
-        data: {pno:postId},
-        dataType:"JSON",
-        success: function (result){
-          var carouselTag = "";
-          var titleTag = "<div class='title-text'>" + result.title +"</div>";
-          var commentTag ="<div class='comment-text'>" + result.comment +"</div>";
-
-          $.each(result.imageDTOList, function (idx, imageInfo){
-            if(idx ==0)
-              carouselTag += '<div class="carousel-item active">'
-            else
-              carouselTag += '<div class="carousel-item">'
-            carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
-            carouselTag += '</div>';
-
-          })
-          if(result.imageDTOList.length ==1){
-            $(".carousel-control-next").html("")
-            $(".carousel-control-prev").html("")
-          }
-          else{
-            $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
-            $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
-          }
-
-          $("#post-title").html(titleTag)
-          $("#post-comment").html(commentTag)
-          $("#carousel-image-box").html(carouselTag);
-
-        }
-      })
-      showReplyListInPost(postId);
-
-      $('#reply-send').off('click').on('click', function (){
-        sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
-      });
-
-
-      $('#myModal').on('click', '#post-option', function (){
-        $('#post-option-modal').css('z-index', 1051).modal('show');
-        $('#remove-post').off('click').on('click', function (){
-          sendPostDeleteRequest(postId)
-          $('#post-option-modal').modal('hide');
-          $('#myModal').modal('hide')
-          alert("삭제가 완료되었습니다.")
-          self.location.reload();
-        });
-        $('#cancel-post').off('click').on('click', function (){
-          $('#post-option-modal').modal('hide');
-        })
-      })
-
-    });
-
-    $('#myModal').on('click', '.reply-option', function() {
-      console.log('reply-option event');
-      var rno = $(this).data("rno");
-      $('#reply-option-modal').css('z-index', 1051).modal('show');
-      $('#remove-reply').off('click').on('click', function(){
-        sendReplyDeleteRequest(rno);
-        $('#reply-option-modal').modal('hide');
-      });
-      $('#cancel-reply').off('click').on('click' ,function() {
-        $('#reply-option-modal').modal('hide');
-      });
-    });
-
-
-  });
 </script>

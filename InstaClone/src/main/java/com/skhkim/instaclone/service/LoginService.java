@@ -16,6 +16,11 @@ public interface LoginService {
     boolean checkName(String name);
     boolean checkEmail(String email);
     boolean checkDuplication(ClubMemberDTO memberDTO);
+
+    boolean checkPassword(ClubMemberDTO memberDTO);
+
+    void updatePassword(ClubMemberDTO memberDTO, String newPassword);
+    void updateUserName(String changeName, String originalName);
     String register(ClubMemberDTO memberDTO);
     ClubMemberDTO getClubMemberSearchbyName(String name);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name, String userName);

@@ -5,9 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import com.skhkim.instaclone.entity.ClubMember;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,4 +39,13 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
     @Query("SELECT m, pi FROM ClubMember m LEFT JOIN ProfileImage pi ON m.name = pi.clubMember.name WHERE m.name like CONCAT('%', :searchTerm, '%') AND m.name != :userName")
     Page<Object[]> findByNamePage(Pageable pageable, @Param("searchTerm")String searchTerm, String userName);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE ClubMember m SET m.name =:changeName WHERE m.name =:originalName")
+    void updateByName(String changeName, String originalName);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE ClubMember m SET m.password =:newPassword WHERE m.name =:userName")
+    void updateByPassword(String newPassword, String userName);
 }

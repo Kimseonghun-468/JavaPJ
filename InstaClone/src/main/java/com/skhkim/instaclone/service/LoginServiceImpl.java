@@ -7,15 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +28,21 @@ public class LoginServiceImpl implements LoginService{
         log.info("Club member DTO in Duplication : " + memberDTO);
         boolean checkResult = clubMemberRepository.existsByNameAndEmail(memberDTO.getName(),memberDTO.getEmail());
         return checkResult;
+    }
+    @Override
+    public void updateUserName(String changeName, String originalName){
+        clubMemberRepository.updateByName(changeName, originalName);
+    }
+    @Override
+    public boolean checkPassword(ClubMemberDTO memberDTO){
+        ClubMember member = clubMemberRepository.findByName(memberDTO.getName());
+        return passwordEncoder.matches(memberDTO.getPassword(), member.getPassword());
+    }
+
+    @Override
+    public void updatePassword(ClubMemberDTO memberDTO, String newPassword){
+        String discriptedPassword = passwordEncoder.encode(newPassword);
+        clubMemberRepository.updateByPassword(discriptedPassword, memberDTO.getName());
     }
 
     @Override

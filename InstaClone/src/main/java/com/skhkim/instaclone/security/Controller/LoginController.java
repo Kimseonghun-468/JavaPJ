@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.security.Controller;
 
 import com.skhkim.instaclone.dto.ClubMemberDTO;
+import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.LoginService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 @Controller
 @Log4j2
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class LoginController {
 
     private final LoginService loginService;
+    private final ClubMemberRepository clubMemberRepository;
     @GetMapping("/signup")
     public void loginPage(String error, Model model){
         if ( error != null ){
@@ -52,9 +57,35 @@ public class LoginController {
             loginService.register(memberDTO);
             return "redirect:/login";
         }
-
-
     }
+    @PostMapping("/changeName")
+    public String changeName(ClubMemberDTO memberDTO, String loadName) throws UnsupportedEncodingException {
+        boolean checkResult = clubMemberRepository.existsByName(memberDTO.getName());
+        if (checkResult){
+            return "redirect:/userinfo/"+loadName+"?nameError";
+        }
+        else{
+            loginService.updateUserName(memberDTO.getName(), loadName);
+            String encodedName = URLEncoder.encode(memberDTO.getName(), "UTF-8");
+            return "redirect:/userinfo/"+encodedName;
+        }
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword(ClubMemberDTO memberDTO, String newPassword) throws UnsupportedEncodingException{
+        boolean checkResult = loginService.checkPassword(memberDTO);
+        if (!checkResult){
+            String encodedName = URLEncoder.encode(memberDTO.getName(), "UTF-8");
+            return "redirect:/userinfo/"+encodedName+"?psError";
+        }
+        else{
+            loginService.updatePassword(memberDTO, newPassword);
+            return "redirect:/login?logout";
+        }
+    }
+
+
+
     @GetMapping("")
     public void test(String error, String logout, Model model){
         if ( error != null ){

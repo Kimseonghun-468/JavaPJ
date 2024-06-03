@@ -53,6 +53,30 @@ public class ProfileController {
         return "sidebar";
     }
 
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/userinfo/{name}")
+    public String userinfo(@PathVariable("name") String name, PostPageRequestDTO postPageRequestDTO,
+                          String nameError, String psError,
+                          @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
+                          Model model){
+        if ( nameError != null )
+            model.addAttribute("nameChangeError", true);
+        if ( psError != null )
+            model.addAttribute("psError", true);
+        String userEamil = postService.getEmailByUserName(name);
+        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
+        model.addAttribute("userExist", loginService.getUserExist(name));
+        model.addAttribute("profileImageDTO", profileImageDTO);
+        model.addAttribute("memberDTO", clubAuthMemberDTO);
+        model.addAttribute("userName", name);
+        model.addAttribute("userEmail", userEamil);
+        model.addAttribute("postNum", postService.getPostNumber(userEamil));
+        model.addAttribute("friendNum", friendShipService.getFriendNum(name));
+        return "userinfo";
+    }
+
+
+
     @PostMapping("/sidebar/post/{name}")
     public String sidevar(@PathVariable("name") String name, PostDTO postDTO){
         log.info("PostDTO : " + postDTO);

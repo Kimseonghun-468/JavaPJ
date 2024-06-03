@@ -1,0 +1,84 @@
+.user-info-change-box{
+    display: block;
+    height: calc(100% - 150px);
+    margin-top: 25px;
+}
+
+.id-change-box{
+    display: flex;
+    height: 40%;
+    margin-bottom: 10px;
+    border: 1px solid #f0f0f0;
+    overflow: scroll;
+}
+.id-block1{
+    width: 20%;
+    font-size: 20px;
+    align-self: center;
+    text-align: center;
+}
+.id-block2{
+    width: 80%;
+    padding: 30px;
+}
+
+.form-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #FFFFFF;
+    color: royalblue;
+    border: #0068FF solid 1px;
+}
+.form-actions{
+    align-content: end;
+    text-align: end;
+}
+.button-check {
+    background-color: #FFFFFF;
+    color: royalblue;
+    border-radius: 8px;
+    border: #0068FF solid 1px;
+    cursor: pointer;
+}
+.ac-h1{
+    height: calc(100% - 90px);
+}
+.ac-h2{
+    height: calc(100% - 135px);
+}
+.form-group {
+    display: flex;
+     margin-bottom: 15px;
+ }
+
+.form-group-info{
+    width: 30%;
+}
+.form-group-value{
+    width: 70%;
+}
+
+button:hover {
+    background-color: #a7cbff;
+    color: white;
+}
+.ps-change-box{
+    height: calc(60% - 40px);
+    display: flex;
+    border: 1px solid #f0f0f0;
+    overflow: scroll;
+}
+
+.ps-block1{
+    width: 20%;
+    font-size: 20px;
+    align-self: center;
+    text-align: center;
+
+}
+.ps-block2{
+    width: 80%;
+    padding: 30px;
+}
