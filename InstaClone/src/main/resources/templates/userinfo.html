@@ -534,7 +534,7 @@
       Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button follow'>친구 삭제</button>"
       Result += '</div>';
       Result += '<div class="user-chat-button-box2">';
-      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
+      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendEmail + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
       Result += '</div>';
       Result += '</div>';
     }
@@ -635,7 +635,7 @@
       Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].friendName + '">';
       Result += '</div>';
       Result += '<div class ="user-chat-button-box3">';
-      Result += '<button data-name =' + result.dtoList[i].friendName + ' class=\"request-Chatroom-button\">대화창 열기</button>'
+      Result += '<button data-name =' + result.dtoList[i].friendEmail + ' class=\"request-Chatroom-button\">대화창 열기</button>'
       Result += '</div>';
       Result += '</div>';
     }
@@ -1210,15 +1210,15 @@
       const debouncedPagingUp = debounce(chatScrollPagingUp,300);
       const debouncedPagingDown = debounce(chatScrollPagingDown, 300);
       $(document).on('click', '.request-Chatroom-button', function (){
-        var loginName = '[[${memberDTO.name}]]';
-        var requesterName = $(this).attr('data-name');
+        var loginEmail = '[[${memberDTO.Email}]]';
+        var requesterEmail = $(this).attr('data-name');
         $('#chatMessageModal').css('z-index', 1052).modal('show');
         async function getChatRoom(){
           const chatRoomDTO = await $.ajax({
             url: '/chat/getORCreateChatRoom',
             type: 'POST',
             dataType: 'JSON',
-            data: {loginName: loginName, friendName: requesterName},
+            data: {loginEmail: loginEmail, friendEmail: requesterEmail},
           })
           roomID = chatRoomDTO.id;
           connect(chatRoomDTO.id);

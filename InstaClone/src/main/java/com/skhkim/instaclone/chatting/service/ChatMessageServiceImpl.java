@@ -40,14 +40,14 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return chatMessage.getCid();
     }
     @Override
-    public void updateChatMessagesReadStatus(String roomID, String userName){
+    public void updateChatMessagesReadStatus(String roomID, String userEmail){
         Optional<ChatRoom> result = chatRoomRepository.getChatIdbyNames(roomID);
         if (result.isPresent()){
             ChatRoom chatRoom = result.get();
-            if (chatRoom.getClubMemberUser1().getName().equals(userName))
-                chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userName, chatRoom.getLastDisConnect2());
+            if (chatRoom.getClubMemberUser1().getEmail().equals(userEmail))
+                chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userEmail, chatRoom.getLastDisConnect2());
             else
-                chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userName, chatRoom.getLastDisConnect1());
+                chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userEmail, chatRoom.getLastDisConnect1());
         }
     }
 

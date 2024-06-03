@@ -102,6 +102,7 @@ public class ProfileServieImpl implements ProfileService{
         Function<Object[], Map<String,Object>> fn = (arr ->{
             Map<String, Object> profileAndFriendMap = new HashMap<>();
             profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
+            profileAndFriendMap.put("friendEmail",((FriendShip) arr[0]).getClubMemberUser().getEmail());
             if (arr[1] == null)
                 profileAndFriendMap.put("profileImage",null);
             else

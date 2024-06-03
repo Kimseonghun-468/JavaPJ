@@ -62,12 +62,12 @@ public class ChatController {
     }
 
     @PostMapping("/chat/getORCreateChatRoom")
-    public ResponseEntity<ChatRoomDTO> getORCreateChatRoom(String loginName, String friendName){
-        log.info("Login Name : " +loginName);
-        log.info("Friend Name : " +friendName);
-        ChatRoomDTO chatRoomDTO = chatRoomService.getORCreateChatRoomID(loginName, friendName);
-        List<String> roomID = chatRoomService.getNamesToId(loginName, friendName);
-        chatMessageService.updateChatMessagesReadStatus(roomID.get(2), friendName);
+    public ResponseEntity<ChatRoomDTO> getORCreateChatRoom(String loginEmail, String friendEmail){
+        log.info("Login Name : " +loginEmail);
+        log.info("Friend Name : " +friendEmail);
+        ChatRoomDTO chatRoomDTO = chatRoomService.getORCreateChatRoomID(loginEmail, friendEmail);
+        List<String> roomID = chatRoomService.getNamesToId(loginEmail, friendEmail);
+        chatMessageService.updateChatMessagesReadStatus(roomID.get(2), friendEmail);
         return new ResponseEntity<>(chatRoomDTO, HttpStatus.OK);
     }
 

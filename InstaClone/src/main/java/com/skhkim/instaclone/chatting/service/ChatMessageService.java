@@ -17,7 +17,7 @@ public interface ChatMessageService {
     ChatMessageDTO getNewChatMessageDTO(String name, String content);
     List<ChatMessageDTO> getChatMessageListByRoomID(String roomID);
 
-    void updateChatMessagesReadStatus(String roomID, String userName);
+    void updateChatMessagesReadStatus(String roomID, String userEmail);
 
     PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, String roomID, String loginName);
     PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, String roomID, String loginName);

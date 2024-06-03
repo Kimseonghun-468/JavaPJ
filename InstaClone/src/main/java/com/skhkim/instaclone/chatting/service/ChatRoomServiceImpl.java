@@ -41,8 +41,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     @Override
     public ChatRoom createChatRoomID(List<String> sortedID){
         String roomID = sortedID.get(2);
-        ClubMember user1 = clubMemberRepository.findByName(sortedID.get(0));
-        ClubMember user2 = clubMemberRepository.findByName(sortedID.get(1));
+        ClubMember user1 = clubMemberRepository.findByEmail(sortedID.get(0)).get();
+        ClubMember user2 = clubMemberRepository.findByEmail(sortedID.get(1)).get();
         ChatRoom chatRoom = ChatRoom.builder()
                 .id(roomID)
                 .clubMemberUser1(user1)
@@ -82,13 +82,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Function<Object[], Map<String, Object>> fn = (arr ->{
             Map<String, Object> chatRoomAndProfileMap = new HashMap<>();
             chatRoomAndProfileMap.put("friendName", (arr[0]));
-            chatRoomAndProfileMap.put("lastChat", (arr[1]));
-            chatRoomAndProfileMap.put("lastChatTime", (arr[2]));
+            chatRoomAndProfileMap.put("friendEmail", (arr[1]));
+            chatRoomAndProfileMap.put("lastChat", (arr[2]));
+            chatRoomAndProfileMap.put("lastChatTime", (arr[3]));
 
-            if(arr[3] == null)
+            if(arr[4] == null)
                 chatRoomAndProfileMap.put("profileImage", null);
             else
-                chatRoomAndProfileMap.put("profileImage", entityToDTOByProfileImage((ProfileImage) arr[3]));
+                chatRoomAndProfileMap.put("profileImage", entityToDTOByProfileImage((ProfileImage) arr[4]));
 
             return chatRoomAndProfileMap;
         });

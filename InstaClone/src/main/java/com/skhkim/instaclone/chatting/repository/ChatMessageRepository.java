@@ -29,7 +29,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     // 시간 이후의 것들 전부 조회
     @Modifying
     @Transactional
-    @Query("UPDATE ChatMessage cm SET cm.readStatus = TRUE WHERE cm.regDate >= :disConnectTime AND cm.chatRoom.id = :roomID AND cm.clubMember.name = :userName")
+    @Query("UPDATE ChatMessage cm SET cm.readStatus = TRUE WHERE cm.regDate >= :disConnectTime AND cm.chatRoom.id = :roomID AND cm.clubMember.email = :userName")
     int updateByChatRoomIdAndDisConnectTime(String roomID, String userName, LocalDateTime disConnectTime);
 
 
