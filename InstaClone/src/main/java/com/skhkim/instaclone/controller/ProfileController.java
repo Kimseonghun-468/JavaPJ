@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 @Controller
 @Log4j2
 @RequiredArgsConstructor
@@ -77,17 +80,19 @@ public class ProfileController {
 
 
     @PostMapping("/sidebar/post/{name}")
-    public String sidevar(@PathVariable("name") String name, PostDTO postDTO){
+    public String sidevar(@PathVariable("name") String name, PostDTO postDTO) throws UnsupportedEncodingException {
         log.info("PostDTO : " + postDTO);
         Long pno = postService.register(postDTO);
-        return "redirect:/sidebar/"+name;
+        String encodedName = URLEncoder.encode(name, "UTF-8");
+        return "redirect:/sidebar/"+encodedName;
     }
 
     @PostMapping("/sidebar/profileImage/{name}")
-    public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO){
+    public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO) throws UnsupportedEncodingException{
         log.info("Profile Image DTO : " + profileImageDTO);
         Long pfino = profileService.register(profileImageDTO);
-        return "redirect:/sidebar/"+name;
+        String encodedName = URLEncoder.encode(name, "UTF-8");
+        return "redirect:/sidebar/"+encodedName;
     }
 
 
@@ -111,8 +116,9 @@ public class ProfileController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping({"", "/sidebar","/sidebar/"})
-    public String defaultPage(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO){
-        return "redirect:/sidebar/"+clubAuthMemberDTO.getName();
+    public String defaultPage(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO) throws UnsupportedEncodingException{
+        String encodedName = URLEncoder.encode(clubAuthMemberDTO.getName(), "UTF-8");
+        return "redirect:/sidebar/"+encodedName;
     }
 
 

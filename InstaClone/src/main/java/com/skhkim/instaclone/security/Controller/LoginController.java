@@ -57,7 +57,8 @@ public class LoginController {
     public String changeName(ClubMemberDTO memberDTO, String loadName) throws UnsupportedEncodingException {
         boolean checkResult = clubMemberRepository.existsByName(memberDTO.getName());
         if (checkResult){
-            return "redirect:/userinfo/"+loadName+"?nameError";
+            String encodedloadName = URLEncoder.encode(loadName, "UTF-8");
+            return "redirect:/userinfo/"+encodedloadName+"?nameError";
         }
         else{
             loginService.updateUserName(memberDTO.getName(), loadName);
