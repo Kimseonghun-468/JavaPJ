@@ -15,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Log4j2
@@ -55,7 +54,7 @@ public class ProfileController {
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/userinfo/{name}")
-    public String userinfo(@PathVariable("name") String name, PostPageRequestDTO postPageRequestDTO,
+    public String userinfo(@PathVariable("name") String name,
                           String nameError, String psError,
                           @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                           Model model){

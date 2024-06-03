@@ -36,12 +36,3 @@ public interface PostRepository extends JpaRepository<Post, String> {
     void deleteByPno(Long pno);
 
 }
-
-
-//    @Query("select m, mi, avg(coalesce(r.grade, 0)), count(distinct r) " +
-//            "from Movie m left outer join  MovieImage mi on mi.movie = m " +
-//            "left outer join Review r on r.movie = m " +
-//            "where m.mno = :mno " +
-//            "GROUP BY mi")
-//    List<Object[]> getMovieWithAll(Long mno);
-//}

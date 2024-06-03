@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor

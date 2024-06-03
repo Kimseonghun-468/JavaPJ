@@ -2,13 +2,7 @@ package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public interface ProfileService {
     Long register(ProfileImageDTO profileImageDTO);

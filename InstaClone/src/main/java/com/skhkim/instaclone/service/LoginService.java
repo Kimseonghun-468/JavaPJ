@@ -3,10 +3,6 @@ package com.skhkim.instaclone.service;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.ProfileImage;
-import org.springframework.data.domain.Page;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.List;
 import java.util.Map;
 
 public interface LoginService {

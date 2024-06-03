@@ -4,8 +4,6 @@ import com.skhkim.instaclone.dto.ReplyDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.Reply;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReplyService {

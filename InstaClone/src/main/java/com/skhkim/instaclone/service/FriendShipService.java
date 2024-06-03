@@ -6,9 +6,6 @@ import com.skhkim.instaclone.entity.FriendShip;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface FriendShipService {
 
     String createFriendShip(String searchName);

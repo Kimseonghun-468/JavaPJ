@@ -1,7 +1,6 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.ReplyDTO;
-import com.skhkim.instaclone.entity.Reply;
 import com.skhkim.instaclone.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
