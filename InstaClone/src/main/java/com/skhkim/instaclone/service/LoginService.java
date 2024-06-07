@@ -15,7 +15,7 @@ public interface LoginService {
 
     boolean checkPassword(ClubMemberDTO memberDTO);
 
-    void updatePassword(ClubMemberDTO memberDTO, String newPassword);
+    void updatePassword(String memberName, String newPassword);
     void updateUserName(String changeName, String originalName);
     String register(ClubMemberDTO memberDTO);
     ClubMemberDTO getClubMemberSearchbyName(String name);

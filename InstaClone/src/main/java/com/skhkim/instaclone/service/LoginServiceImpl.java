@@ -40,9 +40,9 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    public void updatePassword(ClubMemberDTO memberDTO, String newPassword){
+    public void updatePassword(String memberName, String newPassword){
         String discriptedPassword = passwordEncoder.encode(newPassword);
-        clubMemberRepository.updateByPassword(discriptedPassword, memberDTO.getName());
+        clubMemberRepository.updateByPassword(discriptedPassword, memberName);
     }
 
     @Override

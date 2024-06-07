@@ -43,12 +43,10 @@ public class ClubLoginFormSuccessHandler implements AuthenticationSuccessHandler
         ClubAuthMemberDTO authMember = (ClubAuthMemberDTO) authentication.getPrincipal();
         String token = jwtUtils.generateToken(authMember.getEmail());
 
-        // JSON 객체 생성
         Map<String, String> responseData = new HashMap<>();
         responseData.put("token", token);
         responseData.put("name", authMember.getName());
 
-        // JSON 응답 작성
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         ObjectMapper objectMapper = new ObjectMapper();

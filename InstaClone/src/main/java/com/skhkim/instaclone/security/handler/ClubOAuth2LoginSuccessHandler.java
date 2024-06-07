@@ -1,9 +1,13 @@
 package com.skhkim.instaclone.security.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skhkim.instaclone.security.Utils.JwtUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -12,14 +16,20 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Log4j2
-public class ClubLoginSuccessHandler implements AuthenticationSuccessHandler {
+@RequiredArgsConstructor
+public class ClubOAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private PasswordEncoder passwordEncoder;
 
-    public ClubLoginSuccessHandler(PasswordEncoder passwordEncoder){
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    public ClubOAuth2LoginSuccessHandler(PasswordEncoder passwordEncoder){
         this.passwordEncoder = passwordEncoder;
     }
     @Override
@@ -28,17 +38,19 @@ public class ClubLoginSuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication)
         throws IOException, ServletException{
 
-        log.info("----------------------");
-        log.info("onAuthenticationSuccess");
-
         ClubAuthMemberDTO authMember = (ClubAuthMemberDTO)authentication.getPrincipal();
-
         boolean fromSocial = authMember.isFromSocial();
-        log.info("Need Modify Member?" + fromSocial);
 
-        boolean passwordResult = passwordEncoder.matches("1111", authMember.getPassword());
+        boolean passwordResult = passwordEncoder.matches("PasswordReset?fjaowifjaiofawjpoif$*!fajnk", authMember.getPassword());
         if(fromSocial && passwordResult){
-            redirectStrategy.sendRedirect(request, response, "/member/modify?from=social");
+            String token = jwtUtils.generateToken(authMember.getEmail());
+            String targetUrl = "http://localhost:8080/login/oauth2/google?token=" + token + "&name="+authMember.getName() + "&modify=true";
+            redirectStrategy.sendRedirect(request, response, targetUrl);
+        }
+        else {
+            String token = jwtUtils.generateToken(authMember.getEmail());
+            String targetUrl = "http://localhost:8080/login/oauth2/google?token=" + token + "&name="+authMember.getName();
+            redirectStrategy.sendRedirect(request, response, targetUrl);
         }
     }
 

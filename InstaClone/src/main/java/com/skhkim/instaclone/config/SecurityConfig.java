@@ -13,7 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import com.skhkim.instaclone.security.handler.ClubLoginSuccessHandler;
+import com.skhkim.instaclone.security.handler.ClubOAuth2LoginSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -37,14 +37,14 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable());
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         http.oauth2Login(Customizer.withDefaults());
-        http.oauth2Login((oauth2Login) -> oauth2Login.loginPage("/login/auth"));
+        http.oauth2Login((oauth2Login) -> oauth2Login.loginPage("/login/oauth2"));
         http.oauth2Login(oauth2Login -> oauth2Login.successHandler(clubLoginSuccessHandler()));
         return http.build();
     }
 
     @Bean
-    public ClubLoginSuccessHandler clubLoginSuccessHandler() {
-        return new ClubLoginSuccessHandler(passwordEncoder());
+    public ClubOAuth2LoginSuccessHandler clubLoginSuccessHandler() {
+        return new ClubOAuth2LoginSuccessHandler(passwordEncoder());
     }
 
     @Bean

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+
+
+<script>
+    function setCookie(name, value, hours) {
+        var expires = "";
+        if (hours) {
+            var date = new Date();
+            date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const name = urlParams.get('name');
+        const modify = urlParams.get('modify')
+        if (token) {
+            setCookie("Authorization", "Bearer " + token, 2);
+            if (modify =="true")
+                window.location.href = '/member/modify';
+            else
+                window.location.href = '/sidebar/'+name;
+        }
+    }
+</script>
+</body>
+</html>

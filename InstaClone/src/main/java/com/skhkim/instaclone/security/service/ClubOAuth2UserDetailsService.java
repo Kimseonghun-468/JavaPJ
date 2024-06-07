@@ -36,9 +36,6 @@ public class ClubOAuth2UserDetailsService extends DefaultOAuth2UserService {
             email = oAuth2User.getAttribute("email");
         }
 
-//        ClubMember member = saveSocialMember(email);
-//        return oAuth2User;
-
         ClubMember member = saveSocialMember(email);
 
         ClubAuthMemberDTO clubAuthMember = new ClubAuthMemberDTO(
@@ -63,7 +60,7 @@ public class ClubOAuth2UserDetailsService extends DefaultOAuth2UserService {
         ClubMember clubMember = ClubMember.builder()
                 .email(email)
                 .name(email)
-                .password(passwordEncoder.encode("1111"))
+                .password(passwordEncoder.encode("PasswordReset?fjaowifjaiofawjpoif$*!fajnk"))
                 .fromSocial(true)
                 .build();
 

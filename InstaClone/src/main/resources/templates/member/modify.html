@@ -7,27 +7,23 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<div class="main-container">
+<div class="main-container" th:if="${checkPassword}">
     <div class="container">
-        <h2>회원가입을 위해<br>정보를 입력해주세요.</h2>
-        <a th:if ="${signUpError}" style="color: red">(회원 가입 실패) 이메일 or 이름이 중복되었습니다.</a>
-        <form id="signup-form" action="/login/signup" method="POST">
-            <label for="email">
-                <div class="sub-check">* 이메일
-                    <button class="button-check" id="button-check-email" type="button">중복 체크</button>
-                </div>
-                <input type="email" id="email" name="email"><br><br>
-            </label>
+        <h2>회원 정보 변경을 위해<br>정보를 입력해주세요.</h2>
+        <form id="change-form" action="/member/socialChange" method="POST">
+            <div class="sub-check">* 이메일
+            </div>
+            <input type="text" th:value="${memberDTO.email}" disabled>
             <label for="name">
                 <div class="sub-check">* 이름
                     <button class="button-check" id="button-check-name" type="button">중복 체크</button>
                 </div>
                 <input type="text" id="name" name="name"><br><br>
             </label>
-            <label for="password">* 비밀번호<br>
-                <input class="pw" id="password" type="password" name="password" autocomplete="new-password"><br><br>
+            <label for="newPassword">* 비밀번호<br>
+                <input class="pw" id="newPassword" type="password" name="newPassword" autocomplete="new-password"><br><br>
             </label>
-            <label for="password">* 비밀번호 확인<br>
+            <label for="password-check">* 비밀번호 확인<br>
                 <input class="pw" id="password-check" type="password"><br><br> </label>
 
             <br><br>
@@ -41,21 +37,20 @@
 </html>
 <script>
     var passwordFlag = false
-    var emailFlag = false;
+
     var nameFlag = false
     $('#tt').click(function (){
-        var password = $('#password').val()
+        var password = $('#newPassword').val()
         var passwordCheck = $('#password-check').val()
         if (password == passwordCheck){
             passwordFlag = true;
         }
         else
             passwordFlag = false
-        if (emailFlag == false || nameFlag ==false) {
+        if (nameFlag ==false) {
             alert("중복 체크를 완료해주세요.")
         }
         else if (password == "" || passwordCheck == "") {
-            console.log(emailFlag)
             console.log(nameFlag)
             alert("비밀번호를 입력해주세요.")
         }
@@ -63,35 +58,10 @@
             alert("비밀번호를 다시 입력해주세요")
         }
 
-        if(emailFlag && nameFlag && passwordFlag){
-            $('#signup-form').submit();
+        if(nameFlag && passwordFlag){
+            $('#change-form').submit();
         }
 
-    })
-    $('#button-check-email').click(function (){
-        var email = $('#email').val()
-        if (email.indexOf("@") == -1){
-            emailFlag = false;
-            alert("이메일 양식을 지켜주세요")
-            $('#button-check-email').text("체크 실패");
-        }
-        else {
-            $.ajax({
-                url: "/login/checkEmail",
-                type: "POST",
-                data: {email: email},
-                success: function (result) {
-                    console.log(result)
-                    if (!result) {
-                        emailFlag = true;
-                        $('#button-check-email').text("체크 완료");
-                    } else {
-                        emailFlag = false
-                        $('#button-check-email').text("체크 실패");
-                    }
-                }
-            })
-        }
     })
     $('#button-check-name').click(function (){
         var name = $('#name').val()

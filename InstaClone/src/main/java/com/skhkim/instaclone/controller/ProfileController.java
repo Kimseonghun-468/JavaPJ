@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.FriendShipService;
 import com.skhkim.instaclone.service.LoginService;
@@ -29,6 +30,7 @@ public class ProfileController {
     private final ProfileService profileService;
     private final LoginService loginService;
     private final FriendShipService friendShipService;
+    private final ClubMemberRepository clubMemberRepository;
     @GetMapping("/profile")
     public void profile(){
         log.info("Profile...-----");
@@ -120,6 +122,4 @@ public class ProfileController {
         String encodedName = URLEncoder.encode(clubAuthMemberDTO.getName(), "UTF-8");
         return "redirect:/sidebar/"+encodedName;
     }
-
-
 }

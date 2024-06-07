@@ -2,11 +2,14 @@ package com.skhkim.instaclone.security.Controller;
 
 import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
+import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +31,10 @@ public class LoginController {
         if ( error != null ){
             model.addAttribute("signUpError", true);
         }
+    }
+    @GetMapping("/oauth2/google")
+    public void oauth2Login(){
+
     }
     @PostMapping("/checkEmail")
     public ResponseEntity<Boolean> checkEmail(String email) {
@@ -54,8 +61,13 @@ public class LoginController {
         }
     }
     @PostMapping("/changeName")
-    public String changeName(ClubMemberDTO memberDTO, String loadName) throws UnsupportedEncodingException {
+    @PreAuthorize("hasRole('USER')")
+    public String changeName(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
+                             ClubMemberDTO memberDTO, String loadName) throws UnsupportedEncodingException {
         boolean checkResult = clubMemberRepository.existsByName(memberDTO.getName());
+        if (!clubAuthMemberDTO.getName().equals(loadName)){
+            return "Post-Error";
+        }
         if (checkResult){
             String encodedloadName = URLEncoder.encode(loadName, "UTF-8");
             return "redirect:/userinfo/"+encodedloadName+"?nameError";
@@ -65,17 +77,23 @@ public class LoginController {
             String encodedName = URLEncoder.encode(memberDTO.getName(), "UTF-8");
             return "redirect:/userinfo/"+encodedName;
         }
+        //여기서 지금 내가 이름 검사를 해야할거 같은데..
     }
 
     @PostMapping("/changePassword")
-    public String changePassword(ClubMemberDTO memberDTO, String newPassword) throws UnsupportedEncodingException{
+    @PreAuthorize("hasRole('USER')")
+    public String changePassword(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
+                                 ClubMemberDTO memberDTO, String newPassword) throws UnsupportedEncodingException{
         boolean checkResult = loginService.checkPassword(memberDTO);
+        if (!clubAuthMemberDTO.getName().equals(memberDTO.getName())){
+            return "Post-Error";
+        }
         if (!checkResult){
             String encodedName = URLEncoder.encode(memberDTO.getName(), "UTF-8");
             return "redirect:/userinfo/"+encodedName+"?psError";
         }
         else{
-            loginService.updatePassword(memberDTO, newPassword);
+            loginService.updatePassword(memberDTO.getName(), newPassword);
             return "redirect:/login?logout";
         }
     }
