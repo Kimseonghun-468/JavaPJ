@@ -77,7 +77,6 @@ public class LoginController {
             String encodedName = URLEncoder.encode(memberDTO.getName(), "UTF-8");
             return "redirect:/userinfo/"+encodedName;
         }
-        //여기서 지금 내가 이름 검사를 해야할거 같은데..
     }
 
     @PostMapping("/changePassword")
