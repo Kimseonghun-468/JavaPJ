@@ -18,7 +18,6 @@ public class ReplyController {
     private final ReplyService replyService;
     @GetMapping("{pno}/all")
     public ResponseEntity<List<ReplyDTO>> getList(@PathVariable("pno") Long pno){
-        log.info("---------list-------------");
         log.info("MNO : " + pno);
 
         List<ReplyDTO> reviewDTOList = replyService.getListOfPost(pno);
@@ -26,7 +25,6 @@ public class ReplyController {
     }
     @PostMapping("/{pno}")
     public ResponseEntity<Long> addReview(@RequestBody ReplyDTO postReplyDTO){
-        log.info("------------add MovieReivew------------");
         log.info("reviewDTO : " + postReplyDTO);
 
         Long rno = replyService.register(postReplyDTO);
@@ -34,7 +32,6 @@ public class ReplyController {
     }
     @DeleteMapping("/{replynum}")
     public ResponseEntity<Long> removeReply(@PathVariable Long replynum){
-        log.info("-----------delete removereply -----------");
         log.info("replynum : " + replynum);
 
         replyService.remove(replynum);
