@@ -32,7 +32,6 @@ public class JwtFilter extends OncePerRequestFilter {
             authorizationHeader = null;
 
         }
-//        final String authorizationHeader = request.getHeader("Authorization");
         String email = null;
         String jwt = null;
 
@@ -53,7 +52,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwtUtil.validateToken(jwt, clubMemberDTO.getEmail())) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         clubAuthMember, null, clubAuthMember.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
