@@ -320,7 +320,7 @@
 </html>
 
 <div id="friend-List-UserModal" class="modal-custom">
-  <div class="modal-content-side-frame">
+  <div id="friend-modal" class="modal-content-side-frame">
 
     <div id="friend-List-UserBox" class="side-border">
 
@@ -1232,7 +1232,6 @@ async function showChatInfoBefore(roomID, loginName){
     })
     $(function () {
       async function friendScrollPaging(){
-        const scrollContainer = document.getElementById('friend-list-UserModal');
         let val = scrollContainer.scrollHeight - scrollContainer.scrollTop
         if (scrollContainer.clientHeight -15 <= val  &&  val <= scrollContainer.clientHeight +15) {
           if (friendListTotalPage >= friendListPage && friendFlag) {
@@ -1244,7 +1243,7 @@ async function showChatInfoBefore(roomID, loginName){
         }
       }
       const debouncedPaging = debounce(friendScrollPaging,300);
-      const scrollContainer = document.getElementById('friend-list-UserModal');
+      const scrollContainer = document.getElementById('friend-modal');
       $("#friend-List").click(function () {
         $('#friend-List-UserModal').modal('show');
         var userName = '[[${userName}]]';
