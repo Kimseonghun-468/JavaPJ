@@ -21,11 +21,7 @@ import java.util.stream.Collectors;
 public class ClubUserDetailsService implements UserDetailsService {
 
     private final ClubMemberRepository clubMemberRepository;
-//    @Override
-//    public UserDetails loadUserBy
-
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
         log.info("ClubUserDetailsService loadUserbyUsername " + username);
 
@@ -47,6 +43,3 @@ public class ClubUserDetailsService implements UserDetailsService {
         return clubAuthMember;
     }
 }
-
-// post를 /login으로 보내고 , name = name, name = password로 보내면, 자동으로 userDetailService의 Overide loadUserByUserName에 들어가게 된다..
-
