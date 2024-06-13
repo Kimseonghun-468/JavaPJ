@@ -31,12 +31,11 @@ public class SecurityConfig {
 
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.formLogin((formLgoin) -> formLgoin.loginPage("/login"));
+        http.formLogin((formLogin) -> formLogin.loginPage("/login"));
         http.formLogin((formLogin) -> formLogin.successHandler(clubLoginFormSuccessHandler()));
-        http.formLogin((formlogin) -> formlogin.failureHandler(failHandler()));
+        http.formLogin((formLogin) -> formLogin.failureHandler(failHandler()));
         http.csrf((csrf) -> csrf.disable());
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        http.oauth2Login(Customizer.withDefaults());
         http.oauth2Login((oauth2Login) -> oauth2Login.loginPage("/login/oauth2"));
         http.oauth2Login(oauth2Login -> oauth2Login.successHandler(clubLoginSuccessHandler()));
         return http.build();
