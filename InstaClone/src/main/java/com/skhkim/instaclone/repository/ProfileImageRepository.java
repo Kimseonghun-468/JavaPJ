@@ -46,7 +46,7 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Query("SELECT fs1, pi, fs2.status, fs2.isFrom " +
             "FROM FriendShip fs1 " +
             "LEFT JOIN FriendShip fs2 ON (fs1.clubMemberUser.name = fs2.clubMemberUser.name AND fs2.clubMemberFriend.name = :loginName) " +
-            "OR (fs1.clubMemberUser.name = :loginName AND fs2.clubMemberUser.name = :userName AND fs2.clubMemberFriend.name = :loginName) " +
+//            "OR (fs1.clubMemberUser.name = :loginName AND fs2.clubMemberUser.name = :userName AND fs2.clubMemberFriend.name = :loginName) " +
             "LEFT JOIN ProfileImage pi ON fs1.clubMemberUser.name = pi.clubMember.name " +
             "WHERE fs1.clubMemberFriend.name =:userName " +
             "AND fs1.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT AND fs1.clubMemberUser.name != :loginName " +
