@@ -46,9 +46,4 @@ public class WebSocketEventListener {
             log.info("User Disconnected : " + userId);
         }
     }
-
-//    public Map<String, String> getSession(){
-//        return userSessions;
-//    }
-
 }
