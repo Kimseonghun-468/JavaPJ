@@ -628,6 +628,8 @@
   function createChatroomListInfo(result){
     Result = "";
     for (var i = 0; i < result.dtoList.length; i++){
+      if (result.dtoList[i].lastChat == null)
+        continue;
       getNotReadMessageNum(result.dtoList[i].friendName, loginName)
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
