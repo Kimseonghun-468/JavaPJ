@@ -17,6 +17,14 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Query("SELECT pi FROM ProfileImage pi WHERE pi.clubMember.name = :userName ORDER BY pi.modDate DESC LIMIT 1")
     ProfileImage findByUserName(@Param("userName") String userName);
 
+    @Query("SELECT pi FROM ProfileImage pi where pi.clubMember.email = :userEmail")
+    ProfileImage findByUserEmail(String userEmail);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ProfileImage pi WHERE pi.clubMember.email =:userEmail")
+    void deleteByUserEmail(String userEmail);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM ProfileImage pi WHERE pi.clubMember.name =:userName")

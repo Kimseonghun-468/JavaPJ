@@ -7,12 +7,16 @@ import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -23,16 +27,33 @@ import java.util.stream.Collectors;
 public class ProfileServieImpl implements ProfileService{
 
     private final ProfileImageRepository profileImageRepository;
+    @Value("/Users/gimseonghun/JavaPJ/InstaClone/data/")
+    private String uploadPath;
 
     @Override
     @Transactional
     public Long register(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = dtoToEntity(profileImageDTO);
-        profileImageRepository.deleteByUserName(profileImage.getClubMember().getName());
+        ProfileImage beforeImage = profileImageRepository.findByUserEmail(profileImage.getClubMember().getEmail());
+        profileImageRepository.deleteByUserEmail(profileImage.getClubMember().getEmail());
+        deleteImage(beforeImage);
         profileImageRepository.save(profileImage);
 
         return profileImage.getPfino();
+    }
+
+    public void deleteImage(ProfileImage imageEntity){
+        if (imageEntity != null) {
+            try {
+                Path path = Paths.get(uploadPath + imageEntity.getPath() + "/" + imageEntity.getUuid() + "_" + imageEntity.getImgName());
+                Path path_s = Paths.get(uploadPath + imageEntity.getPath() + "/s_" + imageEntity.getUuid() + "_" + imageEntity.getImgName());
+                Files.deleteIfExists(path);
+                Files.deleteIfExists(path_s);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     @Override
     public ProfileImageDTO getProfileImage(String name){
@@ -69,7 +90,9 @@ public class ProfileServieImpl implements ProfileService{
     @Override
     @Transactional
     public void deleteByName(String name){
+        ProfileImage beforeImage = profileImageRepository.findByUserName(name);
         profileImageRepository.deleteByUserName(name);
+        deleteImage(beforeImage);
     }
 
     @Override
