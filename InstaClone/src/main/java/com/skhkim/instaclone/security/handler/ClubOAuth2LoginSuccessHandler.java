@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skhkim.instaclone.security.Utils.JwtUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -16,8 +16,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -26,6 +24,8 @@ public class ClubOAuth2LoginSuccessHandler implements AuthenticationSuccessHandl
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private PasswordEncoder passwordEncoder;
 
+    @Value("${password.reset.key")
+    private String passwordResetKey;
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -41,7 +41,7 @@ public class ClubOAuth2LoginSuccessHandler implements AuthenticationSuccessHandl
         ClubAuthMemberDTO authMember = (ClubAuthMemberDTO)authentication.getPrincipal();
         boolean fromSocial = authMember.isFromSocial();
 
-        boolean passwordResult = passwordEncoder.matches("PasswordReset?fjaowifjaiofawjpoif$*!fajnk", authMember.getPassword());
+        boolean passwordResult = passwordEncoder.matches(passwordResetKey, authMember.getPassword());
         if(fromSocial && passwordResult){
             String token = jwtUtils.generateToken(authMember.getEmail());
             String targetUrl = "http://localhost:8080/login/oauth2/google?token=" + token + "&name="+authMember.getName() + "&modify=true";

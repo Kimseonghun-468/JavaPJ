@@ -2,6 +2,7 @@ package com.skhkim.instaclone.security.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -24,6 +25,8 @@ public class ClubOAuth2UserDetailsService extends DefaultOAuth2UserService {
 
     private final ClubMemberRepository repository;
     private final PasswordEncoder passwordEncoder;
+    @Value("${password.reset.key")
+    private String passwordResetKey;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
@@ -60,7 +63,7 @@ public class ClubOAuth2UserDetailsService extends DefaultOAuth2UserService {
         ClubMember clubMember = ClubMember.builder()
                 .email(email)
                 .name(email)
-                .password(passwordEncoder.encode("PasswordReset?fjaowifjaiofawjpoif$*!fajnk"))
+                .password(passwordEncoder.encode(passwordResetKey))
                 .fromSocial(true)
                 .build();
 
