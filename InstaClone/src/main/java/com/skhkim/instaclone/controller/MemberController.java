@@ -58,11 +58,9 @@ public class MemberController {
     @PreAuthorize("hasRole('USER')")
     public void signup(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                        Model model){
-        boolean checkPassowrd =  passwordEncoder.matches(passwordResetKey, clubAuthMemberDTO.getPassword());
+        boolean checkPassowrd =  passwordEncoder.matches(passwordResetKey, clubMemberRepository.findByName(clubAuthMemberDTO.getName()).getPassword());
         model.addAttribute("checkPassword", checkPassowrd);
         model.addAttribute("memberDTO", clubAuthMemberDTO);
-
-
     }
 
     @PreAuthorize("hasRole('USER')")
