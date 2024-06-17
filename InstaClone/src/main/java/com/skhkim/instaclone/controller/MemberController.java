@@ -7,6 +7,7 @@ import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,8 @@ public class MemberController {
     private final ClubMemberRepository clubMemberRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoginService loginService;
+    @Value("${password.reset.key")
+    private String passwordResetKey;
     @PostMapping("")
     public String singupMember(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
              ClubMemberDTO memberDTO,
@@ -55,7 +58,7 @@ public class MemberController {
     @PreAuthorize("hasRole('USER')")
     public void signup(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                        Model model){
-        boolean checkPassowrd =  passwordEncoder.matches("PasswordReset?fjaowifjaiofawjpoif$*!fajnk", clubAuthMemberDTO.getPassword());
+        boolean checkPassowrd =  passwordEncoder.matches(passwordResetKey, clubAuthMemberDTO.getPassword());
         model.addAttribute("checkPassword", checkPassowrd);
         model.addAttribute("memberDTO", clubAuthMemberDTO);
 

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-
 @Log4j2
 @RequiredArgsConstructor
 public class FriendShipController {
