@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
             ClubMemberDTO clubMemberDTO = loginService.getClubMemberSearchbyEmail(email);
             ClubAuthMemberDTO clubAuthMember = new ClubAuthMemberDTO(
                     clubMemberDTO.getEmail(),
-                    null,
+                    "",
                     clubMemberDTO.getName(),
                     clubMemberDTO.getRoleSet().stream().map(role ->
                             new SimpleGrantedAuthority("ROLE_"+role.name())).collect(Collectors.toSet())
