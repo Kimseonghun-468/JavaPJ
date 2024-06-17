@@ -11,6 +11,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class FriendShipServiceImpl implements FriendShipService{
     private final ClubMemberRepository clubMemberRepository;
     private final FriendShipRepository friendShipRepository;
     @Override
+    @Transactional
     public String createFriendShip(String searchName){
         //        로그인한 아이디
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -71,6 +74,7 @@ public class FriendShipServiceImpl implements FriendShipService{
     }
 
     @Override
+    @Transactional
     public String acceptFriendShip(String requesterName, String accepterName){
         Optional<FriendShip> accepterFriendShip = clubMemberRepository.getFriendshipsByName(requesterName, accepterName);
         Optional<FriendShip> requesterFriendShip = clubMemberRepository.getFriendshipsByNameIsNotFrom(accepterName, requesterName);
@@ -87,6 +91,7 @@ public class FriendShipServiceImpl implements FriendShipService{
     }
 
     @Override
+    @Transactional
     public String deleteFriendShip(String requestName, String accepterName){
         friendShipRepository.deleteByUserNameAndFriendName(requestName, accepterName);
         friendShipRepository.deleteByUserNameAndFriendName(accepterName, requestName);

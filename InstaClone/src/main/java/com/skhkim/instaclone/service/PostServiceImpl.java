@@ -88,6 +88,7 @@ public class PostServiceImpl implements PostService {
         return entitiesToDTO(post, postImageList);
     }
     @Override
+    @Transactional
     public void removePost(Long pno){
         replyRepository.deleteByPostPno(pno);
         postImageRepository.deleteByPostPno(pno);
