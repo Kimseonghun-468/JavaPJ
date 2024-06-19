@@ -4,21 +4,17 @@ import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
-import com.skhkim.instaclone.chatting.entity.ChatRoom;
+import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatMessageRepository;
-import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
+import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,96 +22,49 @@ import java.util.stream.Collectors;
 public class ChatMessageServiceImpl implements ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
-    private final ChatRoomRepository chatRoomRepository;
+    private final ChatUserRepository chatUserRepository;
 
     @Override
-    public ChatMessageDTO getNewChatMessageDTO(String name, String content){
-        return ChatMessageDTO.builder().build();
-    }
-
-    @Override
-    public Long register(ChatMessageDTO chatMessageDTO, String roomID){
+    public Long register(ChatMessageDTO chatMessageDTO, Long roomID){
         ChatMessage chatMessage = dtoToEntity(chatMessageDTO, roomID);
         chatMessageRepository.save(chatMessage);
         return chatMessage.getCid();
     }
     @Override
-    public void updateChatMessagesReadStatus(String roomID, String userEmail){
-        Optional<ChatRoom> result = chatRoomRepository.getChatIdbyNames(roomID);
-        if (result.isPresent()){
-            ChatRoom chatRoom = result.get();
-            if (chatRoom.getClubMemberUser1().getEmail().equals(userEmail))
-                chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userEmail, chatRoom.getLastDisConnect2());
-            else
-                chatMessageRepository.updateByChatRoomIdAndDisConnectTime(roomID, userEmail, chatRoom.getLastDisConnect1());
-        }
+    public void updateChatMessagesReadStatus(Long roomID, String userEmail){
+        ChatUser chatUser = chatUserRepository.getChatUsersByRoomIdAndEmail(roomID, userEmail);
+        chatMessageRepository.updateByRoomIdAndSenderEmailAndTime(chatUser.getChatRoom().getRoomId(), userEmail, chatUser.getDisConnect());
+
     }
 
     @Override
-    public List<ChatMessageDTO> getChatMessageListByRoomID(String roomID){
-//        Pageable pageable =
-        Optional<List<ChatMessage>> chatMessagesList = chatMessageRepository.findByChatRoomId(roomID);
-        if(chatMessagesList.isPresent()) {
-            List<ChatMessageDTO> chatMessageDTOList = chatMessagesList.get().stream().map
-                    (chatMessage -> entityToDTO(chatMessage)).collect(Collectors.toList());
-            return chatMessageDTOList;
-        }
-        else
-            return Collections.emptyList();
+    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
+        Pageable pageable = pageRequestDTO.getPageable();
+        Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
+                (ChatMessage) arr[0])
+        );
+        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomID);
+        Page<Object[]> result = chatMessageRepository.getChatMessageByRoomIdAndTimeBefore(pageable, roomID, disConnectTime);
+        return new PageResultDTO<>(result, fn);
     }
+
     @Override
-    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, String roomID, String loginName){
+    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
         Pageable pageable = pageRequestDTO.getPageable();
         Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
                 (ChatMessage)arr[0])
         );
-        Page<Object[]> result;
-        if (roomID.split("_")[0].equals(loginName)){
-            result = chatMessageRepository.findByChatRoomIdInfixBefore(pageable, roomID);
-        }
-        else{
-            result = chatMessageRepository.findByChatRoomIdPostfixBefore(pageable, roomID);
-        }
+        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomID);
+        Page<Object[]> result = chatMessageRepository.getChatMessageByRoomIdAndTimeAfter(pageable, roomID, disConnectTime);
 
         return new PageResultDTO<>(result, fn);
     }
 
     @Override
-    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, String roomID, String loginName){
-        Pageable pageable = pageRequestDTO.getPageable();
-        Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
-                (ChatMessage)arr[0])
-        );
-        Page<Object[]> result;
-        if (roomID.split("_")[0].equals(loginName)){
-            result = chatMessageRepository.findByChatRoomIdInfixAfter(pageable, roomID);
-        }
-        else{
-            result = chatMessageRepository.findByChatRoomIdPostfixAfter(pageable, roomID);
-        }
-
-        return new PageResultDTO<>(result, fn);
+    public Long getNotReadNum(String loginEmail, Long roomId){
+        LocalDateTime disConnectTime = chatUserRepository.getChatUsersByRoomIdAndEmail(roomId, loginEmail).getDisConnect();
+        return chatMessageRepository.getNotReadNum(roomId, loginEmail, disConnectTime);
     }
 
-    @Override
-    public Long getNotReadNum(String loginName, String friendName){
-        String roomID = getNamesToId(loginName, friendName).get(2);
-        return chatMessageRepository.getNotReadNum(roomID, friendName);
-    }
-
-    public List<String> getNamesToId(String loginName, String friendName){
-        List<String> sortedID = new ArrayList<>();
-        if(loginName.compareTo(friendName) < 0 ) {
-            sortedID.add(loginName);
-            sortedID.add(friendName);
-            sortedID.add(loginName+ "_" + friendName);
-        }
-        else {
-            sortedID.add(friendName);
-            sortedID.add(loginName);
-            sortedID.add(friendName + "_" + loginName);
-        }
-        return sortedID;
-    }
 
 }

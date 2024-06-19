@@ -1,34 +1,39 @@
-//package com.skhkim.instaclone.repository;
-//
-//import com.skhkim.instaclone.dto.ProfileImageDTO;
-//import com.skhkim.instaclone.entity.ClubMember;
-//import com.skhkim.instaclone.entity.FriendShip;
-//import com.skhkim.instaclone.entity.FriendShipStatus;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.PageRequest;
-//import org.springframework.data.domain.Sort;
-//import org.springframework.test.annotation.Commit;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.util.Arrays;
-//
-//@SpringBootTest
-//public class repositorytests {
-//
-//    @Autowired
-//    private PostRepository postRepository;
-//    private ProfileImageRepository profileImageRepository;
-//    @Autowired
-//    private FriendShipRepository friendShipRepository;
-//    @Autowired
-//    private ClubMemberRepository clubMemberRepository;
-//    @Commit
-//    @Transactional
-//    @Test
-//    public void testtt() {
+package com.skhkim.instaclone.repository;
+
+import com.skhkim.instaclone.chatting.entity.ChatRoom;
+import com.skhkim.instaclone.chatting.entity.ChatUser;
+import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
+import com.skhkim.instaclone.entity.ClubMember;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+@SpringBootTest
+public class repositorytests {
+
+    @Autowired
+    private PostRepository postRepository;
+    private ProfileImageRepository profileImageRepository;
+    @Autowired
+    private FriendShipRepository friendShipRepository;
+    @Autowired
+    private ClubMemberRepository clubMemberRepository;
+    @Autowired
+    private ChatUserRepository chatUserRepository;
+    @Commit
+    @Transactional
+    @Test
+    public void testtt() {
+        ChatUser chatUser = ChatUser.builder()
+                .chatRoom(ChatRoom.builder().roomId(1L).build())
+                .disConnect(LocalDateTime.now())
+                .member(ClubMember.builder().email("profile5@naver.com").build())
+                .build();
+        chatUserRepository.save(chatUser);
 //        System.out.println("What@@@@@@@@@@@@@@@");
 //        ClubMember member1 = clubMemberRepository.findByName("Seognhun");
 //        ClubMember faw = clubMemberRepository.findByName("faw");
@@ -58,20 +63,5 @@
 //
 //            friendShipRepository.save(friendShipRequester);
 //            friendShipRepository.save(friendShipAccepter);
-//        }
-//
-//    }
-////    public void testListPage(){
-////        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "pno"));
-////        Page<Object[]> result = postRepository.getListPage(pageRequest, "seonghun@naver.com");
-//////        Long count = postRepository.getPostCount("seonghun@naver.com");
-//////        System.out.println(count);
-////        for(Object[] objects : result.getContent()){
-////            System.out.println(Arrays.toString(objects));
-////        }
-////    }
-////    @Test
-////    public void testProfileImage(){
-////        ProfileImageDTO =
-////    }
-//}
+        }
+}

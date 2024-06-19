@@ -1,6 +1,4 @@
 package com.skhkim.instaclone.chatting.entity;
-
-import com.skhkim.instaclone.entity.ClubMember;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,22 +10,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"chatRoom", "clubMember"})
+@ToString
 public class ChatMessage{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cid;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_room_id")
-    private ChatRoom chatRoom;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ClubMember clubMember;
+    private Long roomId;
+    private String senderEmail;
     private String content;
-
-    private boolean readStatus;
-
+    private Long readStatus;
     @CreatedDate
     @Column(name = "regdate", updatable = false)
     private LocalDateTime regDate;

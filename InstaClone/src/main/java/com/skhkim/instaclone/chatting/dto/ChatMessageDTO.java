@@ -11,10 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ChatMessageDTO {
     private Long cid;
-    private String name;
-    private String email;
+    private String senderEmail;
     private String content;
+    private Long readStatus;
     private LocalDateTime regDate;
-
-    private boolean readStatus;
 }

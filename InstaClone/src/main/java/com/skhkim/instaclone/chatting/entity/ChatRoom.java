@@ -1,6 +1,4 @@
 package com.skhkim.instaclone.chatting.entity;
-
-import com.skhkim.instaclone.entity.ClubMember;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,24 +10,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"clubMemberUser1", "clubMemberUser2"})
+@ToString
 public class ChatRoom {
 
     @Id
-    private String id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ClubMember clubMemberUser1;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ClubMember clubMemberUser2;
-
-    @Column(nullable = false)
-    private LocalDateTime lastDisConnect1;
-    @Column(nullable = false)
-    private LocalDateTime lastDisConnect2;
-    private LocalDateTime lastChatTime;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long roomId;
     private String lastChat;
+    private Long userNum;
+    private LocalDateTime lastChatTime;
+
 
 
 

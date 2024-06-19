@@ -56,3 +56,37 @@ Chatting 기능에서 메시지 조회 기능을 추가할 예정
   - 위 과정을 지나고 나면 Case1 을 수행한다. (완료)
 
     
+***    
+05-12
+- Chatting 기능 완료
+***
+05-13 ~ 05-16
+- Spring Security, 회원 가입 기본 설정에서 변경
+***
+
+05-17 ~ 05-22
+- Spring Security + JWT 구현
+- ProfileImage 등록 로직 수정
+- Docker build Test 완료
+- Token을 Cookie 형식으로 설정
+- Chatting Service 기능 변경
+- DB Key 참조 안한것들 정합성을 위해 참조 설정
+
+***
+06-18
+Chatting 1:N Service로 변경 및 ChatMessage NoSQL(MongoDB) 사용 계획
+- Table
+    - ChatRoom : ChatRoom ID, Last Chat, Last Chat Time
+    - ChatUser : UserEmail, Room ID, DisConnect Time
+    - ChatMessage : Room ID, Chat Comment, User Email
+
+  ChatRoom List는 해당 User와 연결된 ChatRoom 을 전부 보여준다. ( Chat User의 Room ID를 기준으로 Room ID가 같은 User를 가진 레코드를 조회한다. )
+
+    1. Query로는 일단 들어가 있는 Room ID에서, Room ID를 공유하는 ChatUser들을 Join한다.
+    2. Where 조건으로는, 첫 UserEmail을 자신으로, 두번째 UserEmail이 자신이 아닌것
+    3. 그럼 Room ID를 통해 Group으로 묶고, 각 Name들을 표기하고 보여준다.
+    4. Button엔 Room ID를 넣어서 Session을 열 수 있도록 한다.
+    5. 추가 기능으로, Chatting Open (+) 를 넣고, 검색을 통해 방을 생성할 수 있도록 한다.
+
+RDBMS로 설계 후, 처리 시간 확인 및 ChatMessage만 MongoDB로 수정 후 속도 확인 예정
+-> 처리 시간을 어떻게 측정할지는 고민중

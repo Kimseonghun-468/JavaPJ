@@ -351,8 +351,13 @@
       </div>
     </div>
     <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
-    <div class="modal-footer">
-      <button type="button" id="send-button-modalroom">Send</button>
+    <div class="chatting-footer">
+      <div class="chatting-invite">
+        <button type="button" id="invite-chatuser">invite</button>
+      </div>
+      <div class="chatting-send">
+        <button type="button" id="send-button-modalroom">Send</button>
+      </div>
     </div>
   </div>
   </div>
@@ -379,7 +384,10 @@
   var beforeDayCheck = null;
   var chatFlag = true;
   var loginName = '[[${memberDTO.name}]]'
+  var loginEmail = '[[${memberDTO.email}]]'
   var userName = '[[${userName}]]';
+  var userEmail = '[[${userEmail}]]';
+  var dictionary = {}
   const options = {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -613,13 +621,15 @@
     return Result;
   }
 
-   function getNotReadMessageNum(friendName, loginName) {
+   function getNotReadMessageNum(loginEmail, roomId, friendName) {
+    console.log(loginEmail, roomId)
      $.ajax({
        url: "/chat/getNotReadNum",
        type: "POST",
        dataType: "JSON",
-       data: {loginName: loginName, friendName: friendName},
+       data: {loginEmail: loginEmail, roomId: roomId},
        success: function (result){
+         console.log(result)
          $('#num-'+friendName).html(result);
        }
      })
@@ -630,7 +640,9 @@
     for (var i = 0; i < result.dtoList.length; i++){
       if (result.dtoList[i].lastChat == null)
         continue;
-      getNotReadMessageNum(result.dtoList[i].friendName, loginName)
+      console.log(result)
+      console.log(roomID)
+      getNotReadMessageNum(loginEmail, result.dtoList[i].roomId, result.dtoList[i].friendName)
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
       if(result.dtoList[i].profileImage != null)
@@ -659,11 +671,11 @@
 
     return Result;
   }
-  function showChatroomAndProfileImageList(loginName){
+  function showChatroomAndProfileImageList(loginEmail){
     $.ajax({
       url: "/chat/getChatRoomAndProfileImagePage?Page=" + chatRoomPage,
       type: "POST",
-      data: {loginName: loginName},
+      data: {loginEmail: loginEmail},
       dataType: "JSON",
       success: function (profileAndChatRoomMap){
         var pageResult = "";
@@ -898,16 +910,9 @@
     tag += '<div class="message-time">';
     tag += showedTime;
     tag += '</div>'
-    if (readStatus == true) {
-      tag += '<div class="status-true">';
-      tag += "읽음"
-      tag += '</div>'
-    }
-    else{
-      tag += '<div class="status-false">';
-      tag += "읽지 않음";
-      tag += '</div>';
-    }
+    tag += '<div class="status-true">';
+    tag += readStatus
+    tag += '</div>'
     tag += '</div>'
 
     return tag;
@@ -924,19 +929,18 @@
 
   function sendMessage(RoomID) {
     var messageContent = document.getElementById('messageInput').value.trim();
-    var name = '[[${memberDTO.name}]]';
     var email = '[[${memberDTO.email}]]';
     if(messageContent && stompClient) {
       var chatMessage = {
-        name: name,
         content: messageContent,
-        email: email
+        senderEmail: email
       };
       stompClient.send("/app/chat/"+RoomID, {}, JSON.stringify(chatMessage));
       document.getElementById('messageInput').value = '';
     }
   }
   function showChatMessage(name, message, time, readStatus, reverse, live) {
+    console.log(name, message, time, readStatus)
     var messageElement = document.createElement('div');
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
@@ -962,13 +966,30 @@
     }
 
   }
-  function connect(RoomID) {
+
+  async function makeEmailToName(roomId){
+
+    const response = await $.ajax({
+      url: '/chat/getEmailAndNameByRoomId',
+      type: 'POST',
+      data: {roomId:roomId},
+      dataType: "JSON",
+    })
+    response.forEach((item, index) => {
+      dictionary[item[0]] = item[1]
+    })
+  }
+  async function connect(RoomID) {
+    // 여기서 조회하고 뭘 조회하냐. User Email to Name으로 변환할 수 있는 함수 한번 조회
+    // 어디다 담냐. 맨 위에 전역 함수로 덤아 놓을까?
+    // 딕셔너리로 담자. Email : Name으로
+
     var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
     var connectPromise = new Promise((resolve, reject) => {
       stompClient.connect({'roomId': RoomID}, function (frame) {
         stompClient.subscribe('/topic/chat/'+RoomID, function (chatMessage) {
-          showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content,
+          showChatMessage(dictionary[JSON.parse(chatMessage.body).senderEmail], JSON.parse(chatMessage.body).content,
                   JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false, true);
         });
         stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, function (result){
@@ -985,9 +1006,11 @@
       var loginName = '[[${memberDTO.name}]]';
       stompClient.send("/app/chat/accessLoad/"+roomID, {}, loginName);
     })
+
+    await makeEmailToName(RoomID);
   }
   function disconnect(RoomID) {
-    var loginName = '[[${memberDTO.name}]]';
+    var loginEmail = '[[${memberDTO.email}]]';
     if (stompClient !== null) {
       stompClient.disconnect({'roomId': RoomID});
     }
@@ -995,7 +1018,7 @@
     $.ajax({
       url: "/chat/updateDisConnectTime",
       type: "POST",
-      data: {roomID:roomID, loginName:loginName},
+      data: {roomId:RoomID, loginEmail:loginEmail},
       dataType: "JSON",
       success: function (result){
         console.log("Disconnected");
@@ -1003,12 +1026,12 @@
     })
   }
 
-  function showChatInfoAfter(roomID, loginName){
+  function showChatInfoAfter(roomID, loginEmail){
     $.ajax({
       url: '/chat/getChatListByRoomIDPageAfter?page=' + chatAfterPage,
       type: 'POST',
       dataType: 'JSON',
-      data: {roomID: roomID, loginName:loginName},
+      data: {roomID: roomID, loginEmail:loginEmail},
       success: function (pageRequestChatDTO) {
         if (pageRequestChatDTO.dtoList.length > 0) {
           afterDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
@@ -1016,7 +1039,7 @@
         chatTotalAfterPage = pageRequestChatDTO.totalPage;
 
         $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
-          showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
+          showChatMessage(dictionary[chatMessageDTO.name], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
         })
         chatAfterPage +=1
         $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight + (280 - 300 - pageRequestChatDTO.dtoList.length*40));
@@ -1025,13 +1048,13 @@
     })
   }
 
-  async function showChatInfoAfter2(roomID, loginName){
+  async function showChatInfoAfter2(roomID, loginEmail){
     try {
       const response = await $.ajax({
         url: '/chat/getChatListByRoomIDPageAfter?page=' + chatAfterPage,
         type: 'POST',
         dataType: 'JSON',
-        data: {roomID: roomID, loginName:loginName},
+        data: {roomID: roomID, loginEmail:loginEmail},
       })
       chatAfterPage += 1
       $.each(response.dtoList, function (idx, chatMessageDTO) {
@@ -1042,14 +1065,15 @@
     }
   }
 
-async function showChatInfoBefore(roomID, loginName){
+async function showChatInfoBefore(roomID, loginEmail){
     try {
       const response = await $.ajax({
         url: '/chat/getChatListByRoomIDPageBefore?page=' + chatPage,
         type: 'POST',
         dataType: 'JSON',
-        data: {roomID: roomID, loginName: loginName}
+        data: {roomID: roomID, loginEmail: loginEmail}
       });
+      console.log(response)
       if (response.dtoList.length > 0) {
         beforeDayCheck = response.dtoList[0].regDate.slice(0, 10);
         afterDayCheck = response.dtoList[0].regDate.slice(0, 10);
@@ -1057,7 +1081,7 @@ async function showChatInfoBefore(roomID, loginName){
       chatTotalPage = response.totalPage;
 
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
       })
       chatPage += 1
       if (response.end == 1) {
@@ -1071,15 +1095,16 @@ async function showChatInfoBefore(roomID, loginName){
       throw error;
     }
   }
-  async function showChatInfoBefore2(roomID, loginName){
+  async function showChatInfoBefore2(roomID, loginEmail){
     try {
       const response = await $.ajax({
         url: '/chat/getChatListByRoomIDPageBefore?page=' + chatPage,
         type: 'POST',
         dataType: 'JSON',
-        data: {roomID: roomID, loginName:loginName},
+        data: {roomID: roomID, loginEmail:loginEmail},
       })
       chatPage += 1
+      console.log(response)
       $.each(response.dtoList, function (idx, chatMessageDTO) {
         showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
       })
@@ -1266,12 +1291,12 @@ async function showChatInfoBefore(roomID, loginName){
     });
     $(".chatting-roomList").click(function (){
       $('#chatroom-Modal').modal('show');
-      var loginName = '[[${memberDTO.name}]]';
-      showChatroomAndProfileImageList(loginName);
+      var loginEmail = '[[${memberDTO.email}]]';
+      showChatroomAndProfileImageList(loginEmail);
       $('#chatroom-page').off('click').on('click', '.chatroom-page-button', function (){
         var presentPage = $(this).attr('data-name');
         chatRoomPage = presentPage;
-        showChatroomAndProfileImageList(loginName);
+        showChatroomAndProfileImageList(loginEmail);
       })
     })
 
@@ -1337,7 +1362,7 @@ async function showChatInfoBefore(roomID, loginName){
         if (scrollContainer.scrollTop >=5 &&  scrollContainer.scrollTop <= 200){
           if (chatTotalPage >= chatPage && chatFlag) {
             chatFlag = false
-            await showChatInfoBefore2(roomID, loginName);
+            await showChatInfoBefore2(roomID, loginEmail);
             chatFlag =true
           }
         }
@@ -1347,7 +1372,7 @@ async function showChatInfoBefore(roomID, loginName){
         if (scrollContainer.clientHeight -1 <= val  &&  val <= scrollContainer.clientHeight +1) {
           if (chatTotalPage >= chatPage && chatFlag) {
             chatFlag = false
-            await showChatInfoAfter2(roomID, loginName);
+            await showChatInfoAfter2(roomID, loginEmail);
             chatFlag =true
 
           }
@@ -1361,16 +1386,16 @@ async function showChatInfoBefore(roomID, loginName){
         var requesterEmail = $(this).attr('data-name');
         $('#chatMessageModal').css('z-index', 1052).modal('show');
         async function getChatRoom(){
-          const chatRoomDTO = await $.ajax({
+          const chatRoomId = await $.ajax({
             url: '/chat/getORCreateChatRoom',
             type: 'POST',
             dataType: 'JSON',
             data: {loginEmail: loginEmail, friendEmail: requesterEmail},
           })
-          roomID = chatRoomDTO.id;
-          connect(chatRoomDTO.id);
-          await showChatInfoBefore(roomID, loginName);
-          showChatInfoAfter(roomID, loginName);
+          roomID = chatRoomId;
+          await connect(chatRoomId);
+          await showChatInfoBefore(roomID, loginEmail);
+          showChatInfoAfter(roomID, loginEmail);
           scrollContainer.addEventListener('scroll', debouncedPagingDown)
           scrollContainer.addEventListener('scroll', debouncedPagingUp);
         }
