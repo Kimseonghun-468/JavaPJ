@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
@@ -119,5 +118,11 @@ public class ChatController {
         chatUserService.insertChatUser(userEmails, roomId);
         chatRoomService.updateUserNum(roomId, addNum);
         return new ResponseEntity<>(1L, HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/getDisConnectTime")
+    public ResponseEntity<LocalDateTime> getDissConnectTime(Long roomId, String loginEmail){
+        LocalDateTime result = chatUserService.getDisConnectTime(roomId, loginEmail);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.chatting.repository;
 
-import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,4 +35,7 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
             "WHERE cu2.member.email != :loginEmail AND cu2.chatRoom.roomId =:roomId")
     List<Object[]> getUserEmailByEmailAndRoomId2(String loginEmail, Long roomId);
 
+
+    @Query("SELECT cu.disConnect FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.email =:loginEmail")
+    LocalDateTime getDisConnectTimeByRoomIdAndEmail(Long roomId, String loginEmail);
 }

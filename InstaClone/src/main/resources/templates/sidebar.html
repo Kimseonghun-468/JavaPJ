@@ -363,22 +363,6 @@
   </div>
 </div>
 
-
-<!--<div id="SearchModal" class="modal modal-custom">-->
-<!--  <div class="modal-content-search">-->
-<!--    <form id="searchForm">-->
-<!--      <input type="text" id="searchInput" placeholder="검색어 입력...">-->
-<!--      <button type="submit">검색</button>-->
-<!--    </form>-->
-<!--    <div id="searchResult" class="side-border">-->
-
-<!--    </div>-->
-<!--    <ul class="pagination h-100 justify-content-center align-items-center" id="search-page">-->
-
-<!--    </ul>-->
-<!--  </div>-->
-<!--</div>-->
-
 <div class="modal modal-custom" id="inviteModal">
     <div class="modal-content-search" id="scroll-invite">
       <form id="inviteSearchForm" class="invite-search-form">
@@ -427,7 +411,7 @@
   var userName = '[[${userName}]]';
   var userEmail = '[[${userEmail}]]';
   var dictionary = {}
-  var dictinaryInverse = {}
+  var dictionaryInverse = {}
   var dictionaryInvite = {}
   var dictionaryInviteEmail = {}
   const options = {
@@ -985,7 +969,7 @@
 
     })
   }
-  function createChatMessagesTag(name, message, showedTime, readStatus){
+  function createChatMessagesTag(name, message, showedTime, readStatus, time){
     var tag = "";
     tag += '<div class="message-frame">'
     tag += '<div class="message-name">';
@@ -997,7 +981,7 @@
     tag += '<div class="message-time">';
     tag += showedTime;
     tag += '</div>'
-    tag += '<div class="status-true">';
+    tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">';
     tag += readStatus
     tag += '</div>'
     tag += '</div>'
@@ -1031,7 +1015,7 @@
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
             formattedDateTime.slice(12, 20)
-    tag = createChatMessagesTag(name, message, showedTime, readStatus);
+    tag = createChatMessagesTag(name, message, showedTime, readStatus, time);
 
     if (beforeDayCheck != time.slice(0, 10) && reverse == true) {
       $('#messages-box').prepend('<h1>' + beforeDayCheck +'</h1>');
@@ -1063,14 +1047,11 @@
     })
     response.forEach((item, index) => {
       dictionary[item[0]] = item[1]
-      dictinaryInverse[item[1]] = item[0]
+      dictionaryInverse[item[1]] = item[0]
     })
   }
   async function connect(RoomID) {
-    // 여기서 조회하고 뭘 조회하냐. User Email to Name으로 변환할 수 있는 함수 한번 조회
-    // 어디다 담냐. 맨 위에 전역 함수로 덤아 놓을까?
-    // 딕셔너리로 담자. Email : Name으로
-
+    await makeEmailToName(RoomID);
     var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
     var connectPromise = new Promise((resolve, reject) => {
@@ -1079,9 +1060,35 @@
           showChatMessage(dictionary[JSON.parse(chatMessage.body).senderEmail], JSON.parse(chatMessage.body).content,
                   JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false, true);
         });
-        stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, function (result){
+        stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, async function (result){
           if (result.body != '[[${memberDTO.name}]]'){
-            $('.status-false').text("읽음");
+            const disConnectTime = await $.ajax({
+              url: "/chat/getDisConnectTime",
+              type: "POST",
+              data:{roomId :RoomID, loginEmail:dictionaryInverse[result.body]},
+            })
+            console.log(disConnectTime)
+            // ajax get disconnection time by room id
+            $('.status-true').each(function() {
+
+              let timeValue = ($(this).attr('data-time'));
+              let nameValue = ($(this).attr('data-name'));
+              let readNumValue = $(this).text();
+              let readStatusFlag = false
+              if (timeValue > disConnectTime)
+                readStatusFlag = true;
+              console.log(timeValue, nameValue, readNumValue, disConnectTime, readStatusFlag)
+
+              if (readStatusFlag && result.body != nameValue){
+                $(this).text(readNumValue-1);
+              }
+              // timeValue > disconnectionTIme 이고, dataname이 아닌걸 골라서 -1하기
+              // $(this).attr('data-name', nameValue - 1);
+            });
+            //connect time을 알아내고,
+            // connect time lastconnect time 이후에 해당하는걸 모두 -1을 할까?
+            // chat message의 lastconnect time은 어떻게 알 수 있을까?
+            // 고민되네
           }
         })
         resolve();
@@ -1094,7 +1101,7 @@
       stompClient.send("/app/chat/accessLoad/"+roomID, {}, loginName);
     })
 
-    await makeEmailToName(RoomID);
+
   }
   function disconnect(RoomID) {
     var loginEmail = '[[${memberDTO.email}]]';
@@ -1110,7 +1117,7 @@
       success: function (result){
         console.log("Disconnected");
         dictionary = {}
-        dictinaryInverse = {}
+        dictionaryInverse = {}
       }
     })
   }
@@ -1128,7 +1135,7 @@
         chatTotalAfterPage = pageRequestChatDTO.totalPage;
 
         $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
-          showChatMessage(dictionary[chatMessageDTO.name], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
+          showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
         })
         chatAfterPage +=1
         $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight + (280 - 300 - pageRequestChatDTO.dtoList.length*40));
@@ -1147,7 +1154,7 @@
       })
       chatAfterPage += 1
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
       })
     } catch (error){
       throw error;

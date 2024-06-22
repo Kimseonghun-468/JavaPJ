@@ -381,7 +381,7 @@
 </html>
 
 <div id="friend-List-UserModal" class="modal-custom">
-  <div class="modal-content-side-frame">
+  <div id="friend-modal" class="modal-content-side-frame">
 
     <div id="friend-List-UserBox" class="side-border">
 
@@ -412,14 +412,36 @@
         </div>
       </div>
       <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
-      <div class="modal-footer">
-        <button type="button" id="send-button-modalroom">Send</button>
+      <div class="chatting-footer">
+        <div class="chatting-invite">
+          <button type="button" id="invite-chatuser">invite</button>
+        </div>
+        <div class="chatting-send">
+          <button type="button" id="send-button-modalroom">Send</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+<div class="modal modal-custom" id="inviteModal">
+  <div class="modal-content-search" id="scroll-invite">
+    <form id="inviteSearchForm" class="invite-search-form">
+      <input type="text" id="inviteSearchInput" placeholder="검색어 입력...">
+      <button type="submit" style="width: 100px;">검색</button>
+      <div id="invite-dictionary">
 
+      </div>
+
+      <div class="invite-submit">
+        <button type="submit" id="invite-submit">완료</button>
+      </div>
+    </form>
+    <div id="inviteSearchResult" class="side-border">
+
+    </div>
+  </div>
+</div>
 
 <script>
   var requestedPage = 1;
@@ -427,6 +449,8 @@
   var chatRoomPage = 1;
   var postPage = 1;
   var searchPage = 1;
+  var inviteListPage = 1;
+  var inviteListTotalPage = 1;
   var friendListPage = 1;
   var frinenListTotalPage = 1;
   var chatPage = 1;
@@ -436,13 +460,21 @@
   // var flag = true;
   var friendFlag = true;
   var roomID = ""
+  var inviteSearchTerm = null;
 
   var stompClient = null;
   var afterDayCheck = null;
   var beforeDayCheck = null;
   var chatFlag = true;
+  var inviteFlag = true;
   var loginName = '[[${memberDTO.name}]]'
+  var loginEmail = '[[${memberDTO.email}]]'
   var userName = '[[${userName}]]';
+  var userEmail = '[[${userEmail}]]';
+  var dictionary = {}
+  var dictionaryInverse = {}
+  var dictionaryInvite = {}
+  var dictionaryInviteEmail = {}
   const options = {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -450,7 +482,85 @@
     timeZone: "Asia/Seoul"  // 서버 시간대가 UTC라고 가정
   };
   const formatter = new Intl.DateTimeFormat('en-US', options);
+  function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
+    var data = {pno:postId, text:commentBox.value, email:userEmail};
+    $.ajax({
+      url: '/reply/'+postId,
+      type: "POST",
+      data: JSON.stringify(data),
+      contentType: "application/json; charset=utf-8",
+      dataType:"text",
+      success: function (result){
+        var tempReply = {name:userName, text:commentBox.value, rno:result};
+        replyResult = ""
+        var replyArea = $("#reply-comment-body");
+        replyArea.append(createReplyhtmlbox(userName, tempReply));
+        $('#comment-box').val('');
+        $('#reply-comment-body').scrollTop($('#reply-comment-body')[0].scrollHeight);
+      }
+    })
+  };
+  function sendReplyDeleteRequest(rno){
+    $.ajax({
+      url: '/reply/'+rno,
+      type: 'DELETE',
+      contentType: "application/json; charset=utf-8",
+      dataType: "text",
+      success: function (result){
+        $('[data-rno="' + rno + '"]').closest('.comment-body-reply').remove();
+      }
+    })
+  }
+  function sendPostDeleteRequest(pno){
+    $.ajax({
+      url: '/post/delete/' + pno,
+      type: 'DELETE',
+      success: function (result){
+      }
+    })
+  }
 
+  function showReplyListInPost(postId){
+    $.getJSON("/reply/"+postId +"/all", function (arr){
+      var str = "";
+      var loginName = '[[${memberDTO.name}]]';;
+
+      $.each(arr, function (idx, reply){
+        replyStr = createReplyhtmlbox(loginName, reply);
+        str += replyStr;
+      });
+      $("#reply-comment-body").html(str);
+    })
+  }
+
+  function showUploadedImages(arr){
+    var divArea = $(".uploadResult");
+    var str = "";
+
+    for (var i = 0; i < arr.length; i++) {
+      str += "<div>";
+      str += "<img src='/display?fileName=" + arr[i].thumbnailURL + "'>";
+      str += "<button class='removeBtn' data-name='" + arr[i].imageURL + "'>Remove</button>";
+      str += "</div>";
+    }
+    divArea.append(str);
+  }
+
+  function createReplyhtmlbox(loginName, reply){
+    var str = "";
+    str += '<div class="comment-body-reply">';
+    str += '<div class="comment-title-username comment-bold">'
+    str += reply.name
+    str += '</div>'
+    str += '<div class="comment-title-comment">'
+    str += reply.text
+    str += '</div>'
+    if (loginName == reply.name) {
+      str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
+    }
+    str += '</div>'
+    return str
+  }
   function sendFollowRequest(name, $button){
     $.ajax({
       url: '/friendShip/' + name,
@@ -487,6 +597,23 @@
     if (searchResult =="")
       searchResult += "검색한 사용자가 없습니다."
     return searchResult;
+  }
+  async function showInviteSearchInfo(userName, loginName, inviteSearchTerm){
+    try{
+      const response = await $.ajax({
+        url: "/search/invite?page" + inviteListPage,
+        type: "POST",
+        data: {loginName:loginName, inviteSearchTerm:inviteSearchTerm},
+        dataType: "JSON",
+      })
+      console.log(loginName, inviteSearchTerm, inviteListPage)
+      console.log(response)
+      inviteListTotalPage = response.end;
+      inviteListPage += 1
+      createInviteUserInfo(response);
+    } catch (error){
+      throw error;
+    }
   }
   function getSearchUserInfo(searchTerm){
     var loginName = '[[${memberDTO.name}]]';
@@ -574,6 +701,36 @@
     $('#friend-List-UserBox').append(Result);
   }
 
+  function createInviteUserInfo(profileAndFriendMap){
+    var Result = "";
+    console.log(profileAndFriendMap)
+    for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
+      Result += '<div class="user-info-box">';
+      Result += '<div class="profile-box">';
+      if(profileAndFriendMap.dtoList[i].profileImage ==null)
+        Result += '<img src = "/display?fileName=outprofile.png/"' +
+                ' alt="Profile Picture" class="profile-picture">'
+      else
+        Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
+                ' alt="Profile Picture" class="profile-picture">'
+      Result += '</div>';
+      Result += '<div class="user-name-box">'
+      Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
+              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
+      Result += '</div>';
+      Result += '<div class="user-chat-button-box">';
+      if (dictionaryInvite[profileAndFriendMap.dtoList[i].friendName] == null)
+        Result += "<button data-name='" + profileAndFriendMap.dtoList[i].friendName +
+                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' class='invite-button follow'> + </button>";
+      else
+        Result += "<button data-name='" + profileAndFriendMap.dtoList[i].friendName +
+                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' class='invite-cancel-button follow'> - </button>";
+      Result += '</div>';
+      Result += '</div>';
+    }
+    $('#inviteSearchResult').append(Result);
+  }
+
   function createFriendShipWaitingInfo(profileAndFriendMap){
     var Result = "";
     for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
@@ -598,14 +755,15 @@
     return Result;
   }
 
-  function getNotReadMessageNum(friendName, loginName) {
+  function getNotReadMessageNum(loginEmail, roomId) {
     $.ajax({
       url: "/chat/getNotReadNum",
       type: "POST",
       dataType: "JSON",
-      data: {loginName: loginName, friendName: friendName},
+      data: {loginEmail: loginEmail, roomId: roomId},
       success: function (result){
-        $('#num-'+friendName).html(result);
+        console.log(result)
+        $('#num-'+roomId).html(result);
       }
     })
 
@@ -613,11 +771,13 @@
   function createChatroomListInfo(result){
     Result = "";
     for (var i = 0; i < result.dtoList.length; i++){
-      getNotReadMessageNum(result.dtoList[i].friendName, loginName)
+      if (result.dtoList[i].lastChat == null)
+        continue;
+      getNotReadMessageNum(loginEmail, result.dtoList[i].roomId)
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
-      if(result.dtoList[i].profileImage != null)
-        Result += '<img src ="/display?fileName=' + result.dtoList[i].profileImage.imageURL + '/"' +
+      if(result.dtoList[i].profileImage[0] != null)
+        Result += '<img src ="/display?fileName=' + result.dtoList[i].profileImage[0].imageURL + '/"' +
                 ' alt="Profile Picture" class="profile-picture">';
       else
         Result += '<img src ="/display?fileName=outprofile.png/"' +
@@ -632,23 +792,24 @@
       Result += '<div class ="last-chat-time">';
       Result += result.dtoList[i].lastChatTime.slice(5,10) + " " + " " + result.dtoList[i].lastChatTime.slice(11, 16);
       Result += '</div>';
-      Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].friendName + '">';
+      Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].roomId + '">';
       Result += '</div>';
       Result += '<div class ="user-chat-button-box3">';
-      Result += '<button data-name =' + result.dtoList[i].friendEmail + ' class=\"request-Chatroom-button\">대화창 열기</button>'
+      Result += '<button room-id =' + result.dtoList[i].roomId + ' class=\"request-Chatroom-button\">대화창 열기</button>'
       Result += '</div>';
       Result += '</div>';
     }
 
     return Result;
   }
-  function showChatroomAndProfileImageList(loginName){
+  function showChatroomAndProfileImageList(loginEmail){
     $.ajax({
       url: "/chat/getChatRoomAndProfileImagePage?Page=" + chatRoomPage,
       type: "POST",
-      data: {loginName: loginName},
+      data: {loginEmail: loginEmail},
       dataType: "JSON",
       success: function (profileAndChatRoomMap){
+        console.log(profileAndChatRoomMap)
         var pageResult = "";
         Result = createChatroomListInfo(profileAndChatRoomMap);
         if (profileAndChatRoomMap.prev != false)
@@ -769,6 +930,47 @@
     })
   }
 
+  function uploadImageAndPostRegisterRequset(formData){
+    $.ajax({
+      url: '/uploadAjax',
+      processData: false,
+      contentType: false,
+      data: formData,
+      type: 'POST',
+      dataType: 'json',
+      success: function (result) {
+        var str = "";
+        var carouselTag = "";
+        $.each(result, function (idx, imageInfo) {
+          str += "<input type='hidden' name='imageDTOList["+idx+"].imgName' value='"+imageInfo['fileName'] +"'>";
+          str += "<input type='hidden' name='imageDTOList["+idx+"].path' value='"+imageInfo['folderPath']+"'>";
+          str += "<input type='hidden' name='imageDTOList["+idx+"].uuid' value='"+imageInfo['uuid']+"'>";
+
+          if(idx ==0)
+            carouselTag += '<div class="carousel-item active">'
+          else
+            carouselTag += '<div class="carousel-item">'
+          carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+          carouselTag += '</div>';
+        });
+        if(result.length ==1){
+          $(".carousel-control-next").html("")
+          $(".carousel-control-prev").html("")
+        }
+        else{
+          $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
+          $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
+        }
+
+        $("#upload-form-image-box").html(str);
+        $("#upload-carousel-image-box").html(carouselTag);
+        return result;
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus)
+      }
+    });
+  }
   function uploadImageAndProfileRegisterRequset(formData){
     $.ajax({
       url: '/uploadAjax',
@@ -828,7 +1030,7 @@
 
     })
   }
-  function createChatMessagesTag(name, message, showedTime, readStatus){
+  function createChatMessagesTag(name, message, showedTime, readStatus, time){
     var tag = "";
     tag += '<div class="message-frame">'
     tag += '<div class="message-name">';
@@ -840,16 +1042,9 @@
     tag += '<div class="message-time">';
     tag += showedTime;
     tag += '</div>'
-    if (readStatus == true) {
-      tag += '<div class="status-true">';
-      tag += "읽음"
-      tag += '</div>'
-    }
-    else{
-      tag += '<div class="status-false">';
-      tag += "읽지 않음";
-      tag += '</div>';
-    }
+    tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">';
+    tag += readStatus
+    tag += '</div>'
     tag += '</div>'
 
     return tag;
@@ -866,23 +1061,22 @@
 
   function sendMessage(RoomID) {
     var messageContent = document.getElementById('messageInput').value.trim();
-    var name = '[[${memberDTO.name}]]';
     var email = '[[${memberDTO.email}]]';
     if(messageContent && stompClient) {
       var chatMessage = {
-        name: name,
         content: messageContent,
-        email: email
+        senderEmail: email
       };
       stompClient.send("/app/chat/"+RoomID, {}, JSON.stringify(chatMessage));
       document.getElementById('messageInput').value = '';
     }
   }
   function showChatMessage(name, message, time, readStatus, reverse, live) {
+    var messageElement = document.createElement('div');
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
             formattedDateTime.slice(12, 20)
-    tag = createChatMessagesTag(name, message, showedTime, readStatus);
+    tag = createChatMessagesTag(name, message, showedTime, readStatus, time);
 
     if (beforeDayCheck != time.slice(0, 10) && reverse == true) {
       $('#messages-box').prepend('<h1>' + beforeDayCheck +'</h1>');
@@ -903,18 +1097,59 @@
     }
 
   }
-  function connect(RoomID) {
+
+  async function makeEmailToName(roomId){
+
+    const response = await $.ajax({
+      url: '/chat/getEmailAndNameByRoomId',
+      type: 'POST',
+      data: {roomId:roomId},
+      dataType: "JSON",
+    })
+    response.forEach((item, index) => {
+      dictionary[item[0]] = item[1]
+      dictionaryInverse[item[1]] = item[0]
+    })
+  }
+  async function connect(RoomID) {
+    await makeEmailToName(RoomID);
     var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
     var connectPromise = new Promise((resolve, reject) => {
       stompClient.connect({'roomId': RoomID}, function (frame) {
         stompClient.subscribe('/topic/chat/'+RoomID, function (chatMessage) {
-          showChatMessage(JSON.parse(chatMessage.body).name, JSON.parse(chatMessage.body).content,
+          showChatMessage(dictionary[JSON.parse(chatMessage.body).senderEmail], JSON.parse(chatMessage.body).content,
                   JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false, true);
         });
-        stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, function (result){
+        stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, async function (result){
           if (result.body != '[[${memberDTO.name}]]'){
-            $('.status-false').text("읽음");
+            const disConnectTime = await $.ajax({
+              url: "/chat/getDisConnectTime",
+              type: "POST",
+              data:{roomId :RoomID, loginEmail:dictionaryInverse[result.body]},
+            })
+            console.log(disConnectTime)
+            // ajax get disconnection time by room id
+            $('.status-true').each(function() {
+
+              let timeValue = ($(this).attr('data-time'));
+              let nameValue = ($(this).attr('data-name'));
+              let readNumValue = $(this).text();
+              let readStatusFlag = false
+              if (timeValue > disConnectTime)
+                readStatusFlag = true;
+              console.log(timeValue, nameValue, readNumValue, disConnectTime, readStatusFlag)
+
+              if (readStatusFlag && result.body != nameValue){
+                $(this).text(readNumValue-1);
+              }
+              // timeValue > disconnectionTIme 이고, dataname이 아닌걸 골라서 -1하기
+              // $(this).attr('data-name', nameValue - 1);
+            });
+            //connect time을 알아내고,
+            // connect time lastconnect time 이후에 해당하는걸 모두 -1을 할까?
+            // chat message의 lastconnect time은 어떻게 알 수 있을까?
+            // 고민되네
           }
         })
         resolve();
@@ -926,9 +1161,11 @@
       var loginName = '[[${memberDTO.name}]]';
       stompClient.send("/app/chat/accessLoad/"+roomID, {}, loginName);
     })
+
+
   }
   function disconnect(RoomID) {
-    var loginName = '[[${memberDTO.name}]]';
+    var loginEmail = '[[${memberDTO.email}]]';
     if (stompClient !== null) {
       stompClient.disconnect({'roomId': RoomID});
     }
@@ -936,20 +1173,22 @@
     $.ajax({
       url: "/chat/updateDisConnectTime",
       type: "POST",
-      data: {roomID:roomID, loginName:loginName},
+      data: {roomId:RoomID, loginEmail:loginEmail},
       dataType: "JSON",
       success: function (result){
         console.log("Disconnected");
+        dictionary = {}
+        dictionaryInverse = {}
       }
     })
   }
 
-  function showChatInfoAfter(roomID, loginName){
+  function showChatInfoAfter(roomID, loginEmail){
     $.ajax({
       url: '/chat/getChatListByRoomIDPageAfter?page=' + chatAfterPage,
       type: 'POST',
       dataType: 'JSON',
-      data: {roomID: roomID, loginName:loginName},
+      data: {roomID: roomID, loginEmail:loginEmail},
       success: function (pageRequestChatDTO) {
         if (pageRequestChatDTO.dtoList.length > 0) {
           afterDayCheck = pageRequestChatDTO.dtoList[0].regDate.slice(0, 10);
@@ -957,7 +1196,7 @@
         chatTotalAfterPage = pageRequestChatDTO.totalPage;
 
         $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
-          showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
+          showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
         })
         chatAfterPage +=1
         $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight + (280 - 300 - pageRequestChatDTO.dtoList.length*40));
@@ -966,31 +1205,32 @@
     })
   }
 
-  async function showChatInfoAfter2(roomID, loginName){
+  async function showChatInfoAfter2(roomID, loginEmail){
     try {
       const response = await $.ajax({
         url: '/chat/getChatListByRoomIDPageAfter?page=' + chatAfterPage,
         type: 'POST',
         dataType: 'JSON',
-        data: {roomID: roomID, loginName:loginName},
+        data: {roomID: roomID, loginEmail:loginEmail},
       })
       chatAfterPage += 1
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
       })
     } catch (error){
       throw error;
     }
   }
 
-  async function showChatInfoBefore(roomID, loginName){
+  async function showChatInfoBefore(roomID, loginEmail){
     try {
       const response = await $.ajax({
         url: '/chat/getChatListByRoomIDPageBefore?page=' + chatPage,
         type: 'POST',
         dataType: 'JSON',
-        data: {roomID: roomID, loginName: loginName}
+        data: {roomID: roomID, loginEmail: loginEmail}
       });
+      console.log(response)
       if (response.dtoList.length > 0) {
         beforeDayCheck = response.dtoList[0].regDate.slice(0, 10);
         afterDayCheck = response.dtoList[0].regDate.slice(0, 10);
@@ -998,7 +1238,7 @@
       chatTotalPage = response.totalPage;
 
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
       })
       chatPage += 1
       if (response.end == 1) {
@@ -1012,17 +1252,18 @@
       throw error;
     }
   }
-  async function showChatInfoBefore2(roomID, loginName){
+  async function showChatInfoBefore2(roomID, loginEmail){
     try {
       const response = await $.ajax({
         url: '/chat/getChatListByRoomIDPageBefore?page=' + chatPage,
         type: 'POST',
         dataType: 'JSON',
-        data: {roomID: roomID, loginName:loginName},
+        data: {roomID: roomID, loginEmail:loginEmail},
       })
       chatPage += 1
+      console.log(response)
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
       })
       if (chatPage == chatTotalPage +1)
         if (response.dtoList.length != 0){
@@ -1034,9 +1275,31 @@
     }
   }
   $(function (){
-    $('.uploadButton-profile').off('click').on('click', function () {
-      $('#profile-option-modal').modal('show');
+    $('.uploadButton-post').off('click').click(function() {
+      $('.post-Image-File').off('change');
+      $('.post-Image-File').click().on('change', function() {
+        if (this.files && this.files.length > 0) {
+          $('#post-upload-modal').modal('show');
+          var formData = new FormData();
+          var inputFile = $("input.post-Image-File");
+          var files = inputFile[0].files;
+          for (var i = 0; i < files.length; i++){
+            formData.append("uploadFiles", files[i]);
+          }
+          uploadImageAndPostRegisterRequset(formData);
 
+        }
+        $('#upload-post-button').click(function() {
+          alert('포스트 파일이 제출되었습니다.');
+          $('#upload-form').submit();
+          $('.Post-File-Modal').modal('hide');
+
+        });
+      });
+    });
+    $('.uploadButton-profile').off('click').on('click', function () {
+      if (loginName == userName)
+        $('#profile-option-modal').modal('show');
       $('#upload-profile-image').off('click').on('click', function () {
         $('.profile-Image-File').off('change').click().on('change', function () {
           if (this.files && this.files.length > 0) {
@@ -1069,6 +1332,34 @@
       });
     });
 
+    // $('.uploadButton-profile').click(function () {
+    //   $('.profile-Image-File').click().on('change', function() {
+    //     if (this.files && this.files.length > 0) {
+    //       $('.Profile-File-Modal').modal('show');
+    //       var formData = new FormData();
+    //       var inputFile = $("input.profile-Image-File");
+    //       var files = inputFile[0].files;
+    //       formData.append("uploadFiles", files[0]);
+    //     }
+    //     $('.submitFile-Profile').click(function() {
+    //       uploadImageAndProfileRegisterRequset(formData);
+    //       alert('프로필 파일이 제출되었습니다.');
+    //       $('.filemodal').modal('hide');
+    //     });
+    //   });
+    // });
+
+    $(".profile-picture").click(function (){
+      var userName = '[[${memberDTO.name}]]';
+      var loadName = '[[${userName}]]';
+      if (userName != loadName) {
+        $('#profileImageModal').modal('show');
+        var imageUrl = $(this).attr('src');
+        var str = '<img src=\"' + imageUrl + '/\"' +
+                ' alt=\"Profile Picture\" class=\"post-image\">'
+        $("#modal-content-profile-imagebox").html(str);
+      }
+    })
   });
 
   $(function (){
@@ -1125,7 +1416,6 @@
     })
     $(function () {
       async function friendScrollPaging(){
-        const scrollContainer = document.getElementById('friend-list-UserModal');
         let val = scrollContainer.scrollHeight - scrollContainer.scrollTop
         if (scrollContainer.clientHeight -15 <= val  &&  val <= scrollContainer.clientHeight +15) {
           if (friendListTotalPage >= friendListPage && friendFlag) {
@@ -1137,7 +1427,7 @@
         }
       }
       const debouncedPaging = debounce(friendScrollPaging,300);
-      const scrollContainer = document.getElementById('friend-list-UserModal');
+      const scrollContainer = document.getElementById('friend-modal');
       $("#friend-List").click(function () {
         $('#friend-List-UserModal').modal('show');
         var userName = '[[${userName}]]';
@@ -1158,15 +1448,54 @@
     });
     $(".chatting-roomList").click(function (){
       $('#chatroom-Modal').modal('show');
-      var loginName = '[[${memberDTO.name}]]';
-      showChatroomAndProfileImageList(loginName);
+      var loginEmail = '[[${memberDTO.email}]]';
+      showChatroomAndProfileImageList(loginEmail);
       $('#chatroom-page').off('click').on('click', '.chatroom-page-button', function (){
         var presentPage = $(this).attr('data-name');
         chatRoomPage = presentPage;
-        showChatroomAndProfileImageList(loginName);
+        showChatroomAndProfileImageList(loginEmail);
       })
     })
 
+    $(".temp3").off('click').on('click', '.post-page-button', function (){
+      var presentPage = $(this).attr('data-name');
+      postPage = presentPage;
+      $.ajax({
+        url: "/post/getPostInfo?page=" + postPage,
+        type: "POST",
+        data: {userName:userName},
+        dataType: "JSON",
+        success: function (result){
+          var postResult = "";
+          var postPageResult = "";
+          $.each(result.dtoList, function (idx, dtoList){
+            postResult += '<div class="post-item">';
+            postResult += '<img class="post-list-img" ' +
+                    'src="/display?fileName=' + dtoList.imageDTOList[0].imageURL + '/" ' +
+                    'data-url ="' + dtoList.imageDTOList[0].imageURL +'" ' +
+                    'data-id="' +dtoList.imageDTOList[0].pino + '" ' +
+                    'data-pid="' + dtoList.pno + '">'
+            postResult += '</div>';
+          })
+          if (result.prev != false)
+            postPageResult += '<button class="page-link requested-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
+          $.each(result.pageList, function (idx, pageList){
+            if (postPage == pageList)
+              postPageResult += '<li class="page-item active">'
+            else
+              postPageResult += '<li class="page-item">'
+            postPageResult += '<button class="page-link post-page-button" ' +
+                    'data-name="' + pageList +'">' +pageList +'</button>'
+          })
+          if (result.prev != false)
+            postPageResult += '<button class="page-link post-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
+
+          $("#post-grid-image-box").html(postResult);
+          $("#post-page").html(postPageResult);
+        }
+      })
+
+    })
     $(document).on('click', '.request-Accept-button', function(){
       var loginName = '[[${memberDTO.name}]]';
       var requesterName = $(this).attr('data-name');
@@ -1190,7 +1519,7 @@
         if (scrollContainer.scrollTop >=5 &&  scrollContainer.scrollTop <= 200){
           if (chatTotalPage >= chatPage && chatFlag) {
             chatFlag = false
-            await showChatInfoBefore2(roomID, loginName);
+            await showChatInfoBefore2(roomID, loginEmail);
             chatFlag =true
           }
         }
@@ -1200,7 +1529,7 @@
         if (scrollContainer.clientHeight -1 <= val  &&  val <= scrollContainer.clientHeight +1) {
           if (chatTotalPage >= chatPage && chatFlag) {
             chatFlag = false
-            await showChatInfoAfter2(roomID, loginName);
+            await showChatInfoAfter2(roomID, loginEmail);
             chatFlag =true
 
           }
@@ -1212,18 +1541,19 @@
       $(document).on('click', '.request-Chatroom-button', function (){
         var loginEmail = '[[${memberDTO.Email}]]';
         var requesterEmail = $(this).attr('data-name');
+        var requestRoomId = $(this).attr('room-id')
         $('#chatMessageModal').css('z-index', 1052).modal('show');
         async function getChatRoom(){
-          const chatRoomDTO = await $.ajax({
+          const chatRoomId = await $.ajax({
             url: '/chat/getORCreateChatRoom',
             type: 'POST',
             dataType: 'JSON',
-            data: {loginEmail: loginEmail, friendEmail: requesterEmail},
+            data: {loginEmail: loginEmail, friendEmail: requesterEmail, requestRoomId:requestRoomId},
           })
-          roomID = chatRoomDTO.id;
-          connect(chatRoomDTO.id);
-          await showChatInfoBefore(roomID, loginName);
-          showChatInfoAfter(roomID, loginName);
+          roomID = chatRoomId;
+          await connect(chatRoomId);
+          await showChatInfoBefore(roomID, loginEmail);
+          showChatInfoAfter(roomID, loginEmail);
           scrollContainer.addEventListener('scroll', debouncedPagingDown)
           scrollContainer.addEventListener('scroll', debouncedPagingUp);
         }
@@ -1243,9 +1573,205 @@
       $('#send-button-modalroom').click(function (){
         sendMessage(roomID);
       })
+
+      async function showInviteUserList(userName, loginName, inviteListPage){
+        try {
+          const response = await $.ajax({
+            url: '/profileImage/inviteList?page=' + inviteListPage,
+            type: "POST",
+            data: {loginName: loginName, userName:userName},
+            dataType: "JSON",
+          })
+          inviteListTotalPage = response.end;
+          createInviteUserInfo(response);
+        } catch (error){
+          throw error;
+        }
+      }
+
+      async function inviteScrollPaging(){
+
+        let val = scrollContainerInvite.scrollHeight - scrollContainerInvite.scrollTop
+        console.log(val)
+        if (scrollContainerInvite.clientHeight -15 <= val  &&  val <= scrollContainerInvite.clientHeight +15) {
+          if (inviteListTotalPage >= inviteListPage && inviteFlag) {
+            inviteFlag = false
+            inviteListPage += 1
+            await showInviteUserList(userName, loginName, inviteListPage)
+            inviteFlag = true
+          }
+        }
+      }
+      async function inviteSeacrhScrollPaging(){
+
+        let val = scrollContainerInvite.scrollHeight - scrollContainerInvite.scrollTop
+        console.log(val)
+        if (scrollContainerInvite.clientHeight -15 <= val  &&  val <= scrollContainerInvite.clientHeight +15) {
+          if (inviteListTotalPage >= inviteListPage && inviteFlag) {
+            inviteFlag = false
+            inviteListPage += 1
+            await showInviteSearchInfo(userName, loginName, inviteSearchTerm)
+            inviteFlag = true
+          }
+        }
+      }
+      const debuncedPagingInvite = debounce(inviteScrollPaging, 300);
+      const debuncedPagingInviteSearch = debounce(inviteSeacrhScrollPaging, 300)
+      const scrollContainerInvite = document.getElementById('scroll-invite')
+      $('#invite-chatuser').click(function (){
+        $('#inviteModal').css('z-index', 1053).modal('show');
+        var userName = '[[${userName}]]';
+        var loginName = '[[${memberDTO.name}]]'
+        showInviteUserList(userName, loginName, inviteListPage);
+        scrollContainerInvite.addEventListener('scroll', debuncedPagingInvite);
+        document.getElementById('inviteSearchForm').onsubmit = function (event){
+          console.log("@@@@")
+          event.preventDefault();
+          inviteSearchTerm = document.getElementById('inviteSearchInput').value;
+          document.getElementById('inviteSearchInput').value = "";
+
+          inviteListPage = 1;
+          inviteListTotalPage = null;
+          scrollContainerInvite.removeEventListener('scroll', debuncedPagingInvite);
+          $('#inviteSearchResult').html("");
+          showInviteSearchInfo(userName, loginName, inviteSearchTerm);
+          scrollContainerInvite.addEventListener('scroll', debuncedPagingInviteSearch);
+        }
+      })
+      $('#inviteModal').on('hidden.bs.modal', function (){
+        inviteListPage = 1;
+        inviteListTotalPage = null;
+        $('#invite-dictionary').html("");
+        dictionaryInvite = {}
+        dictionaryInviteEmail = {}
+        $('#inviteSearchResult').html("");
+        scrollContainerInvite.removeEventListener('scroll', debuncedPagingInvite);
+        scrollContainerInvite.removeEventListener('scroll', debuncedPagingInviteSearch);
+
+      })
+
+      $(document).on('click', '.invite-button, .invite-cancel-button', function (){
+        var inviteName = $(this).attr('data-name');
+        var inviteEmail = $(this).attr('data-email');
+        var $this = $(this);
+        if ($this.hasClass('invite-button')) {
+          $this.removeClass('invite-button').addClass('invite-cancel-button');
+          $this.text(' - ');
+          $('#invite-dictionary').append("<a user-name='" + inviteName + "'>"+ inviteName + " " +"</a>");
+          dictionaryInvite[inviteName] = true;
+          dictionaryInviteEmail[inviteEmail] = true;
+
+        } else {
+          $this.removeClass('invite-cancel-button').addClass('invite-button');
+          $this.text(' + ');
+          $('#invite-dictionary').find("a[user-name='" + inviteName + "']").remove();
+          delete dictionaryInvite[inviteName]
+          delete dictionaryInviteEmail[inviteEmail]
+        }
+      })
+
+      $('#invite-submit').click(function (){
+        console.log(roomID)
+
+        let userNames = Object.keys(dictionaryInvite);
+        let userEmails = Object.keys(dictionaryInviteEmail);
+
+        console.log(userEmails)
+        $.ajax({
+          url: '/chat/updateUserAndRoom',
+          type: 'POST',
+          data: {userEmails:userEmails, roomId:roomID, addNum:userEmails.length},
+          traditional: true,
+          success: function (response){
+            console.log("성공")
+          }
+        })
+      })
     })
 
   });
 
 
+  $(function (){
+    var commentBox = document.querySelector('#comment-box');
+    var userEmail = '[[${memberDTO.email}]]';
+    var userName = '[[${memberDTO.name}]]';
+    var loadEmail = '[[${userEmail}]]';
+    $(document).on('click', '.post-list-img',function() {
+      $('#myModal').modal('show');
+      var imageUrl = $(this).data('url');
+      var postId = $(this).data('pid');
+      $.ajax({
+        url:'/post/postInfoWithImage',
+        type:"POST",
+        data: {pno:postId},
+        dataType:"JSON",
+        success: function (result){
+          var carouselTag = "";
+          var titleTag = "<div class='title-text'>" + result.title +"</div>";
+          var commentTag ="<div class='comment-text'>" + result.comment +"</div>";
+
+          $.each(result.imageDTOList, function (idx, imageInfo){
+            if(idx ==0)
+              carouselTag += '<div class="carousel-item active">'
+            else
+              carouselTag += '<div class="carousel-item">'
+            carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+            carouselTag += '</div>';
+
+          })
+          if(result.imageDTOList.length ==1){
+            $(".carousel-control-next").html("")
+            $(".carousel-control-prev").html("")
+          }
+          else{
+            $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
+            $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
+          }
+
+          $("#post-title").html(titleTag)
+          $("#post-comment").html(commentTag)
+          $("#carousel-image-box").html(carouselTag);
+
+        }
+      })
+      showReplyListInPost(postId);
+
+      $('#reply-send').off('click').on('click', function (){
+        sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
+      });
+
+
+      $('#myModal').on('click', '#post-option', function (){
+        $('#post-option-modal').css('z-index', 1051).modal('show');
+        $('#remove-post').off('click').on('click', function (){
+          sendPostDeleteRequest(postId)
+          $('#post-option-modal').modal('hide');
+          $('#myModal').modal('hide')
+          alert("삭제가 완료되었습니다.")
+          self.location.reload();
+        });
+        $('#cancel-post').off('click').on('click', function (){
+          $('#post-option-modal').modal('hide');
+        })
+      })
+
+    });
+
+    $('#myModal').on('click', '.reply-option', function() {
+      console.log('reply-option event');
+      var rno = $(this).data("rno");
+      $('#reply-option-modal').css('z-index', 1051).modal('show');
+      $('#remove-reply').off('click').on('click', function(){
+        sendReplyDeleteRequest(rno);
+        $('#reply-option-modal').modal('hide');
+      });
+      $('#cancel-reply').off('click').on('click' ,function() {
+        $('#reply-option-modal').modal('hide');
+      });
+    });
+
+
+  });
 </script>
+

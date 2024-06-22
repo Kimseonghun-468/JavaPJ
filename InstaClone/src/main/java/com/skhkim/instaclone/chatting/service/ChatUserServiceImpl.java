@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -88,5 +87,9 @@ public class ChatUserServiceImpl implements ChatUserService {
                     .build();
             chatUserRepository.save(chatUser);
         });
+    }
+    @Override
+    public LocalDateTime getDisConnectTime(Long roomId, String loginEmail){
+        return chatUserRepository.getDisConnectTimeByRoomIdAndEmail(roomId, loginEmail);
     }
 }

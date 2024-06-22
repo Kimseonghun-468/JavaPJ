@@ -4,6 +4,8 @@ import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.ProfilePageResultDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ public interface ChatUserService {
     ProfilePageResultDTO<Map<String, Object>, Object[]> getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail);
 
     void insertChatUser(List<String> userEmails, Long roomId);
+    LocalDateTime getDisConnectTime(Long roomId, String loginEmail);
     default ProfileImageDTO entityToDTOByProfileImage(ProfileImage profileImage){
         ProfileImageDTO profileImageDTO = ProfileImageDTO.builder()
                 .pfino(profileImage.getPfino())
