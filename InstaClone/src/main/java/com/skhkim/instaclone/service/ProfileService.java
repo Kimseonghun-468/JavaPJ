@@ -2,6 +2,8 @@ package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
+
+import java.util.List;
 import java.util.Map;
 
 public interface ProfileService {
@@ -11,8 +13,9 @@ public interface ProfileService {
     ProfilePageResultDTO<Map<String, Object>, Object[]> getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName);
+    ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers);
 
-    ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm);
+    ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers);
     Map<String, Object> getFirstUser(String userName, String loginName);
     default ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
 

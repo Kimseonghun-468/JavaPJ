@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,8 +38,8 @@ public class SearchCotroller {
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getInivteListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, String inviteSearchTerm, String loginName){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> result = profileService.getInviteListPage(profilePageRequestDTO, loginName, inviteSearchTerm);
+    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getInivteListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, String inviteSearchTerm, String loginName, @RequestParam List<String> roomUsers){
+        ProfilePageResultDTO<Map<String, Object>, Object[]> result = profileService.getInviteSearchListPage(profilePageRequestDTO, loginName, inviteSearchTerm, roomUsers);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 

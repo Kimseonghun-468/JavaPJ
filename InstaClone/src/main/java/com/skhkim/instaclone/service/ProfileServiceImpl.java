@@ -19,12 +19,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class ProfileServieImpl implements ProfileService{
+public class ProfileServiceImpl implements ProfileService{
 
     private final ProfileImageRepository profileImageRepository;
     @Value("/Users/gimseonghun/JavaPJ/InstaClone/data/")
@@ -118,9 +117,9 @@ public class ProfileServieImpl implements ProfileService{
     }
 
     @Override
-    public ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm){
+    public ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers){
         Pageable pageable = profilePageRequestDTO.getPageable();
-        Page<Object[]> result = profileImageRepository.getInviteListByNamePage(pageable, loginName, inviteSearchTerm);
+        Page<Object[]> result = profileImageRepository.getInviteListByNamePage(pageable, loginName, inviteSearchTerm, roomUsers);
 
         Function<Object[], Map<String,Object>> fn = (arr ->{
             Map<String, Object> profileAndFriendMap = new HashMap<>();
@@ -160,6 +159,27 @@ public class ProfileServieImpl implements ProfileService{
                 profileAndFriendMap.put("status", "WAITING");
             else if (arr[2] == FriendShipStatus.WAITING && ((boolean) arr[3]))
                 profileAndFriendMap.put("status", "WAITACCEPT");
+
+            return profileAndFriendMap;
+        });
+        return new ProfilePageResultDTO<>(result, fn);
+    }
+
+    @Override
+    public ProfilePageResultDTO<Map<String, Object>, Object[]>
+    getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers){
+        Pageable pageable = profilePageRequestDTO.getPageable();
+        Page<Object[]> result = profileImageRepository.getInviteListPage(pageable, loginName, roomUsers);
+
+        Function<Object[], Map<String,Object>> fn = (arr ->{
+            Map<String, Object> profileAndFriendMap = new HashMap<>();
+            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
+            profileAndFriendMap.put("friendEmail",((FriendShip) arr[0]).getClubMemberUser().getEmail());
+
+            if (arr[1] == null)
+                profileAndFriendMap.put("profileImage",null);
+            else
+                profileAndFriendMap.put("profileImage",entityToDTO((ProfileImage) arr[1]));
 
             return profileAndFriendMap;
         });

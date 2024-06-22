@@ -55,19 +55,28 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
             "WHERE fs.clubMemberFriend.name =:loginName " +
             "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT " +
-            "AND fs.clubMemberUser.name like CONCAT('%', :inviteSearchTerm, '%') ")
-    Page<Object[]> getInviteListByNamePage(Pageable pageable, @Param("loginName") String loginName, String inviteSearchTerm);
+            "AND fs.clubMemberUser.name like CONCAT('%', :inviteSearchTerm, '%') " +
+            "AND fs.clubMemberUser.email NOT IN :roomUsers")
+    Page<Object[]> getInviteListByNamePage(Pageable pageable, @Param("loginName") String loginName, String inviteSearchTerm, List<String> roomUsers);
 
 
     @Query("SELECT fs1, pi, fs2.status, fs2.isFrom " +
             "FROM FriendShip fs1 " +
             "LEFT JOIN FriendShip fs2 ON (fs1.clubMemberUser.name = fs2.clubMemberUser.name AND fs2.clubMemberFriend.name = :loginName) " +
-//            "OR (fs1.clubMemberUser.name = :loginName AND fs2.clubMemberUser.name = :userName AND fs2.clubMemberFriend.name = :loginName) " +
             "LEFT JOIN ProfileImage pi ON fs1.clubMemberUser.name = pi.clubMember.name " +
             "WHERE fs1.clubMemberFriend.name =:userName " +
             "AND fs1.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT AND fs1.clubMemberUser.name != :loginName " +
             "ORDER BY fs2.status DESC, fs1.clubMemberUser.name")
     Page<Object[]> getFriendListPage(Pageable pageable, @Param("userName") String userName, @Param("loginName") String loginName);
+
+    @Query("SELECT fs1, pi " +
+            "FROM FriendShip fs1 " +
+            "LEFT JOIN ProfileImage pi ON fs1.clubMemberUser.name = pi.clubMember.name " +
+            "WHERE fs1.clubMemberFriend.name =:loginName " +
+            "AND fs1.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT AND fs1.clubMemberUser.name != :loginName " +
+            "AND fs1.clubMemberUser.email NOT IN :roomUsers " +
+            "ORDER BY fs1.clubMemberUser.name")
+    Page<Object[]> getInviteListPage(Pageable pageable, @Param("loginName") String loginName, List<String> roomUsers);
 
     @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
             "WHERE fs.clubMemberFriend.name =:userName AND fs.clubMemberUser.name =:loginName")
