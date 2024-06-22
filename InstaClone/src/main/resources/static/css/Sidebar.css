@@ -652,3 +652,14 @@ textarea {
 
 }
 
+.invite-search-form {
+    display: flex;
+    height: 30px;
+}
+
+.invite-submit{
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+

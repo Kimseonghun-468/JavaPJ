@@ -4,6 +4,7 @@ package com.skhkim.instaclone.chatting.service;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
+import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.ProfilePageResultDTO;
 import com.skhkim.instaclone.entity.ClubMember;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,22 +54,39 @@ public class ChatUserServiceImpl implements ChatUserService {
     getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Page<Object[]> result = chatUserRepository.getChatroomAndProfileImage(pageable, loginEmail);
+
         Function<Object[], Map<String, Object>> fn = (arr ->{
+            List<Object[]> emailAndProfileList = chatUserRepository.getUserEmailByEmailAndRoomId2(loginEmail,(Long) arr[2]);
+            List<ProfileImageDTO> profileImageList = emailAndProfileList.stream().map(emailAndProfile -> {
+                if (emailAndProfile[1] != null)
+                    return entityToDTOByProfileImage((ProfileImage) emailAndProfile[1]);
+                else
+                    return null;
+            }).toList();
+            List<String> nameList = emailAndProfileList.stream().
+                    map(emailAndProfile -> (String) emailAndProfile[0]).toList();
+
+            String combinedName = String.join(", ", nameList);
             Map<String, Object> userAndProfileMap = new HashMap<>();
-            userAndProfileMap.put("friendName", (arr[0]));
-            userAndProfileMap.put("friendEmail", (arr[1]));
-            userAndProfileMap.put("lastChat", (arr[2]));
-            userAndProfileMap.put("lastChatTime", (arr[3]));
-            userAndProfileMap.put("roomId", (arr[4]));
-
-            if(arr[5] == null)
-                userAndProfileMap.put("profileImage", null);
-            else
-                userAndProfileMap.put("profileImage", entityToDTOByProfileImage((ProfileImage) arr[5]));
-
+            userAndProfileMap.put("friendName", combinedName);
+            userAndProfileMap.put("lastChat", (arr[0]));
+            userAndProfileMap.put("lastChatTime", (arr[1]));
+            userAndProfileMap.put("roomId", (arr[2]));
+            userAndProfileMap.put("profileImage", profileImageList);
             return userAndProfileMap;
         });
         return new ProfilePageResultDTO<>(result, fn);
 
+    }
+    @Override
+    public void insertChatUser(List<String> userEmails, Long roomId){
+        userEmails.forEach(userEmail -> {
+            ChatUser chatUser = ChatUser.builder()
+                    .member(ClubMember.builder().email(userEmail).build())
+                    .chatRoom(ChatRoom.builder().roomId(roomId).build())
+                    .disConnect(LocalDateTime.now())
+                    .build();
+            chatUserRepository.save(chatUser);
+        });
     }
 }

@@ -67,26 +67,7 @@ public class ProfileServieImpl implements ProfileService{
         }
     }
 
-    @Override
-    public Map<String, Object> getWaitingFriendList(String loginName){
-        Map<String, Object> profileAndFriendMap = new HashMap<>();
-        List<String> friendNameList = new ArrayList<>();
-        List<Object[]> result = profileImageRepository.getByWaitingList(loginName);
-        result.forEach(arr->{
-            friendNameList.add(((FriendShip) arr[0]).getClubMemberUser().getName());
-        });
-        List<ProfileImageDTO> profileImageDTOList = result.stream().map(arr -> {
-            if (arr[1] == null)
-                return null;
-            else
-                return entityToDTO((ProfileImage) arr[1]);
-        }
-        ).collect(Collectors.toList());
 
-        profileAndFriendMap.put("friendNameList", friendNameList);
-        profileAndFriendMap.put("profileImageList", profileImageDTOList);
-        return profileAndFriendMap;
-    }
     @Override
     @Transactional
     public void deleteByName(String name){
@@ -137,6 +118,25 @@ public class ProfileServieImpl implements ProfileService{
     }
 
     @Override
+    public ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm){
+        Pageable pageable = profilePageRequestDTO.getPageable();
+        Page<Object[]> result = profileImageRepository.getInviteListByNamePage(pageable, loginName, inviteSearchTerm);
+
+        Function<Object[], Map<String,Object>> fn = (arr ->{
+            Map<String, Object> profileAndFriendMap = new HashMap<>();
+            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
+            profileAndFriendMap.put("friendEmail",((FriendShip) arr[0]).getClubMemberUser().getEmail());
+            if (arr[1] == null)
+                profileAndFriendMap.put("profileImage",null);
+            else
+                profileAndFriendMap.put("profileImage",entityToDTO((ProfileImage) arr[1]));
+
+            return profileAndFriendMap;
+        });
+        return new ProfilePageResultDTO<>(result, fn);
+    }
+
+    @Override
     public ProfilePageResultDTO<Map<String, Object>, Object[]>
     getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
@@ -145,6 +145,8 @@ public class ProfileServieImpl implements ProfileService{
         Function<Object[], Map<String,Object>> fn = (arr ->{
             Map<String, Object> profileAndFriendMap = new HashMap<>();
             profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
+            profileAndFriendMap.put("friendEmail",((FriendShip) arr[0]).getClubMemberUser().getEmail());
+
             if (arr[1] == null)
                 profileAndFriendMap.put("profileImage",null);
             else
@@ -182,28 +184,4 @@ public class ProfileServieImpl implements ProfileService{
         }
         return resultMap;
     }
-
-
-    @Override
-    public Map<String, Object> getAcceptFriendList(String loginName){
-        Map<String, Object> profileAndFriendMap = new HashMap<>();
-        List<String> friendNameList = new ArrayList<>();
-        List<Object[]> result = profileImageRepository.getByAcceptList(loginName);
-
-        result.forEach(arr->{
-            friendNameList.add(((FriendShip) arr[0]).getClubMemberUser().getName());
-        });
-        List<ProfileImageDTO> profileImageDTOList = result.stream().map(arr -> {
-                    if (arr[1] == null)
-                        return null;
-                    else
-                        return entityToDTO((ProfileImage) arr[1]);
-                }
-        ).collect(Collectors.toList());
-        profileAndFriendMap.put("friendNameList", friendNameList);
-        profileAndFriendMap.put("profileImageList", profileImageDTOList);
-
-        return profileAndFriendMap;
-    }
-
 }

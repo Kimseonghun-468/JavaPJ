@@ -42,6 +42,14 @@ public class ProfileImageController {
         return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
     }
 
+    @PostMapping("inviteList")
+    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
+    getProfileImageInviteList(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
+        ProfilePageResultDTO<Map<String, Object>, Object[]> profileAndInviteMap =
+                profileService.getFriendListPage(profilePageRequestDTO, userName, loginName);// 여기 함수 바꾸
+        return new ResponseEntity<>(profileAndInviteMap, HttpStatus.OK);
+    }
+
     @PostMapping("firstList")
     public ResponseEntity<Map<String, Object>> getProfileFirst(String userName, String loginName){
         Map<String, Object> resultMap = profileService.getFirstUser(userName, loginName);

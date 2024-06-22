@@ -53,4 +53,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             chatRoomRepository.save(chatRoom);
         }
     }
+    @Override
+    public void updateUserNum(Long roomId, Long addNum){
+        chatRoomRepository.updateUserNumByRoomId(roomId, addNum);
+    }
 }

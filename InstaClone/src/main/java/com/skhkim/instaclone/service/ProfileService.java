@@ -8,12 +8,11 @@ public interface ProfileService {
     Long register(ProfileImageDTO profileImageDTO);
     void deleteByName(String name);
     ProfileImageDTO getProfileImage(String name);
-    Map<String, Object> getWaitingFriendList(String loginName);
-    Map<String, Object> getAcceptFriendList(String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName);
 
+    ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm);
     Map<String, Object> getFirstUser(String userName, String loginName);
     default ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
 

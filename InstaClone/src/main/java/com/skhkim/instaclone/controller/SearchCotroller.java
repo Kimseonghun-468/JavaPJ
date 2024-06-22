@@ -36,6 +36,12 @@ public class SearchCotroller {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @PostMapping("/invite")
+    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getInivteListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, String inviteSearchTerm, String loginName){
+        ProfilePageResultDTO<Map<String, Object>, Object[]> result = profileService.getInviteListPage(profilePageRequestDTO, loginName, inviteSearchTerm);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
     private Map<String, Object> getClubMemberDTOAndProfileImageDTO
             (ClubMemberDTO clubMemberDTO){
 

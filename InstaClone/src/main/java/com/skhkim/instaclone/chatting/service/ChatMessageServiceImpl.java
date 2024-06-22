@@ -33,8 +33,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public void updateChatMessagesReadStatus(Long roomID, String userEmail){
         ChatUser chatUser = chatUserRepository.getChatUsersByRoomIdAndEmail(roomID, userEmail);
-        chatMessageRepository.updateByRoomIdAndSenderEmailAndTime(chatUser.getChatRoom().getRoomId(), userEmail, chatUser.getDisConnect());
-
+        chatMessageRepository.updateByRoomIdAndSenderEmailAndTime(roomID, userEmail, chatUser.getDisConnect());
     }
 
     @Override

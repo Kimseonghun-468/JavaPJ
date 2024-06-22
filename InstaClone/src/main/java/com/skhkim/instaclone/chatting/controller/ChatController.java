@@ -18,8 +18,10 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
@@ -60,9 +62,13 @@ public class ChatController {
     }
 
     @PostMapping("/chat/getORCreateChatRoom")
-    public ResponseEntity<Long> getORCreateChatRoom(String loginEmail, String friendEmail){
+    public ResponseEntity<Long> getORCreateChatRoom(String loginEmail, String friendEmail, Long requestRoomId){
         log.info("Login Name : " +loginEmail);
         log.info("Friend Name : " +friendEmail);
+        if (requestRoomId != null){
+            chatMessageService.updateChatMessagesReadStatus(requestRoomId, loginEmail);
+            return new ResponseEntity<>(requestRoomId, HttpStatus.OK);
+        }
         Map<String, Object> chatRoomIDAndOR = chatRoomService.getORCreateChatRoomID(loginEmail, friendEmail);
         Long roomId = (Long) chatRoomIDAndOR.get("roomId");
         if ((boolean) chatRoomIDAndOR.get("OR")) {
@@ -106,5 +112,12 @@ public class ChatController {
     public ResponseEntity<Long> getNotReadNum(String loginEmail, Long roomId){
         Long resultNum = chatMessageService.getNotReadNum(loginEmail, roomId);
         return new ResponseEntity<>(resultNum, HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/updateUserAndRoom")
+    public ResponseEntity<Long> updateUserAndRoom(@RequestParam List<String> userEmails, Long roomId, Long addNum){
+        chatUserService.insertChatUser(userEmails, roomId);
+        chatRoomService.updateUserNum(roomId, addNum);
+        return new ResponseEntity<>(1L, HttpStatus.OK);
     }
 }

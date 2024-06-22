@@ -11,6 +11,8 @@ public interface ChatRoomService {
     void updateLastChatTime(Long roomID, String comment);
 
     Long getUserNum(Long roomId);
+
+    void updateUserNum(Long roomId, Long addNum);
     default ChatRoomDTO entityToDTO(ChatRoom chatRoom){
         ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
                 .roomId(chatRoom.getRoomId())

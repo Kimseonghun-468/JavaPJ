@@ -363,12 +363,49 @@
   </div>
 </div>
 
+
+<!--<div id="SearchModal" class="modal modal-custom">-->
+<!--  <div class="modal-content-search">-->
+<!--    <form id="searchForm">-->
+<!--      <input type="text" id="searchInput" placeholder="검색어 입력...">-->
+<!--      <button type="submit">검색</button>-->
+<!--    </form>-->
+<!--    <div id="searchResult" class="side-border">-->
+
+<!--    </div>-->
+<!--    <ul class="pagination h-100 justify-content-center align-items-center" id="search-page">-->
+
+<!--    </ul>-->
+<!--  </div>-->
+<!--</div>-->
+
+<div class="modal modal-custom" id="inviteModal">
+    <div class="modal-content-search" id="scroll-invite">
+      <form id="inviteSearchForm" class="invite-search-form">
+        <input type="text" id="inviteSearchInput" placeholder="검색어 입력...">
+        <button type="submit" style="width: 100px;">검색</button>
+        <div id="invite-dictionary">
+
+        </div>
+
+        <div class="invite-submit">
+          <button type="submit" id="invite-submit">완료</button>
+        </div>
+      </form>
+      <div id="inviteSearchResult" class="side-border">
+
+      </div>
+    </div>
+</div>
+
 <script>
   var requestedPage = 1;
   var acceptedPage = 1;
   var chatRoomPage = 1;
   var postPage = 1;
   var searchPage = 1;
+  var inviteListPage = 1;
+  var inviteListTotalPage = 1;
   var friendListPage = 1;
   var frinenListTotalPage = 1;
   var chatPage = 1;
@@ -378,16 +415,21 @@
   // var flag = true;
   var friendFlag = true;
   var roomID = ""
+  var inviteSearchTerm = null;
 
   var stompClient = null;
   var afterDayCheck = null;
   var beforeDayCheck = null;
   var chatFlag = true;
+  var inviteFlag = true;
   var loginName = '[[${memberDTO.name}]]'
   var loginEmail = '[[${memberDTO.email}]]'
   var userName = '[[${userName}]]';
   var userEmail = '[[${userEmail}]]';
   var dictionary = {}
+  var dictinaryInverse = {}
+  var dictionaryInvite = {}
+  var dictionaryInviteEmail = {}
   const options = {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -511,6 +553,23 @@
       searchResult += "검색한 사용자가 없습니다."
     return searchResult;
   }
+  async function showInviteSearchInfo(userName, loginName, inviteSearchTerm){
+    try{
+      const response = await $.ajax({
+        url: "/search/invite?page" + inviteListPage,
+        type: "POST",
+        data: {loginName:loginName, inviteSearchTerm:inviteSearchTerm},
+        dataType: "JSON",
+      })
+      console.log(loginName, inviteSearchTerm, inviteListPage)
+      console.log(response)
+      inviteListTotalPage = response.end;
+      inviteListPage += 1
+      createInviteUserInfo(response);
+    } catch (error){
+      throw error;
+    }
+  }
   function getSearchUserInfo(searchTerm){
     var loginName = '[[${memberDTO.name}]]';
     $.getJSON("/search/name/all/"+searchTerm+"?page="+searchPage+"&user="+loginName, function (searchInfo){
@@ -597,6 +656,36 @@
       $('#friend-List-UserBox').append(Result);
   }
 
+  function createInviteUserInfo(profileAndFriendMap){
+    var Result = "";
+    console.log(profileAndFriendMap)
+    for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
+      Result += '<div class="user-info-box">';
+      Result += '<div class="profile-box">';
+      if(profileAndFriendMap.dtoList[i].profileImage ==null)
+        Result += '<img src = "/display?fileName=outprofile.png/"' +
+                ' alt="Profile Picture" class="profile-picture">'
+      else
+        Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
+                ' alt="Profile Picture" class="profile-picture">'
+      Result += '</div>';
+      Result += '<div class="user-name-box">'
+      Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
+              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
+      Result += '</div>';
+      Result += '<div class="user-chat-button-box">';
+      if (dictionaryInvite[profileAndFriendMap.dtoList[i].friendName] == null)
+        Result += "<button data-name='" + profileAndFriendMap.dtoList[i].friendName +
+                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' class='invite-button follow'> + </button>";
+      else
+        Result += "<button data-name='" + profileAndFriendMap.dtoList[i].friendName +
+                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' class='invite-cancel-button follow'> - </button>";
+      Result += '</div>';
+      Result += '</div>';
+    }
+    $('#inviteSearchResult').append(Result);
+  }
+
   function createFriendShipWaitingInfo(profileAndFriendMap){
     var Result = "";
     for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
@@ -621,8 +710,7 @@
     return Result;
   }
 
-   function getNotReadMessageNum(loginEmail, roomId, friendName) {
-    console.log(loginEmail, roomId)
+   function getNotReadMessageNum(loginEmail, roomId) {
      $.ajax({
        url: "/chat/getNotReadNum",
        type: "POST",
@@ -630,7 +718,7 @@
        data: {loginEmail: loginEmail, roomId: roomId},
        success: function (result){
          console.log(result)
-         $('#num-'+friendName).html(result);
+         $('#num-'+roomId).html(result);
        }
      })
 
@@ -640,13 +728,11 @@
     for (var i = 0; i < result.dtoList.length; i++){
       if (result.dtoList[i].lastChat == null)
         continue;
-      console.log(result)
-      console.log(roomID)
-      getNotReadMessageNum(loginEmail, result.dtoList[i].roomId, result.dtoList[i].friendName)
+      getNotReadMessageNum(loginEmail, result.dtoList[i].roomId)
       Result += '<div class="user-info-box">';
       Result += '<div class="profile-box">';
-      if(result.dtoList[i].profileImage != null)
-        Result += '<img src ="/display?fileName=' + result.dtoList[i].profileImage.imageURL + '/"' +
+      if(result.dtoList[i].profileImage[0] != null)
+        Result += '<img src ="/display?fileName=' + result.dtoList[i].profileImage[0].imageURL + '/"' +
                 ' alt="Profile Picture" class="profile-picture">';
       else
         Result += '<img src ="/display?fileName=outprofile.png/"' +
@@ -661,10 +747,10 @@
       Result += '<div class ="last-chat-time">';
       Result += result.dtoList[i].lastChatTime.slice(5,10) + " " + " " + result.dtoList[i].lastChatTime.slice(11, 16);
       Result += '</div>';
-      Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].friendName + '">';
+      Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].roomId + '">';
       Result += '</div>';
       Result += '<div class ="user-chat-button-box3">';
-      Result += '<button data-name =' + result.dtoList[i].friendEmail + ' class=\"request-Chatroom-button\">대화창 열기</button>'
+      Result += '<button room-id =' + result.dtoList[i].roomId + ' class=\"request-Chatroom-button\">대화창 열기</button>'
       Result += '</div>';
       Result += '</div>';
     }
@@ -678,6 +764,7 @@
       data: {loginEmail: loginEmail},
       dataType: "JSON",
       success: function (profileAndChatRoomMap){
+        console.log(profileAndChatRoomMap)
         var pageResult = "";
         Result = createChatroomListInfo(profileAndChatRoomMap);
         if (profileAndChatRoomMap.prev != false)
@@ -940,7 +1027,6 @@
     }
   }
   function showChatMessage(name, message, time, readStatus, reverse, live) {
-    console.log(name, message, time, readStatus)
     var messageElement = document.createElement('div');
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
@@ -977,6 +1063,7 @@
     })
     response.forEach((item, index) => {
       dictionary[item[0]] = item[1]
+      dictinaryInverse[item[1]] = item[0]
     })
   }
   async function connect(RoomID) {
@@ -1022,6 +1109,8 @@
       dataType: "JSON",
       success: function (result){
         console.log("Disconnected");
+        dictionary = {}
+        dictinaryInverse = {}
       }
     })
   }
@@ -1106,7 +1195,7 @@ async function showChatInfoBefore(roomID, loginEmail){
       chatPage += 1
       console.log(response)
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(chatMessageDTO.name, chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
       })
       if (chatPage == chatTotalPage +1)
         if (response.dtoList.length != 0){
@@ -1384,13 +1473,14 @@ async function showChatInfoBefore(roomID, loginEmail){
       $(document).on('click', '.request-Chatroom-button', function (){
         var loginEmail = '[[${memberDTO.Email}]]';
         var requesterEmail = $(this).attr('data-name');
+        var requestRoomId = $(this).attr('room-id')
         $('#chatMessageModal').css('z-index', 1052).modal('show');
         async function getChatRoom(){
           const chatRoomId = await $.ajax({
             url: '/chat/getORCreateChatRoom',
             type: 'POST',
             dataType: 'JSON',
-            data: {loginEmail: loginEmail, friendEmail: requesterEmail},
+            data: {loginEmail: loginEmail, friendEmail: requesterEmail, requestRoomId:requestRoomId},
           })
           roomID = chatRoomId;
           await connect(chatRoomId);
@@ -1414,6 +1504,120 @@ async function showChatInfoBefore(roomID, loginEmail){
 
       $('#send-button-modalroom').click(function (){
         sendMessage(roomID);
+      })
+
+      async function showInviteUserList(userName, loginName, inviteListPage){
+        try {
+          const response = await $.ajax({
+            url: '/profileImage/inviteList?page=' + inviteListPage,
+            type: "POST",
+            data: {loginName: loginName, userName:userName},
+            dataType: "JSON",
+          })
+          inviteListTotalPage = response.end;
+          createInviteUserInfo(response);
+        } catch (error){
+          throw error;
+        }
+      }
+
+      async function inviteScrollPaging(){
+
+        let val = scrollContainerInvite.scrollHeight - scrollContainerInvite.scrollTop
+        console.log(val)
+        if (scrollContainerInvite.clientHeight -15 <= val  &&  val <= scrollContainerInvite.clientHeight +15) {
+          if (inviteListTotalPage >= inviteListPage && inviteFlag) {
+            inviteFlag = false
+            inviteListPage += 1
+            await showInviteUserList(userName, loginName, inviteListPage)
+            inviteFlag = true
+          }
+        }
+      }
+      async function inviteSeacrhScrollPaging(){
+
+        let val = scrollContainerInvite.scrollHeight - scrollContainerInvite.scrollTop
+        console.log(val)
+        if (scrollContainerInvite.clientHeight -15 <= val  &&  val <= scrollContainerInvite.clientHeight +15) {
+          if (inviteListTotalPage >= inviteListPage && inviteFlag) {
+            inviteFlag = false
+            inviteListPage += 1
+            await showInviteSearchInfo(userName, loginName, inviteSearchTerm)
+            inviteFlag = true
+          }
+        }
+      }
+      const debuncedPagingInvite = debounce(inviteScrollPaging, 300);
+      const debuncedPagingInviteSearch = debounce(inviteSeacrhScrollPaging, 300)
+      const scrollContainerInvite = document.getElementById('scroll-invite')
+      $('#invite-chatuser').click(function (){
+        $('#inviteModal').css('z-index', 1053).modal('show');
+        var userName = '[[${userName}]]';
+        var loginName = '[[${memberDTO.name}]]'
+        showInviteUserList(userName, loginName, inviteListPage);
+        scrollContainerInvite.addEventListener('scroll', debuncedPagingInvite);
+        document.getElementById('inviteSearchForm').onsubmit = function (event){
+          console.log("@@@@")
+          event.preventDefault();
+          inviteSearchTerm = document.getElementById('inviteSearchInput').value;
+          document.getElementById('inviteSearchInput').value = "";
+
+          inviteListPage = 1;
+          inviteListTotalPage = null;
+          scrollContainerInvite.removeEventListener('scroll', debuncedPagingInvite);
+          $('#inviteSearchResult').html("");
+          showInviteSearchInfo(userName, loginName, inviteSearchTerm);
+          scrollContainerInvite.addEventListener('scroll', debuncedPagingInviteSearch);
+        }
+      })
+      $('#inviteModal').on('hidden.bs.modal', function (){
+        inviteListPage = 1;
+        inviteListTotalPage = null;
+        $('#invite-dictionary').html("");
+        dictionaryInvite = {}
+        dictionaryInviteEmail = {}
+        $('#inviteSearchResult').html("");
+        scrollContainerInvite.removeEventListener('scroll', debuncedPagingInvite);
+        scrollContainerInvite.removeEventListener('scroll', debuncedPagingInviteSearch);
+
+      })
+
+      $(document).on('click', '.invite-button, .invite-cancel-button', function (){
+        var inviteName = $(this).attr('data-name');
+        var inviteEmail = $(this).attr('data-email');
+        var $this = $(this);
+        if ($this.hasClass('invite-button')) {
+          $this.removeClass('invite-button').addClass('invite-cancel-button');
+          $this.text(' - ');
+          $('#invite-dictionary').append("<a user-name='" + inviteName + "'>"+ inviteName + " " +"</a>");
+          dictionaryInvite[inviteName] = true;
+          dictionaryInviteEmail[inviteEmail] = true;
+
+        } else {
+          $this.removeClass('invite-cancel-button').addClass('invite-button');
+          $this.text(' + ');
+          $('#invite-dictionary').find("a[user-name='" + inviteName + "']").remove();
+          delete dictionaryInvite[inviteName]
+          delete dictionaryInviteEmail[inviteEmail]
+        }
+      })
+
+      $('#invite-submit').click(function (){
+        console.log(roomID)
+
+        let userNames = Object.keys(dictionaryInvite);
+        let userEmails = Object.keys(dictionaryInviteEmail);
+
+        console.log(userEmails)
+        $.ajax({
+          url: '/chat/updateUserAndRoom',
+          type: 'POST',
+          data: {userEmails:userEmails, roomId:roomID, addNum:userEmails.length},
+          traditional: true,
+          success: function (response){
+            console.log("성공")
+          }
+        })
       })
     })
 

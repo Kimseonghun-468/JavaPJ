@@ -16,6 +16,7 @@ public interface ChatUserService {
 
     ProfilePageResultDTO<Map<String, Object>, Object[]> getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail);
 
+    void insertChatUser(List<String> userEmails, Long roomId);
     default ProfileImageDTO entityToDTOByProfileImage(ProfileImage profileImage){
         ProfileImageDTO profileImageDTO = ProfileImageDTO.builder()
                 .pfino(profileImage.getPfino())
