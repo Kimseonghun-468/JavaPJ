@@ -600,11 +600,13 @@
   }
   async function showInviteSearchInfo(userName, loginName, inviteSearchTerm){
     try{
+      let roomUsers = Object.keys(dictionary);
       const response = await $.ajax({
         url: "/search/invite?page" + inviteListPage,
         type: "POST",
-        data: {loginName:loginName, inviteSearchTerm:inviteSearchTerm},
+        data: {loginName:loginName, inviteSearchTerm:inviteSearchTerm, roomUsers:roomUsers},
         dataType: "JSON",
+        traditional: true,
       })
       console.log(loginName, inviteSearchTerm, inviteListPage)
       console.log(response)
@@ -784,7 +786,7 @@
                 ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
       Result += '<div class ="user-name-box">';
-      Result += '<a class ="user-name">' +result.dtoList[i].friendName+'</a>';
+      Result += '<a class ="user-name">' +result.dtoList[i].friendName.slice(0, 12)+ '... '+ result.dtoList[i].friendName.split(',').length + '</a>';
       Result += '</div>';
       Result += '<div class ="last-chat-comment">';
       Result += result.dtoList[i].lastChat;
@@ -809,7 +811,6 @@
       data: {loginEmail: loginEmail},
       dataType: "JSON",
       success: function (profileAndChatRoomMap){
-        console.log(profileAndChatRoomMap)
         var pageResult = "";
         Result = createChatroomListInfo(profileAndChatRoomMap);
         if (profileAndChatRoomMap.prev != false)
@@ -1113,6 +1114,7 @@
   }
   async function connect(RoomID) {
     await makeEmailToName(RoomID);
+    console.log(dictionary)
     var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
     var connectPromise = new Promise((resolve, reject) => {
@@ -1168,6 +1170,8 @@
     var loginEmail = '[[${memberDTO.email}]]';
     if (stompClient !== null) {
       stompClient.disconnect({'roomId': RoomID});
+      dictionary = {}
+      dictionaryInverse = {}
     }
     // 여기서 룸 아이디에 disconnect 타임 조회 해버리기
     $.ajax({
@@ -1176,9 +1180,7 @@
       data: {roomId:RoomID, loginEmail:loginEmail},
       dataType: "JSON",
       success: function (result){
-        console.log("Disconnected");
-        dictionary = {}
-        dictionaryInverse = {}
+
       }
     })
   }
@@ -1331,23 +1333,6 @@
         });
       });
     });
-
-    // $('.uploadButton-profile').click(function () {
-    //   $('.profile-Image-File').click().on('change', function() {
-    //     if (this.files && this.files.length > 0) {
-    //       $('.Profile-File-Modal').modal('show');
-    //       var formData = new FormData();
-    //       var inputFile = $("input.profile-Image-File");
-    //       var files = inputFile[0].files;
-    //       formData.append("uploadFiles", files[0]);
-    //     }
-    //     $('.submitFile-Profile').click(function() {
-    //       uploadImageAndProfileRegisterRequset(formData);
-    //       alert('프로필 파일이 제출되었습니다.');
-    //       $('.filemodal').modal('hide');
-    //     });
-    //   });
-    // });
 
     $(".profile-picture").click(function (){
       var userName = '[[${memberDTO.name}]]';
@@ -1576,11 +1561,13 @@
 
       async function showInviteUserList(userName, loginName, inviteListPage){
         try {
+          let roomUsers = Object.keys(dictionary);
           const response = await $.ajax({
             url: '/profileImage/inviteList?page=' + inviteListPage,
             type: "POST",
-            data: {loginName: loginName, userName:userName},
+            data: {loginName: loginName, roomUsers:roomUsers},
             dataType: "JSON",
+            traditional: true,
           })
           inviteListTotalPage = response.end;
           createInviteUserInfo(response);
