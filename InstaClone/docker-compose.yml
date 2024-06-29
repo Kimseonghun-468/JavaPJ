@@ -11,8 +11,8 @@ services:
       MYSQL_ROOT_PASSWORD: tjdgns112
     ports:
       - "3306:3306"
-#    volumes:
-#      - ./mysql/conf.d:/etc/mysql/conf.
+    volumes:
+      - ./src/main/resources/index.sql:/index.sql
     networks:
       - test_network
 

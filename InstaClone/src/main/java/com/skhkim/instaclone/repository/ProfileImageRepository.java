@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.repository;
 
-import com.skhkim.instaclone.dto.FriendShipProfileDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,16 +28,6 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Transactional
     @Query("DELETE FROM ProfileImage pi WHERE pi.clubMember.name =:userName")
     void deleteByUserName(String userName);
-    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi On fs.clubMemberUser.name = pi.clubMember.name " +
-            "WHERE fs.clubMemberFriend.name =:loginName " +
-            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
-            "AND fs.isFrom = true")
-    List<Object[]> getByWaitingList(@Param("loginName") String loginName);
-
-    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
-            "WHERE fs.clubMemberFriend.name =:loginName " +
-            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
-    List<Object[]> getByAcceptList(@Param("loginName") String loginName);
 
     @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi On fs.clubMemberUser.name = pi.clubMember.name " +
             "WHERE fs.clubMemberFriend.name =:loginName " +

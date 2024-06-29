@@ -1,0 +1,4 @@
+logging:
+  level:
+    org.springframework.security: ERROR
+    org.springframework.security.web.FilterChainProxy: ERROR
