@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageDTO {
-    private Long cid;
+    private String cid;
     private String senderEmail;
     private String content;
     private Long readStatus;

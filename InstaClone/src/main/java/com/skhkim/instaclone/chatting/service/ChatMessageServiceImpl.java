@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.function.Function;
 
 @Service
@@ -25,36 +26,35 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatUserRepository chatUserRepository;
 
     @Override
-    public Long register(ChatMessageDTO chatMessageDTO, Long roomID){
+    public void register(ChatMessageDTO chatMessageDTO, Long roomID){
         ChatMessage chatMessage = dtoToEntity(chatMessageDTO, roomID);
         chatMessageRepository.save(chatMessage);
-        return chatMessage.getCid();
     }
     @Override
     public void updateChatMessagesReadStatus(Long roomID, String userEmail){
         ChatUser chatUser = chatUserRepository.getChatUsersByRoomIdAndEmail(roomID, userEmail);
-        chatMessageRepository.updateByRoomIdAndSenderEmailAndTime(roomID, userEmail, chatUser.getDisConnect());
+        List<ChatMessage> result = chatMessageRepository.updateByRoomIdAndSenderEmailAndTime(roomID, userEmail, chatUser.getDisConnect());
+        result.forEach(chatMessage -> chatMessage.setReadStatus(chatMessage.getReadStatus()-1));
+        chatMessageRepository.saveAll(result);
     }
 
     @Override
-    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
+    public PageResultDTO<ChatMessageDTO, ChatMessage> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
         Pageable pageable = pageRequestDTO.getPageable();
-        Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
-                (ChatMessage) arr[0])
+        Function<ChatMessage, ChatMessageDTO> fn = (arr -> entityToDTO(
+                (ChatMessage) arr)
         );
         LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomID);
-        Page<Object[]> result = chatMessageRepository.getChatMessageByRoomIdAndTimeBefore(pageable, roomID, disConnectTime);
+        Page<ChatMessage> result = chatMessageRepository.getChatMessageByRoomIdAndTimeBefore(pageable, roomID, disConnectTime);
         return new PageResultDTO<>(result, fn);
     }
 
     @Override
-    public PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
+    public PageResultDTO<ChatMessageDTO, ChatMessage> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
         Pageable pageable = pageRequestDTO.getPageable();
-        Function<Object[], ChatMessageDTO> fn = (arr -> entityToDTO(
-                (ChatMessage)arr[0])
-        );
+        Function<ChatMessage, ChatMessageDTO> fn = (arr -> entityToDTO(arr));
         LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomID);
-        Page<Object[]> result = chatMessageRepository.getChatMessageByRoomIdAndTimeAfter(pageable, roomID, disConnectTime);
+        Page<ChatMessage> result = chatMessageRepository.getChatMessageByRoomIdAndTimeAfter(pageable, roomID, disConnectTime);
 
         return new PageResultDTO<>(result, fn);
     }

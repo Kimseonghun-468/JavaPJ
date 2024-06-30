@@ -9,15 +9,15 @@ import com.skhkim.instaclone.chatting.entity.ChatMessage;
 public interface ChatMessageService {
 
     Long getNotReadNum(String loginEmail, Long roomId);
-    Long register(ChatMessageDTO chatMessageDTO, Long roomID);
+    void register(ChatMessageDTO chatMessageDTO, Long roomID);
 
     void updateChatMessagesReadStatus(Long roomID, String userEmail);
-    PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail);
-    PageResultDTO<ChatMessageDTO, Object[]> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail);
+    PageResultDTO<ChatMessageDTO, ChatMessage> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail);
+    PageResultDTO<ChatMessageDTO, ChatMessage> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail);
     default ChatMessageDTO entityToDTO(ChatMessage chatMessage){
 
         ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder()
-                .cid(chatMessage.getCid())
+                .cid(chatMessage.getId())
                 .senderEmail(chatMessage.getSenderEmail())
                 .content(chatMessage.getContent())
                 .readStatus(chatMessage.getReadStatus())
@@ -29,7 +29,7 @@ public interface ChatMessageService {
 
     default ChatMessage dtoToEntity(ChatMessageDTO chatMessageDTO, Long roomID){
         ChatMessage chatMessage = ChatMessage.builder()
-                .cid(chatMessageDTO.getCid())
+                .id(chatMessageDTO.getCid())
                 .roomId(roomID)
                 .senderEmail(chatMessageDTO.getSenderEmail())
                 .content(chatMessageDTO.getContent())
