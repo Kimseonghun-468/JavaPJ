@@ -3,6 +3,8 @@ package com.skhkim.instaclone.controller;
 import net.coobird.thumbnailator.Thumbnailator;
 import com.skhkim.instaclone.dto.UploadResultDTO;
 import lombok.extern.log4j.Log4j2;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,10 +58,20 @@ public class UploadController {
 
             try{
                 uploadFile.transferTo(savePath);
-
+                BufferedImage bufferedImage = ImageIO.read(uploadFile.getInputStream());
+                int imageWidth = bufferedImage.getWidth();
+                int imageHeight = bufferedImage.getHeight();
+                int cropSize = Math.min(imageWidth, imageHeight);
+                BufferedImage croppedImage = Thumbnails.of(bufferedImage)
+                        .crop(Positions.CENTER)
+                        .size(cropSize, cropSize)
+                        .asBufferedImage();
                 String thumbnailSaveName = uploadPath + File.separator + folderPath + File.separator + "s_" + uuid + "_" + fileName;
-                File thumbnailFile = new File(thumbnailSaveName);
-                Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 100, 100);
+                Path saveThumbnailPath = Paths.get(thumbnailSaveName);
+                File saveThumbnailFile = saveThumbnailPath.toFile();
+                ImageIO.write(croppedImage,"png" ,saveThumbnailFile);
+//                File thumbnailFile = new File(thumbnailSaveName);
+//                Thumbnailator.createThumbnail(savePath.toFile(), saveThumbnailFile, cropSize, cropSize);
                 resultDTOList.add(new UploadResultDTO(fileName,uuid,folderPath));
 
             } catch (IOException e){

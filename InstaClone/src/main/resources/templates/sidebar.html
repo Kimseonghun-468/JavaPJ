@@ -83,7 +83,7 @@
             <div class="post-item " th:each="dto : ${result.dtoList}">
               <td><img class = "post-list-img"
                        th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null }"
-                       th:src ="|/display?fileName=${dto.imageDTOList[0].getImageURL()}|"
+                       th:src ="|/display?fileName=${dto.imageDTOList[0].getThumbnailURL()}|"
                        th:data-url="|${dto.imageDTOList[0].getImageURL()}|"
                        th:data-id="${dto.imageDTOList[0].pino}"
                        th:data-pid="${dto.pno}"
@@ -92,26 +92,27 @@
           </div>
         </section>
       </div>
+      <div class="up-temp3">
+        <div class="temp3">
+          <ul class="pagination justify-content-center align-items-center" id="post-page">
+            <li th:class="'page-item ' + ${result.page == page?'active':''}"
+                th:each="page: ${result.pageList}">
+              <button class="page-link post-page-button" th:data-name="|${page}|">
+                [[${page}]]
+              </button>
+            </li>
+          </ul>
+          <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
+          <button th:if="${memberDTO.name == userName}" class="uploadButton-post">이미지 업로드</button>
+
+          <footer class="profile-footer">
+            <span>© 2024 Instagram Clone</span>
+          </footer>
+        </div>
+      </div>
     </main>
 
-    <div class="up-temp3">
-      <div class="temp3">
-        <ul class="pagination justify-content-center align-items-center" id="post-page">
-          <li th:class="'page-item ' + ${result.page == page?'active':''}"
-              th:each="page: ${result.pageList}">
-            <button class="page-link post-page-button" th:data-name="|${page}|">
-              [[${page}]]
-            </button>
-          </li>
-        </ul>
-        <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
-        <button th:if="${memberDTO.name == userName}" class="uploadButton-post">이미지 업로드</button>
 
-        <footer class="profile-footer">
-          <span>© 2024 Instagram Clone</span>
-        </footer>
-      </div>
-    </div>
   </section>
   <div class ="temp2 temp4 logo" th:unless="${userExist}">
     <p>페이지를 찾을 수 없습니다.</p>
