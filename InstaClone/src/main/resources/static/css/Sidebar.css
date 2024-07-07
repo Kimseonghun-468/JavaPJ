@@ -353,7 +353,7 @@ textarea {
     color: #333333;
     margin-bottom: 5px;
     height: 10%;
-    border-bottom: 1px solid #dbdbdb;
+    /*border-bottom: 1px solid #dbdbdb;*/
 }
 .comment-main{
     display: flex;
@@ -555,7 +555,7 @@ textarea {
     margin: 0% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 60%;
+    width: 900px;
     max-height: 85%;
     overflow: scroll;
 }
@@ -619,9 +619,13 @@ textarea {
 }
 
 .invite-submit{
-    width: 100%;
+    width: 70px;
     display: flex;
     justify-content: end;
+}
+.invite-member{
+    width: calc(100% - 355px);
+    overflow: scroll;
 }
 button {
     border-radius: 5px !important;
