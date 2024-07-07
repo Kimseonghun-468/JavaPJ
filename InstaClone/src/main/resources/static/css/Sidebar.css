@@ -1,13 +1,11 @@
-/* 전체 페이지 스타일링 */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     display: block;
-    /*margin-right: 10px;*/
     width: 100%;
     height: 100%;
-    /*min-width: 1000px;*/
 }
 main {
     margin: 0;
@@ -18,7 +16,7 @@ main {
     height: 100%;
     margin-left: 10px;
     margin-right: 10px;
-    min-width: 860px;
+    min-width: 960px;
     overflow: scroll;
 
 }
@@ -146,7 +144,6 @@ textarea {
 
 .profile-content {
     display: block;
-    height: calc(100% - 150px);
     margin-top: 25px;
 }
 
@@ -174,9 +171,7 @@ textarea {
     grid-template-rows: repeat(2, 1fr);
     gap: 5px;
     padding: 10px 0;
-    /*height: calc(100% - 25px);*/
-    height: 565px;
-    overflow: scroll;
+    /*overflow: scroll;*/
 }
 
 .post-item{
@@ -245,7 +240,7 @@ textarea {
     display: block;
     padding: 30px 20px;
     margin: 0 auto 30px;
-    width: 860px;
+    width: 960px;
     height: 100%;
     margin-bottom: 0;
     min-width: 750px;
@@ -258,7 +253,7 @@ textarea {
     padding-bottom: 0;
     margin: 0 auto 30px;
     margin-bottom: 0;
-    width: 860px;
+    width: 960px;
 }
 
 .au_c {

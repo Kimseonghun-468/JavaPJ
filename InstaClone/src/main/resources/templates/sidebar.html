@@ -42,7 +42,7 @@
 
 
   <section class="temp2" th:if ="${userExist == True}">
-    <main>
+    <main id="post-frame">
       <div class="temp4">
         <header class="profile-header">
           <div class="profile-summary">
@@ -73,7 +73,6 @@
             </div>
           </div>
         </header>
-
         <section class="profile-content">
           <nav class="profile-navigation">
 
@@ -91,25 +90,26 @@
             </div>
           </div>
         </section>
-      </div>
-      <div class="up-temp3">
-        <div class="temp3">
-          <ul class="pagination justify-content-center align-items-center" id="post-page">
-            <li th:class="'page-item ' + ${result.page == page?'active':''}"
-                th:each="page: ${result.pageList}">
-              <button class="page-link post-page-button" th:data-name="|${page}|">
-                [[${page}]]
-              </button>
-            </li>
-          </ul>
-          <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
-          <button th:if="${memberDTO.name == userName}" class="uploadButton-post">이미지 업로드</button>
+        <div class="up-temp3">
+          <div class="temp3">
+            <!--          <ul class="pagination justify-content-center align-items-center" id="post-page">-->
+            <!--            <li th:class="'page-item ' + ${result.page == page?'active':''}"-->
+            <!--                th:each="page: ${result.pageList}">-->
+            <!--              <button class="page-link post-page-button" th:data-name="|${page}|">-->
+            <!--                [[${page}]]-->
+            <!--              </button>-->
+            <!--            </li>-->
+            <!--          </ul>-->
+            <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
+            <button th:if="${memberDTO.name == userName}" class="uploadButton-post">이미지 업로드</button>
 
-          <footer class="profile-footer">
-            <span>© 2024 Instagram Clone</span>
-          </footer>
+            <footer class="profile-footer">
+              <span>© 2024 Instagram Clone</span>
+            </footer>
+          </div>
         </div>
       </div>
+
     </main>
 
 
@@ -388,25 +388,28 @@
   var acceptedPage = 1;
   var chatRoomPage = 1;
   var postPage = 1;
+  var postTotalPage = 1;
+  var postFlag = true;
   var searchPage = 1;
   var inviteListPage = 1;
   var inviteListTotalPage = 1;
+  var inviteFlag = true;
+  var inviteSearchTerm = null;
   var friendListPage = 1;
   var frinenListTotalPage = 1;
+  var friendFlag = true;
   var chatPage = 1;
   var chatAfterPage = 1;
   var chatTotalPage = null;
   var chatTotalAfterPage = null;
-  // var flag = true;
-  var friendFlag = true;
-  var roomID = ""
-  var inviteSearchTerm = null;
+  var chatFlag = true;
 
+  var roomID = ""
   var stompClient = null;
   var afterDayCheck = null;
   var beforeDayCheck = null;
-  var chatFlag = true;
-  var inviteFlag = true;
+
+
   var loginName = '[[${memberDTO.name}]]'
   var loginEmail = '[[${memberDTO.email}]]'
   var userName = '[[${userName}]]';
@@ -1386,44 +1389,59 @@ async function showChatInfoBefore(roomID, loginEmail){
       })
     })
 
-    $(".temp3").off('click').on('click', '.post-page-button', function (){
-      var presentPage = $(this).attr('data-name');
-      postPage = presentPage;
-      $.ajax({
-        url: "/post/getPostInfo?page=" + postPage,
-        type: "POST",
-        data: {userName:userName},
-        dataType: "JSON",
-        success: function (result){
-          var postResult = "";
-          var postPageResult = "";
-          $.each(result.dtoList, function (idx, dtoList){
-            postResult += '<div class="post-item">';
-            postResult += '<img class="post-list-img" ' +
-                    'src="/display?fileName=' + dtoList.imageDTOList[0].imageURL + '/" ' +
-                    'data-url ="' + dtoList.imageDTOList[0].imageURL +'" ' +
-                    'data-id="' +dtoList.imageDTOList[0].pino + '" ' +
-                    'data-pid="' + dtoList.pno + '">'
-            postResult += '</div>';
-          })
-          if (result.prev != false)
-            postPageResult += '<button class="page-link requested-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
-          $.each(result.pageList, function (idx, pageList){
-            if (postPage == pageList)
-              postPageResult += '<li class="page-item active">'
-            else
-              postPageResult += '<li class="page-item">'
-            postPageResult += '<button class="page-link post-page-button" ' +
-                    'data-name="' + pageList +'">' +pageList +'</button>'
-          })
-          if (result.prev != false)
-            postPageResult += '<button class="page-link post-page-button" data-name="' + (result.start-1) + '">NEXT</button>'
-
-          $("#post-grid-image-box").html(postResult);
-          $("#post-page").html(postPageResult);
-        }
+    function createPostInfo(response){
+      let postResult = "";
+      $.each(response.dtoList, function (idx, dtoList){
+        postResult += '<div class="post-item">';
+        postResult += '<img class="post-list-img" ' +
+                'src="/display?fileName=' + dtoList.imageDTOList[0].imageURL + '/" ' +
+                'data-url ="' + dtoList.imageDTOList[0].imageURL +'" ' +
+                'data-id="' +dtoList.imageDTOList[0].pino + '" ' +
+                'data-pid="' + dtoList.pno + '">'
+        postResult += '</div>';
       })
 
+      $("#post-grid-image-box").append(postResult);
+    }
+    async function showPostList(userName, postPage){
+      try {
+        console.log(userName, postPage)
+        const response = await $.ajax({
+          url: "/post/getPostInfo?page=" + postPage,
+          type: "POST",
+          data: {userName: userName},
+          dataType: "JSON",
+        })
+        console.log(response)
+        postTotalPage = response.end;
+        createPostInfo(response);
+
+      } catch (error){
+        throw error;
+      }
+    }
+
+    $(function (){
+      async function postScrollPaging(){
+        let val = scrollContainerPost.scrollHeight - scrollContainerPost.scrollTop
+        console.log(val, scrollContainerPost.clientHeight,  scrollContainerPost.clientHeight, postTotalPage, postPage, postFlag)
+        if (scrollContainerPost.clientHeight -100 <= val  &&  val <= scrollContainerPost.clientHeight +100) {
+          if (postTotalPage >= postPage && postFlag) {
+            postFlag = false
+            postPage += 1
+            await showPostList(userName, postPage)
+            postFlag = true
+          }
+        }
+      }
+      postPage +=1
+      showPostList(userName, postPage)
+      const scrollContainerPost = document.getElementById("post-frame")
+      console.log(scrollContainerPost)
+      const debouncedPagingPost = debounce(postScrollPaging, 300)
+      scrollContainerPost.addEventListener('scroll', debouncedPagingPost)
+
+      // showPostList(userName, postPage)
     })
     $(document).on('click', '.request-Accept-button', function(){
       var loginName = '[[${memberDTO.name}]]';
@@ -1620,7 +1638,7 @@ async function showChatInfoBefore(roomID, loginEmail){
       })
     })
 
-  });
+  })
 
 
   $(function (){
