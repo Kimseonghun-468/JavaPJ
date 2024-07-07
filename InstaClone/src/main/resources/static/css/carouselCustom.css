@@ -12,6 +12,7 @@
 .carousel-item{
     width: 100%;
     height: 100%;
+    align-content: center;
 }
 
 .carousel-control-next-icon{
