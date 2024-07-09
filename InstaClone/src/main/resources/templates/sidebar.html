@@ -18,6 +18,7 @@
   <div class="sidebar">
     <div class="logo"><a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" style="color: black;">Instagram</a></div>
     <a class="menu-item">
+
       <span id="search-user">검색</span>
     </a>
     <a class="menu-item">
@@ -344,20 +345,21 @@
 </div>
 
 <div class="modal-custom" id="chatMessageModal">
-  <div class="modal-content-message-frame">
-  <div class="modal-body">
-    <div id="messages-modal" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background-color: rgb(255, 255, 255);">
-      <div class id="messages-box">
+  <div class="modal-content-message-frame" style="background-color: #d4e6f1;">
+  <div class="modal-body" style="background-color: #d4e6f1;">
+    <div id="messages-modal" style="height: 500px; overflow-y: scroll; padding: 10px; background-color: #d4e6f1;">
+      <div class="message-container" id="messages-box">
 
       </div>
     </div>
+
     <input type="text" id="messageInput" placeholder="Type a message..." class="form-control mt-2">
     <div class="chatting-footer">
       <div class="chatting-invite">
-        <button type="button" id="invite-chatuser">invite</button>
+        <button type="button" id="invite-chatuser">초대하기</button>
       </div>
       <div class="chatting-send">
-        <button type="button" id="send-button-modalroom">Send</button>
+        <button type="button" id="send-button-modalroom">전송</button>
       </div>
     </div>
   </div>
@@ -978,22 +980,51 @@
 
     })
   }
-  function createChatMessagesTag(name, message, showedTime, readStatus, time){
+  function createChatMessagesTag(name, message, showedTime, readStatus, time, imageUrl){
     var tag = "";
-    tag += '<div class="message-frame">'
-    tag += '<div class="message-name">';
-    tag += name;
-    tag += '</div>'
-    tag += '<div class="message-comment">';
-    tag += message;
-    tag += '</div>'
-    tag += '<div class="message-time">';
-    tag += showedTime;
-    tag += '</div>'
-    tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">';
-    tag += readStatus
-    tag += '</div>'
-    tag += '</div>'
+    if (name != loginName) {
+      tag += '<div class="message received">';
+      tag += '<div class="chat-main">'
+      if(imageUrl == null)
+        tag += '<img src="/display?fileName=outprofile.png/" class="chat-profile">'
+      else
+        tag += '<img src="/display?fileName=' + imageUrl +'/" class="chat-profile">'
+      tag += '<div class="chat-side">'
+      tag += '<div class="sender"> ' + name + '</div>'
+      tag += '<div class="content-wrapper">'
+      tag += '<div class="content"> '+ message +'</div>';
+      tag += '<div class="chatlog">'
+      tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">' + readStatus + '</div>' ;
+      tag += '<div class="time"> '+ showedTime +'</div>';
+      tag += '</div>'
+      tag += '</div>'
+      tag += '</div>'
+      tag += '</div>'
+      tag += '</div>'
+    }
+    else{
+      tag += '<div class="message sent">';
+      tag += '<div class="chat-main">'
+
+      tag += '<div class="content-wrapper">'
+      tag += '<div class="chat-side">'
+      tag += '<div class="sender"> ' + name + '</div>'
+      tag += '<div class="chat-side-add">'
+      tag += '<div class="chatlog">'
+      tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">' + readStatus + '</div>' ;
+      tag += '<div class="time"> '+ showedTime +'</div>';
+      tag += '</div>'
+      tag += '<div class="content"> '+ message +'</div>';
+      tag += '</div>'
+      tag += '</div>'
+      if(imageUrl == null)
+        tag += '<img src="/display?fileName=outprofile.png/" class="chat-profile">'
+      else
+        tag += '<img src="/display?fileName=' + imageUrl +'/" class="chat-profile">'
+      tag += '</div>'
+      tag += '</div>'
+      tag += '</div>'
+    }
 
     return tag;
   }
@@ -1019,20 +1050,20 @@
       document.getElementById('messageInput').value = '';
     }
   }
-  function showChatMessage(name, message, time, readStatus, reverse, live) {
+  function showChatMessage(name, message, time, readStatus, reverse, live, imageUrl) {
     var messageElement = document.createElement('div');
     var formattedDateTime = formatter.format(new Date(time));
     var showedTime = formattedDateTime.slice(21, 23)+" "+
             formattedDateTime.slice(12, 20)
-    tag = createChatMessagesTag(name, message, showedTime, readStatus, time);
+    tag = createChatMessagesTag(name, message, showedTime, readStatus, time, imageUrl);
 
     if (beforeDayCheck != time.slice(0, 10) && reverse == true) {
-      $('#messages-box').prepend('<h1>' + beforeDayCheck +'</h1>');
+      $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + beforeDayCheck +'</div></div>');
       beforeDayCheck = time.slice(0, 10);
     }
     if (afterDayCheck != time.slice(0, 10) && reverse == false){
       afterDayCheck = time.slice(0, 10);
-      $('#messages-box').append('<h1>' + afterDayCheck +'</h1>');
+      $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + afterDayCheck +'</div></div>');
     }
 
     if (reverse==true)
@@ -1068,7 +1099,7 @@
       stompClient.connect({'roomId': RoomID}, function (frame) {
         stompClient.subscribe('/topic/chat/'+RoomID, function (chatMessage) {
           showChatMessage(dictionary[JSON.parse(chatMessage.body).senderEmail], JSON.parse(chatMessage.body).content,
-                  JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false, true);
+                  JSON.parse(chatMessage.body).regDate, JSON.parse(chatMessage.body).readStatus, false, true, JSON.parse(chatMessage.body).profileImageUrl);
         });
         stompClient.subscribe('/topic/chat/accessLoad/' + RoomID, async function (result){
           if (result.body != '[[${memberDTO.name}]]'){
@@ -1145,7 +1176,8 @@
         chatTotalAfterPage = pageRequestChatDTO.totalPage;
 
         $.each(pageRequestChatDTO.dtoList, function (idx, chatMessageDTO) {
-          showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
+          showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content,
+                  chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false, chatMessageDTO.profileImageUrl);
         })
         chatAfterPage +=1
         $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight + (280 - 300 - pageRequestChatDTO.dtoList.length*40));
@@ -1164,7 +1196,8 @@
       })
       chatAfterPage += 1
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content,
+                chatMessageDTO.regDate, chatMessageDTO.readStatus, false, false, chatMessageDTO.profileImageUrl);
       })
     } catch (error){
       throw error;
@@ -1187,13 +1220,14 @@ async function showChatInfoBefore(roomID, loginEmail){
       chatTotalPage = response.totalPage;
 
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content,
+                chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false, chatMessageDTO.profileImageUrl);
       })
       chatPage += 1
       if (response.end == 1) {
         if (response.dtoList.length != 0) {
           var lastTime = response.dtoList[response.dtoList.length - 1].regDate.slice(0, 10);
-          $('#messages-box').prepend('<h1>' + lastTime + '</h1>')
+          $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + lastTime +'</div></div>');
         }
       }
       $('#messages-modal').scrollTop($('#messages-modal')[0].scrollHeight);
@@ -1212,7 +1246,8 @@ async function showChatInfoBefore(roomID, loginEmail){
       chatPage += 1
       console.log(response)
       $.each(response.dtoList, function (idx, chatMessageDTO) {
-        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content, chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false);
+        showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content,
+                chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false, chatMessageDTO.profileImageUrl);
       })
       if (chatPage == chatTotalPage +1)
         if (response.dtoList.length != 0){

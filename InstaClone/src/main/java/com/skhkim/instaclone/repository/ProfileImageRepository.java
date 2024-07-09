@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long> {
 
@@ -70,6 +71,9 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
             "WHERE fs.clubMemberFriend.name =:userName AND fs.clubMemberUser.name =:loginName")
     List<Object[]> getFriendFirst(String userName, String loginName);
+
+    @Query("SELECT pi FROM ProfileImage pi WHERE pi.clubMember.email =:userEmail")
+    Optional<ProfileImage> getProfileImageByUserEmail(String userEmail);
 
 }
 

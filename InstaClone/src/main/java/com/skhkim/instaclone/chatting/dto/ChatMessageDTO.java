@@ -15,4 +15,5 @@ public class ChatMessageDTO {
     private String content;
     private Long readStatus;
     private LocalDateTime regDate;
+    private String profileImageUrl;
 }

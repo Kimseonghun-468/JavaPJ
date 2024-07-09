@@ -34,6 +34,9 @@ public class ProfileController {
     @GetMapping("/profile")
     public void profile(){
         log.info("Profile...-----");
+    }
+    @GetMapping("/templ")
+    public void templ(){
 
     }
     @PreAuthorize("hasRole('USER')")

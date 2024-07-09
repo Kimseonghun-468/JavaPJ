@@ -9,6 +9,8 @@ import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.ProfilePageResultDTO;
+import com.skhkim.instaclone.entity.ProfileImage;
+import com.skhkim.instaclone.repository.ProfileImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @Log4j2
@@ -33,6 +36,7 @@ public class ChatController {
     private final ChatRoomService chatRoomService;
     private final ChatUserService chatUserService;
     private final ChatRoomSessionManager chatRoomSessionManager;
+    private final ProfileImageRepository profileImageRepository;
     @MessageMapping("/chat/{roomID}")
     @SendTo("/topic/chat/{roomID}")
     public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO) {
@@ -48,7 +52,8 @@ public class ChatController {
                 .build();
         chatMessageService.register(result, id);
         chatRoomService.updateLastChatTime(id, chatMessageDTO.getContent());
-
+        Optional<ProfileImage> profileImage = profileImageRepository.getProfileImageByUserEmail(result.getSenderEmail());
+        profileImage.ifPresent(image -> result.setProfileImageUrl(image.getImageURL()));
         return result;
     }
 

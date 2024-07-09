@@ -46,7 +46,7 @@ textarea {
     width: 150px; /* 사이드바의 너비를 설정합니다 */
     height: 100vh; /* 전체 뷰포트의 높이 */
     background-color: #fafafa; /* Instagram의 배경색과 유사한 색상 */
-    padding: 25px; /* 내부 여백을 설정합니다 */
+    padding-top: 25px; /* 내부 여백을 설정합니다 */
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 사이드바에 그림자를 추가합니다 */
 }
 
@@ -62,7 +62,8 @@ textarea {
 .menu-item {
     display: flex; /* flexbox를 사용하여 아이콘과 텍스트를 가로로 배치합니다 */
     align-items: center; /* 아이콘과 텍스트를 세로 중앙에 위치시킵니다 */
-    margin-bottom: 20px; /* 메뉴 항목 사이의 간격 */
+    margin-bottom: 5px;
+    padding: 10px 20px;
     font-size: 18px; /* 텍스트 크기 */
     color: #000; /* 텍스트 색상 */
     text-decoration: none; /* 링크의 밑줄 제거 */
@@ -145,6 +146,7 @@ textarea {
 .profile-content {
     display: block;
     margin-top: 25px;
+    min-height: calc(100% - 295px);
 }
 
 .profile-navigation {
@@ -253,6 +255,7 @@ textarea {
     margin: 0 auto 30px;
     margin-bottom: 0;
     width: 960px;
+    height: 100%;
 }
 
 .au_c {
@@ -576,14 +579,10 @@ textarea {
     width: 20%;
     padding-left: 5px;
 }
-.status-true {
-    width: 15%;
-}
-.status-false {
-    width: 15%;
-}
+
 .last-chat-comment{
     width: 20%;
+    overflow-wrap: anywhere;
 }
 .last-chat-time{
     width: 10%;
@@ -638,4 +637,116 @@ button {
 button:hover {
     background-color: #a7cbff;
     color: white;
+}
+
+
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+}
+.message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.message.sent {
+    align-items: flex-end;
+}
+.message .sender {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 2px;
+}
+.message.received .content-wrapper {
+    display: flex;
+    align-items: end;
+}
+.message.sent .content-wrapper {
+    display: flex;
+    align-items: start;
+}
+.message .content {
+    max-width: 60%;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+    overflow-wrap: anywhere;
+}
+.message.sent .content {
+    background-color: #ffeb3b;
+}
+.message.received .content {
+    background-color: #ffffff;
+}
+.message .time {
+    font-size: 12px;
+    color: #888;
+    margin-left: 10px;
+    align-self: flex-end;
+}
+.message.sent .time {
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+.chatlog {
+    display: flex;
+    flex-direction: column;
+}
+
+.message.received .status-true {
+    color: yellow;
+    font-size: 12px;
+    margin-left: 10px;
+
+}
+
+.message.sent .status-true {
+    color: yellow;
+    font-size: 12px;
+    margin-right: 10px;
+    text-align: end;
+}
+
+.chat-date-frame {
+    text-align: -webkit-center;
+}
+.chat-date {
+    background-color: #b7def5;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 12px;
+    color: #666;
+    align-self: center;
+    border-radius: 5px;
+    width: 30%;
+}
+
+.chat-profile{
+    width: 64px;
+    height: 64px;
+    border-radius: 100%;
+}
+
+.chat-main{
+    display: flex;
+}
+.message.received .chat-side{
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.message.sent .chat-side{
+    margin-right: 10px;
+    text-align: end;
+    display: flex;
+    flex-direction: column;
+}
+
+.message.sent .chat-side-add{
+    display: flex;
+    justify-content: end;
 }
