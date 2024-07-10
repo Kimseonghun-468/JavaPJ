@@ -22,10 +22,10 @@ main {
 }
 .upload-form{
     overflow-y: auto;
-    height: calc(90% - 10px);
+    height: calc(100% - 65px);
 }
 .upload-title-input{
-    height: 25%;
+    height: calc(100% - 65px);
     margin-bottom: 5px;
     border-bottom: 1px solid #dbdbdb;
 }
@@ -60,21 +60,17 @@ textarea {
 
 /* 메뉴 아이템 스타일링 */
 .menu-item {
-    display: flex; /* flexbox를 사용하여 아이콘과 텍스트를 가로로 배치합니다 */
-    align-items: center; /* 아이콘과 텍스트를 세로 중앙에 위치시킵니다 */
-    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    margin: 10px 0px;
     padding: 10px 20px;
-    font-size: 18px; /* 텍스트 크기 */
-    color: #000; /* 텍스트 색상 */
-    text-decoration: none; /* 링크의 밑줄 제거 */
+    font-size: 16px;
+    color: #000;
+    text-decoration: none;
+
 }
-.menu-item p{
-    display: flex; /* flexbox를 사용하여 아이콘과 텍스트를 가로로 배치합니다 */
-    align-items: center; /* 아이콘과 텍스트를 세로 중앙에 위치시킵니다 */
-    margin-bottom: 20px; /* 메뉴 항목 사이의 간격 */
-    font-size: 18px; /* 텍스트 크기 */
-    color: #000; /* 텍스트 색상 */
-    text-decoration: none; /* 링크의 밑줄 제거 */
+.menu-item span{
+    margin-left: 5px;
 }
 
 /* 아이콘 스타일링 (가정: FontAwesome 라이브러리 사용) */
@@ -308,6 +304,8 @@ textarea {
     flex-basis: 800px;
     background-color: #000000;
     aspect-ratio: 1/1;
+    border-top-left-radius: 1%;
+    border-bottom-left-radius: 1%;
 }
 
 .post-image {
@@ -317,9 +315,11 @@ textarea {
 
 .comment-section {
     min-width: 405px;
+    width: 405px;
     min-height: 450px;
     background-color: #ffffff;
-    border: 1px solid #cccccc;
+    border-top-right-radius: 1%;
+    border-bottom-right-radius: 1%;
 
 }
 
@@ -329,7 +329,9 @@ textarea {
     align-items: center;
     margin-bottom: 5px;
     border-bottom: 1px solid #dbdbdb;
-    height: 10%;
+    padding-bottom: 14px;
+    padding-left: 16px;
+    height: 60px;
 }
 
 .comment-username {
@@ -351,11 +353,10 @@ textarea {
 
 .comment-title {
     display: flex;
-    justify-content: center;
     align-items: center;
-    color: #333333;
     margin-bottom: 5px;
-    height: 10%;
+    height: 50px;
+    padding-left: 16px;
     /*border-bottom: 1px solid #dbdbdb;*/
 }
 .comment-main{
@@ -375,17 +376,15 @@ textarea {
     width: 60%;
     word-wrap: anywhere;
 }
-.upload-form{
-
-}
 .comment-reply-comment{
     width: 60%;
 }
 
 .comment-body {
-    overflow-y: auto;
+    overflow-y: scroll;
     margin-bottom: 5px;
-    height: 40%;
+    height: calc(100% - 150px);
+    padding: 16px;
 }
 
 .comment-footer {
@@ -405,8 +404,8 @@ textarea {
 .comment-input {
     display: flex;
     border-top: 1px solid #cccccc;
-    padding-top: 10px;
-    height: calc(20% - 20px);
+    padding-top: 5px;
+    height: 80px;
     overflow: scroll;
 }
 
@@ -522,7 +521,7 @@ textarea {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: calc(20% - 10px);
+    height: 60px;
 }
 
 .user-friend-button-box2{
@@ -639,6 +638,10 @@ button:hover {
     color: white;
 }
 
+.menu-item:hover {
+    background-color: #b6bdc4;
+    cursor: pointer;
+}
 
 
 .chat-container {
@@ -730,6 +733,12 @@ button:hover {
     border-radius: 100%;
 }
 
+.reply-profile{
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+}
+
 .chat-main{
     display: flex;
 }
@@ -749,4 +758,40 @@ button:hover {
 .message.sent .chat-side-add{
     display: flex;
     justify-content: end;
+}
+
+.reply-main {
+    display: flex;
+    padding-top: 12px;
+}
+.reply-wrapper {
+    margin-left: 10px;
+}
+
+.reply-name{
+    display: inline;
+    font-size: 14px;
+    font-weight: bold;
+
+}
+.reply-content{
+    display: inline;
+    font-size: 14px;
+    margin-left: 5px;
+}
+.reply-time {
+    display: inline;
+    font-size: 12px;
+}
+.reply-option {
+    display: inline;
+}
+
+.reply-image-container {
+    align-content: start;
+    margin-top: 5px;
+}
+.reply-title {
+    display: flex;
+    padding-bottom: 10px;
 }

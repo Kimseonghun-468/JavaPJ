@@ -1,16 +1,22 @@
 package com.skhkim.instaclone.service;
 
+import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
+import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
+import com.skhkim.instaclone.chatting.dto.PageResultDTO;
+import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.dto.ReplyDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.Reply;
+
+import java.awt.print.Pageable;
 import java.util.List;
 
 public interface ReplyService {
 
     Long register(ReplyDTO replyDTO);
-    List<ReplyDTO> getListOfPost(Long pno);
-
+//    List<ReplyDTO> getListOfPost(Long pno);
+    PageResultDTO<ReplyDTO, Reply> getListOfPostPage(PageRequestDTO pageRequestDTO, Long pno);
     void remove(Long replynum);
     default Reply dtoToEntity(ReplyDTO replyDTO){
 

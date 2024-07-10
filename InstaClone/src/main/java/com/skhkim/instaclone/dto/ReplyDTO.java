@@ -18,4 +18,5 @@ public class ReplyDTO {
     private String email;
     private String text;
     private LocalDateTime regDate, modDate;
+    private String profileImageUrl;
 }

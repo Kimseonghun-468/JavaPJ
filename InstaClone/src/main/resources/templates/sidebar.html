@@ -18,25 +18,53 @@
   <div class="sidebar">
     <div class="logo"><a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" style="color: black;">Instagram</a></div>
     <a class="menu-item">
-
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line>
+      </svg>
       <span id="search-user">검색</span>
     </a>
     <a class="menu-item">
-      <span class="chatting-roomList">채팅 목록</span>
+      <svg width="24" height="24" viewBox="0 0 24 24">
+      <line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="3" y2="10.083"></line>
+      <polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></polygon>
+      </svg>
+      <span class="chatting-roomList">채팅</span>
     </a>
     <a class="menu-item">
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <path d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2m0-2C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"></path>
+      </svg>
       <span class="friendship-accepted">친구 목록</span>
     </a>
     <a class="menu-item">
-      <span class="friendship-requested">친구 요청</span>
+      <svg height="24" viewBox="0 0 24 24" width="24">
+        <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303
+        3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84
+        1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985
+        6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263
+        45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"></path>
+      </svg>
+      <span class="friendship-requested">요청</span>
     </a>
     <a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" class="menu-item">
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <path d="M12 2c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4m0-2C9.24 0 7 2.24 7 5s2.24 5 5 5 5-2.24 5-5S14.76 0 12 0zm7 22v-2c0-1.11-.89-2-2-2H7c-1.11 0-2 .89-2 2v2H0v2h24v-2h-5z"></path>
+      </svg>
       <span class="profile-name">프로필</span>
     </a>
     <a th:href="@{/userinfo/{name}(name=${memberDTO.name})}" class="menu-item">
+      <svg height="24" viewBox="0 0 24 24" width="24">
+      <path d="M2 12v3.45c0 2.849.698 4.005 1.606 4.944.94.909 2.098 1.608 4.946 1.608h6.896c2.848 0 4.006-.7 4.946-1.608C21.302 19.455 22 18.3 22 15.45V8.552c0-2.849-.698-4.006-1.606-4.945C19.454 2.7 18.296 2 15.448 2H8.552c-2.848 0-4.006.699-4.946 1.607C2.698 4.547 2 5.703 2 8.552Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="6.545" x2="17.455" y1="12.001" y2="12.001"></line>
+        <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.003" x2="12.003" y1="6.545" y2="17.455"></line>
+      </svg>
       <span>회원 정보</span>
     </a>
     <a th:href="@{/logout}" class="menu-item">
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <path d="M16 13v-2H7v-2h9V7l5 5-5 5v-4zm1 6H5v-2h2v-2H5V9h2V7H5V5h12v2h-2v2h2v2h-2v2h2v2h-2v2h2v2z"></path>
+      </svg>
       <span>로그아웃</span>
     </a>
   </div>
@@ -209,17 +237,70 @@
     </div>
     <div class="comment-section">
       <div class="comment-header">
-        <span class="comment-username">[[${userName}]]</span>
+        <div class="reply-main" style="align-items: center;">
+          <div class="reply-image-container">
+            <img th:if ="${profileImageDTO.path != null}"
+                 th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|" class="reply-profile">
+            <img th:if ="${profileImageDTO.path == null}"
+                 th:src ="|/display?fileName=outprofile.png|" class="reply-profile">
+          </div>
+          <div class="reply-wrapper">
+            <div class="reply-name">[[${userName}]]</div>
+          </div>
+        </div>
         <span th:if="${memberDTO.name == userName}" class="options" id="post-option">...</span>
       </div>
-      <div class="comment-title comment-bold" id="post-title">
-        tt
-      </div>
-      <div class="comment-main" id="post-comment">
-        fawf
-      </div>
+
+
+
+
       <div class="comment-body" id="reply-comment-body">
 
+        <div id="post-title-container" style="display: flex;">
+
+        </div>
+        <div id="post-reply-container"></div>
+
+<!--        <div class="reply-title">-->
+<!--          <div class="reply-image-container">-->
+<!--            <img th:src ="|/display?fileName=outprofile.png|" class="reply-profile">-->
+<!--          </div>-->
+<!--          <div class="reply-wrapper">-->
+<!--            <div class="reply-name">[[${userName}]]</div>-->
+<!--            <div class="reply-content">안녕 곰돌아!</div>-->
+<!--            <div class="reply-side">-->
+<!--              <div class="reply-time">10분</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div class="reply-main">-->
+<!--          <div class="reply-image-container">-->
+<!--            <img th:src ="|/display?fileName=outprofile.png|" class="reply-profile">-->
+<!--          </div>-->
+<!--          <div class="reply-wrapper">-->
+<!--            <div class="reply-name">subsbe11227</div>-->
+<!--            <div class="reply-content">안녕 곰돌아!</div>-->
+<!--            <div class="reply-side">-->
+<!--              <div class="reply-time">10분</div>-->
+<!--              <div class="reply-option">...</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div class="reply-main">-->
+<!--          <div class="reply-image-container">-->
+<!--            <img th:src ="|/display?fileName=outprofile.png|" class="reply-profile">-->
+<!--          </div>-->
+<!--          <div class="reply-wrapper">-->
+<!--            <div class="reply-name">subsbe11227</div>-->
+<!--            <div class="reply-content">완전 좋다 ㅎㅎㅎ</div>-->
+<!--            <div class="reply-side">-->
+<!--              <div class="reply-time">10분</div>-->
+<!--              <div class="reply-option">...</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
 
       <div class="comment-input">
@@ -259,10 +340,10 @@
           <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
   <!--        <input type="text" placeholder="문구를 입력하세요..." id="upload-comment-box">-->
         </div>
-        <div class="upload-comment-input">
-          <textarea class="text-field" placeholder="텍스트를 입력하세요..." name="comment"></textarea>
+<!--        <div class="upload-comment-input">-->
+<!--          <textarea class="text-field" placeholder="텍스트를 입력하세요..." name="comment"></textarea>-->
 
-        </div>
+<!--        </div>-->
         <div class="upload-button-box">
             <input type="hidden" name="email" th:value="${memberDTO.email}">
             <div id="upload-form-image-box">
@@ -434,14 +515,13 @@
       type: "POST",
       data: JSON.stringify(data),
       contentType: "application/json; charset=utf-8",
-      dataType:"text",
       success: function (result){
-        var tempReply = {name:userName, text:commentBox.value, rno:result};
+        var tempReply = {name:userName, text:commentBox.value, rno:result.rno, regDate:"지금", profileImageUrl:result.imageUrl};
         replyResult = ""
-        var replyArea = $("#reply-comment-body");
-        replyArea.append(createReplyhtmlbox(userName, tempReply));
+        var replyArea = $("#post-reply-container");
+        replyArea.prepend(createReplyhtmlbox(userName, tempReply));
         $('#comment-box').val('');
-        $('#reply-comment-body').scrollTop($('#reply-comment-body')[0].scrollHeight);
+        $('#post-reply-container').scrollTop($('#post-reply-container')[0].scrollHeight);
       }
     })
   };
@@ -452,7 +532,7 @@
       contentType: "application/json; charset=utf-8",
       dataType: "text",
       success: function (result){
-        $('[data-rno="' + rno + '"]').closest('.comment-body-reply').remove();
+        $('[data-rno="' + rno + '"]').closest('.reply-main').remove();
       }
     })
   }
@@ -469,12 +549,11 @@
     $.getJSON("/reply/"+postId +"/all", function (arr){
       var str = "";
       var loginName = '[[${memberDTO.name}]]';;
-
-      $.each(arr, function (idx, reply){
+      $.each(arr.dtoList, function (idx, reply){
         replyStr = createReplyhtmlbox(loginName, reply);
         str += replyStr;
       });
-      $("#reply-comment-body").html(str);
+      $("#post-reply-container").append(str);
     })
   }
 
@@ -493,17 +572,35 @@
 
   function createReplyhtmlbox(loginName, reply){
     var str = "";
-    str += '<div class="comment-body-reply">';
-    str += '<div class="comment-title-username comment-bold">'
-    str += reply.name
+    str += '<div class="reply-main">';
+    str += '<div class="reply-image-container">'
+    if (reply.profileImageUrl != null)
+      str+= '<img src="/display?fileName=' + reply.profileImageUrl +'/" class="reply-profile">';
+    else
+      str += '<img src="/display?fileName=outprofile.png/" class="reply-profile">'
     str += '</div>'
-    str += '<div class="comment-title-comment">'
-    str += reply.text
-    str += '</div>'
+    str += '<div class="reply-wrapper">';
+    str += '<div class="reply-name">' + reply.name + '</div>';
+    str += '<div class="reply-content">' + reply.text + '</div>';
+    str += '<div class="reply-side">';
+    str += '<div class="reply-time">' + reply.regDate + '</div>';
     if (loginName == reply.name) {
       str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
     }
     str += '</div>'
+    str += '</div>'
+    str += '</div>'
+    // str += '<div class="comment-body-reply">';
+    // str += '<div class="comment-title-username comment-bold">'
+    // str += reply.name
+    // str += '</div>'
+    // str += '<div class="comment-title-comment">'
+    // str += reply.text
+    // str += '</div>'
+    // if (loginName == reply.name) {
+    //   str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
+    // }
+    // str += '</div>'
     return str
   }
   function sendFollowRequest(name, $button){
@@ -1692,9 +1789,24 @@ async function showChatInfoBefore(roomID, loginEmail){
         dataType:"JSON",
         success: function (result){
           var carouselTag = "";
-          var titleTag = "<div class='title-text'>" + result.title +"</div>";
-          var commentTag ="<div class='comment-text'>" + result.comment +"</div>";
+          var imageUrl = `[[${profileImageDTO.getImageURL()}]]`
+          var loadName = '[[${userName}]]';
+          function createTitleTag(userName, title, imageUrl){
+            result = ""
+            result += '<div class="reply-title">'
+            result += '<img src="/display?fileName=' + imageUrl +'/" class="reply-profile">';
+            result += '</div>'
+            result += '<div class="reply-wrapper">'
+            result += '<div class="reply-name">' + userName + '</div>'
+            result += '<div class="reply-content">' + title + '</div>'
+            result += '<div class="reply-side">'
+            result += '<div class="reply-time">' + "10분" + '</div>'
+            result += '</div>'
+            result += '</div>'
+            result += '</div>'
 
+            return result;
+          }
           $.each(result.imageDTOList, function (idx, imageInfo){
             if(idx ==0)
               carouselTag += '<div class="carousel-item active">'
@@ -1713,8 +1825,8 @@ async function showChatInfoBefore(roomID, loginEmail){
             $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
           }
 
-          $("#post-title").html(titleTag)
-          $("#post-comment").html(commentTag)
+          // $("#post-title").html(titleTag)
+          $("#post-title-container").html(createTitleTag(loadName, result.title, imageUrl))
           $("#carousel-image-box").html(carouselTag);
 
         }
@@ -1739,6 +1851,11 @@ async function showChatInfoBefore(roomID, loginEmail){
           $('#post-option-modal').modal('hide');
         })
       })
+
+      $('#myModal').on('hidden.bs.modal', function () {
+        $('#post-reply-container').html("");
+
+      });
 
     });
 
