@@ -197,7 +197,7 @@ public class ProfileServiceImpl implements ProfileService{
         }
         else{
             if (result.get(0)[1] != null)
-                resultMap.put("image", ((ProfileImage) result.get(0)[1]));
+                resultMap.put("image", ((ProfileImage) result.get(0)[1]).getImageURL());
             else
                 resultMap.put("image", null);
             resultMap.put("name", ((FriendShip) result.get(0)[0]).getClubMemberUser().getName());

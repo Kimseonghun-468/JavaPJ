@@ -65,6 +65,12 @@ public class ChatController {
         return loginName;
     }
 
+    @MessageMapping("/chat/inviteLoad/{roomID}")
+    @SendTo("/topic/chat/inviteLoad/{roomID}")
+    public List<String> inviteLoad(@DestinationVariable String roomID, @RequestParam List<String> userNames) {
+        return userNames;
+    }
+
     @PostMapping("/chat/getORCreateChatRoom")
     public ResponseEntity<Long> getORCreateChatRoom(String loginEmail, String friendEmail, Long requestRoomId){
         log.info("Login Name : " +loginEmail);

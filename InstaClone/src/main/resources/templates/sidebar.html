@@ -17,27 +17,27 @@
 
   <div class="sidebar">
     <div class="logo"><a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" style="color: black;">Instagram</a></div>
-    <a class="menu-item">
+    <div class="menu-item" id="search-user">
       <svg width="24" height="24" viewBox="0 0 24 24">
         <path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
         <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line>
       </svg>
-      <span id="search-user">검색</span>
-    </a>
-    <a class="menu-item">
+      <span>검색</span>
+    </div>
+    <div class="menu-item" id="chatting-roomList">
       <svg width="24" height="24" viewBox="0 0 24 24">
       <line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="3" y2="10.083"></line>
       <polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></polygon>
       </svg>
-      <span class="chatting-roomList">채팅</span>
-    </a>
-    <a class="menu-item">
+      <span>채팅</span>
+    </div>
+    <div class="menu-item" id="friendship-accepted">
       <svg width="24" height="24" viewBox="0 0 24 24">
         <path d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2m0-2C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"></path>
       </svg>
-      <span class="friendship-accepted">친구 목록</span>
-    </a>
-    <a class="menu-item">
+      <span>친구 목록</span>
+    </div>
+    <div class="menu-item" id="friendship-requested">
       <svg height="24" viewBox="0 0 24 24" width="24">
         <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303
         3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84
@@ -45,13 +45,13 @@
         6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263
         45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"></path>
       </svg>
-      <span class="friendship-requested">요청</span>
-    </a>
+      <span>요청</span>
+    </div>
     <a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" class="menu-item">
       <svg width="24" height="24" viewBox="0 0 24 24">
         <path d="M12 2c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4m0-2C9.24 0 7 2.24 7 5s2.24 5 5 5 5-2.24 5-5S14.76 0 12 0zm7 22v-2c0-1.11-.89-2-2-2H7c-1.11 0-2 .89-2 2v2H0v2h24v-2h-5z"></path>
       </svg>
-      <span class="profile-name">프로필</span>
+      <span>프로필</span>
     </a>
     <a th:href="@{/userinfo/{name}(name=${memberDTO.name})}" class="menu-item">
       <svg height="24" viewBox="0 0 24 24" width="24">
@@ -79,11 +79,11 @@
               <input type="file" th:if="${memberDTO.name == userName}"
                      class="fileInput profile-Image-File" style="display: none;">
               <img th:if ="${profileImageDTO.path != null}"
-                   th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|"
-                   alt="Profile Picture" class="profile-picture uploadButton-profile">
+                   th:src ="|/display?fileName=${profileImageDTO.getThumbnailURL()}|"
+                   alt="Profile Picture" class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;">
               <img th:if ="${profileImageDTO.path == null}"
                    th:src ="|/display?fileName=outprofile.png|"
-                   alt="Profile Picture" class="profile-picture uploadButton-profile">
+                   alt="Profile Picture" class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;">
 
             </div>
             <div class="profile-info">
@@ -303,10 +303,12 @@
 <!--        </div>-->
       </div>
 
-      <div class="comment-input">
-        <input type="text" placeholder="댓글 달기..." id="comment-box">
-        <span id="reply-send">➤</span>
-      </div>
+      <form id="reply-form">
+        <div class="comment-input">
+          <input type="text" placeholder="댓글 달기..." id="reply-box">
+          <span id="reply-send" class="reply-send-button">게시</span>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -338,12 +340,7 @@
       <form class="upload-form" id=upload-form th:action="@{/sidebar/post/{userName}(userName=${memberDTO.name})}" th:method="post">
         <div class="upload-title-input">
           <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
-  <!--        <input type="text" placeholder="문구를 입력하세요..." id="upload-comment-box">-->
         </div>
-<!--        <div class="upload-comment-input">-->
-<!--          <textarea class="text-field" placeholder="텍스트를 입력하세요..." name="comment"></textarea>-->
-
-<!--        </div>-->
         <div class="upload-button-box">
             <input type="hidden" name="email" th:value="${memberDTO.email}">
             <div id="upload-form-image-box">
@@ -360,25 +357,30 @@
 <div id="SearchModal" class="modal modal-custom">
   <div class="modal-content-search">
     <form id="searchForm">
-      <input type="text" id="searchInput" placeholder="검색어 입력...">
-      <button type="submit">검색</button>
+      <div class="search-container">
+        <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon">
+          <path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="검색어 입력...">
+      </div>
     </form>
-    <div id="searchResult" class="side-border">
+    <div id="searchResult" class="side-border search-user-container">
 
     </div>
-    <ul class="pagination h-100 justify-content-center align-items-center" id="search-page">
+    <ul class="pagination justify-content-center align-items-center" id="search-page">
 
     </ul>
   </div>
 </div>
 
 <div id="friendShip-requestedModal" class="modal-custom">
-  <div class="modal-content-side-frame">
+  <div class="modal-content-side-frame" style="width: 650px;">
 
-    <div id="friendship-requestedList" class="side-border">
-
+    <div id="friendship-requestedList" class="side-border" style="height:725px;">
+      <div>현재 요청받은 친구가 없습니다.</div>
     </div>
-    <ul class="pagination h-100 justify-content-center align-items-center" id="requested-page">
+    <ul class="pagination justify-content-center align-items-center" id="requested-page" style="min-height: 38px">
       <li class="page-item active">
         <a class="page-link">1</a>
       </li>
@@ -390,12 +392,12 @@
 </div>
 
 <div id="friendShip-acceptedModal" class="modal-custom">
-  <div class="modal-content-side-frame">
+  <div class="modal-content-side-frame" style="width: 650px;">
 
-    <div id="friendship-acceptedList" class="side-border">
+    <div id="friendship-acceptedList" class="side-border" style="height: 725px;">
 
     </div>
-    <ul class="pagination h-100 justify-content-center align-items-center" id="accepted-page">
+    <ul class="pagination h-100 justify-content-center align-items-center" id="accepted-page" style="min-height: 38px;">
 
     </ul>
   </div>
@@ -403,33 +405,34 @@
 </html>
 
 <div id="friend-List-UserModal" class="modal-custom">
-  <div id="friend-modal" class="modal-content-side-frame">
+  <div id="friend-modal" class="modal-content-side-frame" style="width: 650px; max-height: 100%">
 
-    <div id="friend-List-UserBox" class="side-border">
+    <div id="friend-List-UserBox" class="side-border" style="height: 725px;">
 
     </div>
-    <ul class="pagination h-100 justify-content-center align-items-center" id="friend-List-page">
-
-    </ul>
   </div>
 </div>
 
 <div id="chatroom-Modal" class="modal-custom">
-  <div class="modal-content-side-frame">
-    <div id="chatroom-List" class="side-border">
+  <div class="modal-content-side-frame" style="width: 650px;">
+    <div id="chatroom-List" class="side-border" style="height: 725px;">
 
     </div>
-    <ul class="pagination h-100 justify-content-center align-items-center" id="chatroom-page">
+    <ul class="pagination h-100 justify-content-center align-items-center" id="chatroom-page" style="min-height: 38px;">
 
     </ul>
   </div>
 </div>
 
 <div class="modal-custom" id="chatMessageModal">
-  <div class="modal-content-message-frame" style="background-color: #d4e6f1;">
+  <div class="modal-content-message-frame" style="background-color: #d4e6f1; border-radius: 12px">
   <div class="modal-body" style="background-color: #d4e6f1;">
     <div id="messages-modal" style="height: 500px; overflow-y: scroll; padding: 10px; background-color: #d4e6f1;">
       <div class="message-container" id="messages-box">
+
+<!--        <div class="invite-list-container">-->
+<!--          <div class="invite-user-list">OOO님이 faw, faw, faw, fawa, wwww, fff님을 초대하였습니다.</div>-->
+<!--        </div>-->
 
       </div>
     </div>
@@ -447,20 +450,50 @@
   </div>
 </div>
 
+<form id="searchForm">
+  <div class="search-container">
+    <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon">
+      <path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line>
+    </svg>
+    <input type="text" id="searchInput" placeholder="검색어 입력...">
+    <!--        <button type="submit" class="search-button">검색</button>-->
+  </div>
+</form>
+
+
 <div class="modal modal-custom" id="inviteModal">
     <div class="modal-content-search" id="scroll-invite">
+      <div class="invite-search-submit-container" style="display: flex;">
       <form id="inviteSearchForm" class="invite-search-form">
-        <input type="text" id="inviteSearchInput" placeholder="검색어 입력...">
-        <button type="submit" style="width: 100px;">검색</button>
-        <div id="invite-dictionary" class="invite-member">
-
-        </div>
-
-        <div class="invite-submit">
-          <button type="submit" id="invite-submit">완료</button>
+        <div class="search-container">
+          <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon">
+            <path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line>
+          </svg>
+          <input type="text" id="inviteSearchInput" placeholder="검색어 입력...">
+<!--          <button type="submit" style="width: 100px;">검색</button>-->
         </div>
       </form>
-      <div id="inviteSearchResult" class="side-border">
+      <div class="invite-submit">
+        <button type="submit" id="invite-submit">초대</button>
+      </div>
+      </div>
+      <div id="invite-container" class="invite-member">
+
+<!--        <div class="invite-profile-container">-->
+<!--          <img th:src ="|/display?fileName=outprofile.png|" class="invite-profile">-->
+<!--          <div>tt</div>-->
+<!--        </div>-->
+
+<!--        <div class="invite-profile-container">-->
+<!--          <img th:src ="|/display?fileName=outprofile.png|" class="invite-profile">-->
+<!--          <div class="invite-profile-name">aa</div>-->
+<!--        </div>-->
+
+
+      </div>
+      <div id="inviteSearchResult" class="side-border" style="height: 725px;">
 
       </div>
     </div>
@@ -486,7 +519,8 @@
   var chatTotalPage = null;
   var chatTotalAfterPage = null;
   var chatFlag = true;
-
+  var replyPage = 1;
+  var replyTotalPage = null;
   var roomID = ""
   var stompClient = null;
   var afterDayCheck = null;
@@ -520,8 +554,9 @@
         replyResult = ""
         var replyArea = $("#post-reply-container");
         replyArea.prepend(createReplyhtmlbox(userName, tempReply));
-        $('#comment-box').val('');
-        $('#post-reply-container').scrollTop($('#post-reply-container')[0].scrollHeight);
+        $('#reply-box').val('');
+        $('#reply-send').removeClass("active")
+        $('#reply-comment-body').scrollTop(0);
       }
     })
   };
@@ -546,14 +581,22 @@
   }
 
   function showReplyListInPost(postId){
-    $.getJSON("/reply/"+postId +"/all", function (arr){
+    $.getJSON("/reply/"+postId +"/all" + "?page=" + replyPage , function (arr){
       var str = "";
+      var buttonTag = ""
       var loginName = '[[${memberDTO.name}]]';;
       $.each(arr.dtoList, function (idx, reply){
         replyStr = createReplyhtmlbox(loginName, reply);
         str += replyStr;
       });
       $("#post-reply-container").append(str);
+      if (arr.totalPage >replyPage){
+        buttonTag += '<div class="reply-paging-button">'
+        buttonTag += '<svg aria-label="댓글 더 읽어들이기" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>댓글 더 읽어들이기</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="7.001" x2="17.001" y1="12.005" y2="12.005"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.001" x2="12.001" y1="7.005" y2="17.005"></line></svg>'
+        buttonTag += '</div>'
+      }
+      $("#post-reply-container").append(buttonTag);
+
     })
   }
 
@@ -632,12 +675,10 @@
       searchResult += '<a href="/sidebar/' + searchInfo.dtoList[i].searchName + '"' +
               ' class=comment-bold>' + searchInfo.dtoList[i].searchName + '</a>';
       searchResult += '</div>';
-      searchResult += '<div class="user-chat-button-box">';
-      searchResult += '</div>';
       searchResult += '</div>';
     }
     if (searchResult =="")
-      searchResult += "검색한 사용자가 없습니다."
+      searchResult += "<div class='not-exist-list'>검색한 사용자가 없습니다.</div>"
     return searchResult;
   }
   async function showInviteSearchInfo(userName, loginName, inviteSearchTerm){
@@ -650,8 +691,6 @@
         dataType: "JSON",
         traditional: true,
       })
-      console.log(loginName, inviteSearchTerm, inviteListPage)
-      console.log(response)
       inviteListTotalPage = response.end;
       inviteListPage += 1
       createInviteUserInfo(response);
@@ -696,19 +735,24 @@
         Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
                 ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
-      Result += '<div class="user-name-box">'
+      Result += '<div class="user-name-box-friend">'
       Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
               ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
               ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
       Result += '</div>';
-      Result += '<div class="user-friend-button-box2">';
-      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button follow'>친구 삭제</button>"
-      Result += '</div>';
       Result += '<div class="user-chat-button-box2">';
       Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendEmail + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
       Result += '</div>';
+      Result += '<div class="user-friend-button-box2">';
+      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button follow'>친구 삭제</button>"
+      Result += '</div>';
       Result += '</div>';
     }
+    if (Result == "")
+    {
+      Result += '<div class="not-exist-list">현재 등록된 친구가 없습니다. </div>'
+    }
+
     return Result;
   }
 
@@ -724,12 +768,11 @@
         Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
                 ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
-      Result += '<div class="user-name-box">'
+      Result += '<div class="user-name-box-multifriend">'
       Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
               ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
       Result += '</div>';
-      Result += '<div class="user-chat-button-box">';
-      console.log(profileAndFriendMap.dtoList[i].status)
+      Result += '<div class="friend-delete-button-box">';
 
       if (profileAndFriendMap.dtoList[i].status == "NOTTING")
         Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Follow-button follow'>친구 요청</button>"
@@ -742,35 +785,44 @@
       Result += '</div>';
       Result += '</div>';
     }
+    if (Result == "")
+    {
+      Result += '<div class="not-exist-list">등록된 친구가 없습니다.</div>'
+    }
       $('#friend-List-UserBox').append(Result);
   }
 
   function createInviteUserInfo(profileAndFriendMap){
     var Result = "";
-    console.log(profileAndFriendMap)
+    var imageUrl
     for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
-      Result += '<div class="user-info-box">';
-      Result += '<div class="profile-box">';
-      if(profileAndFriendMap.dtoList[i].profileImage ==null)
-        Result += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture">'
+      if(profileAndFriendMap.dtoList[i].profileImage !=null)
+        imageUrl = profileAndFriendMap.dtoList[i].profileImage.imageURL
       else
-        Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture">'
+        imageUrl = "outprofile.png"
+
+      Result += '<div class="user-info-box invite-info">';
+      Result += '<div class="profile-box">';
+      Result += '<img src ="/display?fileName=' + imageUrl + '/"' +
+              ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
-      Result += '<div class="user-name-box">'
+      Result += '<div class="user-name-box-invite">'
       Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
               ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
       Result += '</div>';
       Result += '<div class="user-chat-button-box">';
       if (dictionaryInvite[profileAndFriendMap.dtoList[i].friendName] == null)
         Result += "<button data-name='" + profileAndFriendMap.dtoList[i].friendName +
-                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' class='invite-button follow'> + </button>";
+                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' data-url='" + imageUrl + "' class='invite-button follow'> + </button>";
       else
         Result += "<button data-name='" + profileAndFriendMap.dtoList[i].friendName +
-                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' class='invite-cancel-button follow'> - </button>";
+                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' data-url='" + imageUrl + "' class='invite-cancel-button follow'> - </button>";
       Result += '</div>';
       Result += '</div>';
+    }
+    if (Result == "")
+    {
+      Result += '<div class="not-exist-list">검색한 친구가 없습니다.</div>'
     }
     $('#inviteSearchResult').append(Result);
   }
@@ -787,14 +839,18 @@
         Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
                 ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
-      Result += '<div class="user-name-box">';
+      Result += '<div class="user-name-box waiting-info">';
       Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
               ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
       Result += '</div>';
-      Result += '<div class="user-chat-button-box">';
+      Result += '<div class="user-chat-button-box2">';
       Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Accept-button follow'>친구 수락</button>"
       Result += '</div>';
       Result += '</div>';
+    }
+    if (Result == "")
+    {
+      Result += '<div class="not-exist-list">현재 요청받은 친구가 없습니다.</div>'
     }
     return Result;
   }
@@ -806,8 +862,10 @@
        dataType: "JSON",
        data: {loginEmail: loginEmail, roomId: roomId},
        success: function (result){
-         console.log(result)
-         $('#num-'+roomId).html(result);
+         if (result > 300)
+           $('#num-'+roomId).html("300+");
+         else
+           $('#num-'+roomId).html(result);
        }
      })
 
@@ -828,24 +886,37 @@
         Result += '<img src ="/display?fileName=outprofile.png/"' +
                 ' alt="Profile Picture" class="profile-picture">'
       Result += '</div>';
-      Result += '<div class ="user-name-box">';
-      if (nameLength > 1)
-        Result += '<a class ="user-name">' +result.dtoList[i].friendName.slice(0, 12)+ '... '+ nameLength + '</a>';
+      Result += '<div class ="chat-name-container">'
+      Result += '<div class ="user-name-box-chatlist">';
+      if (nameLength > 1) {
+        Result += '<div class ="user-name">' + result.dtoList[i].friendName.slice(0, 12) + '  ... </div>';
+        Result += '<div class ="chat-user-num">+' + nameLength + '</div>'
+      }
       else
-        Result += '<a class ="user-name">' +result.dtoList[i].friendName +'</a>';
+        Result += '<div class ="user-name">' +result.dtoList[i].friendName +'</div>';
       Result += '</div>';
       Result += '<div class ="last-chat-comment">';
-      Result += result.dtoList[i].lastChat;
+      if (result.dtoList[i].lastChat.length > 20)
+        Result += result.dtoList[i].lastChat.slice(0, 20) + '...';
+      else
+        Result += result.dtoList[i].lastChat
       Result += '</div>';
+      Result += '</div>';
+      Result += '<div class="chat-tiem-num-container">'
       Result += '<div class ="last-chat-time">';
-      Result += result.dtoList[i].lastChatTime.slice(5,10) + " " + " " + result.dtoList[i].lastChatTime.slice(11, 16);
+      // Result += result.dtoList[i].lastChatTime.slice(5,10) + " " + " " + result.dtoList[i].lastChatTime.slice(11, 16);
+      Result += "오후 10:31"
       Result += '</div>';
-      Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].roomId + '">';
+      Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].roomId + '">' + '</div>';
       Result += '</div>';
       Result += '<div class ="user-chat-button-box3">';
       Result += '<button room-id =' + result.dtoList[i].roomId + ' class=\"request-Chatroom-button\">대화창 열기</button>'
       Result += '</div>';
       Result += '</div>';
+    }
+    if (Result == "")
+    {
+      Result += '<div class="not-exist-list">현재 등록된 채팅방이 없습니다.</div>'
     }
 
     return Result;
@@ -1060,7 +1131,7 @@
           Result += '<img src = "/display?fileName=outprofile.png/"' +
                   ' alt="Profile Picture" class="profile-picture">'
         else
-          Result += '<img src ="/display?fileName=' + result.image.imageURL + '/"' +
+          Result += '<img src ="/display?fileName=' + result.image + '/"' +
                   ' alt="Profile Picture" class="profile-picture">'
         Result += '</div>';
         Result += '<div class="user-name-box">'
@@ -1189,8 +1260,8 @@
   }
   async function connect(RoomID) {
     await makeEmailToName(RoomID);
-    console.log(dictionary)
     var socket = new SockJS('/ws');
+    var loginName = '[[${memberDTO.name}]]';
     stompClient = Stomp.over(socket);
     var connectPromise = new Promise((resolve, reject) => {
       stompClient.connect({'roomId': RoomID}, function (frame) {
@@ -1205,7 +1276,6 @@
               type: "POST",
               data:{roomId :RoomID, loginEmail:dictionaryInverse[result.body]},
             })
-            console.log(disConnectTime)
             // ajax get disconnection time by room id
             $('.status-true').each(function() {
 
@@ -1215,19 +1285,26 @@
               let readStatusFlag = false
               if (timeValue > disConnectTime)
                 readStatusFlag = true;
-              console.log(timeValue, nameValue, readNumValue, disConnectTime, readStatusFlag)
-
               if (readStatusFlag && result.body != nameValue){
                 $(this).text(readNumValue-1);
               }
-              // timeValue > disconnectionTIme 이고, dataname이 아닌걸 골라서 -1하기
-              // $(this).attr('data-name', nameValue - 1);
             });
-            //connect time을 알아내고,
-            // connect time lastconnect time 이후에 해당하는걸 모두 -1을 할까?
-            // chat message의 lastconnect time은 어떻게 알 수 있을까?
-            // 고민되네
           }
+        })
+        stompClient.subscribe('/topic/chat/inviteLoad/' + RoomID, async function (result){
+          var invitedList = JSON.parse(result.body)
+          var names = ""
+          $.each(invitedList, function (idx, name){
+            names += name + ', '
+          })
+          result = ""
+          result += '<div class="invite-list-container">'
+          result += '<div class="invite-user-list">' + names.slice(0, names.length-2) + '님이 초대되었습니다.</div>'
+          result += '</div>'
+          await makeEmailToName(RoomID);
+          $('#messages-box').append(result);
+
+
         })
         resolve();
       }, function (erorr){
@@ -1235,7 +1312,6 @@
       });
     });
     connectPromise.then(()=>{
-      var loginName = '[[${memberDTO.name}]]';
       stompClient.send("/app/chat/accessLoad/"+roomID, {}, loginName);
     })
 
@@ -1309,7 +1385,6 @@ async function showChatInfoBefore(roomID, loginEmail){
         dataType: 'JSON',
         data: {roomID: roomID, loginEmail: loginEmail}
       });
-      console.log(response)
       if (response.dtoList.length > 0) {
         beforeDayCheck = response.dtoList[0].regDate.slice(0, 10);
         afterDayCheck = response.dtoList[0].regDate.slice(0, 10);
@@ -1341,7 +1416,6 @@ async function showChatInfoBefore(roomID, loginEmail){
         data: {roomID: roomID, loginEmail:loginEmail},
       })
       chatPage += 1
-      console.log(response)
       $.each(response.dtoList, function (idx, chatMessageDTO) {
         showChatMessage(dictionary[chatMessageDTO.senderEmail], chatMessageDTO.content,
                 chatMessageDTO.regDate, chatMessageDTO.readStatus, true, false, chatMessageDTO.profileImageUrl);
@@ -1400,7 +1474,6 @@ async function showChatInfoBefore(roomID, loginEmail){
       });
 
       $('#cancel-profile-image').off('click').on('click', function () {
-        console.log("삭제");
         var loginName = '[[${memberDTO.name}]]';
         $.ajax({
           url: "/profileImage/deleteProfile",
@@ -1436,6 +1509,7 @@ async function showChatInfoBefore(roomID, loginEmail){
 
     $(document).on('click', '#search-user', function (){
       $('#SearchModal').css('z-index', 1060).modal('show');
+      $('#searchResult').append('<div class="not-exist-list">사용자를 검색해주세요.</div>')
 
       document.getElementById('searchForm').onsubmit = function(event) {
         event.preventDefault();
@@ -1457,7 +1531,7 @@ async function showChatInfoBefore(roomID, loginEmail){
       });
     })
 
-    $(".friendship-requested").click(function (){
+    $("#friendship-requested").click(function (){
       $('#friendShip-requestedModal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
       showFriendProfileWaitingImageList(loginName, requestedPage);
@@ -1468,7 +1542,7 @@ async function showChatInfoBefore(roomID, loginEmail){
       })
 
     })
-    $(".friendship-accepted").click(function (){
+    $("#friendship-accepted").click(function (){
       $('#friendShip-acceptedModal').modal('show');
       var loginName = '[[${memberDTO.name}]]';
       showFriendProfileAcceptedImageList(loginName, acceptedPage)
@@ -1510,7 +1584,7 @@ async function showChatInfoBefore(roomID, loginEmail){
 
       })
     });
-    $(".chatting-roomList").click(function (){
+    $("#chatting-roomList").click(function (){
       $('#chatroom-Modal').modal('show');
       var loginEmail = '[[${memberDTO.email}]]';
       showChatroomAndProfileImageList(loginEmail);
@@ -1537,14 +1611,12 @@ async function showChatInfoBefore(roomID, loginEmail){
     }
     async function showPostList(userName, postPage){
       try {
-        console.log(userName, postPage)
         const response = await $.ajax({
           url: "/post/getPostInfo?page=" + postPage,
           type: "POST",
           data: {userName: userName},
           dataType: "JSON",
         })
-        console.log(response)
         postTotalPage = response.end;
         createPostInfo(response);
 
@@ -1556,7 +1628,6 @@ async function showChatInfoBefore(roomID, loginEmail){
     $(function (){
       async function postScrollPaging(){
         let val = scrollContainerPost.scrollHeight - scrollContainerPost.scrollTop
-        console.log(val, scrollContainerPost.clientHeight,  scrollContainerPost.clientHeight, postTotalPage, postPage, postFlag)
         if (scrollContainerPost.clientHeight -100 <= val  &&  val <= scrollContainerPost.clientHeight +100) {
           if (postTotalPage >= postPage && postFlag) {
             postFlag = false
@@ -1569,7 +1640,6 @@ async function showChatInfoBefore(roomID, loginEmail){
       postPage +=1
       showPostList(userName, postPage)
       const scrollContainerPost = document.getElementById("post-frame")
-      console.log(scrollContainerPost)
       const debouncedPagingPost = debounce(postScrollPaging, 300)
       scrollContainerPost.addEventListener('scroll', debouncedPagingPost)
 
@@ -1673,7 +1743,6 @@ async function showChatInfoBefore(roomID, loginEmail){
       async function inviteScrollPaging(){
 
         let val = scrollContainerInvite.scrollHeight - scrollContainerInvite.scrollTop
-        console.log(val)
         if (scrollContainerInvite.clientHeight -15 <= val  &&  val <= scrollContainerInvite.clientHeight +15) {
           if (inviteListTotalPage >= inviteListPage && inviteFlag) {
             inviteFlag = false
@@ -1686,7 +1755,6 @@ async function showChatInfoBefore(roomID, loginEmail){
       async function inviteSeacrhScrollPaging(){
 
         let val = scrollContainerInvite.scrollHeight - scrollContainerInvite.scrollTop
-        console.log(val)
         if (scrollContainerInvite.clientHeight -15 <= val  &&  val <= scrollContainerInvite.clientHeight +15) {
           if (inviteListTotalPage >= inviteListPage && inviteFlag) {
             inviteFlag = false
@@ -1706,7 +1774,6 @@ async function showChatInfoBefore(roomID, loginEmail){
         showInviteUserList(userName, loginName, inviteListPage);
         scrollContainerInvite.addEventListener('scroll', debuncedPagingInvite);
         document.getElementById('inviteSearchForm').onsubmit = function (event){
-          console.log("@@@@")
           event.preventDefault();
           inviteSearchTerm = document.getElementById('inviteSearchInput').value;
           document.getElementById('inviteSearchInput').value = "";
@@ -1722,7 +1789,7 @@ async function showChatInfoBefore(roomID, loginEmail){
       $('#inviteModal').on('hidden.bs.modal', function (){
         inviteListPage = 1;
         inviteListTotalPage = null;
-        $('#invite-dictionary').html("");
+        $('#invite-container').html("");
         dictionaryInvite = {}
         dictionaryInviteEmail = {}
         $('#inviteSearchResult').html("");
@@ -1734,30 +1801,44 @@ async function showChatInfoBefore(roomID, loginEmail){
       $(document).on('click', '.invite-button, .invite-cancel-button', function (){
         var inviteName = $(this).attr('data-name');
         var inviteEmail = $(this).attr('data-email');
+        var inviteUrl = $(this).attr('data-url')
         var $this = $(this);
         if ($this.hasClass('invite-button')) {
           $this.removeClass('invite-button').addClass('invite-cancel-button');
           $this.text(' - ');
-          $('#invite-dictionary').append("<a user-name='" + inviteName + "'>"+ inviteName + " " +"</a>");
+          function createInviteTag(inviteName, imageUrl){
+            let nameSlice
+            if (inviteName.length > 5)
+              nameSlice = inviteName.slice(0,5) + ' ...';
+            else
+              nameSlice = inviteName
+            result = "";
+            result += '<div class="invite-profile-container">'
+            result += '<img src="/display?fileName=' + imageUrl +'/" class="invite-profile" user-name="' + inviteName + '">';
+            result += '<div class="invite-profile-name" user-name="' + inviteName +'">' + nameSlice + '</div>'
+            result += '</div>'
+            return resultinvite-container
+          }
+
+          // $('#invite-container').append("<a user-name='" + inviteName + "'>"+ inviteName + " " +"</a>");
+          $('#invite-container').append(createInviteTag(inviteName, inviteUrl));
           dictionaryInvite[inviteName] = true;
           dictionaryInviteEmail[inviteEmail] = true;
 
         } else {
           $this.removeClass('invite-cancel-button').addClass('invite-button');
           $this.text(' + ');
-          $('#invite-dictionary').find("a[user-name='" + inviteName + "']").remove();
+          $('#invite-container').find("div[user-name='" + inviteName + "']").remove();
+          $('#invite-container').find("img[user-name='" + inviteName + "']").remove();
           delete dictionaryInvite[inviteName]
           delete dictionaryInviteEmail[inviteEmail]
         }
       })
 
       $('#invite-submit').click(function (){
-        console.log(roomID)
-
         let userNames = Object.keys(dictionaryInvite);
         let userEmails = Object.keys(dictionaryInviteEmail);
 
-        console.log(userEmails)
         $.ajax({
           url: '/chat/updateUserAndRoom',
           type: 'POST',
@@ -1765,6 +1846,9 @@ async function showChatInfoBefore(roomID, loginEmail){
           traditional: true,
           success: function (response){
             console.log("성공")
+            var loginName = '[[${memberDTO.name}]]';
+            stompClient.send("/app/chat/inviteLoad/"+roomID, {}, JSON.stringify(userNames));
+            $('#inviteModal').modal('hide');
           }
         })
       })
@@ -1774,13 +1858,24 @@ async function showChatInfoBefore(roomID, loginEmail){
 
 
   $(function (){
-    var commentBox = document.querySelector('#comment-box');
+    var commentBox = document.querySelector('#reply-box');
     var userEmail = '[[${memberDTO.email}]]';
     var userName = '[[${memberDTO.name}]]';
     var loadEmail = '[[${userEmail}]]';
     $(document).on('click', '.post-list-img',function() {
+      commentBox.addEventListener('input', function (){
+
+        var text = commentBox.value.trim()
+        var button = document.querySelector('#reply-send')
+
+        if (text === ""){
+          button.classList.remove('active')
+        }
+        else {
+          button.classList.add('active')
+        }
+      })
       $('#myModal').modal('show');
-      var imageUrl = $(this).data('url');
       var postId = $(this).data('pid');
       $.ajax({
         url:'/post/postInfoWithImage',
@@ -1832,11 +1927,25 @@ async function showChatInfoBefore(roomID, loginEmail){
         }
       })
       showReplyListInPost(postId);
+      $(document).on('click', '.reply-paging-button', function (){
+      // $('.reply-paging-button').off('click').on('click', function (){
+        replyPage +=1
+        console.log("????")
+        showReplyListInPost(postId)
+        this.remove()
+      })
 
+      document.getElementById('reply-form').onsubmit = function (event){
+        event.preventDefault();
+        if (commentBox.value.trim() === "")
+          return ;
+        sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
+      }
       $('#reply-send').off('click').on('click', function (){
+        if (commentBox.value.trim() === "")
+          return ;
         sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
       });
-
 
       $('#myModal').on('click', '#post-option', function (){
         $('#post-option-modal').css('z-index', 1051).modal('show');
@@ -1854,7 +1963,10 @@ async function showChatInfoBefore(roomID, loginEmail){
 
       $('#myModal').on('hidden.bs.modal', function () {
         $('#post-reply-container').html("");
-
+        $('#reply-box').val('');
+        $('#reply-send').removeClass("active")
+        replyPage = 1;
+        replyTotalPage = null;
       });
 
     });
