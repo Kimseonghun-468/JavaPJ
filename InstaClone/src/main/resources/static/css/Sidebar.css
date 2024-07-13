@@ -304,7 +304,6 @@ textarea {
     flex-basis: 800px;
     background-color: #000000;
     aspect-ratio: 1/1;
-    border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
 }
 
@@ -317,8 +316,8 @@ textarea {
     min-width: 405px;
     width: 405px;
     min-height: 450px;
+    max-height: 800px;
     background-color: #ffffff;
-    border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
 
 }
@@ -453,11 +452,10 @@ textarea {
     align-self: end;
 }
 .option-modal-content {
-    background-color: #fefefe; /* 모달 내용의 배경색 */
-    margin: 15% auto; /* 중앙 정렬 */
-    padding: 20px; /* 패딩으로 내용과 경계 사이 여백 제공 */
-    border: 1px solid #888; /* 테두리 */
-    width: 40%; /* 너비 */
+    background-color: #fefefe;
+    margin: 0 auto;
+    width: 400px;
+    border-radius: 12px;
 }
 
 .option-modal-body h3 {
@@ -645,6 +643,8 @@ textarea {
     width: 70px;
     margin-left: 16px;
     opacity: 0.5;
+    font-size: 14px;
+    text-align: end;
 }
 
 .chat-name-container{
@@ -952,3 +952,41 @@ button:hover {
     font-size: 24px;
     font-weight: 700;
 }
+
+.option-modal-body {
+    text-align: center;
+    padding: 4px 8px;
+    font-size: 14px;
+    border-top: 1px solid #dedddd;
+    font-weight: 700;
+    height: 48px;
+    align-content: center;
+}
+
+.option-modal-title{
+    font-size: 20px;
+    font-weight: 500;
+    padding: 32px;
+    height: 94px;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.post-header-container{
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    height: 42px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom: 1px solid #dbdbdb;
+    max-width: 1205px;
+    min-width: 740px;
+    margin: auto;
+}
+

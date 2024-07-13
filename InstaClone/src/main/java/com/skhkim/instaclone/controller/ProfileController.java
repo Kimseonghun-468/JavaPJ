@@ -85,9 +85,17 @@ public class ProfileController {
 
 
     @PostMapping("/sidebar/post/{name}")
-    public String sidevar(@PathVariable("name") String name, PostDTO postDTO) throws UnsupportedEncodingException {
+    public String postRegister(@PathVariable("name") String name, PostDTO postDTO) throws UnsupportedEncodingException {
         log.info("PostDTO : " + postDTO);
         Long pno = postService.register(postDTO);
+        String encodedName = URLEncoder.encode(name, "UTF-8");
+        return "redirect:/sidebar/"+encodedName;
+    }
+
+    @PostMapping("/sidebar/postModify/{name}")
+    public String postModify(@PathVariable("name") String name, PostDTO postDTO) throws UnsupportedEncodingException {
+        log.info("PostDTO : " + postDTO);
+        postService.modifyTitle(postDTO);
         String encodedName = URLEncoder.encode(name, "UTF-8");
         return "redirect:/sidebar/"+encodedName;
     }

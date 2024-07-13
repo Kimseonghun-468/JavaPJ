@@ -20,6 +20,8 @@ public interface PostService {
     PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String name);
     Long register(PostDTO postDTO);
 
+    void modifyTitle(PostDTO postDTO);
+
     Long getPostNumber(String email);
 
     void removePost(Long pno);

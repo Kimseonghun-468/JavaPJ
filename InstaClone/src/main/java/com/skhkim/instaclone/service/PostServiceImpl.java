@@ -53,6 +53,15 @@ public class PostServiceImpl implements PostService {
 
             return post.getPno();
     }
+
+    @Override
+    @Transactional
+    public void modifyTitle(PostDTO postDTO){
+        Map<String, Object> entityMap = dtoToEntity(postDTO);
+        Post post = (Post) entityMap.get("post");
+        postRepository.save(post);
+    }
+
     @Override
     public PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String name){
         Pageable pageable = postPageRequestDTO.getPageable();

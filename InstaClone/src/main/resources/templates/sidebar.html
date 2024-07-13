@@ -47,6 +47,14 @@
       </svg>
       <span>요청</span>
     </div>
+
+
+    <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
+    <div class="menu-item uploadButton-post" th:if="${memberDTO.name == userName}">
+      <svg aria-label="새로운 게시물" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>새로운 게시물</title><path d="M2 12v3.45c0 2.849.698 4.005 1.606 4.944.94.909 2.098 1.608 4.946 1.608h6.896c2.848 0 4.006-.7 4.946-1.608C21.302 19.455 22 18.3 22 15.45V8.552c0-2.849-.698-4.006-1.606-4.945C19.454 2.7 18.296 2 15.448 2H8.552c-2.848 0-4.006.699-4.946 1.607C2.698 4.547 2 5.703 2 8.552Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="6.545" x2="17.455" y1="12.001" y2="12.001"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.003" x2="12.003" y1="6.545" y2="17.455"></line></svg>
+      <span>업로드</span>
+    </div>
+
     <a th:href="@{/sidebar/{name}(name=${memberDTO.name})}" class="menu-item">
       <svg width="24" height="24" viewBox="0 0 24 24">
         <path d="M12 2c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4m0-2C9.24 0 7 2.24 7 5s2.24 5 5 5 5-2.24 5-5S14.76 0 12 0zm7 22v-2c0-1.11-.89-2-2-2H7c-1.11 0-2 .89-2 2v2H0v2h24v-2h-5z"></path>
@@ -54,11 +62,7 @@
       <span>프로필</span>
     </a>
     <a th:href="@{/userinfo/{name}(name=${memberDTO.name})}" class="menu-item">
-      <svg height="24" viewBox="0 0 24 24" width="24">
-      <path d="M2 12v3.45c0 2.849.698 4.005 1.606 4.944.94.909 2.098 1.608 4.946 1.608h6.896c2.848 0 4.006-.7 4.946-1.608C21.302 19.455 22 18.3 22 15.45V8.552c0-2.849-.698-4.006-1.606-4.945C19.454 2.7 18.296 2 15.448 2H8.552c-2.848 0-4.006.699-4.946 1.607C2.698 4.547 2 5.703 2 8.552Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-        <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="6.545" x2="17.455" y1="12.001" y2="12.001"></line>
-        <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.003" x2="12.003" y1="6.545" y2="17.455"></line>
-      </svg>
+      <svg aria-label="설정" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>설정</title><circle cx="12" cy="12" fill="none" r="8.635" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><path d="M14.232 3.656a1.269 1.269 0 0 1-.796-.66L12.93 2h-1.86l-.505.996a1.269 1.269 0 0 1-.796.66m-.001 16.688a1.269 1.269 0 0 1 .796.66l.505.996h1.862l.505-.996a1.269 1.269 0 0 1 .796-.66M3.656 9.768a1.269 1.269 0 0 1-.66.796L2 11.07v1.862l.996.505a1.269 1.269 0 0 1 .66.796m16.688-.001a1.269 1.269 0 0 1 .66-.796L22 12.93v-1.86l-.996-.505a1.269 1.269 0 0 1-.66-.796M7.678 4.522a1.269 1.269 0 0 1-1.03.096l-1.06-.348L4.27 5.587l.348 1.062a1.269 1.269 0 0 1-.096 1.03m11.8 11.799a1.269 1.269 0 0 1 1.03-.096l1.06.348 1.318-1.317-.348-1.062a1.269 1.269 0 0 1 .096-1.03m-14.956.001a1.269 1.269 0 0 1 .096 1.03l-.348 1.06 1.317 1.318 1.062-.348a1.269 1.269 0 0 1 1.03.096m11.799-11.8a1.269 1.269 0 0 1-.096-1.03l.348-1.06-1.317-1.318-1.062.348a1.269 1.269 0 0 1-1.03-.096" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></path></svg>
       <span>회원 정보</span>
     </a>
     <a th:href="@{/logout}" class="menu-item">
@@ -121,17 +125,12 @@
         </section>
         <div class="up-temp3">
           <div class="temp3">
-            <!--          <ul class="pagination justify-content-center align-items-center" id="post-page">-->
-            <!--            <li th:class="'page-item ' + ${result.page == page?'active':''}"-->
-            <!--                th:each="page: ${result.pageList}">-->
-            <!--              <button class="page-link post-page-button" th:data-name="|${page}|">-->
-            <!--                [[${page}]]-->
-            <!--              </button>-->
-            <!--            </li>-->
-            <!--          </ul>-->
-            <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>
-            <button th:if="${memberDTO.name == userName}" class="uploadButton-post">게시물 업로드</button>
 
+<!--            <div class="upload-container">-->
+<!--              <svg aria-label="새로운 게시물" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>새로운 게시물</title><path d="M2 12v3.45c0 2.849.698 4.005 1.606 4.944.94.909 2.098 1.608 4.946 1.608h6.896c2.848 0 4.006-.7 4.946-1.608C21.302 19.455 22 18.3 22 15.45V8.552c0-2.849-.698-4.006-1.606-4.945C19.454 2.7 18.296 2 15.448 2H8.552c-2.848 0-4.006.699-4.946 1.607C2.698 4.547 2 5.703 2 8.552Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="6.545" x2="17.455" y1="12.001" y2="12.001"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.003" x2="12.003" y1="6.545" y2="17.455"></line></svg>-->
+<!--              <input type="file" th:if="${memberDTO.name == userName}" class="fileInput post-Image-File" style="display: none;" multiple>-->
+<!--              <button th:if="${memberDTO.name == userName}" class="uploadButton-post">게시물 업로드</button>-->
+<!--            </div>-->
             <footer class="profile-footer">
               <span>© 2024 Instagram Clone</span>
             </footer>
@@ -178,11 +177,14 @@
 <div id="reply-option-modal" class="modal-custom">
   <div class="option-modal-content">
 
+<!--    <div class="option-modal-title">-->
+<!--      <div class="text-center">Reply Option</div>-->
+<!--    </div>-->
     <div class="option-modal-body">
-      <h3 id="remove-reply">삭제</h3>
+      <div id="remove-reply" style="color: red;">삭제</div>
     </div>
-    <div class="option-modal-footer">
-      <h3 id="cancel-reply">취소</h3>
+    <div class="option-modal-body">
+      <div id="cancel-reply">취소</div>
     </div>
   </div>
 </div>
@@ -190,11 +192,17 @@
 <div id="post-option-modal" class="modal-custom">
   <div class="option-modal-content">
 
+<!--    <div class="option-modal-title">-->
+<!--      <div class="text-center">Post Option</div>-->
+<!--    </div>-->
     <div class="option-modal-body">
-      <h3 id="remove-post">삭제</h3>
+      <div id="remove-post" style="color:red;">삭제</div>
     </div>
-    <div class="option-modal-footer">
-      <h3 id="cancel-post">취소</h3>
+    <div class="option-modal-body">
+      <div id="post-modify-button">수정</div>
+    </div>
+    <div class="option-modal-body">
+      <div id="cancel-post">취소</div>
     </div>
   </div>
 </div>
@@ -202,11 +210,17 @@
 <div id="profile-option-modal" class="modal-custom">
   <div class="option-modal-content">
 
-    <div class="option-modal-body">
-      <h3 id="upload-profile-image">등록</h3>
+    <div class="option-modal-title">
+      <div class="text-center">프로필 사진 바꾸기</div>
     </div>
-    <div class="option-modal-footer">
-      <h3 id="cancel-profile-image">삭제</h3>
+    <div class="option-modal-body">
+      <div id="upload-profile-image" style="color: cornflowerblue">사진 업로드</div>
+    </div>
+    <div class="option-modal-body">
+      <div id="cancel-profile-image" style="color: red">현재 사진 삭제</div>
+    </div>
+    <div class="option-modal-body">
+      <div id="aaa">취소</div>
     </div>
   </div>
 </div>
@@ -220,7 +234,7 @@
 
 <div id="myModal" class="modal-custom">
   <div class="modal-content-post">
-    <div class="modal-content-post-imagebox">
+    <div class="modal-content-post-imagebox" style="border-top-left-radius: 12px;">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner" id="carousel-image-box">
 
@@ -235,7 +249,7 @@
         </a>
       </div>
     </div>
-    <div class="comment-section">
+    <div class="comment-section" style="border-top-right-radius: 12px">
       <div class="comment-header">
         <div class="reply-main" style="align-items: center;">
           <div class="reply-image-container">
@@ -248,7 +262,8 @@
             <div class="reply-name">[[${userName}]]</div>
           </div>
         </div>
-        <span th:if="${memberDTO.name == userName}" class="options" id="post-option">...</span>
+        <span th:if="${memberDTO.name == userName}" class="options" id="post-option" style="margin-right: 16px;
+    font-size: 28px;">...</span>
       </div>
 
 
@@ -305,7 +320,7 @@
 
       <form id="reply-form">
         <div class="comment-input">
-          <input type="text" placeholder="댓글 달기..." id="reply-box">
+          <textarea class="text-filed" placeholder="댓글 달기..." id="reply-box"></textarea>
           <span id="reply-send" class="reply-send-button">게시</span>
         </div>
       </form>
@@ -316,41 +331,110 @@
 
 
 <div id="post-upload-modal" class="modal-custom">
-  <div class="modal-content-post">
-    <div class="modal-content-post-imagebox">
-      <div id="uploadCarouselControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner" id = "upload-carousel-image-box">
-
-        </div>
-        <a class="carousel-control-prev" href="#uploadCarouselControls" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <!--        <span class="sr-only">Previous</span>-->
-        </a>
-        <a class="carousel-control-next" href="#uploadCarouselControls" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <!--        <span class="sr-only">Next</span>-->
-        </a>
-      </div>
+  <div class="modal-content-post" style="display: block;">
+    <div class="post-header-container">
+      <div>새 게시물 만들기</div>
     </div>
-    <div class="comment-section">
-      <div class="comment-header">
-        <span class="comment-username">[[${userName}]]</span>
+    <div style="display: flex; place-content: center; min-width: 740px">
+      <div class="modal-content-post-imagebox">
+    <div id="uploadCarouselControls" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner" id = "upload-carousel-image-box">
+
       </div>
-
-      <form class="upload-form" id=upload-form th:action="@{/sidebar/post/{userName}(userName=${memberDTO.name})}" th:method="post">
-        <div class="upload-title-input">
-          <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
-        </div>
-        <div class="upload-button-box">
-            <input type="hidden" name="email" th:value="${memberDTO.email}">
-            <div id="upload-form-image-box">
-
+      <a class="carousel-control-prev" href="#uploadCarouselControls" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <!--        <span class="sr-only">Previous</span>-->
+      </a>
+      <a class="carousel-control-next" href="#uploadCarouselControls" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <!--        <span class="sr-only">Next</span>-->
+      </a>
+    </div>
+  </div>
+      <div class="comment-section">
+        <div class="comment-header">
+          <div class="reply-main" style="align-items: center;">
+            <div class="reply-image-container">
+              <img th:if ="${profileImageDTO.path != null}"
+                   th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|" class="reply-profile">
+              <img th:if ="${profileImageDTO.path == null}"
+                   th:src ="|/display?fileName=outprofile.png|" class="reply-profile">
             </div>
-            <button type="button" class="btn btn-primary" id="upload-post-button">공유하기</button>
+            <div class="reply-wrapper">
+              <div class="reply-name">[[${userName}]]</div>
+            </div>
+          </div>
         </div>
 
-      </form>
+    <form class="upload-form" id=upload-form th:action="@{/sidebar/post/{userName}(userName=${memberDTO.name})}" th:method="post">
+      <div class="upload-title-input">
+        <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
+      </div>
+      <div class="upload-button-box">
+          <input type="hidden" name="email" th:value="${memberDTO.email}">
+        <div id="upload-form-image-box">
+
+        </div>
+          <button type="button" class="btn btn-primary" id="upload-post-button">공유하기</button>
+      </div>
+
+    </form>
+  </div>
     </div>
+
+  </div>
+</div>
+
+<div id="post-modify-modal" class="modal-custom">
+  <div class="modal-content-post" style="display: block;">
+    <div class="post-header-container">
+      <div>게시물 수정</div>
+    </div>
+    <div style="display: flex; place-content: center; min-width: 740px;">
+      <div class="modal-content-post-imagebox">
+        <div id="uploadCarouselControls" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner" id = "modify-carousel-image-box">
+
+          </div>
+          <a class="carousel-control-prev" href="#uploadCarouselControls" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <!--        <span class="sr-only">Previous</span>-->
+          </a>
+          <a class="carousel-control-next" href="#uploadCarouselControls" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <!--        <span class="sr-only">Next</span>-->
+          </a>
+        </div>
+      </div>
+      <div class="comment-section">
+        <div class="comment-header">
+          <div class="reply-main" style="align-items: center;">
+            <div class="reply-image-container">
+              <img th:if ="${profileImageDTO.path != null}"
+                   th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|" class="reply-profile">
+              <img th:if ="${profileImageDTO.path == null}"
+                   th:src ="|/display?fileName=outprofile.png|" class="reply-profile">
+            </div>
+            <div class="reply-wrapper">
+              <div class="reply-name">[[${userName}]]</div>
+            </div>
+          </div>
+        </div>
+
+        <form class="upload-form" id=post-modify-form th:action="@{/sidebar/postModify/{userName}(userName=${memberDTO.name})}" th:method="post">
+          <div class="upload-title-input">
+            <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
+          </div>
+          <div class="upload-button-box modify-value">
+            <input type="hidden" name="email" th:value="${memberDTO.email}">
+<!--            <input type="hidden" name="pno" th:value="${memberDTO.email}">-->
+            <button type="button" class="btn btn-primary" id="modify-post-button">수정하기</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -613,6 +697,25 @@
     divArea.append(str);
   }
 
+  function formatTimeDifference(pastTime) {
+    const currentTime = new Date();
+    const pastDate = new Date(pastTime);
+    const diffInMilliseconds = currentTime - pastDate;
+    const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInDays > 0) {
+      return `${diffInDays}일 전`;
+    } else if (diffInHours > 0) {
+      return `${diffInHours}시간 전`;
+    } else if (diffInMinutes > 0) {
+      return `${diffInMinutes}분 전`;
+    } else {
+      return `방금 전`;
+    }
+  }
+
   function createReplyhtmlbox(loginName, reply){
     var str = "";
     str += '<div class="reply-main">';
@@ -626,7 +729,7 @@
     str += '<div class="reply-name">' + reply.name + '</div>';
     str += '<div class="reply-content">' + reply.text + '</div>';
     str += '<div class="reply-side">';
-    str += '<div class="reply-time">' + reply.regDate + '</div>';
+    str += '<div class="reply-time">' + formatTimeDifference(reply.regDate) + '</div>';
     if (loginName == reply.name) {
       str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
     }
@@ -904,8 +1007,7 @@
       Result += '</div>';
       Result += '<div class="chat-tiem-num-container">'
       Result += '<div class ="last-chat-time">';
-      // Result += result.dtoList[i].lastChatTime.slice(5,10) + " " + " " + result.dtoList[i].lastChatTime.slice(11, 16);
-      Result += "오후 10:31"
+      Result += formatTimeDifference(result.dtoList[i].lastChatTime)
       Result += '</div>';
       Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].roomId + '">' + '</div>';
       Result += '</div>';
@@ -1163,7 +1265,7 @@
       tag += '<div class="content"> '+ message +'</div>';
       tag += '<div class="chatlog">'
       tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">' + readStatus + '</div>' ;
-      tag += '<div class="time"> '+ showedTime +'</div>';
+      tag += '<div class="time"> '+ showedTime.slice(0,8) +'</div>';
       tag += '</div>'
       tag += '</div>'
       tag += '</div>'
@@ -1180,7 +1282,7 @@
       tag += '<div class="chat-side-add">'
       tag += '<div class="chatlog">'
       tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">' + readStatus + '</div>' ;
-      tag += '<div class="time"> '+ showedTime +'</div>';
+      tag += '<div class="time"> '+ showedTime.slice(0,8) +'</div>';
       tag += '</div>'
       tag += '<div class="content"> '+ message +'</div>';
       tag += '</div>'
@@ -1447,8 +1549,6 @@ async function showChatInfoBefore(roomID, loginEmail){
         $('#upload-post-button').click(function() {
           alert('포스트 파일이 제출되었습니다.');
           $('#upload-form').submit();
-          $('.Post-File-Modal').modal('hide');
-
         });
       });
     });
@@ -1817,7 +1917,7 @@ async function showChatInfoBefore(roomID, loginEmail){
             result += '<img src="/display?fileName=' + imageUrl +'/" class="invite-profile" user-name="' + inviteName + '">';
             result += '<div class="invite-profile-name" user-name="' + inviteName +'">' + nameSlice + '</div>'
             result += '</div>'
-            return resultinvite-container
+            return result
           }
 
           // $('#invite-container').append("<a user-name='" + inviteName + "'>"+ inviteName + " " +"</a>");
@@ -1875,62 +1975,68 @@ async function showChatInfoBefore(roomID, loginEmail){
           button.classList.add('active')
         }
       })
+
+      function createPostImageTag(){
+        $.ajax({
+          url:'/post/postInfoWithImage',
+          type:"POST",
+          data: {pno:postId},
+          dataType:"JSON",
+          success: function (result){
+            var carouselTag = "";
+            var imageUrl = `[[${profileImageDTO.getImageURL()}]]`
+            if ('[[${profileImageDTO.path}]]' == '')
+              imageUrl = 'outprofile.png'
+            var loadName = '[[${userName}]]';
+            function createTitleTag(userName, title, imageUrl){
+              result = ""
+              result += '<div class="reply-title">'
+              result += '<img src="/display?fileName=' + imageUrl +'/" class="reply-profile">';
+              result += '</div>'
+              result += '<div class="reply-wrapper">'
+              result += '<div class="reply-name">' + userName + '</div>'
+              result += '<div class="reply-content">' + title + '</div>'
+              result += '<div class="reply-side">'
+              result += '<div class="reply-time">' + "10분" + '</div>'
+              result += '</div>'
+              result += '</div>'
+              result += '</div>'
+
+              return result;
+            }
+            $.each(result.imageDTOList, function (idx, imageInfo){
+              if(idx ==0)
+                carouselTag += '<div class="carousel-item active">'
+              else
+                carouselTag += '<div class="carousel-item">'
+              carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+              carouselTag += '</div>';
+
+            })
+            if(result.imageDTOList.length ==1){
+              $(".carousel-control-next").html("")
+              $(".carousel-control-prev").html("")
+            }
+            else{
+              $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
+              $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
+            }
+
+            // $("#post-title").html(titleTag)
+            $("#post-title-container").html(createTitleTag(loadName, result.title, imageUrl))
+            $("#carousel-image-box").html(carouselTag)
+            $("#modify-carousel-image-box").html(carouselTag)
+
+          }
+        })
+      }
+
       $('#myModal').modal('show');
       var postId = $(this).data('pid');
-      $.ajax({
-        url:'/post/postInfoWithImage',
-        type:"POST",
-        data: {pno:postId},
-        dataType:"JSON",
-        success: function (result){
-          var carouselTag = "";
-          var imageUrl = `[[${profileImageDTO.getImageURL()}]]`
-          var loadName = '[[${userName}]]';
-          function createTitleTag(userName, title, imageUrl){
-            result = ""
-            result += '<div class="reply-title">'
-            result += '<img src="/display?fileName=' + imageUrl +'/" class="reply-profile">';
-            result += '</div>'
-            result += '<div class="reply-wrapper">'
-            result += '<div class="reply-name">' + userName + '</div>'
-            result += '<div class="reply-content">' + title + '</div>'
-            result += '<div class="reply-side">'
-            result += '<div class="reply-time">' + "10분" + '</div>'
-            result += '</div>'
-            result += '</div>'
-            result += '</div>'
-
-            return result;
-          }
-          $.each(result.imageDTOList, function (idx, imageInfo){
-            if(idx ==0)
-              carouselTag += '<div class="carousel-item active">'
-            else
-              carouselTag += '<div class="carousel-item">'
-            carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
-            carouselTag += '</div>';
-
-          })
-          if(result.imageDTOList.length ==1){
-            $(".carousel-control-next").html("")
-            $(".carousel-control-prev").html("")
-          }
-          else{
-            $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
-            $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
-          }
-
-          // $("#post-title").html(titleTag)
-          $("#post-title-container").html(createTitleTag(loadName, result.title, imageUrl))
-          $("#carousel-image-box").html(carouselTag);
-
-        }
-      })
+      $("#carousel-image-box").html(createPostImageTag());
       showReplyListInPost(postId);
       $(document).on('click', '.reply-paging-button', function (){
-      // $('.reply-paging-button').off('click').on('click', function (){
         replyPage +=1
-        console.log("????")
         showReplyListInPost(postId)
         this.remove()
       })
@@ -1969,6 +2075,18 @@ async function showChatInfoBefore(roomID, loginEmail){
         replyTotalPage = null;
       });
 
+
+      $(document).on('click', '#post-modify-button',function() {
+        $('#post-modify-modal').modal('show')
+        $('#post-option-modal').modal('hide')
+
+        $('#modify-post-button').click(function() {
+          alert('포스트 파일이 수정되었습니다.');
+          $('.modify-value').append('<input type="hidden" name="pno" value=' + postId + '>')
+          $('#post-modify-form').submit();
+
+        });
+      })
     });
 
     $('#myModal').on('click', '.reply-option', function() {
@@ -1983,6 +2101,7 @@ async function showChatInfoBefore(roomID, loginEmail){
         $('#reply-option-modal').modal('hide');
       });
     });
+
 
 
   });
