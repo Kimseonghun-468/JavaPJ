@@ -1988,7 +1988,7 @@ async function showChatInfoBefore(roomID, loginEmail){
             if ('[[${profileImageDTO.path}]]' == '')
               imageUrl = 'outprofile.png'
             var loadName = '[[${userName}]]';
-            function createTitleTag(userName, title, imageUrl){
+            function createTitleTag(userName, title, imageUrl, regDate){
               result = ""
               result += '<div class="reply-title">'
               result += '<img src="/display?fileName=' + imageUrl +'/" class="reply-profile">';
@@ -1997,7 +1997,7 @@ async function showChatInfoBefore(roomID, loginEmail){
               result += '<div class="reply-name">' + userName + '</div>'
               result += '<div class="reply-content">' + title + '</div>'
               result += '<div class="reply-side">'
-              result += '<div class="reply-time">' + "10분" + '</div>'
+              result += '<div class="reply-time">' + formatTimeDifference(regDate) + '</div>'
               result += '</div>'
               result += '</div>'
               result += '</div>'
@@ -2023,7 +2023,7 @@ async function showChatInfoBefore(roomID, loginEmail){
             }
 
             // $("#post-title").html(titleTag)
-            $("#post-title-container").html(createTitleTag(loadName, result.title, imageUrl))
+            $("#post-title-container").html(createTitleTag(loadName, result.title, imageUrl, result.regDate))
             $("#carousel-image-box").html(carouselTag)
             $("#modify-carousel-image-box").html(carouselTag)
 
