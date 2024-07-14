@@ -627,14 +627,17 @@
   };
   const formatter = new Intl.DateTimeFormat('en-US', options);
   function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
-    var data = {pno:postId, text:commentBox.value, email:userEmail};
+    var replyText = commentBox.value.replaceAll('\n', '<br>');
+    console.log(replyText)
+    console.log(commentBox.value)
+    var data = {pno:postId, text:replyText, email:userEmail};
     $.ajax({
       url: '/reply/'+postId,
       type: "POST",
       data: JSON.stringify(data),
       contentType: "application/json; charset=utf-8",
       success: function (result){
-        var tempReply = {name:userName, text:commentBox.value, rno:result.rno, regDate:"지금", profileImageUrl:result.imageUrl};
+        var tempReply = {name:userName, text:replyText, rno:result.rno, regDate:"지금", profileImageUrl:result.imageUrl};
         replyResult = ""
         var replyArea = $("#post-reply-container");
         replyArea.prepend(createReplyhtmlbox(userName, tempReply));
@@ -1963,8 +1966,8 @@ async function showChatInfoBefore(roomID, loginEmail){
     var userName = '[[${memberDTO.name}]]';
     var loadEmail = '[[${userEmail}]]';
     $(document).on('click', '.post-list-img',function() {
-      commentBox.addEventListener('input', function (){
 
+      function handleInput(){
         var text = commentBox.value.trim()
         var button = document.querySelector('#reply-send')
 
@@ -1974,7 +1977,16 @@ async function showChatInfoBefore(roomID, loginEmail){
         else {
           button.classList.add('active')
         }
-      })
+      }
+      function handleKeyDown(event){
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          document.getElementById('reply-send').click();
+        }
+      }
+      commentBox.addEventListener('input', handleInput)
+      commentBox.addEventListener('keydown', handleKeyDown);
+
 
       function createPostImageTag(){
         $.ajax({
@@ -2071,6 +2083,8 @@ async function showChatInfoBefore(roomID, loginEmail){
         $('#post-reply-container').html("");
         $('#reply-box').val('');
         $('#reply-send').removeClass("active")
+        commentBox.removeEventListener('input', handleInput)
+        commentBox.removeEventListener('keydown', handleKeyDown)
         replyPage = 1;
         replyTotalPage = null;
       });

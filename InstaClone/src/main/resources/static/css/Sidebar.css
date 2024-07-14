@@ -990,3 +990,8 @@ button:hover {
     margin: auto;
 }
 
+.option-modal-body:hover {
+    background-color: #b6bdc4;
+    cursor: pointer;
+}
+
