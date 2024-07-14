@@ -915,7 +915,7 @@
        success: function (result){
          if (result > 300)
            $('#num-'+roomId).html("300+");
-         else
+         else if (result > 0)
            $('#num-'+roomId).html(result);
        }
      })
@@ -1129,17 +1129,18 @@
           const header = document.getElementById('post-upload-header');
           if (arr[0] < arr[1])
           {
-              header.style.maxWidth = 405 + ((900 / arr[1]) * arr[0]) + 'px';
-              styleBoxes.style.maxWidth = ((900 / arr[1]) * arr[0]) + 'px';
-              styleBoxes.style.maxHeight = '900px';
-              styleBoxes.style.aspectRatio = arr[0] + '/' + arr[1];
-              styleBoxes.style.flexBasis = ((900 / arr[1]) * arr[0]) + 'px';
+            header.style.maxWidth = 405 + ((900 / arr[1]) * arr[0]) + 'px';
+            styleBoxes.style.maxWidth = ((900 / arr[1]) * arr[0]) + 'px';
+            styleBoxes.style.maxHeight = '900px';
+            styleBoxes.style.aspectRatio = arr[0] + '/' + arr[1];
+            styleBoxes.style.flexBasis = ((900 / arr[1]) * arr[0]) + 'px';
           }
           else{
-              styleBoxes.style.maxWidth = '900px'
-              styleBoxes.style.maxHeight = '900px';
-              styleBoxes.style.aspectRatio = '1/1'
-              styleBoxes.style.flexBasis = '900px'
+            header.style.maxWidth = 405 + 900 + 'px';
+            styleBoxes.style.maxWidth = '900px'
+            styleBoxes.style.maxHeight = '900px';
+            styleBoxes.style.aspectRatio = '1/1'
+            styleBoxes.style.flexBasis = '900px'
           }
         });
 
@@ -2007,6 +2008,7 @@ async function showChatInfoBefore(roomID, loginEmail){
                 }
               }
               else{
+                header.style.maxWidth = 405 + 900 +'px'
                 for (let i = 0; i < styleBoxes.length; i++) {
                   styleBoxes[i].style.maxWidth = '900px'
                   styleBoxes[i].style.maxHeight = '900px';
