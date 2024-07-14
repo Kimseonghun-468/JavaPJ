@@ -72,6 +72,9 @@ public class UploadController {
                 ImageIO.write(croppedImage,"png" ,saveThumbnailFile);
 //                File thumbnailFile = new File(thumbnailSaveName);
 //                Thumbnailator.createThumbnail(savePath.toFile(), saveThumbnailFile, cropSize, cropSize);
+//                //----
+//                imageWidth
+
                 resultDTOList.add(new UploadResultDTO(fileName,uuid,folderPath));
 
             } catch (IOException e){
@@ -112,6 +115,24 @@ public class UploadController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;
+    }
+
+    @GetMapping("/getWidthAndHeight")
+    public ResponseEntity<List<Integer>> getWidthAndHeight(String fileName){
+        log.info("First Name : " + fileName);
+        List<Integer> imageInfo = new ArrayList<>();
+        try{
+            File imageFile = new File(uploadPath + File.separator +fileName);
+            BufferedImage image = ImageIO.read(imageFile);
+            int width = image.getWidth();
+            int height = image.getHeight();
+            imageInfo.add(width);
+            imageInfo.add(height);
+        } catch (Exception e){
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(imageInfo ,HttpStatus.OK);
     }
 
 }

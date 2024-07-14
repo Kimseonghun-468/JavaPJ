@@ -236,7 +236,7 @@
   <div class="modal-content-post">
     <div class="modal-content-post-imagebox" style="border-top-left-radius: 12px;">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner" id="carousel-image-box">
+        <div class="carousel-inner" id="carousel-image-box" style="border-top-left-radius: 12px;">
 
         </div>
         <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -274,48 +274,8 @@
         <div id="post-title-container" style="display: flex;">
 
         </div>
-        <div id="post-reply-container"></div>
+        <div id="post-reply-container" style="height: calc(100% - 48px);"></div>
 
-<!--        <div class="reply-title">-->
-<!--          <div class="reply-image-container">-->
-<!--            <img th:src ="|/display?fileName=outprofile.png|" class="reply-profile">-->
-<!--          </div>-->
-<!--          <div class="reply-wrapper">-->
-<!--            <div class="reply-name">[[${userName}]]</div>-->
-<!--            <div class="reply-content">안녕 곰돌아!</div>-->
-<!--            <div class="reply-side">-->
-<!--              <div class="reply-time">10분</div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        <div class="reply-main">-->
-<!--          <div class="reply-image-container">-->
-<!--            <img th:src ="|/display?fileName=outprofile.png|" class="reply-profile">-->
-<!--          </div>-->
-<!--          <div class="reply-wrapper">-->
-<!--            <div class="reply-name">subsbe11227</div>-->
-<!--            <div class="reply-content">안녕 곰돌아!</div>-->
-<!--            <div class="reply-side">-->
-<!--              <div class="reply-time">10분</div>-->
-<!--              <div class="reply-option">...</div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        <div class="reply-main">-->
-<!--          <div class="reply-image-container">-->
-<!--            <img th:src ="|/display?fileName=outprofile.png|" class="reply-profile">-->
-<!--          </div>-->
-<!--          <div class="reply-wrapper">-->
-<!--            <div class="reply-name">subsbe11227</div>-->
-<!--            <div class="reply-content">완전 좋다 ㅎㅎㅎ</div>-->
-<!--            <div class="reply-side">-->
-<!--              <div class="reply-time">10분</div>-->
-<!--              <div class="reply-option">...</div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
 
       <form id="reply-form">
@@ -332,11 +292,11 @@
 
 <div id="post-upload-modal" class="modal-custom">
   <div class="modal-content-post" style="display: block;">
-    <div class="post-header-container">
+    <div class="post-header-container" id="post-upload-header">
       <div>새 게시물 만들기</div>
     </div>
     <div style="display: flex; place-content: center; min-width: 740px">
-      <div class="modal-content-post-imagebox">
+      <div class="modal-content-post-imagebox" id="upload-image-container">
     <div id="uploadCarouselControls" class="carousel slide" data-ride="carousel">
       <div class="carousel-inner" id = "upload-carousel-image-box">
 
@@ -387,20 +347,20 @@
 
 <div id="post-modify-modal" class="modal-custom">
   <div class="modal-content-post" style="display: block;">
-    <div class="post-header-container">
+    <div class="post-header-container" id="post-modify-header">
       <div>게시물 수정</div>
     </div>
     <div style="display: flex; place-content: center; min-width: 740px;">
       <div class="modal-content-post-imagebox">
-        <div id="uploadCarouselControls" class="carousel slide" data-ride="carousel">
+        <div id="modifyCarouselControls" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner" id = "modify-carousel-image-box">
 
           </div>
-          <a class="carousel-control-prev" href="#uploadCarouselControls" role="button" data-slide="prev">
+          <a class="carousel-control-prev" href="#modifyCarouselControls" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <!--        <span class="sr-only">Previous</span>-->
           </a>
-          <a class="carousel-control-next" href="#uploadCarouselControls" role="button" data-slide="next">
+          <a class="carousel-control-next" href="#modifyCarouselControls" role="button" data-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <!--        <span class="sr-only">Next</span>-->
           </a>
@@ -534,18 +494,6 @@
   </div>
 </div>
 
-<form id="searchForm">
-  <div class="search-container">
-    <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon">
-      <path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-      <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line>
-    </svg>
-    <input type="text" id="searchInput" placeholder="검색어 입력...">
-    <!--        <button type="submit" class="search-button">검색</button>-->
-  </div>
-</form>
-
-
 <div class="modal modal-custom" id="inviteModal">
     <div class="modal-content-search" id="scroll-invite">
       <div class="invite-search-submit-container" style="display: flex;">
@@ -641,6 +589,7 @@
         replyResult = ""
         var replyArea = $("#post-reply-container");
         replyArea.prepend(createReplyhtmlbox(userName, tempReply));
+        showReplyListInPost(postId)
         $('#reply-box').val('');
         $('#reply-send').removeClass("active")
         $('#reply-comment-body').scrollTop(0);
@@ -676,7 +625,13 @@
         replyStr = createReplyhtmlbox(loginName, reply);
         str += replyStr;
       });
-      $("#post-reply-container").append(str);
+
+      if (arr.dtoList.length == 0){
+        str += '<div class="not-exist-list">현재 댓글이 없습니다.</div>'
+      }
+      //
+
+      $("#post-reply-container").html(str);
       if (arr.totalPage >replyPage){
         buttonTag += '<div class="reply-paging-button">'
         buttonTag += '<svg aria-label="댓글 더 읽어들이기" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>댓글 더 읽어들이기</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="7.001" x2="17.001" y1="12.005" y2="12.005"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.001" x2="12.001" y1="7.005" y2="17.005"></line></svg>'
@@ -739,17 +694,7 @@
     str += '</div>'
     str += '</div>'
     str += '</div>'
-    // str += '<div class="comment-body-reply">';
-    // str += '<div class="comment-title-username comment-bold">'
-    // str += reply.name
-    // str += '</div>'
-    // str += '<div class="comment-title-comment">'
-    // str += reply.text
-    // str += '</div>'
-    // if (loginName == reply.name) {
-    //   str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
-    // }
-    // str += '</div>'
+
     return str
   }
   function sendFollowRequest(name, $button){
@@ -1164,6 +1109,7 @@
       success: function (result) {
         var str = "";
         var carouselTag = "";
+        //ddd
         $.each(result, function (idx, imageInfo) {
           str += "<input type='hidden' name='imageDTOList["+idx+"].imgName' value='"+imageInfo['fileName'] +"'>";
           str += "<input type='hidden' name='imageDTOList["+idx+"].path' value='"+imageInfo['folderPath']+"'>";
@@ -1176,6 +1122,27 @@
           carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
           carouselTag += '</div>';
         });
+
+        $.getJSON("/getWidthAndHeight?fileName=" +(result[0].imageURL), function (arr){
+          console.log(arr)
+          const styleBoxes = document.getElementById('upload-image-container');
+          const header = document.getElementById('post-upload-header');
+          if (arr[0] < arr[1])
+          {
+              header.style.maxWidth = 405 + ((900 / arr[1]) * arr[0]) + 'px';
+              styleBoxes.style.maxWidth = ((900 / arr[1]) * arr[0]) + 'px';
+              styleBoxes.style.maxHeight = '900px';
+              styleBoxes.style.aspectRatio = arr[0] + '/' + arr[1];
+              styleBoxes.style.flexBasis = ((900 / arr[1]) * arr[0]) + 'px';
+          }
+          else{
+              styleBoxes.style.maxWidth = '900px'
+              styleBoxes.style.maxHeight = '900px';
+              styleBoxes.style.aspectRatio = '1/1'
+              styleBoxes.style.flexBasis = '900px'
+          }
+        });
+
         if(result.length ==1){
           $(".carousel-control-next").html("")
           $(".carousel-control-prev").html("")
@@ -2023,8 +1990,32 @@ async function showChatInfoBefore(roomID, loginEmail){
                 carouselTag += '<div class="carousel-item">'
               carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
               carouselTag += '</div>';
-
             })
+
+            $.getJSON("/getWidthAndHeight?fileName=" +(result.imageDTOList[0].imageURL), function (arr){
+              console.log(arr)
+              const styleBoxes = document.getElementsByClassName('modal-content-post-imagebox');
+              const header = document.getElementById('post-modify-header');
+              if (arr[0] < arr[1])
+              {
+                header.style.maxWidth = 405 + ((900 / arr[1]) * arr[0]) + 'px';
+                for (let i = 0; i < styleBoxes.length; i++) {
+                  styleBoxes[i].style.maxWidth = ((900 / arr[1]) * arr[0]) + 'px';
+                  styleBoxes[i].style.maxHeight = '900px';
+                  styleBoxes[i].style.aspectRatio = arr[0] + '/' + arr[1];
+                  styleBoxes[i].style.flexBasis = ((900 / arr[1]) * arr[0]) + 'px';
+                }
+              }
+              else{
+                for (let i = 0; i < styleBoxes.length; i++) {
+                  styleBoxes[i].style.maxWidth = '900px'
+                  styleBoxes[i].style.maxHeight = '900px';
+                  styleBoxes[i].style.aspectRatio = '1/1'
+                  styleBoxes[i].style.flexBasis = '900px'
+                }
+              }
+            });
+
             if(result.imageDTOList.length ==1){
               $(".carousel-control-next").html("")
               $(".carousel-control-prev").html("")
