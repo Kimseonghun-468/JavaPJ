@@ -274,7 +274,8 @@
         <div id="post-title-container" style="display: flex;">
 
         </div>
-        <div id="post-reply-container" style="height: calc(100% - 48px);"></div>
+        <div id="post-reply-container" style="height: calc(100% - 48px);">
+        </div>
 
       </div>
 
@@ -574,7 +575,7 @@
     timeZone: "Asia/Seoul"  // 서버 시간대가 UTC라고 가정
   };
   const formatter = new Intl.DateTimeFormat('en-US', options);
-  function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
+  async function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
     var replyText = commentBox.value.replaceAll('\n', '<br>');
     console.log(replyText)
     console.log(commentBox.value)
@@ -589,7 +590,6 @@
         replyResult = ""
         var replyArea = $("#post-reply-container");
         replyArea.prepend(createReplyhtmlbox(userName, tempReply));
-        showReplyListInPost(postId)
         $('#reply-box').val('');
         $('#reply-send').removeClass("active")
         $('#reply-comment-body').scrollTop(0);
@@ -616,8 +616,8 @@
     })
   }
 
-  function showReplyListInPost(postId){
-    $.getJSON("/reply/"+postId +"/all" + "?page=" + replyPage , function (arr){
+  async function showReplyListInPost(postId){
+    await $.getJSON("/reply/"+postId +"/all" + "?page=" + replyPage , function (arr){
       var str = "";
       var buttonTag = ""
       var loginName = '[[${memberDTO.name}]]';;
@@ -627,11 +627,10 @@
       });
 
       if (arr.dtoList.length == 0){
-        str += '<div class="not-exist-list">현재 댓글이 없습니다.</div>'
+        str += '<div class="not-exist-list" id="post-not-exist">현재 댓글이 없습니다.</div>'
       }
-      //
 
-      $("#post-reply-container").html(str);
+      $("#post-reply-container").append(str);
       if (arr.totalPage >replyPage){
         buttonTag += '<div class="reply-paging-button">'
         buttonTag += '<svg aria-label="댓글 더 읽어들이기" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>댓글 더 읽어들이기</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="7.001" x2="17.001" y1="12.005" y2="12.005"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.001" x2="12.001" y1="7.005" y2="17.005"></line></svg>'
@@ -1092,7 +1091,7 @@
       data: data,
       dataType: "TEXT",
       success: function (result){
-        $button.text("친구 삭제 완료");
+        $button.text("삭제 완료");
         $button.prop('disabled, true');
       }
     })
@@ -1235,7 +1234,8 @@
       tag += '<div class="content-wrapper">'
       tag += '<div class="content"> '+ message +'</div>';
       tag += '<div class="chatlog">'
-      tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">' + readStatus + '</div>' ;
+      if (readStatus > 0)
+        tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">' + readStatus + '</div>' ;
       tag += '<div class="time"> '+ showedTime.slice(0,8) +'</div>';
       tag += '</div>'
       tag += '</div>'
@@ -1252,6 +1252,7 @@
       tag += '<div class="sender"> ' + name + '</div>'
       tag += '<div class="chat-side-add">'
       tag += '<div class="chatlog">'
+        if (readStatus > 0)
       tag += '<div class="status-true" data-time="' + time + '" data-name="' + name + '">' + readStatus + '</div>' ;
       tag += '<div class="time"> '+ showedTime.slice(0,8) +'</div>';
       tag += '</div>'
@@ -1502,6 +1503,89 @@ async function showChatInfoBefore(roomID, loginEmail){
       throw error;
     }
   }
+  function createTitleTag(userName, title, imageUrl, regDate){
+    result = ""
+    result += '<div class="reply-title">'
+    result += '<img src="/display?fileName=' + imageUrl +'/" class="reply-profile">';
+    result += '</div>'
+    result += '<div class="reply-wrapper">'
+    result += '<div class="reply-name">' + userName + '</div>'
+    result += '<div class="reply-content">' + title + '</div>'
+    result += '<div class="reply-side">'
+    result += '<div class="reply-time">' + formatTimeDifference(regDate) + '</div>'
+    result += '</div>'
+    result += '</div>'
+    result += '</div>'
+
+    return result;
+  }
+
+  function createPostImageTag(postId, commnetBox){
+    $.ajax({
+      url:'/post/postInfoWithImage',
+      type:"POST",
+      data: {pno:postId},
+      dataType:"JSON",
+      success: function (result){
+        var carouselTag = "";
+        var imageUrl = `[[${profileImageDTO.getImageURL()}]]`
+        if ('[[${profileImageDTO.path}]]' == '')
+          imageUrl = 'outprofile.png'
+        var loadName = '[[${userName}]]';
+
+        $.each(result.imageDTOList, function (idx, imageInfo){
+          if(idx ==0)
+            carouselTag += '<div class="carousel-item active">'
+          else
+            carouselTag += '<div class="carousel-item">'
+          carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
+          carouselTag += '</div>';
+        })
+
+        $.getJSON("/getWidthAndHeight?fileName=" +(result.imageDTOList[0].imageURL), function (arr){
+          console.log(arr)
+          const styleBoxes = document.getElementsByClassName('modal-content-post-imagebox');
+          const header = document.getElementById('post-modify-header');
+          if (arr[0] < arr[1])
+          {
+            header.style.maxWidth = 405 + ((900 / arr[1]) * arr[0]) + 'px';
+            for (let i = 0; i < styleBoxes.length; i++) {
+              styleBoxes[i].style.maxWidth = ((900 / arr[1]) * arr[0]) + 'px';
+              styleBoxes[i].style.maxHeight = '900px';
+              styleBoxes[i].style.aspectRatio = arr[0] + '/' + arr[1];
+              styleBoxes[i].style.flexBasis = ((900 / arr[1]) * arr[0]) + 'px';
+            }
+          }
+          else{
+            header.style.maxWidth = 405 + 900 +'px'
+            for (let i = 0; i < styleBoxes.length; i++) {
+              styleBoxes[i].style.maxWidth = '900px'
+              styleBoxes[i].style.maxHeight = '900px';
+              styleBoxes[i].style.aspectRatio = '1/1'
+              styleBoxes[i].style.flexBasis = '900px'
+            }
+          }
+        });
+
+        if(result.imageDTOList.length ==1){
+          $(".carousel-control-next").html("")
+          $(".carousel-control-prev").html("")
+        }
+        else{
+          $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
+          $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
+        }
+
+        let postTitle = result.title.replaceAll("\n", "<br>")
+        $("#post-title-container").html(createTitleTag(loadName, postTitle, imageUrl, result.regDate))
+        $("#carousel-image-box").html(carouselTag)
+        $("#modify-carousel-image-box").html(carouselTag)
+
+      }
+    })
+  }
+
+
   $(function (){
     $('.uploadButton-post').off('click').click(function() {
       $('.post-Image-File').off('change');
@@ -1934,7 +2018,6 @@ async function showChatInfoBefore(roomID, loginEmail){
     var userName = '[[${memberDTO.name}]]';
     var loadEmail = '[[${userEmail}]]';
     $(document).on('click', '.post-list-img',function() {
-
       function handleInput(){
         var text = commentBox.value.trim()
         var button = document.querySelector('#reply-send')
@@ -1947,115 +2030,39 @@ async function showChatInfoBefore(roomID, loginEmail){
         }
       }
       function handleKeyDown(event){
-        if (event.key === 'Enter' && !event.shiftKey) {
+
+        if (!event.isComposing && event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
           document.getElementById('reply-send').click();
+          console.log(event.key)
+          console.log(event.shiftKey)
         }
+        console.log('!', event.isComposing)
       }
       commentBox.addEventListener('input', handleInput)
       commentBox.addEventListener('keydown', handleKeyDown);
 
-
-      function createPostImageTag(){
-        $.ajax({
-          url:'/post/postInfoWithImage',
-          type:"POST",
-          data: {pno:postId},
-          dataType:"JSON",
-          success: function (result){
-            var carouselTag = "";
-            var imageUrl = `[[${profileImageDTO.getImageURL()}]]`
-            if ('[[${profileImageDTO.path}]]' == '')
-              imageUrl = 'outprofile.png'
-            var loadName = '[[${userName}]]';
-            function createTitleTag(userName, title, imageUrl, regDate){
-              result = ""
-              result += '<div class="reply-title">'
-              result += '<img src="/display?fileName=' + imageUrl +'/" class="reply-profile">';
-              result += '</div>'
-              result += '<div class="reply-wrapper">'
-              result += '<div class="reply-name">' + userName + '</div>'
-              result += '<div class="reply-content">' + title + '</div>'
-              result += '<div class="reply-side">'
-              result += '<div class="reply-time">' + formatTimeDifference(regDate) + '</div>'
-              result += '</div>'
-              result += '</div>'
-              result += '</div>'
-
-              return result;
-            }
-            $.each(result.imageDTOList, function (idx, imageInfo){
-              if(idx ==0)
-                carouselTag += '<div class="carousel-item active">'
-              else
-                carouselTag += '<div class="carousel-item">'
-              carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
-              carouselTag += '</div>';
-            })
-
-            $.getJSON("/getWidthAndHeight?fileName=" +(result.imageDTOList[0].imageURL), function (arr){
-              console.log(arr)
-              const styleBoxes = document.getElementsByClassName('modal-content-post-imagebox');
-              const header = document.getElementById('post-modify-header');
-              if (arr[0] < arr[1])
-              {
-                header.style.maxWidth = 405 + ((900 / arr[1]) * arr[0]) + 'px';
-                for (let i = 0; i < styleBoxes.length; i++) {
-                  styleBoxes[i].style.maxWidth = ((900 / arr[1]) * arr[0]) + 'px';
-                  styleBoxes[i].style.maxHeight = '900px';
-                  styleBoxes[i].style.aspectRatio = arr[0] + '/' + arr[1];
-                  styleBoxes[i].style.flexBasis = ((900 / arr[1]) * arr[0]) + 'px';
-                }
-              }
-              else{
-                header.style.maxWidth = 405 + 900 +'px'
-                for (let i = 0; i < styleBoxes.length; i++) {
-                  styleBoxes[i].style.maxWidth = '900px'
-                  styleBoxes[i].style.maxHeight = '900px';
-                  styleBoxes[i].style.aspectRatio = '1/1'
-                  styleBoxes[i].style.flexBasis = '900px'
-                }
-              }
-            });
-
-            if(result.imageDTOList.length ==1){
-              $(".carousel-control-next").html("")
-              $(".carousel-control-prev").html("")
-            }
-            else{
-              $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
-              $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
-            }
-
-            // $("#post-title").html(titleTag)
-            $("#post-title-container").html(createTitleTag(loadName, result.title, imageUrl, result.regDate))
-            $("#carousel-image-box").html(carouselTag)
-            $("#modify-carousel-image-box").html(carouselTag)
-
-          }
-        })
-      }
-
       $('#myModal').modal('show');
       var postId = $(this).data('pid');
-      $("#carousel-image-box").html(createPostImageTag());
+      $("#carousel-image-box").html(createPostImageTag(postId, commentBox));
       showReplyListInPost(postId);
-      $(document).on('click', '.reply-paging-button', function (){
+      $(document).off('click','.reply-paging-button').on('click', '.reply-paging-button', function (){
         replyPage +=1
         showReplyListInPost(postId)
         this.remove()
       })
 
-      document.getElementById('reply-form').onsubmit = function (event){
-        event.preventDefault();
-        if (commentBox.value.trim() === "")
-          return ;
-        sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
-      }
+      // document.getElementById('reply-form').onsubmit = function (event){
+      //   event.preventDefault();
+      //   if (commentBox.value.trim() === "")
+      //     return ;
+      //   sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
+      // }
       $('#reply-send').off('click').on('click', function (){
         if (commentBox.value.trim() === "")
           return ;
         sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
+        $('#post-not-exist').html("")
       });
 
       $('#myModal').on('click', '#post-option', function (){

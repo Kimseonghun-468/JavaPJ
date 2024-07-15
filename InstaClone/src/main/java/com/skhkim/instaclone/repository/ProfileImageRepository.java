@@ -38,7 +38,8 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
 
     @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
             "WHERE fs.clubMemberFriend.name =:loginName " +
-            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT")
+            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT " +
+            "ORDER BY fs.clubMemberUser.name")
     Page<Object[]> getByAcceptListPage(Pageable pageable, @Param("loginName") String loginName);
 
 

@@ -831,6 +831,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     margin-left: 10px;
+    width: 450px;
 }
 
 .message.sent .chat-side{
@@ -838,6 +839,7 @@ button:hover {
     text-align: end;
     display: flex;
     flex-direction: column;
+    width: 450px;
 }
 
 .message.sent .chat-side-add{

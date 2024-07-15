@@ -25,7 +25,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
     boolean existsByName(String name);
 
 
-    @Query("SELECT CASE WHEN count(m) > 0 THEN TRUE ELSE FALSE END from ClubMember m WHERE m.name = :name AND m.email =:email")
+    @Query("SELECT CASE WHEN count(m) > 0 THEN TRUE ELSE FALSE END from ClubMember m WHERE m.name = :name OR m.email =:email")
     boolean existsByNameAndEmail(String name, String email);
 
     @Query("SELECT f FROM ClubMember m join m.friendshipList f WHERE f.clubMemberUser.name =:requesterName and f.clubMemberFriend.name =:accepterName and f.isFrom =true")
