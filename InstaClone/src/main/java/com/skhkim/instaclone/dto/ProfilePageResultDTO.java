@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Data
-public class ProfilePageResultDTO<MAP, EN> {
-    private List<MAP> dtoList;
+public class ProfilePageResultDTO<DTO, EN> {
+    private List<DTO> dtoList;
 
     private int totalPage;
     private int page;
@@ -20,7 +20,7 @@ public class ProfilePageResultDTO<MAP, EN> {
     private boolean prev, next;
     private List<Integer> pageList;
 
-    public ProfilePageResultDTO(Page<EN> result, Function<EN, MAP> fn){
+    public ProfilePageResultDTO(Page<EN> result, Function<EN, DTO> fn){
         dtoList = result.stream().map(fn).collect(Collectors.toList());
         totalPage = result.getTotalPages();
         makePageList(result.getPageable());
