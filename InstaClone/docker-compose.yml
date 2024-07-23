@@ -3,7 +3,7 @@ version: '3'
 services:
   database:
     container_name: mysql
-    image: mysql:8.1
+    image: mysql:8.1.0
     environment:
       MYSQL_DATABASE: Insta
       MYSQL_USER: user
@@ -13,24 +13,72 @@ services:
       - "3306:3306"
     volumes:
       - ./src/main/resources/index.sql:/index.sql
+      - /Users/Shared/mysql:/var/lib/mysql
+    networks:
+      - test_network
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - /Users/Shared/mongo:/data/db
     networks:
       - test_network
 
-  application:
-    container_name: docker-compose-test
+
+  application1:
+    container_name: docker-compose-test1
     build:
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "6001:6001"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/Insta
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: user
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/Insta
+      PORT: 6001
+    volumes:
+      - /Users/Shared/data:/Users/gimseonghun/JavaPJ/InstaClone/data
     depends_on:
       - database
     networks:
       - test_network
     restart: always
+
+  application2:
+    container_name: docker-compose-test2
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "6002:6002"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/Insta
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: user
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/Insta
+      PORT: 6002
+    volumes:
+      - /Users/Shared/data:/Users/gimseonghun/JavaPJ/InstaClone/data
+    depends_on:
+      - database
+    networks:
+      - test_network
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-test
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - application1
+      - application2
+    networks:
+      - test_network
 
 networks:
   test_network:
