@@ -3,6 +3,7 @@ import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.security.Utils.JwtUtils;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.LoginService;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -52,7 +53,6 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwtUtil.validateToken(jwt, clubMemberDTO.getEmail())) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         clubAuthMember, null, clubAuthMember.getAuthorities());
-//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

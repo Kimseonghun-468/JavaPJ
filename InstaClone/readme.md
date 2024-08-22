@@ -90,3 +90,4 @@ Chatting 1:N Service로 변경 및 ChatMessage NoSQL(MongoDB) 사용 계획
 
 RDBMS로 설계 후, 처리 시간 확인 및 ChatMessage만 MongoDB로 수정 후 속도 확인 예정
 -> 처리 시간을 어떻게 측정할지는 고민중
+

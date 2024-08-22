@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 
-    @Query(value = "{ 'roomId' : ?0, 'regDate' : { $lte : ?1 } }", sort = "{ 'regDate' : -1 }")
+    @Query(value = "{ 'roomId' : ?0, 'regDate' : { $lte : ?1 } }", sort = "{ 'regdate' : -1 }")
     Page<ChatMessage> getChatMessageByRoomIdAndTimeBefore(Pageable pageable, Long roomID, LocalDateTime disConnectTime);
 
     @Query("{ 'roomId' : ?0, 'regDate' : { $gt : ?1 } }")

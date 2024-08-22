@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shift + Enter for Line Break</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .textarea-container {
+      width: 300px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: none;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="textarea-container">
+  <textarea id="commentBox" placeholder="Enter your comment"></textarea>
+</div>
+
+<script>
+  document.getElementById('commentBox').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' && event.shiftKey) {
+      // 기본 줄바꿈 동작을 유지하고 추가로 <br> 태그를 삽입합니다.
+      event.preventDefault();
+      insertAtCursor(this, '<br>');
+    }
+  });
+
+  function insertAtCursor(textarea, text) {
+    var scrollPos = textarea.scrollTop;
+    var caretPos = textarea.selectionStart;
+
+    var front = textarea.value.substring(0, caretPos);
+    var back = textarea.value.substring(textarea.selectionEnd, textarea.value.length);
+    textarea.value = front + text + back;
+    caretPos = caretPos + text.length;
+    textarea.selectionStart = caretPos;
+    textarea.selectionEnd = caretPos;
+    textarea.focus();
+    textarea.scrollTop = scrollPos;
+  }
+</script>
+</body>
+</html>
+<!--스프링 부트 매탈 미니수 -->

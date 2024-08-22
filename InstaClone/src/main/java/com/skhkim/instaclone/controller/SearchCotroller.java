@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/search")
 @Log4j2
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('USER')")
 public class SearchCotroller {
     private final LoginService loginService;
     private final ProfileService profileService;

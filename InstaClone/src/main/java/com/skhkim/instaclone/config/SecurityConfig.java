@@ -2,6 +2,7 @@ package com.skhkim.instaclone.config;
 
 import com.skhkim.instaclone.security.handler.ClubLoginFormSuccessHandler;
 import com.skhkim.instaclone.security.handler.FailHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Log4j2
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final CorsConfig corsConfig;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -35,6 +38,8 @@ public class SecurityConfig {
         http.formLogin((formLogin) -> formLogin.successHandler(clubLoginFormSuccessHandler()));
         http.formLogin((formLogin) -> formLogin.failureHandler(failHandler()));
         http.csrf((csrf) -> csrf.disable());
+        http.cors((cors) -> cors.configurationSource(corsConfig.corsConfigurationSource()));
+        http.cors(Customizer.withDefaults());
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         http.oauth2Login((oauth2Login) -> oauth2Login.loginPage("/login/oauth2"));
         http.oauth2Login(oauth2Login -> oauth2Login.successHandler(clubLoginSuccessHandler()));

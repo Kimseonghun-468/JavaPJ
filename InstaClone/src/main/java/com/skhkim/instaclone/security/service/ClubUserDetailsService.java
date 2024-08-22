@@ -11,6 +11,7 @@ import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 import java.util.stream.Collectors;

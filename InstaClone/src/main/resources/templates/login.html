@@ -64,7 +64,7 @@
       deleteCookie("Authorization")
     }
     $('#login-form').submit(function(event) {
-      event.preventDefault(); // 폼의 기본 제출 동작을 방지합니다.
+      event.preventDefault();
 
       // var formData = {
       var username =$('#email').val()
@@ -72,6 +72,7 @@
 
       // };
       // console.log(formData)
+
 
       $.ajax({
         type: 'POST',
@@ -85,7 +86,6 @@
           }
           else {
             localStorage.setItem("Authorization", "Bearer " + response.token)
-
             setCookie("Authorization", "Bearer " + response.token, 2);
             window.location.href = '/sidebar/'+response.name;
           }

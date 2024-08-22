@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -47,7 +48,7 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public String singupMember(ClubMemberDTO memberDTO){
+    public String singupMember(@RequestBody ClubMemberDTO memberDTO){
         log.info("memberDTO : " + memberDTO);
         boolean checkResult = loginService.checkDuplication(memberDTO);
         log.info("checkResult : " + checkResult);
