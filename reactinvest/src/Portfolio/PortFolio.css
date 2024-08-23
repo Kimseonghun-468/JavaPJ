@@ -1,0 +1,69 @@
+.Body {
+    display: flex;
+}
+
+.Main {
+    width: calc(100% - 200px);
+
+}
+.Menu {
+    width: 200px;
+    height: 100vh;
+    background-color: #fafafa;
+    padding-top: 25px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.PF-Container {
+    display: flex;
+    border-bottom: #AACDFF 3px solid;
+    height: 300px;
+    margin: 0 calc((100% - 1200px) / 2);
+}
+.Capital-Graph {
+    width: 300px;
+}
+.Graph-Box {
+    width: 300px;
+    height: 250px;
+    text-align: -webkit-center;
+}
+.Graph-Doughnut {
+    width: 250px;
+    height: 250px;
+}
+
+.Graph-Text{
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.Capital-Retain {
+    padding: 50px 0;
+    width: 300px;
+}
+
+.Capital-Chart {
+    display: flex;
+    padding: 50px 40px;
+    width: 600px;
+}
+
+.Chart-Detail {
+    width: 100%;
+}
+
+.Chart {
+    text-align: center;
+    height: calc(100%/2);
+    align-content: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    text-align: center;
+}
