@@ -1,0 +1,31 @@
+.OB-Container {
+    padding: 50px 50px;
+}
+
+.OB-Chart-Box{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    height: 100px;
+}
+
+.OB-Item {
+    width: 200px;
+    font-weight: bold;
+}
+
+.OB-PAmount {
+    width: 150px;
+}
+
+.OB-CAmount{
+    width: 150px;
+}
+
+.OB-Profit{
+    width: 150px;
+}
+
+.OB-Profit-Percentage{
+    width: 100px;
+}

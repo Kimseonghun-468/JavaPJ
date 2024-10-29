@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import './PortFolio.css';
-
+import OrderBook from "./OrderBook";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -81,16 +81,17 @@ function PortFolioContainer(){
     );
 }
 
-function PortFolio(){
-    const { username } = useParams();
+
+function PortFolio({name}){
     return (
         <div className="Body">
             <div className="Menu">
-                <div className="logo"><a>{username}</a></div>
+                <div className="logo"><a>{name}</a></div>
             </div>
             <div className="Main">
-                {PortFolioContainer()}
-                <h1>{username}'s Portfolio</h1>
+                <PortFolioContainer />
+                <OrderBook />
+                {/*<h1>{username}'s Portfolio</h1>*/}
             </div>
         </div>
     )

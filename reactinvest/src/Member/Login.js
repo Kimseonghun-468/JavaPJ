@@ -22,14 +22,12 @@ function Login() {
                 console.log(data)
                 if (data.token == "error") {
                     console.log("로그인 실패")
-                    window.location.href = '/login?error';
+                    window.location.href = '/Member/login?error';
                 }
                 else {
                     localStorage.setItem('Authorization', 'Bearer ' + data.token);
                     document.cookie = `Authorization=Bearer ${data.token}; path=/; max-age=${2 * 60 * 60}`;
-                    console.log(data.name)
-                    navigate(`/portfolio/${data.name}`);
-                    console.log(data.name)
+                    navigate(`/portfolio`);
                 }
             },
             error: function(error) {
