@@ -8,11 +8,20 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+  <script src="/js/FriendAccept.js"></script>
+  <script src="/js/FriendAcceptApp.js"></script>
+
   <link th:href="@{/css/carouselCustom.css}" rel="stylesheet">
   <title>프로필</title>
 </head>
 
 <body>
+
+<input type="hidden" id="loginName" th:data-login-name="${memberDTO.name}">
+
+
 <div class="temp">
 
   <div class="sidebar">
@@ -773,38 +782,38 @@
       $("#searchResult").html(searchResult);
     })
   }
-  function createFriendShipAcceptedInfo(profileAndFriendMap){
-    var Result = "";
-    for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
-      Result += '<div class="user-info-box">';
-      Result += '<div class="profile-box">';
-      if(profileAndFriendMap.dtoList[i].profileImage ==null)
-        Result += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      else
-        Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      Result += '</div>';
-      Result += '<div class="user-name-box-friend">'
-      Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
-              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
-              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
-      Result += '</div>';
-      Result += '<div class="user-chat-button-box2">';
-      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendEmail + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
-      Result += '</div>';
-      Result += '<div class="user-friend-button-box2">';
-      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button follow'>친구 삭제</button>"
-      Result += '</div>';
-      Result += '</div>';
-    }
-    if (Result == "")
-    {
-      Result += '<div class="not-exist-list">현재 등록된 친구가 없습니다. </div>'
-    }
-
-    return Result;
-  }
+  // function createFriendShipAcceptedInfo(profileAndFriendMap){
+  //   var Result = "";
+  //   for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
+  //     Result += '<div class="user-info-box">';
+  //     Result += '<div class="profile-box">';
+  //     if(profileAndFriendMap.dtoList[i].profileImage ==null)
+  //       Result += '<img src = "/display?fileName=outprofile.png/"' +
+  //               ' alt="Profile Picture" class="profile-picture">'
+  //     else
+  //       Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
+  //               ' alt="Profile Picture" class="profile-picture">'
+  //     Result += '</div>';
+  //     Result += '<div class="user-name-box-friend">'
+  //     Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
+  //             ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
+  //             ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
+  //     Result += '</div>';
+  //     Result += '<div class="user-chat-button-box2">';
+  //     Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendEmail + " class='request-Chatroom-button follow'>1:1 채팅하기</button>"
+  //     Result += '</div>';
+  //     Result += '<div class="user-friend-button-box2">';
+  //     Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button follow'>친구 삭제</button>"
+  //     Result += '</div>';
+  //     Result += '</div>';
+  //   }
+  //   if (Result == "")
+  //   {
+  //     Result += '<div class="not-exist-list">현재 등록된 친구가 없습니다. </div>'
+  //   }
+  //
+  //   return Result;
+  // }
 
   function createFriendShipUserInfo(profileAndFriendMap){
     var Result = "";
@@ -1021,32 +1030,6 @@
           pageResult += '<button class="page-link requested-page-button" data-name="' + (profileAndFriendMap.end+1) + '">NEXT</button>'
         $("#friendship-requestedList").html(friendshipResult);
         $("#requested-page").html(pageResult)
-      }
-    });
-  }
-  function showFriendProfileAcceptedImageList(loginName, acceptedPage){
-    $.ajax({
-      url: '/profileImage/acceptedList?page='+acceptedPage,
-      type: "POST",
-      data: {loginName:loginName},
-      dataType: "JSON",
-      success: function (profileAndFriendMap){
-        var pageResult = ""
-        friendshipResult = createFriendShipAcceptedInfo(profileAndFriendMap);
-        if (profileAndFriendMap.prev != false)
-          pageResult += '<button class="page-link accepted-page-button" data-name="' + (profileAndFriendMap.start-1) + '">NEXT</button>'
-        $.each(profileAndFriendMap.pageList, function (idx, pageList){
-          if (acceptedPage == pageList)
-            pageResult += '<li class="page-item active">';
-          else
-            pageResult += '<li class="page-item">';
-          pageResult += '<button class="page-link accepted-page-button" data-name="' + pageList + '">' + pageList + '</button>'
-          pageResult += '</li>';
-        })
-        if (profileAndFriendMap.next != false)
-          pageResult += '<button class="page-link accepted-page-button" data-name="' + (profileAndFriendMap.end+1) + '">NEXT</button>'
-        $("#friendship-acceptedList").html(friendshipResult);
-        $("#accepted-page").html(pageResult)
       }
     });
   }
@@ -1697,16 +1680,16 @@ async function showChatInfoBefore(roomID, loginEmail){
       })
 
     })
-    $("#friendship-accepted").click(function (){
-      $('#friendShip-acceptedModal').modal('show');
-      var loginName = '[[${memberDTO.name}]]';
-      showFriendProfileAcceptedImageList(loginName, acceptedPage)
-      $('#accepted-page').off('click').on('click', '.accepted-page-button', function (){
-        var presentPage = $(this).attr('data-name');
-        acceptedPage = presentPage;
-        showFriendProfileAcceptedImageList(loginName, acceptedPage);
-      })
-    })
+    // $("#friendship-accepted").click(function (){
+    //   $('#friendShip-acceptedModal').modal('show');
+    //   var loginName = '[[${memberDTO.name}]]';
+    //   showFriendProfileAcceptedImageList(loginName, acceptedPage)
+    //   $('#accepted-page').off('click').on('click', '.accepted-page-button', function (){
+    //     var presentPage = $(this).attr('data-name');
+    //     acceptedPage = presentPage;
+    //     showFriendProfileAcceptedImageList(loginName, acceptedPage);
+    //   })
+    // })
     $(function () {
       async function friendScrollPaging(){
         let val = scrollContainer.scrollHeight - scrollContainer.scrollTop

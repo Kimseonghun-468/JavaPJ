@@ -31,12 +31,12 @@ public class ProfileImageController {
     }
 
 
-    @PostMapping("acceptedList")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
+    @PostMapping("selectAcceptUsersInfo")
+    public ResponseEntity
     getProfileImageAcceptedList(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> profileAndFriendMap =
+        List<UserInfoDTO> acceptUsersInfo =
                 profileService.getAcceptFriendListPage(profilePageRequestDTO, loginName);
-        return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
+        return new ResponseEntity<>(acceptUsersInfo, HttpStatus.OK);
     }
 
     @PostMapping("friendList")

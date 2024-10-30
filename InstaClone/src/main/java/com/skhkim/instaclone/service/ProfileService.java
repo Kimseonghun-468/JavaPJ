@@ -11,7 +11,8 @@ public interface ProfileService {
     void deleteByName(String name);
     ProfileImageDTO getProfileImage(String name);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
-    ProfilePageResultDTO<Map<String, Object>, Object[]> getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
+
+    List<UserInfoDTO> getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers);
 
