@@ -2,6 +2,7 @@ package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
+import com.skhkim.instaclone.response.UserInfoResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ public interface ProfileService {
     ProfileImageDTO getProfileImage(String name);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
 
-    List<UserInfoDTO> getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
+    UserInfoResponse getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName);
     ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers);
 

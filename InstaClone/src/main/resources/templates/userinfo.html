@@ -994,7 +994,7 @@
   }
   function showFriendProfileAcceptedImageList(loginName, acceptedPage){
     $.ajax({
-      url: '/profileImage/acceptedList?page='+acceptedPage,
+      url: '/profileImageselectAcceptUsersInfo?page='+acceptedPage,
       type: "POST",
       data: {loginName:loginName},
       dataType: "JSON",

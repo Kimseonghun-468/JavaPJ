@@ -1,29 +1,34 @@
 const FriendApp = {
     $data: {
         page: 1,
+        hasNext: false,
         loginName: null,
         noneImage: "/display?fileName=outprofile.png/",
     },
 
     $object: {
+        acceptTable : null,
+        scrollContainer : null,
 
     },
+
+    $event: {
+        scrollPagination : null,
+    },
+
     init(loginName) {
         console.log("FriendApp 초기화 중...");
         this.$data.page = 1;
         this.$data.loginName = loginName;
-    },
-
-    // 필요한 다른 메서드를 추가할 수 있습니다.
-    nextPage() {
-        this.$data.page++;
-        console.log("다음 페이지로 이동:", this.$data.page);
+        this.$object.acceptTable = $("#friendship-acceptedList");
+        this.$object.scrollContainer = document.getElementById('acceptContainer');
+        this.scrollPaging = this.scrollPaging.bind(this);
     },
 
     setUserInfo(data) {
         const container = document.createElement("div"); // 최종적으로 추가할 부모 컨테이너
 
-        data.forEach(value => {
+        data.userInfoDTOS.forEach(value => {
             // 개별 사용자 정보 박스 생성
             const userInfoBox = document.createElement("div");
             userInfoBox.classList.add("user-info-box");
@@ -80,13 +85,24 @@ const FriendApp = {
         });
 
         // data가 비어 있는 경우 처리
-        if (data.length === 0) {
+        if (data.userInfoDTOS.length === 0) {
             const emptyMessage = document.createElement("div");
             emptyMessage.classList.add("not-exist-list");
             emptyMessage.textContent = "현재 등록된 친구가 없습니다.";
             container.appendChild(emptyMessage);
         }
 
-        return container.innerHTML;
+        this.$data.hasNext = data.hasNext;
+        this.$data.page += 1
+        this.$object.acceptTable.append(container.innerHTML);
+    },
+
+    scrollPaging(){
+        var container = this.$object.scrollContainer;
+        var value = container.scrollHeight - container.scrollTop
+        if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
+            if(this.$data.hasNext)
+            selectUsersInfo(this.$data.loginName, this.$data.page)
+        }
     }
 };

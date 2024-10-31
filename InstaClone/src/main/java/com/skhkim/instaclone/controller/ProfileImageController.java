@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.response.UserInfoResponse;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,9 +35,9 @@ public class ProfileImageController {
     @PostMapping("selectAcceptUsersInfo")
     public ResponseEntity
     getProfileImageAcceptedList(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
-        List<UserInfoDTO> acceptUsersInfo =
+        UserInfoResponse result =
                 profileService.getAcceptFriendListPage(profilePageRequestDTO, loginName);
-        return new ResponseEntity<>(acceptUsersInfo, HttpStatus.OK);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("friendList")

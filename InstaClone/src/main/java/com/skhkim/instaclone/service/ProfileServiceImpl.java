@@ -5,6 +5,7 @@ import com.skhkim.instaclone.entity.FriendShip;
 import com.skhkim.instaclone.entity.FriendShipStatus;
 import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
+import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,7 +100,7 @@ public class ProfileServiceImpl implements ProfileService{
     }
 
     @Override
-    public List<UserInfoDTO>
+    public UserInfoResponse
     getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.getByAcceptListPage(pageable, loginName);
@@ -111,11 +112,12 @@ public class ProfileServiceImpl implements ProfileService{
                         .path(projection.getProfileImage() != null ? projection.getProfileImage().getPath() : null)
                         .userName(projection.getClubMember().getName())
                         .userEmail(projection.getClubMember().getEmail())
-                        .hasNext(result.hasNext())
                         .build())
                 .collect(Collectors.toList());
 
-        return userInfoDTOS;
+        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
+
+        return response;
     }
 
     @Override
