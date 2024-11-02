@@ -43,7 +43,7 @@ public class ProfileImageController {
     @PostMapping("friendList")
     public ResponseEntity
     getProfileImageFriendList(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> result =
+        UserInfoResponse result =
                 profileService.getFriendListPage(profilePageRequestDTO, userName, loginName);
         return ResponseEntity.ok(result);
     }

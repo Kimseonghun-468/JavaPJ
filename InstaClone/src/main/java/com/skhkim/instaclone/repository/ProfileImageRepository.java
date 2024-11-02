@@ -50,6 +50,36 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
             "ORDER BY clubMember.name")
     Slice<UserInfoProjection> getByAcceptListPage(Pageable pageable, @Param("loginName") String loginName);
 
+
+    @Query("select FA FROM FriendAccept FA " +
+            "WHERE FA.user1.name = :loginName")
+    List<Object[]> test(String loginName);
+
+//    @Query("SELECT fs1, pi, fs2.status, fs2.isFrom " +
+//            "FROM FriendShip fs1 " +
+//            "LEFT JOIN FriendShip fs2 ON (fs1.clubMemberUser.name = fs2.clubMemberUser.name AND fs2.clubMemberFriend.name = :loginName) " +
+//            "LEFT JOIN ProfileImage pi ON fs1.clubMemberUser.name = pi.clubMember.name " +
+//            "WHERE fs1.clubMemberFriend.name =:userName " +
+//            "AND fs1.status = 1 AND fs1.clubMemberUser.name != :loginName " +
+//            "ORDER BY fs2.status DESC, fs1.clubMemberUser.name")
+//    Page<Object[]> getFriendListPage(Pageable pageable, @Param("userName") String userName, @Param("loginName") String loginName);
+
+    @Query("SELECT FA_USER.user2 AS clubMember, " +
+            "CASE WHEN FA_LOGIN.user2 IS NOT NULL THEN 1 " +
+            "WHEN FW_RECEVER.requester IS NOT NULL THEN 2 " +
+            "WHEN FW_REQUESTER.receiver IS NOT NULL THEN 3 ELSE 4 END AS status " +
+            "FROM FriendAccept FA_USER " +
+            "LEFT JOIN FriendAccept FA_LOGIN ON " +
+            "FA_USER.user2 = FA_LOGIN.user2 AND FA_LOGIN.user1.name = :loginName " +
+            "LEFT JOIN FriendWait FW_RECEVER ON " +
+            "FW_RECEVER.requester = FA_USER.user2 AND FW_RECEVER.receiver.name = :loginName " +
+            "LEFT JOIN FriendWait FW_REQUESTER ON " +
+            "FW_REQUESTER.receiver = FA_USER.user2 AND FW_REQUESTER.requester.name = :loginName "+
+            "WHERE FA_USER.user1.name = :userName " +
+            "ORDER BY FA_LOGIN.user2.name DESC, FW_RECEVER.requester.name DESC, FW_REQUESTER.receiver.name DESC")
+    Slice<UserInfoProjection> getFriendListPage(Pageable pageable, String userName, String loginName);
+
+
     @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi ON fs.clubMemberUser.name = pi.clubMember.name " +
             "WHERE fs.clubMemberFriend.name =:loginName " +
             "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT " +
@@ -58,17 +88,6 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     Page<Object[]> getInviteListByNamePage(Pageable pageable, @Param("loginName") String loginName, String inviteSearchTerm, List<String> roomUsers);
 
     // 이건 초대할 사람 검색하는건데, 이름으로..?
-
-    @Query("SELECT fs1, pi, fs2.status, fs2.isFrom " +
-            "FROM FriendShip fs1 " +
-            "LEFT JOIN FriendShip fs2 ON (fs1.clubMemberUser.name = fs2.clubMemberUser.name AND fs2.clubMemberFriend.name = :loginName) " +
-            "LEFT JOIN ProfileImage pi ON fs1.clubMemberUser.name = pi.clubMember.name " +
-            "WHERE fs1.clubMemberFriend.name =:userName " +
-            "AND fs1.status =com.skhkim.instaclone.entity.FriendShipStatus.ACCEPT AND fs1.clubMemberUser.name != :loginName " +
-            "ORDER BY fs2.status DESC, fs1.clubMemberUser.name")
-    Page<Object[]> getFriendListPage(Pageable pageable, @Param("userName") String userName, @Param("loginName") String loginName);
-
-    // 이건 상대방의 친구 관계가 나의 친구들과 어떻게 되는지?
 
     @Query("SELECT fs1, pi " +
             "FROM FriendShip fs1 " +

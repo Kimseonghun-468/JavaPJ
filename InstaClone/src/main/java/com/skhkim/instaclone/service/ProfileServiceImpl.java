@@ -141,33 +141,24 @@ public class ProfileServiceImpl implements ProfileService{
     }
 
     @Override
-    public ProfilePageResultDTO<Map<String, Object>, Object[]>
+    public UserInfoResponse
     getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
-        Page<Object[]> result = profileImageRepository.getFriendListPage(pageable, userName, loginName);
+        Slice<UserInfoProjection> result = profileImageRepository.getFriendListPage(pageable, userName, loginName);
+        List<UserInfoDTO> userInfoDTOS = result.stream()
+                .map(projection -> UserInfoDTO.builder()
+                        .imgName(projection.getClubMember().getProfileImage() != null ? projection.getClubMember().getProfileImage().getImgName() : null)
+                        .uuid(projection.getClubMember().getProfileImage() != null ? projection.getClubMember().getProfileImage().getUuid() : null)
+                        .path(projection.getClubMember().getProfileImage() != null ? projection.getClubMember().getProfileImage().getPath() : null)
+                        .userName(projection.getClubMember().getName())
+                        .userEmail(projection.getClubMember().getEmail())
+                        .status(projection.getStatus())
+                        .build())
+                .collect(Collectors.toList());
 
-        Function<Object[], Map<String,Object>> fn = (arr ->{
-            Map<String, Object> profileAndFriendMap = new HashMap<>();
-            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
-            profileAndFriendMap.put("friendEmail",((FriendShip) arr[0]).getClubMemberUser().getEmail());
+        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
 
-            if (arr[1] == null)
-                profileAndFriendMap.put("profileImage",null);
-            else
-                profileAndFriendMap.put("profileImage",entityToDTO((ProfileImage) arr[1]));
-
-            if (arr[2] == null)
-                profileAndFriendMap.put("status", "NOTTING");
-            else if (arr[2] == FriendShipStatus.ACCEPT)
-                profileAndFriendMap.put("status", "ACCEPT");
-            else if (arr[2] == FriendShipStatus.WAITING && (!(boolean) arr[3]))
-                profileAndFriendMap.put("status", "WAITING");
-            else if (arr[2] == FriendShipStatus.WAITING && ((boolean) arr[3]))
-                profileAndFriendMap.put("status", "WAITACCEPT");
-
-            return profileAndFriendMap;
-        });
-        return new ProfilePageResultDTO<>(result, fn);
+        return response;
     }
 
     @Override

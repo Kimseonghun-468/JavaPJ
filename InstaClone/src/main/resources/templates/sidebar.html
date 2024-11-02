@@ -473,10 +473,6 @@
     <div id="messages-modal" style="height: 500px; overflow-y: scroll; padding: 10px; background-color: #d4e6f1;">
       <div class="message-container" id="messages-box">
 
-<!--        <div class="invite-list-container">-->
-<!--          <div class="invite-user-list">OOO님이 faw, faw, faw, fawa, wwww, fff님을 초대하였습니다.</div>-->
-<!--        </div>-->
-
       </div>
     </div>
 
@@ -905,7 +901,7 @@
       success: function (result) {
         var str = "";
         var carouselTag = "";
-        //ddd
+
         $.each(result, function (idx, imageInfo) {
           str += "<input type='hidden' name='imageDTOList["+idx+"].imgName' value='"+imageInfo['fileName'] +"'>";
           str += "<input type='hidden' name='imageDTOList["+idx+"].path' value='"+imageInfo['folderPath']+"'>";
@@ -1195,7 +1191,7 @@
       dictionary = {}
       dictionaryInverse = {}
     }
-    // 여기서 룸 아이디에 disconnect 타임 조회 해버리기
+
     $.ajax({
       url: "/chat/updateDisConnectTime",
       type: "POST",
@@ -1741,7 +1737,6 @@ async function showChatInfoBefore(roomID, loginEmail){
             return result
           }
 
-          // $('#invite-container').append("<a user-name='" + inviteName + "'>"+ inviteName + " " +"</a>");
           $('#invite-container').append(createInviteTag(inviteName, inviteUrl));
           dictionaryInvite[inviteName] = true;
           dictionaryInviteEmail[inviteEmail] = true;
@@ -1818,12 +1813,7 @@ async function showChatInfoBefore(roomID, loginEmail){
         this.remove()
       })
 
-      // document.getElementById('reply-form').onsubmit = function (event){
-      //   event.preventDefault();
-      //   if (commentBox.value.trim() === "")
-      //     return ;
-      //   sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
-      // }
+
       $('#reply-send').off('click').on('click', function (){
         if (commentBox.value.trim() === "")
           return ;

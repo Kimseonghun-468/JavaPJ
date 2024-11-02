@@ -91,3 +91,15 @@ Chatting 1:N Service로 변경 및 ChatMessage NoSQL(MongoDB) 사용 계획
 RDBMS로 설계 후, 처리 시간 확인 및 ChatMessage만 MongoDB로 수정 후 속도 확인 예정
 -> 처리 시간을 어떻게 측정할지는 고민중
 
+
+
+***
+2024-11-01 ~ 
+코드 리팩터링 시작
+
+- Script File 분할
+  - 각 항목에 맞는 Script 파일 분할 (각 Modal별로 진행)
+    - 친구 목록, 요청 목록, 채팅방 목록 완료
+    - 채팅방별 채팅 기록, 페이지별 친구 목록, 게시물, 검색, 친구 수락 삭제 취소 등 진행 예정
+
+- 좋아요 연계 계획 하기

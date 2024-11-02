@@ -6,5 +6,6 @@ import com.skhkim.instaclone.entity.ProfileImage;
 public interface UserInfoProjection {
     ClubMember getClubMember();
     ProfileImage getProfileImage();
+    String getStatus();
 
 }

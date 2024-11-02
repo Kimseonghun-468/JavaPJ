@@ -16,6 +16,7 @@ public class UserInfoDTO {
     private String uuid;
     private String imgName;
     private String path;
+    private String status;
 
     public String getImageURL(){
         try {
