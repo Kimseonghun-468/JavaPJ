@@ -1,8 +1,10 @@
 package com.skhkim.instaclone.chatting.repository;
 
+import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -34,6 +36,15 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
             "LEFT JOIN ProfileImage pi ON pi.clubMember.email = cu2.member.email " +
             "WHERE cu2.member.email != :loginEmail AND cu2.chatRoom.roomId =:roomId")
     List<Object[]> getUserEmailByEmailAndRoomId2(String loginEmail, Long roomId);
+
+
+    //
+    @Query("SELECT CU.chatRoom FROM ChatUser CU " +
+            "WHERE CU.member.email = :loginEmail " +
+            "ORDER BY CU.chatRoom.lastChatTime DESC")
+    Slice<ChatRoom> getTest(Pageable pageable, String loginEmail);
+    //
+
 
 
     @Query("SELECT cu.disConnect FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.email =:loginEmail")

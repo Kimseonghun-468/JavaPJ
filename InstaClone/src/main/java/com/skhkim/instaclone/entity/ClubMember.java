@@ -29,6 +29,9 @@ public class ClubMember extends BaseEntity{
     @OneToMany(mappedBy = "clubMemberUser")
     private List<FriendShip> friendshipList = new ArrayList<>();
 
+    @OneToOne(mappedBy = "clubMember")
+    private ProfileImage profileImage;
+
     public void addMemberRole(ClubMemberRole clubMemberRole){
         roleSet.add(clubMemberRole);
     }

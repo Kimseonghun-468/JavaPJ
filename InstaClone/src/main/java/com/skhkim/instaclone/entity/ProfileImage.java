@@ -17,7 +17,7 @@ public class ProfileImage extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pfino;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private ClubMember clubMember;
 //    private String userName;
 //    private String userEmail;

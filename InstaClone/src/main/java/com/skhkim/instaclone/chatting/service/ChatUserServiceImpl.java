@@ -1,25 +1,23 @@
 package com.skhkim.instaclone.chatting.service;
 
 
+import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
-import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
+
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
-import com.skhkim.instaclone.dto.ProfilePageResultDTO;
 import com.skhkim.instaclone.entity.ClubMember;
-import com.skhkim.instaclone.entity.ProfileImage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,33 +47,22 @@ public class ChatUserServiceImpl implements ChatUserService {
     }
 
     @Override
-    public ProfilePageResultDTO<Map<String, Object>, Object[]>
+    public ChatRoomResponse
     getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail){
         Pageable pageable = profilePageRequestDTO.getPageable();
-        Page<Object[]> result = chatUserRepository.getChatroomAndProfileImage(pageable, loginEmail);
+        Slice<ChatRoom> result = chatUserRepository.getTest(pageable ,loginEmail);
 
-        Function<Object[], Map<String, Object>> fn = (arr ->{
-            List<Object[]> emailAndProfileList = chatUserRepository.getUserEmailByEmailAndRoomId2(loginEmail,(Long) arr[2]);
-            List<ProfileImageDTO> profileImageList = emailAndProfileList.stream().map(emailAndProfile -> {
-                if (emailAndProfile[1] != null)
-                    return entityToDTOByProfileImage((ProfileImage) emailAndProfile[1]);
-                else
-                    return null;
-            }).toList();
-            List<String> nameList = emailAndProfileList.stream().
-                    map(emailAndProfile -> (String) emailAndProfile[0]).toList();
+        List<ChatRoomDTO> chatRoomDTOS = result.stream()
+                .map(chatRoom -> ChatRoomDTO.builder()
+                        .lastChat(chatRoom.getLastChat())
+                        .roomId(chatRoom.getRoomId())
+                        .lastChatTime(chatRoom.getLastChatTime())
+                        .userNum(chatRoom.getUserNum())
+                        .userInfoDTOS(entityToDTOS(chatRoom.getChatUserList()))
+                        .build())
+                .collect(Collectors.toList());
 
-            String combinedName = String.join(", ", nameList);
-            Map<String, Object> userAndProfileMap = new HashMap<>();
-            userAndProfileMap.put("friendName", combinedName);
-            userAndProfileMap.put("lastChat", (arr[0]));
-            userAndProfileMap.put("lastChatTime", (arr[1]));
-            userAndProfileMap.put("roomId", (arr[2]));
-            userAndProfileMap.put("profileImage", profileImageList);
-            return userAndProfileMap;
-        });
-        return new ProfilePageResultDTO<>(result, fn);
-
+        return new ChatRoomResponse(chatRoomDTOS, result.hasNext());
     }
     @Override
     public void insertChatUser(List<String> userEmails, Long roomId){

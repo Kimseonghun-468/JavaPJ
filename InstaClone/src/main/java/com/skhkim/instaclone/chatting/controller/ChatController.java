@@ -4,6 +4,7 @@ import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
+import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
@@ -106,10 +107,10 @@ public class ChatController {
         return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/chat/getChatRoomAndProfileImagePage")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getChatroomAndProfileImagePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> result = chatUserService.getProfileAndUseByLoginNamePage(profilePageRequestDTO, loginEmail);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    @PostMapping("/chat/selectChatRoom")
+    public ResponseEntity selectChatRoom(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail){
+        ChatRoomResponse result = chatUserService.getProfileAndUseByLoginNamePage(profilePageRequestDTO, loginEmail);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/chat/updateDisConnectTime")

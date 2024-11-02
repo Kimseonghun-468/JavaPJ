@@ -14,6 +14,9 @@
   <script src="/js/AcceptFriendApp.js"></script>
   <script src="/js/WaitFriend.js"></script>
   <script src="/js/WaitFriendApp.js"></script>
+  <script src="/js/ChatRoom.js/"></script>
+  <script src="/js/ChatRoomApp.js/"></script>
+
 
 
   <link th:href="@{/css/carouselCustom.css}" rel="stylesheet">
@@ -23,6 +26,7 @@
 <body>
 
 <input type="hidden" id="loginName" th:data-login-name="${memberDTO.name}">
+<input type="hidden" id="loginEmail" th:data-login-email="${memberDTO.email}">
 
 
 <div class="temp">
@@ -456,13 +460,10 @@
 </div>
 
 <div id="chatroom-Modal" class="modal-custom">
-  <div class="modal-content-side-frame" style="width: 650px;">
-    <div id="chatroom-List" class="side-border" style="height: 725px;">
+  <div id="chatRoomContainer" class="modal-content-side-frame" style="width: 650px;">
+    <div id="chatroom-List" class="side-border" style="height: 600px;">
 
     </div>
-    <ul class="pagination h-100 justify-content-center align-items-center" id="chatroom-page" style="min-height: 38px;">
-
-    </ul>
   </div>
 </div>
 
@@ -847,84 +848,6 @@
      })
 
    }
-  function createChatroomListInfo(result){
-    Result = "";
-    for (var i = 0; i < result.dtoList.length; i++){
-      if (result.dtoList[i].lastChat == null)
-        continue;
-      getNotReadMessageNum(loginEmail, result.dtoList[i].roomId)
-      let nameLength = result.dtoList[i].friendName.split(',').length
-      Result += '<div class="user-info-box">';
-      Result += '<div class="profile-box">';
-      if(result.dtoList[i].profileImage[0] != null)
-        Result += '<img src ="/display?fileName=' + result.dtoList[i].profileImage[0].imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture">';
-      else
-        Result += '<img src ="/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      Result += '</div>';
-      Result += '<div class ="chat-name-container">'
-      Result += '<div class ="user-name-box-chatlist">';
-      if (nameLength > 1) {
-        Result += '<div class ="user-name">' + result.dtoList[i].friendName.slice(0, 12) + '  ... </div>';
-        Result += '<div class ="chat-user-num">+' + nameLength + '</div>'
-      }
-      else
-        Result += '<div class ="user-name">' +result.dtoList[i].friendName +'</div>';
-      Result += '</div>';
-      Result += '<div class ="last-chat-comment">';
-      if (result.dtoList[i].lastChat.length > 20)
-        Result += result.dtoList[i].lastChat.slice(0, 20) + '...';
-      else
-        Result += result.dtoList[i].lastChat
-      Result += '</div>';
-      Result += '</div>';
-      Result += '<div class="chat-tiem-num-container">'
-      Result += '<div class ="last-chat-time">';
-      Result += formatTimeDifference(result.dtoList[i].lastChatTime)
-      Result += '</div>';
-      Result += '<div class ="not-read-num comment-bold" id="num-' +result.dtoList[i].roomId + '">' + '</div>';
-      Result += '</div>';
-      Result += '<div class ="user-chat-button-box3">';
-      Result += '<button room-id =' + result.dtoList[i].roomId + ' class=\"request-Chatroom-button\">대화창 열기</button>'
-      Result += '</div>';
-      Result += '</div>';
-    }
-    if (Result == "")
-    {
-      Result += '<div class="not-exist-list">현재 등록된 채팅방이 없습니다.</div>'
-    }
-
-    return Result;
-  }
-  function showChatroomAndProfileImageList(loginEmail){
-    $.ajax({
-      url: "/chat/getChatRoomAndProfileImagePage?Page=" + chatRoomPage,
-      type: "POST",
-      data: {loginEmail: loginEmail},
-      dataType: "JSON",
-      success: function (profileAndChatRoomMap){
-        var pageResult = "";
-        Result = createChatroomListInfo(profileAndChatRoomMap);
-        if (profileAndChatRoomMap.prev != false)
-          pageResult += '<button class="page-link chatroom-page-button" data-name="' + (profileAndChatRoomMap.start-1) + '">NEXT</button>'
-        $.each(profileAndChatRoomMap.pageList, function (idx, pageList){
-          if (chatRoomPage == pageList)
-            pageResult += '<li class="page-item active">';
-          else
-            pageResult += '<li class="page-item">';
-          pageResult += '<button class="page-link chatroom-page-button" data-name="' + pageList + '">' + pageList + '</button>'
-          pageResult += '</li>';
-        })
-        if (profileAndChatRoomMap.next != false)
-          pageResult += '<button class="page-link chatroom-page-button" data-name="' + (profileAndChatRoomMap.end+1) + '">NEXT</button>'
-
-        $("#chatroom-List").html(Result);
-        $("#chatroom-page").html(pageResult);
-      }
-    })
-  }
-
   async function showFriendProfileUserList(userName, loginName, friendListPage){
     try {
       const response = await $.ajax({
@@ -1592,16 +1515,6 @@ async function showChatInfoBefore(roomID, loginEmail){
 
       })
     });
-    $("#chatting-roomList").click(function (){
-      $('#chatroom-Modal').modal('show');
-      var loginEmail = '[[${memberDTO.email}]]';
-      showChatroomAndProfileImageList(loginEmail);
-      $('#chatroom-page').off('click').on('click', '.chatroom-page-button', function (){
-        var presentPage = $(this).attr('data-name');
-        chatRoomPage = presentPage;
-        showChatroomAndProfileImageList(loginEmail);
-      })
-    })
 
     function createPostInfo(response){
       let postResult = "";

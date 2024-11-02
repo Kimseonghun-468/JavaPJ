@@ -1,13 +1,16 @@
 package com.skhkim.instaclone.chatting.service;
 
+import com.skhkim.instaclone.chatting.entity.ChatUser;
+import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
-import com.skhkim.instaclone.dto.ProfilePageResultDTO;
+
+import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 public interface ChatUserService {
 
@@ -16,7 +19,7 @@ public interface ChatUserService {
 
     List<Object[]> getEmailAndName(Long roomId);
 
-    ProfilePageResultDTO<Map<String, Object>, Object[]> getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail);
+    ChatRoomResponse getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail);
 
     void insertChatUser(List<String> userEmails, Long roomId);
     LocalDateTime getDisConnectTime(Long roomId, String loginEmail);
@@ -31,5 +34,19 @@ public interface ChatUserService {
                 .build();
         return profileImageDTO;
     }
+
+    default List<UserInfoDTO> entityToDTOS(List<ChatUser> chatUserList){
+        List<UserInfoDTO> userInfoDTOS = chatUserList.stream().map(chatUser ->
+            UserInfoDTO.builder()
+                    .userEmail(chatUser.getMember().getEmail())
+                    .userName(chatUser.getMember().getName())
+                    .imgName(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getImgName() : null)
+                    .uuid(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getUuid() : null)
+                    .path(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getPath() : null)
+                    .build()).collect(Collectors.toList());
+
+        return userInfoDTOS;
+    }
+
 }
 
