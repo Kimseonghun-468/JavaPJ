@@ -24,11 +24,11 @@ public class ProfileImageController {
     private final ProfileService profileService;
 
     @PostMapping("waitingList")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
+    public ResponseEntity
     getProfileImagebyClubMember(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> profileAndFriendMap =
+       UserInfoResponse result =
                 profileService.getWaitingFriendListPage(profilePageRequestDTO, loginName);
-        return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
@@ -41,11 +41,11 @@ public class ProfileImageController {
     }
 
     @PostMapping("friendList")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
+    public ResponseEntity
     getProfileImageFriendList(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> profileAndFriendMap =
+        ProfilePageResultDTO<Map<String, Object>, Object[]> result =
                 profileService.getFriendListPage(profilePageRequestDTO, userName, loginName);
-        return new ResponseEntity<>(profileAndFriendMap, HttpStatus.OK);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("inviteList")

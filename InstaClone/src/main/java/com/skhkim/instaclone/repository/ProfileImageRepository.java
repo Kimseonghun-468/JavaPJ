@@ -32,14 +32,11 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
     @Query("DELETE FROM ProfileImage pi WHERE pi.clubMember.name =:userName")
     void deleteByUserName(String userName);
 
-    @Query("SELECT fs, pi FROM FriendShip fs LEFT JOIN ProfileImage pi On fs.clubMemberUser.name = pi.clubMember.name " +
-            "WHERE fs.clubMemberFriend.name =:loginName " +
-            "AND fs.status =com.skhkim.instaclone.entity.FriendShipStatus.WAITING " +
-            "AND fs.isFrom = true")
-    Page<Object[]> getByWaitingListPage(Pageable pageable, @Param("loginName") String loginName);
-
-    // 이건 뭐지? 내가 친구 수락해야 될 아이들?
-
+    @Query("SELECT FS.clubMemberUser as clubMember, PI AS profileImage FROM FriendShip FS " +
+            "LEFT JOIN ProfileImage PI On FS.clubMemberUser.name = PI.clubMember.name " +
+            "WHERE FS.clubMemberFriend.name = :loginName " +
+            "AND FS.status = 0 ")
+    Slice<UserInfoProjection> getByWaitingListPage(Pageable pageable, @Param("loginName") String loginName);
 
     @Query(value = "SELECT FS.clubMemberFriend AS clubMember, PI AS profileImage " +
             "FROM FriendShip FS " +

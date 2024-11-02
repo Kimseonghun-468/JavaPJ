@@ -3,18 +3,18 @@ document.addEventListener("DOMContentLoaded", ()=> {
         $('#friendShip-acceptedModal').modal('show');
         var loginName = document.getElementById("loginName").dataset.loginName;
 
-        FriendApp.init(loginName);
-        selectUsersInfo(FriendApp.$data.loginName, FriendApp.$data.page);
+        AceeptFriendApp.init(loginName);
+        selectUsersInfo(AceeptFriendApp.$data.loginName, AceeptFriendApp.$data.page);
 
         // Make Infinite Scroll Pagination
-        FriendApp.$event.scrollPagination = debounce(FriendApp.scrollPaging,300);
-        FriendApp.$object.scrollContainer.addEventListener('scroll', FriendApp.$event.scrollPagination);
+        AceeptFriendApp.$event.scrollPagination = debounce(AceeptFriendApp.scrollPaging,300);
+        AceeptFriendApp.$object.scrollContainer.addEventListener('scroll', AceeptFriendApp.$event.scrollPagination);
 
     })
     // Delete Modal Setting
     $('#friendShip-acceptedModal').on('hidden.bs.modal', function () {
         $('#friendship-acceptedList').html(""); // Init할 때 초기화 하는게 맞나..?
-        FriendApp.$object.scrollContainer.removeEventListener('scroll', FriendApp.$event.scrollPagination);
+        AceeptFriendApp.$object.scrollContainer.removeEventListener('scroll', AceeptFriendApp.$event.scrollPagination);
     })
 });
 
@@ -25,7 +25,7 @@ function selectUsersInfo(loginName, page){
         data: {loginName:loginName},
         dataType: "JSON",
         success: function (data){
-            FriendApp.setUserInfo(data);
+            AceeptFriendApp.setUserInfo(data);
         }
     });
 }

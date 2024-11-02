@@ -10,8 +10,11 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 
-  <script src="/js/FriendAccept.js"></script>
-  <script src="/js/FriendAcceptApp.js"></script>
+  <script src="/js/AcceptFriend.js"></script>
+  <script src="/js/AcceptFriendApp.js"></script>
+  <script src="/js/WaitFriend.js"></script>
+  <script src="/js/WaitFriendApp.js"></script>
+
 
   <link th:href="@{/css/carouselCustom.css}" rel="stylesheet">
   <title>프로필</title>
@@ -186,9 +189,6 @@
 <div id="reply-option-modal" class="modal-custom">
   <div class="option-modal-content">
 
-<!--    <div class="option-modal-title">-->
-<!--      <div class="text-center">Reply Option</div>-->
-<!--    </div>-->
     <div class="option-modal-body">
       <div id="remove-reply" style="color: red;">삭제</div>
     </div>
@@ -201,9 +201,7 @@
 <div id="post-option-modal" class="modal-custom">
   <div class="option-modal-content">
 
-<!--    <div class="option-modal-title">-->
-<!--      <div class="text-center">Post Option</div>-->
-<!--    </div>-->
+
     <div class="option-modal-body">
       <div id="remove-post" style="color:red;">삭제</div>
     </div>
@@ -429,19 +427,9 @@
 </div>
 
 <div id="friendShip-requestedModal" class="modal-custom">
-  <div class="modal-content-side-frame" style="width: 650px;">
-
-    <div id="friendship-requestedList" class="side-border" style="height:725px;">
-      <div>현재 요청받은 친구가 없습니다.</div>
+  <div id="waitContainer" class="modal-content-side-frame" style="width: 650px;">
+    <div id="friendship-requestedList" class="side-border" style="height:600px;">
     </div>
-    <ul class="pagination justify-content-center align-items-center" id="requested-page" style="min-height: 38px">
-      <li class="page-item active">
-        <a class="page-link">1</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link">2</a>
-      </li>
-    </ul>
   </div>
 </div>
 
@@ -522,16 +510,6 @@
       </div>
       </div>
       <div id="invite-container" class="invite-member">
-
-<!--        <div class="invite-profile-container">-->
-<!--          <img th:src ="|/display?fileName=outprofile.png|" class="invite-profile">-->
-<!--          <div>tt</div>-->
-<!--        </div>-->
-
-<!--        <div class="invite-profile-container">-->
-<!--          <img th:src ="|/display?fileName=outprofile.png|" class="invite-profile">-->
-<!--          <div class="invite-profile-name">aa</div>-->
-<!--        </div>-->
 
 
       </div>
@@ -854,34 +832,6 @@
     $('#inviteSearchResult').append(Result);
   }
 
-  function createFriendShipWaitingInfo(profileAndFriendMap){
-    var Result = "";
-    for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
-      Result += '<div class="user-info-box">';
-      Result += '<div class="profile-box">';
-      if(profileAndFriendMap.dtoList[i].profileImage ==null)
-        Result += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      else
-        Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      Result += '</div>';
-      Result += '<div class="user-name-box waiting-info">';
-      Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
-              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
-      Result += '</div>';
-      Result += '<div class="user-chat-button-box2">';
-      Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Accept-button follow'>친구 수락</button>"
-      Result += '</div>';
-      Result += '</div>';
-    }
-    if (Result == "")
-    {
-      Result += '<div class="not-exist-list">현재 요청받은 친구가 없습니다.</div>'
-    }
-    return Result;
-  }
-
    function getNotReadMessageNum(loginEmail, roomId) {
      $.ajax({
        url: "/chat/getNotReadNum",
@@ -973,33 +923,6 @@
         $("#chatroom-page").html(pageResult);
       }
     })
-  }
-
-  function showFriendProfileWaitingImageList(loginName, requestedPage){
-    $.ajax({
-      url: '/profileImage/waitingList?page='+requestedPage,
-      type: "POST",
-      data: {loginName:loginName},
-      dataType: "JSON",
-      success: function (profileAndFriendMap){
-        var pageResult = ""
-        friendshipResult = createFriendShipWaitingInfo(profileAndFriendMap);
-        if (profileAndFriendMap.prev != false)
-          pageResult += '<button class="page-link requested-page-button" data-name="' + (profileAndFriendMap.start-1) + '">NEXT</button>'
-        $.each(profileAndFriendMap.pageList, function (idx, pageList){
-          if (requestedPage == pageList)
-            pageResult += '<li class="page-item active">';
-          else
-            pageResult += '<li class="page-item">';
-          pageResult += '<button class="page-link requested-page-button" data-name="' + pageList + '">' + pageList + '</button>'
-          pageResult += '</li>';
-        })
-        if (profileAndFriendMap.next != false)
-          pageResult += '<button class="page-link requested-page-button" data-name="' + (profileAndFriendMap.end+1) + '">NEXT</button>'
-        $("#friendship-requestedList").html(friendshipResult);
-        $("#requested-page").html(pageResult)
-      }
-    });
   }
 
   async function showFriendProfileUserList(userName, loginName, friendListPage){
@@ -1637,17 +1560,6 @@ async function showChatInfoBefore(roomID, loginEmail){
       });
     })
 
-    $("#friendship-requested").click(function (){
-      $('#friendShip-requestedModal').modal('show');
-      var loginName = '[[${memberDTO.name}]]';
-      showFriendProfileWaitingImageList(loginName, requestedPage);
-      $('#requested-page').off('click').on('click', '.requested-page-button', function(){
-        var presentPage = $(this).attr('data-name');
-        requestedPage = presentPage;
-        showFriendProfileWaitingImageList(loginName, requestedPage);
-      })
-
-    })
     $(function () {
       async function friendScrollPaging(){
         let val = scrollContainer.scrollHeight - scrollContainer.scrollTop

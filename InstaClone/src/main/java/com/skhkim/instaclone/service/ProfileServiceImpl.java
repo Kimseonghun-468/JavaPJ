@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,24 +80,24 @@ public class ProfileServiceImpl implements ProfileService{
     }
 
     @Override
-    public ProfilePageResultDTO<Map<String, Object>, Object[]>
+    public UserInfoResponse
     getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
 
-        Page<Object[]> result = profileImageRepository.getByWaitingListPage(pageable, loginName);
+        Slice<UserInfoProjection> result = profileImageRepository.getByWaitingListPage(pageable, loginName);
 
-        Function<Object[], Map<String,Object>> fn = (arr ->{
-            Map<String, Object> profileAndFriendMap = new HashMap<>();
-            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
-            if (arr[1] == null)
-                profileAndFriendMap.put("profileImage",null);
-            else
-                profileAndFriendMap.put("profileImage",entityToDTO((ProfileImage) arr[1]));
+        List<UserInfoDTO> userInfoDTOS = result.stream()
+                .map(projection -> UserInfoDTO.builder()
+                        .imgName(projection.getProfileImage() != null ? projection.getProfileImage().getImgName() : null)
+                        .uuid(projection.getProfileImage() != null ? projection.getProfileImage().getUuid() : null)
+                        .path(projection.getProfileImage() != null ? projection.getProfileImage().getPath() : null)
+                        .userName(projection.getClubMember().getName())
+                        .userEmail(projection.getClubMember().getEmail())
+                        .build())
+                .collect(Collectors.toList());
 
-            return profileAndFriendMap;
-        });
-
-        return new ProfilePageResultDTO<>(result, fn);
+        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
+        return response;
     }
 
     @Override
