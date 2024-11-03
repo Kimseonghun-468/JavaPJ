@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.dto;
 
+import com.skhkim.instaclone.entity.type.FriendStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class UserInfoDTO {
     private String uuid;
     private String imgName;
     private String path;
-    private String status;
+    private FriendStatus status;
 
     public String getImageURL(){
         try {

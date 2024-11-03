@@ -26,8 +26,8 @@ public class ClubMember extends BaseEntity{
     @Builder.Default
     private Set<ClubMemberRole> roleSet = new HashSet<>();
 
-    @OneToMany(mappedBy = "clubMemberUser")
-    private List<FriendShip> friendshipList = new ArrayList<>();
+//    @OneToMany(mappedBy = "clubMemberUser")
+//    private List<FriendShip> friendshipList = new ArrayList<>();
 
     @OneToOne(mappedBy = "clubMember")
     private ProfileImage profileImage;

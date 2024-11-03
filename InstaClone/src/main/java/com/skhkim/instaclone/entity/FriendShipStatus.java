@@ -1,5 +1,5 @@
-package com.skhkim.instaclone.entity;
-
-public enum FriendShipStatus {
-    WAITING, ACCEPT
-}
+//package com.skhkim.instaclone.entity;
+//
+//public enum FriendShipStatus {
+//    WAITING, ACCEPT
+//}

@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.response.UserInfoResponse;
 import com.skhkim.instaclone.service.LoginService;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +41,8 @@ public class SearchCotroller {
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>> getInivteListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, String inviteSearchTerm, String loginName, @RequestParam List<String> roomUsers){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> result = profileService.getInviteSearchListPage(profilePageRequestDTO, loginName, inviteSearchTerm, roomUsers);
+    public ResponseEntity getInivteListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, String inviteSearchTerm, String loginName, @RequestParam List<String> roomUsers){
+        UserInfoResponse result = profileService.getInviteSearchListPage(profilePageRequestDTO, loginName, inviteSearchTerm, roomUsers);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 

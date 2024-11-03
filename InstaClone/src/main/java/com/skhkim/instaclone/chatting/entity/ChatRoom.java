@@ -1,5 +1,4 @@
 package com.skhkim.instaclone.chatting.entity;
-import com.skhkim.instaclone.entity.FriendShip;
 import jakarta.persistence.*;
 import lombok.*;
 

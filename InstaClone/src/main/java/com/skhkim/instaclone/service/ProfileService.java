@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.service;
 
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
 import com.skhkim.instaclone.response.UserInfoResponse;
@@ -15,10 +16,10 @@ public interface ProfileService {
 
     UserInfoResponse getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);
     UserInfoResponse getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName);
-    ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers);
+    UserInfoResponse getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers);
 
-    ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers);
-    Map<String, Object> getFirstUser(String userName, String loginName);
+    UserInfoResponse getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers);
+    UserInfoDTO getFirstUser(String userName, String loginName);
     default ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = ProfileImage.builder()

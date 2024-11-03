@@ -16,6 +16,8 @@
   <script src="/js/WaitFriendApp.js"></script>
   <script src="/js/ChatRoom.js/"></script>
   <script src="/js/ChatRoomApp.js/"></script>
+  <script src="/js/ProfileFriend.js"></script>
+  <script src="/js/ProfileFriendApp.js"></script>
 
 
 
@@ -27,7 +29,7 @@
 
 <input type="hidden" id="loginName" th:data-login-name="${memberDTO.name}">
 <input type="hidden" id="loginEmail" th:data-login-email="${memberDTO.email}">
-
+<input type="hidden" id="userName" th:data-user-name="${userName}">
 
 <div class="temp">
 
@@ -451,7 +453,7 @@
 </html>
 
 <div id="friend-List-UserModal" class="modal-custom">
-  <div id="friend-modal" class="modal-content-side-frame" style="width: 650px; max-height: 100%">
+  <div id="profileFriendContainer" class="modal-content-side-frame" style="width: 650px; max-height: 100%">
 
     <div id="friend-List-UserBox" class="side-border" style="height: 725px;">
 
@@ -758,42 +760,6 @@
     })
   }
 
-  function createFriendShipUserInfo(profileAndFriendMap){
-    var Result = "";
-    for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
-      Result += '<div class="user-info-box">';
-      Result += '<div class="profile-box">';
-      if(profileAndFriendMap.dtoList[i].profileImage ==null)
-        Result += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      else
-        Result += '<img src ="/display?fileName=' + profileAndFriendMap.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      Result += '</div>';
-      Result += '<div class="user-name-box-multifriend">'
-      Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
-              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
-      Result += '</div>';
-      Result += '<div class="friend-delete-button-box">';
-
-      if (profileAndFriendMap.dtoList[i].status == "NOTTING")
-        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Follow-button follow'>친구 요청</button>"
-      if (profileAndFriendMap.dtoList[i].status == "WAITING")
-        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Cancel-button follow'>친구 대기</button>"
-      if (profileAndFriendMap.dtoList[i].status == "ACCEPT")
-        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Delete-button'>친구 삭제</button>"
-      if (profileAndFriendMap.dtoList[i].status == "WAITACCEPT")
-        Result += "<button data-name =" + profileAndFriendMap.dtoList[i].friendName + " class='request-Accept-button follow'>친구 수락</button>"
-      Result += '</div>';
-      Result += '</div>';
-    }
-    if (Result == "")
-    {
-      Result += '<div class="not-exist-list">등록된 친구가 없습니다.</div>'
-    }
-      $('#friend-List-UserBox').append(Result);
-  }
-
   function createInviteUserInfo(profileAndFriendMap){
     var Result = "";
     var imageUrl
@@ -844,20 +810,7 @@
      })
 
    }
-  async function showFriendProfileUserList(userName, loginName, friendListPage){
-    try {
-      const response = await $.ajax({
-        url: '/profileImage/friendList?page=' + friendListPage,
-        type: "POST",
-        data: {userName: userName, loginName: loginName},
-        dataType: "JSON",
-      })
-      friendListTotalPage = response.end;
-      createFriendShipUserInfo(response);
-    } catch (error){
-      throw error;
-    }
-  }
+
 
   function sendAcceptFriendShipRequest(loginName, requesterName, $button){
     var data = {loginName:loginName, requesterName:requesterName};
@@ -982,37 +935,7 @@
       }
     });
   }
-  function showFriendProfileFirst(userName, loginName){
-    $.ajax({
-      url: "/profileImage/firstList",
-      type: "POST",
-      data: {userName:userName, loginName:loginName},
-      dataType: "JSON",
-      success: function (result){
-        var Result = "";
-        Result += '<div class="user-info-box">';
-        Result += '<div class="profile-box">';
-        if(result.image ==null)
-          Result += '<img src = "/display?fileName=outprofile.png/"' +
-                  ' alt="Profile Picture" class="profile-picture">'
-        else
-          Result += '<img src ="/display?fileName=' + result.image + '/"' +
-                  ' alt="Profile Picture" class="profile-picture">'
-        Result += '</div>';
-        Result += '<div class="user-name-box">'
-        Result += '<a href="/sidebar/' + result.name + '"' +
-                ' class=comment-bold>' + result.name + '</a>';
-        Result += '</div>';
-        Result += '<div class="user-chat-button-box">';
-        Result += '</div>';
-        Result += '</div>';
 
-        if (result.name != null)
-          $('#friend-List-UserBox').prepend(Result);
-      }
-
-    })
-  }
   function createChatMessagesTag(name, message, showedTime, readStatus, time, imageUrl){
     var tag = "";
     if (name != loginName) {
@@ -1479,38 +1402,6 @@ async function showChatInfoBefore(roomID, loginEmail){
       });
     })
 
-    $(function () {
-      async function friendScrollPaging(){
-        let val = scrollContainer.scrollHeight - scrollContainer.scrollTop
-        if (scrollContainer.clientHeight -15 <= val  &&  val <= scrollContainer.clientHeight +15) {
-          if (friendListTotalPage >= friendListPage && friendFlag) {
-            friendFlag = false
-            friendListPage += 1
-            await showFriendProfileUserList(userName, loginName, friendListPage)
-            friendFlag = true
-          }
-        }
-      }
-      const debouncedPaging = debounce(friendScrollPaging,300);
-      const scrollContainer = document.getElementById('friend-modal');
-      $("#friend-List").click(function () {
-        $('#friend-List-UserModal').modal('show');
-        var userName = '[[${userName}]]';
-        var loginName = '[[${memberDTO.name}]]';
-
-        showFriendProfileFirst(userName, loginName)
-        showFriendProfileUserList(userName, loginName, friendListPage)
-        scrollContainer.addEventListener('scroll', debouncedPaging);
-
-      })
-      $('#friend-List-UserModal').on('hidden.bs.modal', function () {
-        friendListPage = 1;
-        friendListTotalPage = null;
-        $('#friend-List-UserBox').html("");
-        scrollContainer.removeEventListener('scroll', debouncedPaging);
-
-      })
-    });
 
     function createPostInfo(response){
       let postResult = "";

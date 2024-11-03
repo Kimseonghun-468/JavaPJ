@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.entity.type.FriendStatus;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.FriendShipService;
@@ -47,8 +48,8 @@ public class ProfileController {
                           Model model){
         String userEamil = postService.getEmailByUserName(name);
         ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
-        String friendshipStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
-        model.addAttribute("friendshipStatus", friendshipStatus);
+        FriendStatus friendStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
+        model.addAttribute("friendshipStatus", friendStatus);
         model.addAttribute("userExist", loginService.getUserExist(name));
         model.addAttribute("result", postService.getList(postPageRequestDTO, name));
         model.addAttribute("profileImageDTO", profileImageDTO);

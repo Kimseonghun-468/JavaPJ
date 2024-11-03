@@ -49,17 +49,17 @@ public class ProfileImageController {
     }
 
     @PostMapping("inviteList")
-    public ResponseEntity<ProfilePageResultDTO<Map<String, Object>, Object[]>>
+    public ResponseEntity
     getProfileImageInviteList(ProfilePageRequestDTO profilePageRequestDTO, String loginName,@RequestParam List<String> roomUsers){
-        ProfilePageResultDTO<Map<String, Object>, Object[]> profileAndInviteMap =
+        UserInfoResponse result =
                 profileService.getInviteListPage(profilePageRequestDTO, loginName, roomUsers);// 여기 함수 바꾸
-        return new ResponseEntity<>(profileAndInviteMap, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("firstList")
-    public ResponseEntity<Map<String, Object>> getProfileFirst(String userName, String loginName){
-        Map<String, Object> resultMap = profileService.getFirstUser(userName, loginName);
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+    public ResponseEntity getProfileFirst(String userName, String loginName){
+        UserInfoDTO result = profileService.getFirstUser(userName, loginName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("deleteProfile")

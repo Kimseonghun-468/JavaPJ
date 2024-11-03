@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.dto;
 
-import com.skhkim.instaclone.entity.FriendShipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,6 @@ public class FriendShipDTO {
     private String friendEmail;
     private String userName;
     private String friendName;
-    private FriendShipStatus status;
     private boolean isFrom;
 
     private Long counterpartId;

@@ -9,8 +9,6 @@ import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.ClubMemberRole;
-import com.skhkim.instaclone.entity.FriendShip;
-import com.skhkim.instaclone.entity.FriendShipStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,8 +25,8 @@ public class repositorytests {
     @Autowired
     private PostRepository postRepository;
     private ProfileImageRepository profileImageRepository;
-    @Autowired
-    private FriendShipRepository friendShipRepository;
+//    @Autowired
+//    private FriendShipRepository friendShipRepository;
     @Autowired
     private ClubMemberRepository clubMemberRepository;
     @Autowired
@@ -43,33 +41,33 @@ public class repositorytests {
 //    @Transactional
     @Test
     public void testtt() {
-        ClubMember user1 =   clubMemberRepository.findByName("profile2");
-        ClubMember user2 = clubMemberRepository.findByName("profile3");
-        ChatRoom chatRoom = chatRoomRepository.getChatRoombyRoomId(2L).get();
-                for(int k= 1; k<=500000; k++){
-                    ChatMessage chatMessageUser1 = ChatMessage.builder()
-                            .content("Test Comment : " + ((k*2)-1))
-                            .readStatus(0L)
-                            .roomId(chatRoom.getRoomId())
-                            .senderEmail(user1.getEmail())
-                            .regDate(LocalDateTime.now())
-                            .build();
-                    ChatMessage chatMessageUser2 = ChatMessage.builder()
-                            .content("Test Comment : " + k*2)
-                            .readStatus(0L)
-                            .roomId(chatRoom.getRoomId())
-                            .senderEmail(user2.getEmail())
-                            .regDate(LocalDateTime.now())
-                            .build();
-                    chatMessageRepository.save(chatMessageUser1);
-                    chatMessageRepository.save(chatMessageUser2);
-
-                    if (k==5){
-                        chatRoom.setLastChat(chatMessageUser2.getContent());
-                        chatRoom.setLastChatTime(LocalDateTime.now());
-                        chatRoomRepository.save(chatRoom);
-                    }
-                }
+//        ClubMember user1 =   clubMemberRepository.findByName("profile2");
+//        ClubMember user2 = clubMemberRepository.findByName("profile3");
+//        ChatRoom chatRoom = chatRoomRepository.getChatRoombyRoomId(2L).get();
+//                for(int k= 1; k<=500000; k++){
+//                    ChatMessage chatMessageUser1 = ChatMessage.builder()
+//                            .content("Test Comment : " + ((k*2)-1))
+//                            .readStatus(0L)
+//                            .roomId(chatRoom.getRoomId())
+//                            .senderEmail(user1.getEmail())
+//                            .regDate(LocalDateTime.now())
+//                            .build();
+//                    ChatMessage chatMessageUser2 = ChatMessage.builder()
+//                            .content("Test Comment : " + k*2)
+//                            .readStatus(0L)
+//                            .roomId(chatRoom.getRoomId())
+//                            .senderEmail(user2.getEmail())
+//                            .regDate(LocalDateTime.now())
+//                            .build();
+//                    chatMessageRepository.save(chatMessageUser1);
+//                    chatMessageRepository.save(chatMessageUser2);
+//
+//                    if (k==5){
+//                        chatRoom.setLastChat(chatMessageUser2.getContent());
+//                        chatRoom.setLastChatTime(LocalDateTime.now());
+//                        chatRoomRepository.save(chatRoom);
+//                    }
+//                }
 
 
 

@@ -1,9 +1,13 @@
 package com.skhkim.instaclone.service;
 
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.skhkim.instaclone.dto.*;
-import com.skhkim.instaclone.entity.FriendShip;
-import com.skhkim.instaclone.entity.FriendShipStatus;
+import com.skhkim.instaclone.entity.ClubMember;
+import com.skhkim.instaclone.entity.FriendAccept;
+import com.skhkim.instaclone.entity.FriendWait;
 import com.skhkim.instaclone.entity.ProfileImage;
+import com.skhkim.instaclone.entity.type.FriendStatus;
+import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +34,7 @@ import java.util.stream.Collectors;
 public class ProfileServiceImpl implements ProfileService{
 
     private final ProfileImageRepository profileImageRepository;
+    private final ClubMemberRepository memberRepository;
     @Value("/Users/gimseonghun/JavaPJ/InstaClone/data/")
     private String uploadPath;
 
@@ -122,22 +127,24 @@ public class ProfileServiceImpl implements ProfileService{
     }
 
     @Override
-    public ProfilePageResultDTO<Map<String, Object>, Object[]> getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers){
+    public UserInfoResponse getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers){
         Pageable pageable = profilePageRequestDTO.getPageable();
-        Page<Object[]> result = profileImageRepository.getInviteListByNamePage(pageable, loginName, inviteSearchTerm, roomUsers);
 
-        Function<Object[], Map<String,Object>> fn = (arr ->{
-            Map<String, Object> profileAndFriendMap = new HashMap<>();
-            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
-            profileAndFriendMap.put("friendEmail",((FriendShip) arr[0]).getClubMemberUser().getEmail());
-            if (arr[1] == null)
-                profileAndFriendMap.put("profileImage",null);
-            else
-                profileAndFriendMap.put("profileImage",entityToDTO((ProfileImage) arr[1]));
+        Slice<UserInfoProjection> result = profileImageRepository.selectInviteListByName(pageable, loginName, inviteSearchTerm, roomUsers);
 
-            return profileAndFriendMap;
-        });
-        return new ProfilePageResultDTO<>(result, fn);
+        List<UserInfoDTO> userInfoDTOS = result.stream()
+                .map(projection -> UserInfoDTO.builder()
+                        .imgName(projection.getProfileImage() != null ? projection.getProfileImage().getImgName() : null)
+                        .uuid(projection.getProfileImage() != null ? projection.getProfileImage().getUuid() : null)
+                        .path(projection.getProfileImage() != null ? projection.getProfileImage().getPath() : null)
+                        .userName(projection.getClubMember().getName())
+                        .userEmail(projection.getClubMember().getEmail())
+                        .build())
+                .collect(Collectors.toList());
+
+        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
+
+        return response;
     }
 
     @Override
@@ -162,42 +169,52 @@ public class ProfileServiceImpl implements ProfileService{
     }
 
     @Override
-    public ProfilePageResultDTO<Map<String, Object>, Object[]>
+    public UserInfoResponse
     getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers){
+
         Pageable pageable = profilePageRequestDTO.getPageable();
-        Page<Object[]> result = profileImageRepository.getInviteListPage(pageable, loginName, roomUsers);
+        Slice<UserInfoProjection> result = profileImageRepository.selectInviteList(pageable, loginName, roomUsers);
 
-        Function<Object[], Map<String,Object>> fn = (arr ->{
-            Map<String, Object> profileAndFriendMap = new HashMap<>();
-            profileAndFriendMap.put("friendName",((FriendShip) arr[0]).getClubMemberUser().getName());
-            profileAndFriendMap.put("friendEmail",((FriendShip) arr[0]).getClubMemberUser().getEmail());
+        List<UserInfoDTO> userInfoDTOS = result.stream()
+                .map(projection -> UserInfoDTO.builder()
+                        .imgName(projection.getProfileImage() != null ? projection.getProfileImage().getImgName() : null)
+                        .uuid(projection.getProfileImage() != null ? projection.getProfileImage().getUuid() : null)
+                        .path(projection.getProfileImage() != null ? projection.getProfileImage().getPath() : null)
+                        .userName(projection.getClubMember().getName())
+                        .userEmail(projection.getClubMember().getEmail())
+                        .build())
+                .collect(Collectors.toList());
 
-            if (arr[1] == null)
-                profileAndFriendMap.put("profileImage",null);
-            else
-                profileAndFriendMap.put("profileImage",entityToDTO((ProfileImage) arr[1]));
+        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
 
-            return profileAndFriendMap;
-        });
-        return new ProfilePageResultDTO<>(result, fn);
+        return response;
     }
     @Override
-    public Map<String, Object> getFirstUser(String userName, String loginName){
-        List<Object[]> result = profileImageRepository.getFriendFirst(userName, loginName);
-        Map<String , Object> resultMap = new HashMap<>();
-//        FriendShip friendShip = (FriendShip) result.get(0)[0];
+    public UserInfoDTO getFirstUser(String loginName, String userName){
 
-        if (result.size() == 0){
-            resultMap.put("name", null);
-            resultMap.put("image",null);
-        }
-        else{
-            if (result.get(0)[1] != null)
-                resultMap.put("image", ((ProfileImage) result.get(0)[1]).getImageURL());
-            else
-                resultMap.put("image", null);
-            resultMap.put("name", ((FriendShip) result.get(0)[0]).getClubMemberUser().getName());
-        }
-        return resultMap;
+        ClubMember loginMember = memberRepository.findByName(loginName);
+        ProfileImage profileImage = loginMember.getProfileImage();
+
+        // Default로 Status는 NONE 처리
+        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+                .userName(loginName)
+                .uuid(profileImage != null ? profileImage.getUuid() : null)
+                .path(profileImage != null ? profileImage.getPath() : null)
+                .imgName(profileImage != null ? profileImage.getImgName() : null)
+                .status(FriendStatus.NONE)
+                .build();
+
+        Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
+        Optional<FriendAccept> friendAccept = memberRepository.getAcceptFriend(loginName, userName);
+
+        // Wait Requester, Receiver 처리
+        friendWait.ifPresent(wait -> userInfoDTO.setStatus(wait.getRequester().getName().equals(loginName)
+                ? FriendStatus.REQUESTER : FriendStatus.RECEIVER));
+
+        // Accept 처리
+        friendAccept.ifPresent(accept -> userInfoDTO.setStatus(FriendStatus.ACCEPTED));
+
+
+        return userInfoDTO;
     }
 }

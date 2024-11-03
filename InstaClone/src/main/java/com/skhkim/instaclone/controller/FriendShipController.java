@@ -18,26 +18,26 @@ public class FriendShipController {
 //    @PostMapping("{name}")
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/friendShip/{name}")
-    public ResponseEntity<String> sendFriendShipRequest(@PathVariable("name") String name){
+    public ResponseEntity sendFriendShipRequest(@PathVariable("name") String name){
         log.info("sendFriendShopRequest : " + name);
-        String result = friendShipService.createFriendShip(name);
+        boolean result = friendShipService.createFriendShip(name);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/friendShip/acceptFriendShipRequest")
-    public ResponseEntity<String> accecptFriendShipRequest(String loginName, String requesterName){
+    public ResponseEntity accecptFriendShipRequest(String loginName, String requesterName){
         log.info("Accept FriendShip Request");
-        String result = friendShipService.acceptFriendShip(requesterName, loginName);
+        boolean result = friendShipService.acceptFriendShip(requesterName, loginName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/friendShip/deleteFriendShipRequest")
-    public ResponseEntity<String> deleteFriendShipRequest(String loginName, String requesterName){
+    public ResponseEntity deleteFriendShipRequest(String loginName, String requesterName){
         log.info("Delete FriendShip Request");
-        String result = friendShipService.deleteFriendShip(requesterName, loginName);
+        boolean result = friendShipService.deleteFriendShip(requesterName, loginName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
