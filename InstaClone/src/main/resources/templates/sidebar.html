@@ -14,10 +14,12 @@
   <script src="/js/AcceptFriendApp.js"></script>
   <script src="/js/WaitFriend.js"></script>
   <script src="/js/WaitFriendApp.js"></script>
-  <script src="/js/ChatRoom.js/"></script>
-  <script src="/js/ChatRoomApp.js/"></script>
+  <script src="/js/ChatRoom.js"></script>
+  <script src="/js/ChatRoomApp.js"></script>
   <script src="/js/ProfileFriend.js"></script>
   <script src="/js/ProfileFriendApp.js"></script>
+  <script src="/js/UserSearch.js"></script>
+  <script src="/js/UserSearchApp.js"></script>
 
 
 
@@ -413,7 +415,7 @@
 </div>
 
 <div id="SearchModal" class="modal modal-custom">
-  <div class="modal-content-search">
+  <div id="searchContainer" class="modal-content-search">
     <form id="searchForm">
       <div class="search-container">
         <svg width="24" height="24" viewBox="0 0 24 24" class="search-icon">
@@ -694,29 +696,7 @@
     })
   }
 
-  function createSearchInfohtmlbox(searchInfo){
-    var searchResult = "";
-    for (var i = 0; i < searchInfo.dtoList.length; i++) {
-      searchResult += '<div class="user-info-box">';
-      searchResult += '<div class="profile-box">';
-      if (searchInfo.dtoList[i].profileImage != null) {
-        searchResult += '<img src ="/display?fileName=' + searchInfo.dtoList[i].profileImage.imageURL + '/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      } else {
-        searchResult += '<img src = "/display?fileName=outprofile.png/"' +
-                ' alt="Profile Picture" class="profile-picture">'
-      }
-      searchResult += '</div>';
-      searchResult += '<div class="user-name-box">';
-      searchResult += '<a href="/sidebar/' + searchInfo.dtoList[i].searchName + '"' +
-              ' class=comment-bold>' + searchInfo.dtoList[i].searchName + '</a>';
-      searchResult += '</div>';
-      searchResult += '</div>';
-    }
-    if (searchResult =="")
-      searchResult += "<div class='not-exist-list'>검색한 사용자가 없습니다.</div>"
-    return searchResult;
-  }
+
   async function showInviteSearchInfo(userName, loginName, inviteSearchTerm){
     try{
       let roomUsers = Object.keys(dictionary);
@@ -733,31 +713,6 @@
     } catch (error){
       throw error;
     }
-  }
-  function getSearchUserInfo(searchTerm){
-    var loginName = '[[${memberDTO.name}]]';
-    $.getJSON("/search/name/all/"+searchTerm+"?page="+searchPage+"&user="+loginName, function (searchInfo){
-
-      var pageResult = ""
-      var searchResult = createSearchInfohtmlbox(searchInfo);
-      if (searchInfo.prev != false)
-        pageResult += '<button class="page-link search-page-button" data-name="' + (searchInfo.start-1) + '">NEXT</button>'
-      $.each(searchInfo.pageList, function (idx, pageList){
-        if (searchPage == pageList)
-          pageResult += '<li class="page-item active">';
-        else
-          pageResult += '<li class="page-item">';
-        pageResult += '<button class="page-link search-page-button" data-name="' + pageList + '">' + pageList + '</button>'
-        pageResult += '</li>';
-      })
-      if (searchInfo.next != false)
-        pageResult += '<button class="page-link search-page-button" data-name="' + (searchInfo.end+1) + '">NEXT</button>'
-
-
-
-      $("#search-page").html(pageResult);
-      $("#searchResult").html(searchResult);
-    })
   }
 
   function createInviteUserInfo(profileAndFriendMap){
@@ -1378,30 +1333,6 @@ async function showChatInfoBefore(roomID, loginEmail){
       sendFollowRequest(name, $button);
     });
 
-    $(document).on('click', '#search-user', function (){
-      $('#SearchModal').css('z-index', 1060).modal('show');
-      $('#searchResult').append('<div class="not-exist-list">사용자를 검색해주세요.</div>')
-
-      document.getElementById('searchForm').onsubmit = function(event) {
-        event.preventDefault();
-        var searchTerm = document.getElementById('searchInput').value;
-        document.getElementById('searchInput').value = "";
-
-        getSearchUserInfo(searchTerm);
-        $('#search-page').off('click').on('click', '.search-page-button', function (){
-          var presentPage = $(this).attr('data-name');
-          searchPage = presentPage;
-          getSearchUserInfo(searchTerm);
-        })
-      }
-      $('#SearchModal').on('hidden.bs.modal', function () {
-        searchPage = 1;
-
-        $("#search-page").html("");
-        $("#searchResult").html("");
-      });
-    })
-
 
     function createPostInfo(response){
       let postResult = "";
@@ -1762,8 +1693,6 @@ async function showChatInfoBefore(roomID, loginEmail){
         $('#reply-option-modal').modal('hide');
       });
     });
-
-
 
   });
 </script>

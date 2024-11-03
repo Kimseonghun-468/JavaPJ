@@ -3,16 +3,19 @@ package com.skhkim.instaclone.service;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
+import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -62,22 +65,14 @@ public class LoginServiceImpl implements LoginService{
         return result != null ? entityToDTO(result) : ClubMemberDTO.builder().build();
     }
     @Override
-    public ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name, String userName){
+    @Transactional
+    public UserInfoResponse getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String searchName, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
-        Page<Object[]> result = clubMemberRepository.findByNamePage(pageable, name, userName);
+        Slice<ClubMember> result = clubMemberRepository.selectSearchUserInfo(pageable, searchName, loginName);
 
-        Function<Object[], Map<String,Object>> fn = (arr ->{
-            Map<String, Object> profileAndSearchMap = new HashMap<>();
-            profileAndSearchMap.put("searchName",((ClubMember) arr[0]).getName());
-            if (arr[1] == null)
-                profileAndSearchMap.put("profileImage",null);
-            else
-                profileAndSearchMap.put("profileImage",entityToDTOByProfileImage((ProfileImage) arr[1]));
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
-            return profileAndSearchMap;
-        });
-        return new ProfilePageResultDTO<>(result, fn);
-
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
 
     }
     @Override

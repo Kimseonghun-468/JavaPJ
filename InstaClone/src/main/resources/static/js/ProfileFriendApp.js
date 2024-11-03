@@ -76,16 +76,16 @@ const ProfileFriendApp = {
             let button = document.createElement("button");
             button.dataset.name = item.userName;
 
-            if (item.status == 4) {
+            if (item.status == "NONE") {
                 button.classList.add("request-Follow-button", "follow");
                 button.textContent = "친구 요청";
-            } else if (item.status == 3) {
+            } else if (item.status == "REQUESTER") {
                 button.classList.add("request-Cancel-button", "follow");
                 button.textContent = "친구 대기";
-            } else if (item.status == 1) {
+            } else if (item.status == "ACCEPTED") {
                 button.classList.add("request-Delete-button");
                 button.textContent = "친구 삭제";
-            } else if (item.status == 2) {
+            } else if (item.status == "RECEIVER") {
                 button.classList.add("request-Accept-button", "follow");
                 button.textContent = "친구 수락";
             }

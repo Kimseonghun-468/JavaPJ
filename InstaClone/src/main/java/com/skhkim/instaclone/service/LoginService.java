@@ -3,6 +3,8 @@ package com.skhkim.instaclone.service;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.ProfileImage;
+import com.skhkim.instaclone.response.UserInfoResponse;
+
 import java.util.Map;
 
 public interface LoginService {
@@ -19,7 +21,7 @@ public interface LoginService {
     void updateUserName(String changeName, String originalName);
     String register(ClubMemberDTO memberDTO);
     ClubMemberDTO getClubMemberSearchbyName(String name);
-    ProfilePageResultDTO<Map<String, Object>, Object[]> getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String name, String userName);
+    UserInfoResponse getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String searchName, String loginName);
     ClubMemberDTO getClubMemberSearchbyEmail(String Email);
     boolean getUserExist(String name);
     default ClubMember dtoToEntity(ClubMemberDTO dto){

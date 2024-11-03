@@ -1,9 +1,11 @@
 package com.skhkim.instaclone.repository;
 
+import com.skhkim.instaclone.dto.UserInfoProjection;
 import com.skhkim.instaclone.entity.FriendAccept;
 import com.skhkim.instaclone.entity.FriendWait;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -40,6 +42,11 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
 
     @Query("SELECT m, pi FROM ClubMember m LEFT JOIN ProfileImage pi ON m.name = pi.clubMember.name WHERE m.name like CONCAT('%', :searchTerm, '%') AND m.name != :userName ORDER BY m.name")
     Page<Object[]> findByNamePage(Pageable pageable, @Param("searchTerm")String searchTerm, String userName);
+
+    @Query("SELECT CM AS clubMember FROM ClubMember CM " +
+            "WHERE CM.name like CONCAT('%', :searchTerm, '%') AND CM.name != :loginName ORDER BY CM.name")
+    Slice<ClubMember> selectSearchUserInfo(Pageable pageable, String searchTerm, String loginName);
+
 
     @Modifying
     @Transactional
