@@ -2,11 +2,10 @@ package com.skhkim.instaclone.chatting.service;
 
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
-import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 
 import com.skhkim.instaclone.dto.UserInfoDTO;
-import com.skhkim.instaclone.entity.ProfileImage;
+import com.skhkim.instaclone.response.UserInfoResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,21 +18,12 @@ public interface ChatUserService {
 
     List<Object[]> getEmailAndName(Long roomId);
 
+    UserInfoResponse selectChatRoomUsers(Long roomId);
+
     ChatRoomResponse getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail);
 
     void insertChatUser(List<String> userEmails, Long roomId);
     LocalDateTime getDisConnectTime(Long roomId, String loginEmail);
-    default ProfileImageDTO entityToDTOByProfileImage(ProfileImage profileImage){
-        ProfileImageDTO profileImageDTO = ProfileImageDTO.builder()
-                .pfino(profileImage.getPfino())
-                .userName(profileImage.getClubMember().getName())
-                .imgName(profileImage.getImgName())
-                .userEmail(profileImage.getClubMember().getEmail())
-                .path(profileImage.getPath())
-                .uuid(profileImage.getUuid())
-                .build();
-        return profileImageDTO;
-    }
 
     default List<UserInfoDTO> entityToDTOS(List<ChatUser> chatUserList){
         List<UserInfoDTO> userInfoDTOS = chatUserList.stream().map(chatUser ->

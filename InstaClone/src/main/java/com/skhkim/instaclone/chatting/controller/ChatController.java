@@ -4,14 +4,14 @@ import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
+import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
-import com.skhkim.instaclone.dto.ProfilePageResultDTO;
-import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
+import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -45,17 +45,12 @@ public class ChatController {
         Long id = Long.parseLong(roomID);
         Long userNum = chatRoomService.getUserNum(id);
         int readStatus = userNum.intValue() - chatRoomSessionManager.getRoomJoinNum(roomID);
-        ChatMessageDTO result = ChatMessageDTO.builder()
-                .senderEmail(chatMessageDTO.getSenderEmail())
-                .content(chatMessageDTO.getContent())
-                .readStatus((long) readStatus)
-                .regDate(LocalDateTime.now())
-                .build();
-        chatMessageService.register(result, id);
+        chatMessageDTO.setReadStatus((long) readStatus);
+        chatMessageDTO.setRegDate(LocalDateTime.now());
+        chatMessageService.register(chatMessageDTO, id);
         chatRoomService.updateLastChatTime(id, chatMessageDTO.getContent());
-        Optional<ProfileImage> profileImage = profileImageRepository.getProfileImageByUserEmail(result.getSenderEmail());
-        profileImage.ifPresent(image -> result.setProfileImageUrl(image.getImageURL()));
-        return result;
+
+        return chatMessageDTO;
     }
 
     @MessageMapping("/chat/accessLoad/{roomID}")
@@ -74,8 +69,10 @@ public class ChatController {
 
     @PostMapping("/chat/getORCreateChatRoom")
     public ResponseEntity<Long> getORCreateChatRoom(String loginEmail, String friendEmail, Long requestRoomId){
-        log.info("Login Name : " +loginEmail);
-        log.info("Friend Name : " +friendEmail);
+        // room id가 존재하는 경우엔 update하고 들어가고, 없는 경우에는 챗룸 생성하고, 업데이트 한다.. 가 맞겠지?
+        // 그럼 룸 아이디가 널일때 생성하고, 나머지는 동일 로직으로 묶어야겠네.
+        // 그 와중에 이름으로 바꿔야겠네
+
         if (requestRoomId != null){
             chatMessageService.updateChatMessagesReadStatus(requestRoomId, loginEmail);
             return new ResponseEntity<>(requestRoomId, HttpStatus.OK);
@@ -89,10 +86,17 @@ public class ChatController {
         chatMessageService.updateChatMessagesReadStatus(roomId, loginEmail);
         return new ResponseEntity<>(roomId, HttpStatus.OK);
     }
-    @PostMapping("/chat/getChatListByRoomIDPageBefore")
-    public ResponseEntity<PageResultDTO> getChatListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
-        PageResultDTO pageResultDTO = chatMessageService.getChatMessageListByRoomIDPageBefore(pageRequestDTO, roomID, loginEmail);
-        return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
+
+    @PostMapping("/chat/selectChatMessageUp")
+    public ResponseEntity selectChatMessageUp(PageRequestDTO pageRequestDTO, Long roomId, String loginEmail){
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(pageRequestDTO, roomId, loginEmail);
+        return ResponseEntity.ok(chatMessageResponse);
+    }
+
+    @PostMapping("/chat/selectChatMessageDown")
+    public ResponseEntity selectChatMessageDown(PageRequestDTO pageRequestDTO, Long roomId, String loginEmail) {
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(pageRequestDTO, roomId, loginEmail);
+        return ResponseEntity.ok(chatMessageResponse);
     }
 
     @PostMapping("/chat/getEmailAndNameByRoomId")
@@ -100,11 +104,11 @@ public class ChatController {
         List<Object[]> result = chatUserService.getEmailAndName(roomId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-//
-    @PostMapping("/chat/getChatListByRoomIDPageAfter")
-    public ResponseEntity<PageResultDTO> getChatListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail) {
-        PageResultDTO pageResultDTO = chatMessageService.getChatMessageListByRoomIDPageAfter(pageRequestDTO, roomID, loginEmail);
-        return new ResponseEntity<>(pageResultDTO, HttpStatus.OK);
+
+    @PostMapping("/chat/selectChatRoomUsers")
+    public ResponseEntity selectChatRoomUsers(Long roomId){
+        UserInfoResponse result = chatUserService.selectChatRoomUsers(roomId);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/chat/selectChatRoom")

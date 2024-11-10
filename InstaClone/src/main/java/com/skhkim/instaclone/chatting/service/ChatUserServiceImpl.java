@@ -8,7 +8,10 @@ import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ClubMember;
+import com.skhkim.instaclone.response.UserInfoResponse;
+import com.skhkim.instaclone.service.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +47,14 @@ public class ChatUserServiceImpl implements ChatUserService {
     @Override
     public List<Object[]> getEmailAndName(Long roomId){
         return chatUserRepository.getEmailAndNmaeByRoomId(roomId);
+    }
+
+    @Override
+    public UserInfoResponse selectChatRoomUsers(Long roomId){
+        List<ClubMember> result = chatUserRepository.selectChatRoomUsers(roomId);
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
+
+        return new UserInfoResponse(userInfoDTOS, false);
     }
 
     @Override

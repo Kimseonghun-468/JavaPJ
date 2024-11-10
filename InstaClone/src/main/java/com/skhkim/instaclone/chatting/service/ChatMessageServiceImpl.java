@@ -7,12 +7,16 @@ import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatMessageRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
+import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
+import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
+import com.skhkim.instaclone.service.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,33 +47,25 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public PageResultDTO<ChatMessageDTO, ChatMessage> getChatMessageListByRoomIDPageBefore(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
+    public ChatMessageResponse selectChatMessageUp(PageRequestDTO pageRequestDTO, Long roomId, String loginEmail){
         Pageable pageable = pageRequestDTO.getPageable();
-        Function<ChatMessage, ChatMessageDTO> fn = (arr -> {
-            ChatMessageDTO chatMessageDTO = entityToDTO(arr);
-            Optional<ProfileImage> profileImage = profileImageRepository.getProfileImageByUserEmail(arr.getSenderEmail());
-            profileImage.ifPresent(image -> chatMessageDTO.setProfileImageUrl(image.getImageURL()));
-            return chatMessageDTO;
-        });
-        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomID);
-        Page<ChatMessage> result = chatMessageRepository.getChatMessageByRoomIdAndTimeBefore(pageable, roomID, disConnectTime);
 
-        return new PageResultDTO<>(result, fn);
+        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomId);
+        Slice<ChatMessage> result = chatMessageRepository.selectChatMessageUp(pageable, roomId, disConnectTime);
+        List<ChatMessageDTO> chatMessageDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
+
+        return new ChatMessageResponse(chatMessageDTOS, result.hasNext());
     }
 
     @Override
-    public PageResultDTO<ChatMessageDTO, ChatMessage> getChatMessageListByRoomIDPageAfter(PageRequestDTO pageRequestDTO, Long roomID, String loginEmail){
+    public ChatMessageResponse selectChatMessageDown(PageRequestDTO pageRequestDTO, Long roomId, String loginEmail){
         Pageable pageable = pageRequestDTO.getPageable();
-        Function<ChatMessage, ChatMessageDTO> fn = (arr -> {
-            ChatMessageDTO chatMessageDTO = entityToDTO(arr);
-            Optional<ProfileImage> profileImage = profileImageRepository.getProfileImageByUserEmail(arr.getSenderEmail());
-            profileImage.ifPresent(image -> chatMessageDTO.setProfileImageUrl(image.getImageURL()));
-            return chatMessageDTO;
-        });
-        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomID);
-        Page<ChatMessage> result = chatMessageRepository.getChatMessageByRoomIdAndTimeAfter(pageable, roomID, disConnectTime);
 
-        return new PageResultDTO<>(result, fn);
+        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomId);
+        Slice<ChatMessage> result = chatMessageRepository.selectChatMessageDown(pageable, roomId, disConnectTime);
+        List<ChatMessageDTO> chatMessageDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
+
+        return new ChatMessageResponse(chatMessageDTOS, result.hasNext());
     }
 
     @Override
