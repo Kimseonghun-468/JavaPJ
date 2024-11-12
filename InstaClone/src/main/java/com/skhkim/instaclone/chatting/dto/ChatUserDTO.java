@@ -12,11 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatUserDTO {
-//    private Long userId;
-//    private String userEmail; //
-//    private String userName; //
-//    private Long roomId;
-//    private LocalDateTime disConnect;
+    private Long roomId;
+    private LocalDateTime disConnect;
     private UserInfoDTO userInfoDTO;
+
 
 }

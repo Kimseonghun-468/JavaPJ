@@ -2,6 +2,7 @@ package com.skhkim.instaclone.chatting.service;
 
 
 import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
+import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
@@ -58,6 +59,22 @@ public class ChatUserServiceImpl implements ChatUserService {
     }
 
     @Override
+    public ChatUserDTO selectChatUser(Long roomId, String loginName){
+        ChatUser result = chatUserRepository.selectChatUser(roomId, loginName);
+        ChatUserDTO chatUserDTO = EntityMapper.entityToDTO(result);
+
+        return chatUserDTO;
+    }
+
+    @Override
+    public List<ChatUserDTO> selectChatUserList(Long roomId, List<String> userNameList){
+        List<ChatUser> result = chatUserRepository.selectChatUserList(roomId, userNameList);
+        List<ChatUserDTO> chatUserDTOS = result.stream().map(user -> EntityMapper.entityToDTO(user)).toList();
+
+        return chatUserDTOS;
+    }
+
+    @Override
     public ChatRoomResponse
     getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail){
         Pageable pageable = profilePageRequestDTO.getPageable();
@@ -85,9 +102,5 @@ public class ChatUserServiceImpl implements ChatUserService {
                     .build();
             chatUserRepository.save(chatUser);
         });
-    }
-    @Override
-    public LocalDateTime getDisConnectTime(Long roomId, String loginEmail){
-        return chatUserRepository.getDisConnectTimeByRoomIdAndEmail(roomId, loginEmail);
     }
 }

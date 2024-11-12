@@ -2,7 +2,6 @@ package com.skhkim.instaclone.chatting.repository;
 
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
-import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -25,9 +24,14 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
     @Query("SELECT cu.disConnect FROM ChatUser cu WHERE cu.member.email =:loginEmail AND cu.chatRoom.roomId =:roomId")
     LocalDateTime getDisConnectTimeByEmail(String loginEmail, Long roomId);
 
+    @Query("SELECT cu FROM ChatUser cu WHERE cu.member.name =:loginName AND cu.chatRoom.roomId = :roomId")
+    ChatUser selectChatUser(Long roomId, String loginName);
+
+    @Query("SELECT cu FROM ChatUser cu WHERE cu.member.name in :userNameList AND cu.chatRoom.roomId = :roomId")
+    List<ChatUser> selectChatUserList(Long roomId, List<String> userNameList);
+
     @Query("SELECT cu.member.email, cu.member.name FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId")
     List<Object[]> getEmailAndNmaeByRoomId(Long roomId);
-
 
     @Query("SELECT CU.chatRoom FROM ChatUser CU " +
             "WHERE CU.member.email = :loginEmail " +
@@ -38,7 +42,4 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
             "WHERE cu.chatRoom.roomId =:roomId")
     List<ClubMember> selectChatRoomUsers(Long roomId);
 
-
-    @Query("SELECT cu.disConnect FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.email =:loginEmail")
-    LocalDateTime getDisConnectTimeByRoomIdAndEmail(Long roomId, String loginEmail);
 }

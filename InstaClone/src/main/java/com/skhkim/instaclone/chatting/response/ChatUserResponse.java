@@ -8,7 +8,6 @@ import java.util.List;
 @Data
 public class ChatUserResponse {
     private List<ChatUserDTO> chatUserDTOS;
-    private Long roomId;
 
     public ChatUserResponse(List<ChatUserDTO> chatUserDTOS) {
         this.chatUserDTOS = chatUserDTOS;

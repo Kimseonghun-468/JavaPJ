@@ -1,7 +1,9 @@
 package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
+import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
+import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.dto.UserInfoProjection;
 import com.skhkim.instaclone.entity.ClubMember;
@@ -47,6 +49,16 @@ public class EntityMapper {
                 .build();
 
         return chatMessageDTO;
+    }
+
+    public static ChatUserDTO entityToDTO(ChatUser chatUser){
+        ChatUserDTO chatUserDTO = ChatUserDTO.builder()
+                .userInfoDTO(entityToDTO(chatUser.getMember()))
+                .roomId(chatUser.getChatRoom().getRoomId())
+                .disConnect(chatUser.getDisConnect())
+                .build();
+
+        return chatUserDTO;
     }
 }
 

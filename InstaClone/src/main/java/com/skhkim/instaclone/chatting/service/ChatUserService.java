@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.chatting.service;
 
+import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
@@ -20,10 +21,13 @@ public interface ChatUserService {
 
     UserInfoResponse selectChatRoomUsers(Long roomId);
 
+    ChatUserDTO selectChatUser(Long roomId, String loginName);
+
+    List<ChatUserDTO> selectChatUserList(Long roomId, List<String> invitNameList);
+
     ChatRoomResponse getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail);
 
     void insertChatUser(List<String> userEmails, Long roomId);
-    LocalDateTime getDisConnectTime(Long roomId, String loginEmail);
 
     default List<UserInfoDTO> entityToDTOS(List<ChatUser> chatUserList){
         List<UserInfoDTO> userInfoDTOS = chatUserList.stream().map(chatUser ->

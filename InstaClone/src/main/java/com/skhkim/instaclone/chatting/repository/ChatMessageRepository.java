@@ -17,7 +17,7 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     @Query(value = "{ 'roomId' : ?0, 'regDate' : { $lte : ?1 } }", sort = "{ 'regdate' : -1 }")
     Slice<ChatMessage> selectChatMessageUp(Pageable pageable, Long roomID, LocalDateTime disConnectTime);
 
-    @Query("{ 'roomId' : ?0, 'regDate' : { $gt : ?1 } }")
+    @Query(value = "{ 'roomId' : ?0, 'regDate' : { $gt : ?1 } }", sort = "{ 'regdate' :  1 }")
     Slice<ChatMessage> selectChatMessageDown(Pageable pageable, Long roomID, LocalDateTime disConnectTime);
 
     @Query("{ 'roomId' : ?0, 'regDate' : { $gte : ?2 }, 'senderEmail' : { $ne : ?1 } }")

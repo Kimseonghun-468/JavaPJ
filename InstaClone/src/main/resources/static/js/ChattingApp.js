@@ -36,14 +36,15 @@ const ChattingApp = {
         this.$data.loginEmail = loginEmail;
         this.$data.upPage = 1;
         this.$data.downPage = 1;
-        // this.$data.timeFormat = formatter.format(new Data(time))
+        this.$data.upDayCheck = new Date().toISOString().slice(0, 10);
+        this.$data.downDayCheck = new Date().toISOString().slice(0, 10);
         this.$data.roomId = roomId
         this.$data.socket = new SockJS('/ws');
         this.$data.stompClient = Stomp.over(this.$data.socket);
         this.$object.waitTable = $("#messages-box");
         this.$object.scrollContainer = document.getElementById('messages-modal');
         this.scrollPaging = this.scrollPaging.bind(this);
-        this.makeUserDict(roomId)
+        this.makeUserDict(roomId, loginEmail)
         this.connect()
 
     },
@@ -56,7 +57,7 @@ const ChattingApp = {
                 selectChattingDown(this.$data.loginEmail, this.$data.roomId, this.$data.downPage)
         }
 
-        if (container.scrollTop >=5 &&  container.scrollTop <= 200) {
+        if (container.scrollTop >=0 &&  container.scrollTop <= 200) {
             if (this.$data.hasNextUp)
                 selectChattingUp(this.$data.loginEmail, this.$data.roomId, this.$data.upPage)
 
@@ -72,9 +73,16 @@ const ChattingApp = {
             const regDate = messageData.regDate;
             const readStatus = messageData.readStatus;
             const profileImageUrl = messageData.profileImageUrl;
+            if (this.$data.upDayCheck != regDate.slice(0, 10)){
+                $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + this.$data.upDayCheck +'</div></div>')
+                this.$data.upDayCheck = regDate.slice(0, 10)
+            }
             this.setChatMessage(senderName, content, readStatus, regDate, profileImageUrl, inverse= true)
 
         })
+        if (data.hasNext == false)
+            $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + this.$data.upDayCheck +'</div></div>')
+
 
         this.$data.hasNextUp = data.hasNext;
         this.$data.upPage += 1
@@ -89,17 +97,21 @@ const ChattingApp = {
             const regDate = messageData.regDate;
             const readStatus = messageData.readStatus;
             const profileImageUrl = messageData.profileImageUrl;
+            if (this.$data.downDayCheck != regDate.slice(0, 10)){
+                this.$data.downDayCheck = regDate.slice(0, 10);
+                $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + this.$data.downDayCheck +'</div></div>');
+            }
             this.setChatMessage(senderName, content, readStatus, regDate, profileImageUrl, inverse= false)
         })
 
-        this.$data.hasNextDown = data.hasNextDown;
+        this.$data.hasNextDown = data.hasNext;
         this.$data.downPage += 1
     },
-    makeUserDict(roomId) {
+    makeUserDict(roomId, loginEmail) {
         $.ajax({
             url: '/chat/selectChatRoomUsers',
             type: 'POST',
-            data: {roomId : roomId},
+            data: {roomId : roomId, loginEmail:loginEmail},
             dataType: "JSON",
             success: (data) => {
                 data.userInfoDTOS.forEach((item, index) => {
@@ -115,6 +127,7 @@ const ChattingApp = {
         var client = this.$data.stompClient
 
         client.connect({'roomId': roomId}, () => {
+
             client.subscribe('/topic/chat/' + roomId, (chatMessage) => {
 
                 const messageData = JSON.parse(chatMessage.body);  // 한 번만 파싱
@@ -127,6 +140,38 @@ const ChattingApp = {
                 this.setChatMessage(senderName, content, readStatus, regDate, profileImageUrl, inverse= false)
 
             });
+
+            client.subscribe('/topic/chat/accessLoad/' + roomId, (result) => {
+                var result = result.body
+                if (result.userInfoDTO.userName != this.$data.loginName){
+                    $('.status-true').each(function() {
+
+                        let statusTime = ($(this).attr('data-time'));
+                        let statusName = ($(this).attr('data-name'));
+                        let readNum = $(this).text();
+
+                        if (statusTime > disConnectTime && statusName != result.userInfoDTO.userName){
+                            $(this).text(readNum-1);
+                        }
+                    });
+                }
+            })
+
+            client.subscribe('/topic/chat/inviteLoad/' + roomId, (result) => {
+                var invitedList = JSON.parse(result.body) // 여기에 UserInfo를 보내주자
+                var names = ""
+                $.each(invitedList, function (idx, name){
+                    names += name + ', '
+                })
+                result = ""
+                result += '<div class="invite-list-container">'
+                result += '<div class="invite-user-list">' + names.slice(0, names.length-2) + '님이 초대되었습니다.</div>'
+                result += '</div>'
+                // makeEmailToName(RoomID);
+                // $('#messages-box').append(result);
+
+
+            })
         });
 
     },
@@ -267,6 +312,8 @@ const ChattingApp = {
             $('#messages-box').prepend(tag)
         else
             $('#messages-box').append(tag)
-    }
+    },
+
+
 
 }

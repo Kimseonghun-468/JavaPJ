@@ -18,6 +18,8 @@
   <script src="/js/ChatRoomApp.js"></script>
   <script src="/js/Chatting.js"></script>
   <script src="/js/ChattingApp.js"></script>
+  <script src="/js/ChatInvite.js"></script>
+  <script src="/js/ChatInviteApp.js"></script>
   <script src="/js/ProfileFriend.js"></script>
   <script src="/js/ProfileFriendApp.js"></script>
   <script src="/js/UserSearch.js"></script>
@@ -529,35 +531,14 @@
   var postPage = 1;
   var postTotalPage = 1;
   var postFlag = true;
-  var searchPage = 1;
-  var inviteListPage = 1;
-  var inviteListTotalPage = 1;
-  var inviteFlag = true;
-  var inviteSearchTerm = null;
-  var friendListPage = 1;
-  var frinenListTotalPage = 1;
-  var friendFlag = true;
-  var chatPage = 1;
-  var chatAfterPage = 1;
-  var chatTotalPage = null;
-  var chatTotalAfterPage = null;
-  var chatFlag = true;
   var replyPage = 1;
   var replyTotalPage = null;
-  var roomID = ""
-  var stompClient = null;
-  var afterDayCheck = null;
-  var beforeDayCheck = null;
-
 
   var loginName = '[[${memberDTO.name}]]'
   var loginEmail = '[[${memberDTO.email}]]'
   var userName = '[[${userName}]]';
   var userEmail = '[[${userEmail}]]';
-  var dictionary = {}
-  var dictionaryInverse = {}
-  var dictionaryInvite = {}
-  var dictionaryInviteEmail = {}
+
   const options = {
     year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -698,75 +679,6 @@
     })
   }
 
-
-  async function showInviteSearchInfo(userName, loginName, inviteSearchTerm){
-    try{
-      let roomUsers = Object.keys(dictionary);
-      const response = await $.ajax({
-        url: "/search/invite?page" + inviteListPage,
-        type: "POST",
-        data: {loginName:loginName, inviteSearchTerm:inviteSearchTerm, roomUsers:roomUsers},
-        dataType: "JSON",
-        traditional: true,
-      })
-      inviteListTotalPage = response.end;
-      inviteListPage += 1
-      createInviteUserInfo(response);
-    } catch (error){
-      throw error;
-    }
-  }
-
-  function createInviteUserInfo(profileAndFriendMap){
-    var Result = "";
-    var imageUrl
-    for (var i = 0; i < profileAndFriendMap.dtoList.length ; i++) {
-      if(profileAndFriendMap.dtoList[i].profileImage !=null)
-        imageUrl = profileAndFriendMap.dtoList[i].profileImage.imageURL
-      else
-        imageUrl = "outprofile.png"
-
-      Result += '<div class="user-info-box invite-info">';
-      Result += '<div class="profile-box">';
-      Result += '<img src ="/display?fileName=' + imageUrl + '/"' +
-              ' alt="Profile Picture" class="profile-picture">'
-      Result += '</div>';
-      Result += '<div class="user-name-box-invite">'
-      Result += '<a href="/sidebar/' + profileAndFriendMap.dtoList[i].friendName + '"' +
-              ' class=comment-bold>' + profileAndFriendMap.dtoList[i].friendName + '</a>';
-      Result += '</div>';
-      Result += '<div class="user-chat-button-box">';
-      if (dictionaryInvite[profileAndFriendMap.dtoList[i].friendName] == null)
-        Result += "<button data-name='" + profileAndFriendMap.dtoList[i].friendName +
-                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' data-url='" + imageUrl + "' class='invite-button follow'> + </button>";
-      else
-        Result += "<button data-name='" + profileAndFriendMap.dtoList[i].friendName +
-                "' data-email='" + profileAndFriendMap.dtoList[i].friendEmail + "' data-url='" + imageUrl + "' class='invite-cancel-button follow'> - </button>";
-      Result += '</div>';
-      Result += '</div>';
-    }
-    if (Result == "")
-    {
-      Result += '<div class="not-exist-list">검색한 친구가 없습니다.</div>'
-    }
-    $('#inviteSearchResult').append(Result);
-  }
-
-   function getNotReadMessageNum(loginEmail, roomId) {
-     $.ajax({
-       url: "/chat/getNotReadNum",
-       type: "POST",
-       dataType: "JSON",
-       data: {loginEmail: loginEmail, roomId: roomId},
-       success: function (result){
-         if (result > 300)
-           $('#num-'+roomId).html("300+");
-         else if (result > 0)
-           $('#num-'+roomId).html(result);
-       }
-     })
-
-   }
 
 
   function sendAcceptFriendShipRequest(loginName, requesterName, $button){
@@ -1122,137 +1034,6 @@
       var requesterName = $(this).attr('data-name');
       var $button = $(this);
       sendDeleteFriendShipRequest(loginName, requesterName, $button)
-    })
-
-    $(function (){
-      async function showInviteUserList(userName, loginName, inviteListPage){
-        try {
-          let roomUsers = Object.keys(dictionary);
-          const response = await $.ajax({
-            url: '/profileImage/inviteList?page=' + inviteListPage,
-            type: "POST",
-            data: {loginName: loginName, roomUsers:roomUsers},
-            dataType: "JSON",
-            traditional: true,
-          })
-          inviteListTotalPage = response.end;
-          createInviteUserInfo(response);
-        } catch (error){
-          throw error;
-        }
-      }
-
-      async function inviteScrollPaging(){
-
-        let val = scrollContainerInvite.scrollHeight - scrollContainerInvite.scrollTop
-        if (scrollContainerInvite.clientHeight -15 <= val  &&  val <= scrollContainerInvite.clientHeight +15) {
-          if (inviteListTotalPage >= inviteListPage && inviteFlag) {
-            inviteFlag = false
-            inviteListPage += 1
-            await showInviteUserList(userName, loginName, inviteListPage)
-            inviteFlag = true
-          }
-        }
-      }
-      async function inviteSeacrhScrollPaging(){
-
-        let val = scrollContainerInvite.scrollHeight - scrollContainerInvite.scrollTop
-        if (scrollContainerInvite.clientHeight -15 <= val  &&  val <= scrollContainerInvite.clientHeight +15) {
-          if (inviteListTotalPage >= inviteListPage && inviteFlag) {
-            inviteFlag = false
-            inviteListPage += 1
-            await showInviteSearchInfo(userName, loginName, inviteSearchTerm)
-            inviteFlag = true
-          }
-        }
-      }
-      const debuncedPagingInvite = debounce(inviteScrollPaging, 300);
-      const debuncedPagingInviteSearch = debounce(inviteSeacrhScrollPaging, 300)
-      const scrollContainerInvite = document.getElementById('scroll-invite')
-      $('#invite-chatuser').click(function (){
-        $('#inviteModal').css('z-index', 1053).modal('show');
-        var userName = '[[${userName}]]';
-        var loginName = '[[${memberDTO.name}]]'
-        showInviteUserList(userName, loginName, inviteListPage);
-        scrollContainerInvite.addEventListener('scroll', debuncedPagingInvite);
-        document.getElementById('inviteSearchForm').onsubmit = function (event){
-          event.preventDefault();
-          inviteSearchTerm = document.getElementById('inviteSearchInput').value;
-          document.getElementById('inviteSearchInput').value = "";
-
-          inviteListPage = 1;
-          inviteListTotalPage = null;
-          scrollContainerInvite.removeEventListener('scroll', debuncedPagingInvite);
-          $('#inviteSearchResult').html("");
-          showInviteSearchInfo(userName, loginName, inviteSearchTerm);
-          scrollContainerInvite.addEventListener('scroll', debuncedPagingInviteSearch);
-        }
-      })
-      $('#inviteModal').on('hidden.bs.modal', function (){
-        inviteListPage = 1;
-        inviteListTotalPage = null;
-        $('#invite-container').html("");
-        dictionaryInvite = {}
-        dictionaryInviteEmail = {}
-        $('#inviteSearchResult').html("");
-        scrollContainerInvite.removeEventListener('scroll', debuncedPagingInvite);
-        scrollContainerInvite.removeEventListener('scroll', debuncedPagingInviteSearch);
-
-      })
-
-      $(document).on('click', '.invite-button, .invite-cancel-button', function (){
-        var inviteName = $(this).attr('data-name');
-        var inviteEmail = $(this).attr('data-email');
-        var inviteUrl = $(this).attr('data-url')
-        var $this = $(this);
-        if ($this.hasClass('invite-button')) {
-          $this.removeClass('invite-button').addClass('invite-cancel-button');
-          $this.text(' - ');
-          function createInviteTag(inviteName, imageUrl){
-            let nameSlice
-            if (inviteName.length > 5)
-              nameSlice = inviteName.slice(0,5) + ' ...';
-            else
-              nameSlice = inviteName
-            result = "";
-            result += '<div class="invite-profile-container">'
-            result += '<img src="/display?fileName=' + imageUrl +'/" class="invite-profile" user-name="' + inviteName + '">';
-            result += '<div class="invite-profile-name" user-name="' + inviteName +'">' + nameSlice + '</div>'
-            result += '</div>'
-            return result
-          }
-
-          $('#invite-container').append(createInviteTag(inviteName, inviteUrl));
-          dictionaryInvite[inviteName] = true;
-          dictionaryInviteEmail[inviteEmail] = true;
-
-        } else {
-          $this.removeClass('invite-cancel-button').addClass('invite-button');
-          $this.text(' + ');
-          $('#invite-container').find("div[user-name='" + inviteName + "']").remove();
-          $('#invite-container').find("img[user-name='" + inviteName + "']").remove();
-          delete dictionaryInvite[inviteName]
-          delete dictionaryInviteEmail[inviteEmail]
-        }
-      })
-
-      $('#invite-submit').click(function (){
-        let userNames = Object.keys(dictionaryInvite);
-        let userEmails = Object.keys(dictionaryInviteEmail);
-
-        $.ajax({
-          url: '/chat/updateUserAndRoom',
-          type: 'POST',
-          data: {userEmails:userEmails, roomId:roomID, addNum:userEmails.length},
-          traditional: true,
-          success: function (response){
-            console.log("성공")
-            var loginName = '[[${memberDTO.name}]]';
-            stompClient.send("/app/chat/inviteLoad/"+roomID, {}, JSON.stringify(userNames));
-            $('#inviteModal').modal('hide');
-          }
-        })
-      })
     })
 
   })

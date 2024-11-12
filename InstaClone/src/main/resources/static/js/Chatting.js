@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         ChattingApp.init(loginName, loginEmail, roomId)
 
         selectChattingUp(ChattingApp.$data.loginEmail, ChattingApp.$data.roomId, ChattingApp.$data.upPage)
+        selectChattingDown(ChattingApp.$data.loginEmail, ChattingApp.$data.roomId, ChattingApp.$data.downPage)
 
         ChattingApp.$event.scrollPagination = debounce(ChattingApp.scrollPaging,300);
         ChattingApp.$object.scrollContainer.addEventListener('scroll', ChattingApp.$event.scrollPagination);
@@ -56,4 +57,20 @@ function selectChattingDown(loginEmail, roomId ,page){
     });
 }
 
+
+function getNotReadMessageNum(loginEmail, roomId) {
+    $.ajax({
+        url: "/chat/getNotReadNum",
+        type: "POST",
+        dataType: "JSON",
+        data: {loginEmail: loginEmail, roomId: roomId},
+        success: function (result){
+            if (result > 300)
+                $('#num-'+roomId).html("300+");
+            else if (result > 0)
+                $('#num-'+roomId).html(result);
+        }
+    })
+
+}
 
