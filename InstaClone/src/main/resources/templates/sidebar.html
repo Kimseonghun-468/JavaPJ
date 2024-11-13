@@ -24,6 +24,8 @@
   <script src="/js/ProfileFriendApp.js"></script>
   <script src="/js/UserSearch.js"></script>
   <script src="/js/UserSearchApp.js"></script>
+  <script src="/js/Post.js"></script>
+  <script src="/js/PostApp.js"></script>
 
 
 
@@ -971,57 +973,6 @@
       sendFollowRequest(name, $button);
     });
 
-
-    function createPostInfo(response){
-      let postResult = "";
-      $.each(response.dtoList, function (idx, dtoList){
-        postResult += '<div class="post-item">';
-        postResult += '<img class="post-list-img" ' +
-                'src="/display?fileName=' + dtoList.imageDTOList[0].imageURL + '/" ' +
-                'data-url ="' + dtoList.imageDTOList[0].imageURL +'" ' +
-                'data-id="' +dtoList.imageDTOList[0].pino + '" ' +
-                'data-pid="' + dtoList.pno + '">'
-        postResult += '</div>';
-      })
-
-      $("#post-grid-image-box").append(postResult);
-    }
-    async function showPostList(userName, postPage){
-      try {
-        const response = await $.ajax({
-          url: "/post/getPostInfo?page=" + postPage,
-          type: "POST",
-          data: {userName: userName},
-          dataType: "JSON",
-        })
-        postTotalPage = response.end;
-        createPostInfo(response);
-
-      } catch (error){
-        throw error;
-      }
-    }
-
-    $(function (){
-      async function postScrollPaging(){
-        let val = scrollContainerPost.scrollHeight - scrollContainerPost.scrollTop
-        if (scrollContainerPost.clientHeight -100 <= val  &&  val <= scrollContainerPost.clientHeight +100) {
-          if (postTotalPage >= postPage && postFlag) {
-            postFlag = false
-            postPage += 1
-            await showPostList(userName, postPage)
-            postFlag = true
-          }
-        }
-      }
-      postPage +=1
-      showPostList(userName, postPage)
-      const scrollContainerPost = document.getElementById("post-frame")
-      const debouncedPagingPost = debounce(postScrollPaging, 300)
-      scrollContainerPost.addEventListener('scroll', debouncedPagingPost)
-
-      // showPostList(userName, postPage)
-    })
     $(document).on('click', '.request-Accept-button', function(){
       var loginName = '[[${memberDTO.name}]]';
       var requesterName = $(this).attr('data-name');

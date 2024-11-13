@@ -3,13 +3,10 @@ package com.skhkim.instaclone.chatting.controller;
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
-import com.skhkim.instaclone.chatting.dto.PageResultDTO;
-import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
-import com.skhkim.instaclone.chatting.response.ChatUserResponse;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
@@ -19,7 +16,6 @@ import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -28,12 +24,10 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @Log4j2
@@ -146,7 +140,7 @@ public class ChatController {
     public ResponseEntity updateUserAndRoom(@RequestBody InviteRequest inviteRequest){
         chatUserService.insertChatUser(inviteRequest.getUserEmails(), inviteRequest.getRoomId());
         chatRoomService.updateUserNum(inviteRequest.getRoomId(), inviteRequest.getAddNum());
-        return ResponseEntity.ok(1L);
+        return ResponseEntity.ok(true);
     }
 
 }
