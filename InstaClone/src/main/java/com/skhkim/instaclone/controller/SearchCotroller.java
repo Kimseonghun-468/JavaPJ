@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.controller;
 
+import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.response.UserInfoResponse;
 import com.skhkim.instaclone.service.LoginService;
@@ -46,8 +47,8 @@ public class SearchCotroller {
     }
 
     @PostMapping("/invite")
-    public ResponseEntity getInivteListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, String inviteSearchTerm, String loginName, @RequestParam List<String> roomUsers) {
-        UserInfoResponse result = profileService.getInviteSearchListPage(profilePageRequestDTO, loginName, inviteSearchTerm, roomUsers);
+    public ResponseEntity getInivteListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, @RequestBody InviteRequest inviteRequest) {
+        UserInfoResponse result = profileService.getInviteSearchListPage(profilePageRequestDTO, inviteRequest.getLoginName(), inviteRequest.getSearchTerm(), inviteRequest.getUserNames());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

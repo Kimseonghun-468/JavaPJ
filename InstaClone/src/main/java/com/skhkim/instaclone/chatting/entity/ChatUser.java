@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"member", "chatRoom"})
 public class ChatUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

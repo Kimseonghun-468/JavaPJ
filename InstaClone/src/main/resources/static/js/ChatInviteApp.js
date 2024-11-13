@@ -29,10 +29,9 @@ const ChatInviteApp = {
         this.$data.loginName = loginName;
         this.$data.loginEmail = loginEmail;
         this.$data.page = 1;
-        this.$data.roomUsers = {};
-        this.$data.roomEmails = {};
         this.$data.nameDict = {};
         this.$data.emailDict = {};
+        this.makeUserDict()
         this.$object.inviteTable = $("#inviteSearchResult");
         this.$object.scrollContainer = document.getElementById('scroll-invite')
         this.scrollPaging = this.scrollPaging.bind(this);
@@ -44,17 +43,22 @@ const ChatInviteApp = {
         if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
             if(this.$data.hasNext) {
                 if (this.$data.status == true) {
-                    selectInviteSearchUserList(this.$data.loginName, this.$data.searchTerm, this.$data.roomUsers)
+                    selectInviteSearchUserList(this.$data.loginName, this.$data.searchTerm, this.$data.roomUsers, this.$data.page)
                 } else {
-                    selectInviteUserList(this.$data.userName, this.$data.roomUsers, this.$data.page)
+                    selectInviteUserList(this.$data.loginName, this.$data.roomUsers, this.$data.page)
                 }
             }
         }
     },
 
-    setInviteUserList(data) {
+    makeUserDict() {
+        this.$data.roomUsers = Object.keys(ChattingApp.$data.nameAndEmailDict);
+        this.$data.roomEmails = Object.keys(ChattingApp.$data.emailAndNameDict);
+    },
+
+    setInviteUserList(data, status) {
         const inviteSearchResult = document.getElementById('inviteSearchResult');
-        inviteSearchResult.innerHTML = "";  // 기존 내용을 초기화합니다.
+        // inviteSearchResult.innerHTML = "";  // 기존 내용을 초기화합니다.
 
         data.userInfoDTOS.forEach(item => {
             const imageUrl = item.imgName ? `/display?fileName=${item.imageURL}` : this.$data.noneImage;
@@ -122,6 +126,10 @@ const ChatInviteApp = {
             notExistMessage.textContent = "검색한 친구가 없습니다.";
             inviteSearchResult.appendChild(notExistMessage);
         }
+
+        this.$data.hasNext = data.hasNext;
+        this.$data.page += 1
+        this.$data.status = status
 
     },
 

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
         ChatInviteApp.init(loginName, loginEmail);
 
-        selectInviteUserList(ChatInviteApp.$data.loginName, ChatInviteApp.$data.roomUsers, ChatInviteApp.$data.page)
+        selectInviteUserList(ChatInviteApp.$data.loginName, ChattingApp.$data.nameAndEmailDict, ChatInviteApp.$data.page)
 
         ChatInviteApp.$event.scrollPagination = debounce(ChatInviteApp.scrollPaging,300);
         ChatInviteApp.$object.scrollContainer.addEventListener('scroll', ChatInviteApp.$event.scrollPagination);
@@ -16,19 +16,19 @@ document.addEventListener("DOMContentLoaded", ()=> {
             event.preventDefault();
             ChatInviteApp.$data.searchTerm = document.getElementById('inviteSearchInput').value;
             document.getElementById('inviteSearchInput').value = "";
-
+            ChatInviteApp.$data.page = 1
             $('#inviteSearchResult').html("");
             // app으로 가져가
             let roomUserList = Object.keys(ChattingApp.$data.nameAndEmailDict);
-            selectInviteSearchUserList(loginName, ChatInviteApp.$data.searchTerm, roomUserList);
+            selectInviteSearchUserList(loginName, ChatInviteApp.$data.searchTerm, roomUserList, ChatInviteApp.$data.page);
 
         }
     });
 
     $('#invite-submit').click(function (){
         // app으로 가져가
-        let userNames = Object.keys(ChattingApp.$data.nameAndEmailDict);
-        let userEmails = Object.keys(ChattingApp.$data.emailAndNameDict);
+        let userNames = Object.keys(ChatInviteApp.$data.nameDict);
+        let userEmails = Object.keys(ChatInviteApp.$data.emailDict);
         inviteUsers(userNames, userEmails, ChattingApp.$data.roomId); // roomId처리
     });
 
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $('#inviteModal').on('hidden.bs.modal', function (){
         $('#invite-container').html("");
         $('#inviteSearchResult').html("");
-        ChatInviteApp.$object.scrollContainer.removeEventListener('scroll', ChattingApp.$event.scrollPagination);
+        ChatInviteApp.$object.scrollContainer.removeEventListener('scroll', ChatInviteApp.$event.scrollPagination);
     })
 });
 
@@ -67,37 +67,39 @@ function selectInviteUserList(loginName, roomUsers, page){
     $.ajax({
         url: '/profileImage/inviteList?page=' + page,
         type: "POST",
-        data: {loginName: loginName, roomUsers:roomUsers},
+        data: {loginName: loginName, roomUsers:Object.keys(roomUsers)},
         dataType: "JSON",
         traditional: true,
         success: function (data) {
-            ChatInviteApp.setInviteUserList(data)
+            ChatInviteApp.setInviteUserList(data, false)
         }
     })
 }
 
 function selectInviteSearchUserList(loginName, searchTerm, roomUsers, page){
     $.ajax({
-        url: "/search/invite?page" + page,
+        url: "/search/invite?page=" + page,
         type: "POST",
-        data: {loginName:loginName, inviteSearchTerm:searchTerm, roomUsers:roomUsers},
+        data: JSON.stringify({loginName:loginName, searchTerm:searchTerm, userNames:roomUsers}),
         dataType: "JSON",
+        contentType: "application/json",
         traditional: true,
         success: function (data){
-            ChatInviteApp.setInviteUserList(data);
+            ChatInviteApp.setInviteUserList(data, true);
         }
     })
 }
 
 function inviteUsers(userNames, userEmails, roomId){
     $.ajax({
-        url: '/chat/updateUserAndRoom',
+        url: "/chat/updateUserAndRoom",
         type: 'POST',
-        data: {userEmails:userEmails, roomId:roomId, addNum:userEmails.length},
-        traditional: true,
+        data: JSON.stringify({userEmails:userEmails, roomId:roomId, addNum:userEmails.length}),
+        dataType: "JSON",
+        contentType: "application/json",
         success: function (data){
             console.log("성공")
-            ChattingApp.$data.stompClient.send("/app/chat/inviteLoad/"+roomId, {}, JSON.stringify(userNames));
+            ChattingApp.$data.stompClient.send("/app/chat/inviteLoad/"+ roomId, {}, JSON.stringify({userNames:userNames, roomId:roomId}));
             $('#inviteModal').modal('hide');
         }
     })

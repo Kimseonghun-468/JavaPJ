@@ -12,7 +12,7 @@ public interface ChatRoomService {
 
     Long getUserNum(Long roomId);
 
-    void updateUserNum(Long roomId, Long addNum);
+    void updateUserNum(Long roomId, Integer addNum);
     default ChatRoomDTO entityToDTO(ChatRoom chatRoom){
         ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
                 .roomId(chatRoom.getRoomId())

@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.chatting.service;
 
 
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
@@ -8,6 +9,7 @@ import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 
+import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ClubMember;
@@ -67,11 +69,11 @@ public class ChatUserServiceImpl implements ChatUserService {
     }
 
     @Override
-    public List<ChatUserDTO> selectChatUserList(Long roomId, List<String> userNameList){
-        List<ChatUser> result = chatUserRepository.selectChatUserList(roomId, userNameList);
-        List<ChatUserDTO> chatUserDTOS = result.stream().map(user -> EntityMapper.entityToDTO(user)).toList();
+    public List<UserInfoDTO> selectChatUserList(Long roomId, List<String> userNameList){
+        List<ClubMember> result = chatUserRepository.selectChatUserList(roomId, userNameList);
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(user -> EntityMapper.entityToDTO(user)).toList();
 
-        return chatUserDTOS;
+        return userInfoDTOS;
     }
 
     @Override

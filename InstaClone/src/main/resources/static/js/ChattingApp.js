@@ -158,17 +158,18 @@ const ChattingApp = {
             })
 
             client.subscribe('/topic/chat/inviteLoad/' + roomId, (result) => {
-                var invitedList = JSON.parse(result.body) // 여기에 UserInfo를 보내주자
+                var invitedList = JSON.parse(result.body).body
                 var names = ""
-                $.each(invitedList, function (idx, name){
-                    names += name + ', '
+                invitedList.forEach(item => {
+                    names += item.userName + ', '
+
                 })
                 result = ""
                 result += '<div class="invite-list-container">'
                 result += '<div class="invite-user-list">' + names.slice(0, names.length-2) + '님이 초대되었습니다.</div>'
                 result += '</div>'
-                // makeEmailToName(RoomID);
-                // $('#messages-box').append(result);
+                this.makeUserDict(roomId, this.$data.loginEmail)
+                $('#messages-box').append(result);
 
 
             })

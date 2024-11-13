@@ -23,7 +23,7 @@ public interface ChatUserService {
 
     ChatUserDTO selectChatUser(Long roomId, String loginName);
 
-    List<ChatUserDTO> selectChatUserList(Long roomId, List<String> invitNameList);
+    List<UserInfoDTO> selectChatUserList(Long roomId, List<String> invitNameList);
 
     ChatRoomResponse getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail);
 

@@ -27,8 +27,8 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
     @Query("SELECT cu FROM ChatUser cu WHERE cu.member.name =:loginName AND cu.chatRoom.roomId = :roomId")
     ChatUser selectChatUser(Long roomId, String loginName);
 
-    @Query("SELECT cu FROM ChatUser cu WHERE cu.member.name in :userNameList AND cu.chatRoom.roomId = :roomId")
-    List<ChatUser> selectChatUserList(Long roomId, List<String> userNameList);
+    @Query("SELECT cu.member FROM ChatUser cu WHERE cu.member.name in :userNameList AND cu.chatRoom.roomId = :roomId")
+    List<ClubMember> selectChatUserList(Long roomId, List<String> userNameList);
 
     @Query("SELECT cu.member.email, cu.member.name FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId")
     List<Object[]> getEmailAndNmaeByRoomId(Long roomId);

@@ -6,6 +6,7 @@ import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
+import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.chatting.response.ChatUserResponse;
@@ -26,6 +27,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
@@ -71,9 +73,9 @@ public class ChatController {
     // 이 기준을 가지고 OOO님이 입장하셨습니다 로 퉁치자
     @MessageMapping("/chat/inviteLoad/{roomID}")
     @SendTo("/topic/chat/inviteLoad/{roomID}")
-    public ResponseEntity inviteLoad(@DestinationVariable Long roomId, @RequestParam List<String> userNameList) {
-        List<ChatUserDTO> result = chatUserService.selectChatUserList(roomId, userNameList);
-        // 실제 인비트 수행
+    public ResponseEntity inviteLoad(@RequestBody InviteRequest inviteRequest) {
+        List<UserInfoDTO> result = chatUserService.selectChatUserList(inviteRequest.getRoomId(), inviteRequest.getUserNames());
+
 
         return ResponseEntity.ok(result);
     }
@@ -141,10 +143,10 @@ public class ChatController {
     }
 
     @PostMapping("/chat/updateUserAndRoom")
-    public ResponseEntity<Long> updateUserAndRoom(@RequestParam List<String> userEmails, Long roomId, Long addNum){
-        chatUserService.insertChatUser(userEmails, roomId);
-        chatRoomService.updateUserNum(roomId, addNum);
-        return new ResponseEntity<>(1L, HttpStatus.OK);
+    public ResponseEntity updateUserAndRoom(@RequestBody InviteRequest inviteRequest){
+        chatUserService.insertChatUser(inviteRequest.getUserEmails(), inviteRequest.getRoomId());
+        chatRoomService.updateUserNum(inviteRequest.getRoomId(), inviteRequest.getAddNum());
+        return ResponseEntity.ok(1L);
     }
 
 }
