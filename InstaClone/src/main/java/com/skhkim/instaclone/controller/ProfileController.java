@@ -10,6 +10,7 @@ import com.skhkim.instaclone.service.PostService;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -133,5 +134,12 @@ public class ProfileController {
     public String defaultPage(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO) throws UnsupportedEncodingException{
         String encodedName = URLEncoder.encode(clubAuthMemberDTO.getName(), "UTF-8");
         return "redirect:/sidebar/"+encodedName;
+    }
+
+    @PostMapping("/selectUserInfo")
+    public ResponseEntity selectUserInfo(String userName){
+        UserInfoDTO result = profileService.selectUserInfo(userName);
+
+        return ResponseEntity.ok(result);
     }
 }

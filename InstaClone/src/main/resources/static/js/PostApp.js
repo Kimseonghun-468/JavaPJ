@@ -48,8 +48,6 @@ const PostApp = {
             postResult += '</div>';
         });
 
-        // $("#post-grid-image-box").append(postResult);
-
         this.$data.page += 1
         this.$data.hasNext = data.hasNext;
         this.$object.postTable.append(postResult)

@@ -26,8 +26,8 @@
   <script src="/js/UserSearchApp.js"></script>
   <script src="/js/Post.js"></script>
   <script src="/js/PostApp.js"></script>
-
-
+  <script src="/js/PostDetail.js"></script>
+  <script src="/js/PostDetailApp.js"></script>
 
   <link th:href="@{/css/carouselCustom.css}" rel="stylesheet">
   <title>프로필</title>
@@ -38,6 +38,7 @@
 <input type="hidden" id="loginName" th:data-login-name="${memberDTO.name}">
 <input type="hidden" id="loginEmail" th:data-login-email="${memberDTO.email}">
 <input type="hidden" id="userName" th:data-user-name="${userName}">
+<input type="hidden" id="userEmail" th:data-user-email="${userEmail}">
 
 <div class="temp">
 
@@ -241,7 +242,7 @@
   </div>
 </div>
 
-<div id="myModal" class="modal-custom">
+<div id="postModal" class="modal-custom">
   <div class="modal-content-post">
     <div class="modal-content-post-imagebox" style="border-top-left-radius: 12px;">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -400,7 +401,6 @@
 <!--            <input type="hidden" name="pno" th:value="${memberDTO.email}">-->
             <button type="button" class="btn btn-primary" id="modify-post-button">수정하기</button>
           </div>
-
         </form>
       </div>
     </div>
@@ -515,14 +515,6 @@
 </div>
 
 <script>
-  var requestedPage = 1;
-  var acceptedPage = 1;
-  var chatRoomPage = 1;
-  var postPage = 1;
-  var postTotalPage = 1;
-  var postFlag = true;
-  var replyPage = 1;
-  var replyTotalPage = null;
 
   var loginName = '[[${memberDTO.name}]]'
   var loginEmail = '[[${memberDTO.email}]]'
@@ -536,84 +528,7 @@
     timeZone: "Asia/Seoul"  // 서버 시간대가 UTC라고 가정
   };
   const formatter = new Intl.DateTimeFormat('en-US', options);
-  async function sendReplyRegisterRequset(postId, commentBox, userEmail, userName) {
-    var replyText = commentBox.value.replaceAll('\n', '<br>');
-    console.log(replyText)
-    console.log(commentBox.value)
-    var data = {pno:postId, text:replyText, email:userEmail};
-    $.ajax({
-      url: '/reply/'+postId,
-      type: "POST",
-      data: JSON.stringify(data),
-      contentType: "application/json; charset=utf-8",
-      success: function (result){
-        var tempReply = {name:userName, text:replyText, rno:result.rno, regDate:"지금", profileImageUrl:result.imageUrl};
-        replyResult = ""
-        var replyArea = $("#post-reply-container");
-        replyArea.prepend(createReplyhtmlbox(userName, tempReply));
-        $('#reply-box').val('');
-        $('#reply-send').removeClass("active")
-        $('#reply-comment-body').scrollTop(0);
-      }
-    })
-  };
-  function sendReplyDeleteRequest(rno){
-    $.ajax({
-      url: '/reply/'+rno,
-      type: 'DELETE',
-      contentType: "application/json; charset=utf-8",
-      dataType: "text",
-      success: function (result){
-        $('[data-rno="' + rno + '"]').closest('.reply-main').remove();
-      }
-    })
-  }
-  function sendPostDeleteRequest(pno){
-    $.ajax({
-      url: '/post/delete/' + pno,
-      type: 'DELETE',
-      success: function (result){
-      }
-    })
-  }
 
-  async function showReplyListInPost(postId){
-    await $.getJSON("/reply/"+postId +"/all" + "?page=" + replyPage , function (arr){
-      var str = "";
-      var buttonTag = ""
-      var loginName = '[[${memberDTO.name}]]';;
-      $.each(arr.dtoList, function (idx, reply){
-        replyStr = createReplyhtmlbox(loginName, reply);
-        str += replyStr;
-      });
-
-      if (arr.dtoList.length == 0){
-        str += '<div class="not-exist-list" id="post-not-exist">현재 댓글이 없습니다.</div>'
-      }
-
-      $("#post-reply-container").append(str);
-      if (arr.totalPage >replyPage){
-        buttonTag += '<div class="reply-paging-button">'
-        buttonTag += '<svg aria-label="댓글 더 읽어들이기" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>댓글 더 읽어들이기</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="7.001" x2="17.001" y1="12.005" y2="12.005"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.001" x2="12.001" y1="7.005" y2="17.005"></line></svg>'
-        buttonTag += '</div>'
-      }
-      $("#post-reply-container").append(buttonTag);
-
-    })
-  }
-
-  function showUploadedImages(arr){
-    var divArea = $(".uploadResult");
-    var str = "";
-
-    for (var i = 0; i < arr.length; i++) {
-      str += "<div>";
-      str += "<img src='/display?fileName=" + arr[i].thumbnailURL + "'>";
-      str += "<button class='removeBtn' data-name='" + arr[i].imageURL + "'>Remove</button>";
-      str += "</div>";
-    }
-    divArea.append(str);
-  }
 
   function formatTimeDifference(pastTime) {
     const currentTime = new Date();
@@ -634,29 +549,6 @@
     }
   }
 
-  function createReplyhtmlbox(loginName, reply){
-    var str = "";
-    str += '<div class="reply-main">';
-    str += '<div class="reply-image-container">'
-    if (reply.profileImageUrl != null)
-      str+= '<img src="/display?fileName=' + reply.profileImageUrl +'/" class="reply-profile">';
-    else
-      str += '<img src="/display?fileName=outprofile.png/" class="reply-profile">'
-    str += '</div>'
-    str += '<div class="reply-wrapper">';
-    str += '<div class="reply-name">' + reply.name + '</div>';
-    str += '<div class="reply-content">' + reply.text + '</div>';
-    str += '<div class="reply-side">';
-    str += '<div class="reply-time">' + formatTimeDifference(reply.regDate) + '</div>';
-    if (loginName == reply.name) {
-      str += '<span class="options dots reply-option" data-rno="' + reply.rno + '">...</span>'
-    }
-    str += '</div>'
-    str += '</div>'
-    str += '</div>'
-
-    return str
-  }
   function sendFollowRequest(name, $button){
     $.ajax({
       url: '/friendShip/' + name,
@@ -668,8 +560,6 @@
       }
     })
   }
-
-
 
   function sendAcceptFriendShipRequest(loginName, requesterName, $button){
     var data = {loginName:loginName, requesterName:requesterName};
@@ -802,87 +692,6 @@
     }
   }
 
-  function createTitleTag(userName, title, imageUrl, regDate){
-    result = ""
-    result += '<div class="reply-title">'
-    result += '<img src="/display?fileName=' + imageUrl +'/" class="reply-profile">';
-    result += '</div>'
-    result += '<div class="reply-wrapper">'
-    result += '<div class="reply-name">' + userName + '</div>'
-    result += '<div class="reply-content">' + title + '</div>'
-    result += '<div class="reply-side">'
-    result += '<div class="reply-time">' + formatTimeDifference(regDate) + '</div>'
-    result += '</div>'
-    result += '</div>'
-    result += '</div>'
-
-    return result;
-  }
-
-  function createPostImageTag(postId, commnetBox){
-    $.ajax({
-      url:'/post/postInfoWithImage',
-      type:"POST",
-      data: {pno:postId},
-      dataType:"JSON",
-      success: function (result){
-        var carouselTag = "";
-        var imageUrl = `[[${profileImageDTO.getImageURL()}]]`
-        if ('[[${profileImageDTO.path}]]' == '')
-          imageUrl = 'outprofile.png'
-        var loadName = '[[${userName}]]';
-
-        $.each(result.imageDTOList, function (idx, imageInfo){
-          if(idx ==0)
-            carouselTag += '<div class="carousel-item active">'
-          else
-            carouselTag += '<div class="carousel-item">'
-          carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
-          carouselTag += '</div>';
-        })
-
-        $.getJSON("/getWidthAndHeight?fileName=" +(result.imageDTOList[0].imageURL), function (arr){
-          console.log(arr)
-          const styleBoxes = document.getElementsByClassName('modal-content-post-imagebox');
-          const header = document.getElementById('post-modify-header');
-          if (arr[0] < arr[1])
-          {
-            header.style.maxWidth = 405 + ((900 / arr[1]) * arr[0]) + 'px';
-            for (let i = 0; i < styleBoxes.length; i++) {
-              styleBoxes[i].style.maxWidth = ((900 / arr[1]) * arr[0]) + 'px';
-              styleBoxes[i].style.maxHeight = '900px';
-              styleBoxes[i].style.aspectRatio = arr[0] + '/' + arr[1];
-              styleBoxes[i].style.flexBasis = ((900 / arr[1]) * arr[0]) + 'px';
-            }
-          }
-          else{
-            header.style.maxWidth = 405 + 900 +'px'
-            for (let i = 0; i < styleBoxes.length; i++) {
-              styleBoxes[i].style.maxWidth = '900px'
-              styleBoxes[i].style.maxHeight = '900px';
-              styleBoxes[i].style.aspectRatio = '1/1'
-              styleBoxes[i].style.flexBasis = '900px'
-            }
-          }
-        });
-
-        if(result.imageDTOList.length ==1){
-          $(".carousel-control-next").html("")
-          $(".carousel-control-prev").html("")
-        }
-        else{
-          $(".carousel-control-prev").html('<span class="carousel-control-prev-icon" aria-hidden="true"></span>')
-          $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
-        }
-
-        let postTitle = result.title.replaceAll("\n", "<br>")
-        $("#post-title-container").html(createTitleTag(loadName, postTitle, imageUrl, result.regDate))
-        $("#carousel-image-box").html(carouselTag)
-        $("#modify-carousel-image-box").html(carouselTag)
-
-      }
-    })
-  }
 
 
   $(function (){
@@ -976,106 +785,4 @@
     })
 
   })
-
-
-  $(function (){
-    var commentBox = document.querySelector('#reply-box');
-    var userEmail = '[[${memberDTO.email}]]';
-    var userName = '[[${memberDTO.name}]]';
-    var loadEmail = '[[${userEmail}]]';
-    $(document).on('click', '.post-list-img',function() {
-      function handleInput(){
-        var text = commentBox.value.trim()
-        var button = document.querySelector('#reply-send')
-
-        if (text === ""){
-          button.classList.remove('active')
-        }
-        else {
-          button.classList.add('active')
-        }
-      }
-      function handleKeyDown(event){
-
-        if (!event.isComposing && event.key === 'Enter' && !event.shiftKey) {
-          event.preventDefault();
-          document.getElementById('reply-send').click();
-          console.log(event.key)
-          console.log(event.shiftKey)
-        }
-        console.log('!', event.isComposing)
-      }
-      commentBox.addEventListener('input', handleInput)
-      commentBox.addEventListener('keydown', handleKeyDown);
-
-      $('#myModal').modal('show');
-      var postId = $(this).data('pid');
-      $("#carousel-image-box").html(createPostImageTag(postId, commentBox));
-      showReplyListInPost(postId);
-      $(document).off('click','.reply-paging-button').on('click', '.reply-paging-button', function (){
-        replyPage +=1
-        showReplyListInPost(postId)
-        this.remove()
-      })
-
-
-      $('#reply-send').off('click').on('click', function (){
-        if (commentBox.value.trim() === "")
-          return ;
-        sendReplyRegisterRequset(postId, commentBox, userEmail, userName);
-        $('#post-not-exist').html("")
-      });
-
-      $('#myModal').on('click', '#post-option', function (){
-        $('#post-option-modal').css('z-index', 1051).modal('show');
-        $('#remove-post').off('click').on('click', function (){
-          sendPostDeleteRequest(postId)
-          $('#post-option-modal').modal('hide');
-          $('#myModal').modal('hide')
-          alert("삭제가 완료되었습니다.")
-          self.location.reload();
-        });
-        $('#cancel-post').off('click').on('click', function (){
-          $('#post-option-modal').modal('hide');
-        })
-      })
-
-      $('#myModal').on('hidden.bs.modal', function () {
-        $('#post-reply-container').html("");
-        $('#reply-box').val('');
-        $('#reply-send').removeClass("active")
-        commentBox.removeEventListener('input', handleInput)
-        commentBox.removeEventListener('keydown', handleKeyDown)
-        replyPage = 1;
-        replyTotalPage = null;
-      });
-
-
-      $(document).on('click', '#post-modify-button',function() {
-        $('#post-modify-modal').modal('show')
-        $('#post-option-modal').modal('hide')
-
-        $('#modify-post-button').click(function() {
-          alert('포스트 파일이 수정되었습니다.');
-          $('.modify-value').append('<input type="hidden" name="pno" value=' + postId + '>')
-          $('#post-modify-form').submit();
-
-        });
-      })
-    });
-
-    $('#myModal').on('click', '.reply-option', function() {
-      console.log('reply-option event');
-      var rno = $(this).data("rno");
-      $('#reply-option-modal').css('z-index', 1051).modal('show');
-      $('#remove-reply').off('click').on('click', function(){
-        sendReplyDeleteRequest(rno);
-        $('#reply-option-modal').modal('hide');
-      });
-      $('#cancel-reply').off('click').on('click' ,function() {
-        $('#reply-option-modal').modal('hide');
-      });
-    });
-
-  });
 </script>

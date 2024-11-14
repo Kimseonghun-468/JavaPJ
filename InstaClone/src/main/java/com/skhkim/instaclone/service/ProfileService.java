@@ -20,6 +20,8 @@ public interface ProfileService {
 
     UserInfoResponse getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers);
     UserInfoDTO getFirstUser(String userName, String loginName);
+
+    UserInfoDTO selectUserInfo(String userName);
     default ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = ProfileImage.builder()

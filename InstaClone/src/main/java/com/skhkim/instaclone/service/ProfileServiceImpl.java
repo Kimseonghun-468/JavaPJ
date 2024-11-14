@@ -217,4 +217,12 @@ public class ProfileServiceImpl implements ProfileService{
 
         return userInfoDTO;
     }
+
+    @Override
+    public UserInfoDTO selectUserInfo(String userName){
+        ClubMember clubMember = memberRepository.selectUserInfo(userName);
+        UserInfoDTO userInfoDTO = EntityMapper.entityToDTO(clubMember);
+
+        return userInfoDTO;
+    }
 }

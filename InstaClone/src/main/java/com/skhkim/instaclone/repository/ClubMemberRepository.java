@@ -47,6 +47,8 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
             "WHERE CM.name like CONCAT('%', :searchTerm, '%') AND CM.name != :loginName ORDER BY CM.name")
     Slice<ClubMember> selectSearchUserInfo(Pageable pageable, String searchTerm, String loginName);
 
+    @Query("SELECT CM FROM ClubMember CM WHERE CM.name = :userName")
+    ClubMember selectUserInfo(String userName);
 
     @Modifying
     @Transactional
