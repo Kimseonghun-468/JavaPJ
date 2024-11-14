@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.entity;
 
+import com.skhkim.instaclone.chatting.entity.ChatUser;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,4 +24,6 @@ public class Post extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private ClubMember clubMember;
 
+    @OneToMany(mappedBy = "post")
+    private List<PostImage> postImageList = new ArrayList<>();
 }

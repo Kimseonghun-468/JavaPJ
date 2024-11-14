@@ -1,18 +1,19 @@
 package com.skhkim.instaclone.service;
 
+import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
 import com.skhkim.instaclone.dto.PostPageRequestDTO;
-import com.skhkim.instaclone.dto.PostPageResultDTO;
 import com.skhkim.instaclone.dto.PostDTO;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.repository.PostImageRepository;
 import com.skhkim.instaclone.repository.PostRepository;
 import com.skhkim.instaclone.repository.ReplyRepository;
+import com.skhkim.instaclone.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,15 +64,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String name){
-        Pageable pageable = postPageRequestDTO.getPageable();
+    public PostResponse getList(PostPageRequestDTO postPageRequestDTO, String name){
 
-        Page<Object[]> result = postRepository.getListPage(pageable, name);
-        Function<Object[], PostDTO> fn = (arr -> entitiesToDTO(
-                (Post)arr[0],
-                (List<PostImage>)(Arrays.asList((PostImage)arr[1])))
-        );
-        return new PostPageResultDTO<>(result, fn);
+
+        Pageable pageable = postPageRequestDTO.getPageable();
+        Slice<Post> result = postRepository.getListPage(pageable, name);
+        List<PostDTO> postDTOS = result.stream().map(post -> EntityMapper.entityToDTO(post)).toList();
+
+        return new PostResponse(postDTOS, result.hasNext());
     }
     @Override
     public Long getPostNumber(String email){

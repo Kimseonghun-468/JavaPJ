@@ -1,12 +1,12 @@
 package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.dto.PostPageRequestDTO;
-import com.skhkim.instaclone.dto.PostPageResultDTO;
 import com.skhkim.instaclone.dto.PostDTO;
 import com.skhkim.instaclone.dto.PostImageDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
+import com.skhkim.instaclone.response.PostResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public interface PostService {
 
-    PostPageResultDTO<PostDTO, Object[]> getList(PostPageRequestDTO postPageRequestDTO, String name);
+    PostResponse getList(PostPageRequestDTO postPageRequestDTO, String name);
     Long register(PostDTO postDTO);
 
     void modifyTitle(PostDTO postDTO);

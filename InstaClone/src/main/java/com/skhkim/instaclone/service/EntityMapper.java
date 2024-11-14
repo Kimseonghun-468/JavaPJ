@@ -4,11 +4,18 @@ import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
+import com.skhkim.instaclone.dto.PostDTO;
+import com.skhkim.instaclone.dto.PostImageDTO;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.dto.UserInfoProjection;
 import com.skhkim.instaclone.entity.ClubMember;
+import com.skhkim.instaclone.entity.Post;
+import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.entity.ProfileImage;
 import lombok.Data;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Data
@@ -59,6 +66,30 @@ public class EntityMapper {
                 .build();
 
         return chatUserDTO;
+    }
+
+    public static PostDTO entityToDTO(Post post){
+        PostDTO postDTO = PostDTO.builder()
+                .pno(post.getPno())
+                .email(post.getClubMember().getEmail())
+                .comment(post.getComment())
+                .title(post.getTitle())
+                .regDate(post.getRegDate())
+                .modDate(post.getModDate())
+                .build();
+
+        List<PostImage> postImages = post.getPostImageList();
+
+        List<PostImageDTO> postImageDTOList = postImages.stream().map(postImage ->
+                PostImageDTO.builder().imgName(postImage.getImgName())
+                .path(postImage.getPath())
+                .uuid(postImage.getUuid())
+                .pino(postImage.getPino())
+                .build()).toList();
+
+        postDTO.setImageDTOList(postImageDTOList);
+
+        return postDTO;
     }
 }
 

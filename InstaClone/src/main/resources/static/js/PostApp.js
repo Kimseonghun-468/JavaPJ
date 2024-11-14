@@ -38,7 +38,7 @@ const PostApp = {
 
     setPostList(data){
         let postResult = "";
-        data.dtoList.forEach(item => {
+        data.postDTOS.forEach(item => {
             postResult += '<div class="post-item">';
             postResult += '<img class="post-list-img" ' +
                 'src="/display?fileName=' + item.imageDTOList[0].imageURL + '/" ' +
@@ -48,7 +48,11 @@ const PostApp = {
             postResult += '</div>';
         });
 
-        $("#post-grid-image-box").append(postResult);
+        // $("#post-grid-image-box").append(postResult);
+
+        this.$data.page += 1
+        this.$data.hasNext = data.hasNext;
+        this.$object.postTable.append(postResult)
     },
 
 }

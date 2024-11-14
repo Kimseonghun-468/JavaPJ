@@ -3,6 +3,7 @@ package com.skhkim.instaclone.repository;
 import com.skhkim.instaclone.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,12 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, String> {
-    @Query("SELECT p, pi FROM Post p " +
-            "LEFT OUTER JOIN PostImage pi ON pi.post = p " +
+    @Query("SELECT p FROM Post p " +
             "WHERE p.clubMember.name = :name " +
-            "AND (pi.pino is null or pi.pino = (SELECT MIN(pi2.pino) FROM PostImage pi2 WHERE pi2.post = p)) " +
             "ORDER BY p.pno DESC")
-    Page<Object[]>getListPage(Pageable pageable, String name);
+    Slice<Post> getListPage(Pageable pageable, String name);
 
     @Query("SELECT p, pi FROM Post p LEFT JOIN PostImage pi ON pi.post = p WHERE p.pno =:pno")
     List<Object[]> getPostWithAll(Long pno);

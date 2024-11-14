@@ -51,7 +51,7 @@ public class ProfileController {
         FriendStatus friendStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
         model.addAttribute("friendshipStatus", friendStatus);
         model.addAttribute("userExist", loginService.getUserExist(name));
-        model.addAttribute("result", postService.getList(postPageRequestDTO, name));
+//        model.addAttribute("result", postService.getList(postPageRequestDTO, name));
         model.addAttribute("profileImageDTO", profileImageDTO);
         model.addAttribute("memberDTO", clubAuthMemberDTO);
         model.addAttribute("userName", name);
