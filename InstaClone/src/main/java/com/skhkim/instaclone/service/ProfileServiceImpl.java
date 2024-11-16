@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.service;
 
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.FriendAccept;
@@ -13,10 +12,8 @@ import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -88,21 +83,10 @@ public class ProfileServiceImpl implements ProfileService{
     public UserInfoResponse
     getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
-
         Slice<UserInfoProjection> result = profileImageRepository.getByWaitingListPage(pageable, loginName);
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(proejction -> EntityMapper.entityToDTO(proejction)).toList();
 
-        List<UserInfoDTO> userInfoDTOS = result.stream()
-                .map(projection -> UserInfoDTO.builder()
-                        .imgName(projection.getProfileImage() != null ? projection.getProfileImage().getImgName() : null)
-                        .uuid(projection.getProfileImage() != null ? projection.getProfileImage().getUuid() : null)
-                        .path(projection.getProfileImage() != null ? projection.getProfileImage().getPath() : null)
-                        .userName(projection.getClubMember().getName())
-                        .userEmail(projection.getClubMember().getEmail())
-                        .build())
-                .collect(Collectors.toList());
-
-        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
-        return response;
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
 
     @Override
@@ -110,41 +94,18 @@ public class ProfileServiceImpl implements ProfileService{
     getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.getByAcceptListPage(pageable, loginName);
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(proejction -> EntityMapper.entityToDTO(proejction)).toList();
 
-        List<UserInfoDTO> userInfoDTOS = result.stream()
-                .map(projection -> UserInfoDTO.builder()
-                        .imgName(projection.getProfileImage() != null ? projection.getProfileImage().getImgName() : null)
-                        .uuid(projection.getProfileImage() != null ? projection.getProfileImage().getUuid() : null)
-                        .path(projection.getProfileImage() != null ? projection.getProfileImage().getPath() : null)
-                        .userName(projection.getClubMember().getName())
-                        .userEmail(projection.getClubMember().getEmail())
-                        .build())
-                .collect(Collectors.toList());
-
-        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
-
-        return response;
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
 
     @Override
     public UserInfoResponse getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers){
         Pageable pageable = profilePageRequestDTO.getPageable();
-
         Slice<UserInfoProjection> result = profileImageRepository.selectInviteListByName(pageable, loginName, inviteSearchTerm, roomUsers);
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(proejction -> EntityMapper.entityToDTO(proejction)).toList();
 
-        List<UserInfoDTO> userInfoDTOS = result.stream()
-                .map(projection -> UserInfoDTO.builder()
-                        .imgName(projection.getProfileImage() != null ? projection.getProfileImage().getImgName() : null)
-                        .uuid(projection.getProfileImage() != null ? projection.getProfileImage().getUuid() : null)
-                        .path(projection.getProfileImage() != null ? projection.getProfileImage().getPath() : null)
-                        .userName(projection.getClubMember().getName())
-                        .userEmail(projection.getClubMember().getEmail())
-                        .build())
-                .collect(Collectors.toList());
-
-        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
-
-        return response;
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
 
     @Override
@@ -152,57 +113,25 @@ public class ProfileServiceImpl implements ProfileService{
     getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.getFriendListPage(pageable, userName, loginName);
-        List<UserInfoDTO> userInfoDTOS = result.stream()
-                .map(projection -> UserInfoDTO.builder()
-                        .imgName(projection.getClubMember().getProfileImage() != null ? projection.getClubMember().getProfileImage().getImgName() : null)
-                        .uuid(projection.getClubMember().getProfileImage() != null ? projection.getClubMember().getProfileImage().getUuid() : null)
-                        .path(projection.getClubMember().getProfileImage() != null ? projection.getClubMember().getProfileImage().getPath() : null)
-                        .userName(projection.getClubMember().getName())
-                        .userEmail(projection.getClubMember().getEmail())
-                        .status(projection.getStatus())
-                        .build())
-                .collect(Collectors.toList());
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(proejction -> EntityMapper.entityToDTO(proejction)).toList();
 
-        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
-
-        return response;
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
 
     @Override
     public UserInfoResponse
     getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers){
-
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.selectInviteList(pageable, loginName, roomUsers);
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(projection -> EntityMapper.entityToDTO(projection)).toList();
 
-        List<UserInfoDTO> userInfoDTOS = result.stream()
-                .map(projection -> UserInfoDTO.builder()
-                        .imgName(projection.getProfileImage() != null ? projection.getProfileImage().getImgName() : null)
-                        .uuid(projection.getProfileImage() != null ? projection.getProfileImage().getUuid() : null)
-                        .path(projection.getProfileImage() != null ? projection.getProfileImage().getPath() : null)
-                        .userName(projection.getClubMember().getName())
-                        .userEmail(projection.getClubMember().getEmail())
-                        .build())
-                .collect(Collectors.toList());
-
-        UserInfoResponse response = new UserInfoResponse(userInfoDTOS, result.hasNext());
-
-        return response;
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
     @Override
     public UserInfoDTO getFirstUser(String loginName, String userName){
 
         ClubMember loginMember = memberRepository.findByName(loginName);
-        ProfileImage profileImage = loginMember.getProfileImage();
-
-        // Default로 Status는 NONE 처리
-        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
-                .userName(loginName)
-                .uuid(profileImage != null ? profileImage.getUuid() : null)
-                .path(profileImage != null ? profileImage.getPath() : null)
-                .imgName(profileImage != null ? profileImage.getImgName() : null)
-                .status(FriendStatus.NONE)
-                .build();
+        UserInfoDTO userInfoDTO = EntityMapper.entityToDTO(loginMember);
 
         Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
         Optional<FriendAccept> friendAccept = memberRepository.getAcceptFriend(loginName, userName);

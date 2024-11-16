@@ -18,6 +18,8 @@ public class PostDTO {
     private String email;
     private String comment;
     private String title;
+    private Integer replyNum;
+    private Integer likeNum;
 
     @Builder.Default
     private List<PostImageDTO> imageDTOList = new ArrayList<>();

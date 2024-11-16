@@ -43,9 +43,16 @@ const PostApp = {
             postResult += '<div class="post-item">';
             postResult += '<img class="post-list-img" ' +
                 'src="/display?fileName=' + item.imageDTOList[0].imageURL + '/" ' +
-                'data-url ="' + item.imageDTOList[0].imageURL +'" ' +
-                'data-id="' +item.imageDTOList[0].pino + '" ' +
+                'data-reply-num="' +item.replyNum + '" ' +
+                'data-like-num="' +item.likeNum+ '" ' +
                 'data-pid="' + item.pno + '">'
+
+            postResult += '<div class="info-overlay">';
+            postResult += '<span class="like-num">like' + item.likeNum +'</span>';
+            postResult += '<br>';
+            postResult += '<span class="reply-num">reply' + item.replyNum + '</span>';
+            postResult += '</div>';
+
             postResult += '</div>';
         });
 

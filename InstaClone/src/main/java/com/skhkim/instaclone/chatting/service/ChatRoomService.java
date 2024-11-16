@@ -13,13 +13,4 @@ public interface ChatRoomService {
     Long getUserNum(Long roomId);
 
     void updateUserNum(Long roomId, Integer addNum);
-    default ChatRoomDTO entityToDTO(ChatRoom chatRoom){
-        ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
-                .roomId(chatRoom.getRoomId())
-                .userNum(chatRoom.getUserNum())
-                .lastChat(chatRoom.getLastChat())
-                .lastChatTime(chatRoom.getLastChatTime())
-                .build();
-        return chatRoomDTO;
-    }
 }

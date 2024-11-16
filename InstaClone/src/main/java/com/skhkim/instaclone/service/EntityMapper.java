@@ -1,14 +1,17 @@
 package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
+import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
+import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Data
@@ -64,6 +67,19 @@ public class EntityMapper {
         return chatMessageDTO;
     }
 
+    public static ChatMessage dtoToEntity(ChatMessageDTO chatMessageDTO, Long roomID){
+        ChatMessage chatMessage = ChatMessage.builder()
+                .id(chatMessageDTO.getCid())
+                .roomId(roomID)
+                .senderEmail(chatMessageDTO.getSenderEmail())
+                .content(chatMessageDTO.getContent())
+                .readStatus(chatMessageDTO.getReadStatus())
+                .regDate(chatMessageDTO.getRegDate())
+                .build();
+
+        return chatMessage;
+    }
+
     public static ChatUserDTO entityToDTO(ChatUser chatUser){
         ChatUserDTO chatUserDTO = ChatUserDTO.builder()
                 .userInfoDTO(entityToDTO(chatUser.getMember()))
@@ -74,12 +90,38 @@ public class EntityMapper {
         return chatUserDTO;
     }
 
+    public static ChatRoomDTO entityToDTO(ChatRoom chatRoom){
+        ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
+                .roomId(chatRoom.getRoomId())
+                .userNum(chatRoom.getUserNum())
+                .lastChat(chatRoom.getLastChat())
+                .lastChatTime(chatRoom.getLastChatTime())
+                .userInfoDTOS(EntityMapper.entityToDTOS(chatRoom.getChatUserList()))
+                .build();
+        return chatRoomDTO;
+    }
+
+    public static List<UserInfoDTO> entityToDTOS(List<ChatUser> chatUserList){
+        List<UserInfoDTO> userInfoDTOS = chatUserList.stream().map(chatUser ->
+                UserInfoDTO.builder()
+                        .userEmail(chatUser.getMember().getEmail())
+                        .userName(chatUser.getMember().getName())
+                        .imgName(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getImgName() : null)
+                        .uuid(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getUuid() : null)
+                        .path(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getPath() : null)
+                        .build()).collect(Collectors.toList());
+
+        return userInfoDTOS;
+    }
+
     public static PostDTO entityToDTO(Post post){
         PostDTO postDTO = PostDTO.builder()
                 .pno(post.getPno())
                 .email(post.getClubMember().getEmail())
                 .comment(post.getComment())
                 .title(post.getTitle())
+                .replyNum(post.getReplyNum())
+                .likeNum(post.getLikeNum())
                 .regDate(post.getRegDate())
                 .modDate(post.getModDate())
                 .build();

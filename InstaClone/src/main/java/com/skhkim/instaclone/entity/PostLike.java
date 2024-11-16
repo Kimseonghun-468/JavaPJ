@@ -19,7 +19,7 @@ public class PostLike extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private ClubMember clubMember;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
 }

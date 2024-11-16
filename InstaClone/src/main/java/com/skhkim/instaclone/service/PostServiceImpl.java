@@ -65,8 +65,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse getList(PostPageRequestDTO postPageRequestDTO, String name){
-
-
         Pageable pageable = postPageRequestDTO.getPageable();
         Slice<Post> result = postRepository.getListPage(pageable, name);
         List<PostDTO> postDTOS = result.stream().map(post -> EntityMapper.entityToDTO(post)).toList();

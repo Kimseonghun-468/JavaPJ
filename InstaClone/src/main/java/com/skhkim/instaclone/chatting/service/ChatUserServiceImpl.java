@@ -1,7 +1,5 @@
 package com.skhkim.instaclone.chatting.service;
 
-
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
@@ -9,7 +7,6 @@ import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 
-import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ClubMember;
@@ -23,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,16 +77,7 @@ public class ChatUserServiceImpl implements ChatUserService {
     getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<ChatRoom> result = chatUserRepository.getTest(pageable ,loginEmail);
-
-        List<ChatRoomDTO> chatRoomDTOS = result.stream()
-                .map(chatRoom -> ChatRoomDTO.builder()
-                        .lastChat(chatRoom.getLastChat())
-                        .roomId(chatRoom.getRoomId())
-                        .lastChatTime(chatRoom.getLastChatTime())
-                        .userNum(chatRoom.getUserNum())
-                        .userInfoDTOS(entityToDTOS(chatRoom.getChatUserList()))
-                        .build())
-                .collect(Collectors.toList());
+        List<ChatRoomDTO> chatRoomDTOS = result.stream().map(chatRoom -> EntityMapper.entityToDTO(chatRoom)).toList();
 
         return new ChatRoomResponse(chatRoomDTOS, result.hasNext());
     }

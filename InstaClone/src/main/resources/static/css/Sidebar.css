@@ -173,6 +173,7 @@ textarea {
 }
 
 .post-item{
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -997,3 +998,25 @@ button:hover {
     cursor: pointer;
 }
 
+
+.info-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    display: none; /* 기본적으로는 숨김 */
+    z-index: 1;
+}
+
+.post-item:hover .info-overlay {
+    display: block;
+}
+
+.post-item:hover img {
+    opacity: 0.5; /* 해당 이미지에만 opacity 적용 */
+}

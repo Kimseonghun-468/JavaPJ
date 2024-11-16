@@ -111,24 +111,6 @@ public class ProfileController {
     }
 
 
-    @GetMapping("/midle")
-    public void midle(){
-        log.info("midle...----");
-    }
-    @GetMapping("/srctest")
-    public void srctest(){
-        log.info("src...----");
-    }
-
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/list")
-    public void list(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO, PostPageRequestDTO postPageRequestDTO, Model model){
-        log.info("pageRequestDTO : " + postPageRequestDTO);
-        model.addAttribute("result", postService.getList(postPageRequestDTO, clubAuthMemberDTO.getEmail()));
-
-        log.info("What!");
-    }
-
     @PreAuthorize("hasRole('USER')")
     @GetMapping({"", "/sidebar","/sidebar/"})
     public String defaultPage(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO) throws UnsupportedEncodingException{

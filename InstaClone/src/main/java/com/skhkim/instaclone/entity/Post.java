@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.entity;
 
-import com.skhkim.instaclone.chatting.entity.ChatUser;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,4 +25,19 @@ public class Post extends BaseEntity{
 
     @OneToMany(mappedBy = "post")
     private List<PostImage> postImageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostLike> postLikeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<Reply> postReplyList = new ArrayList<>();
+
+    public int getLikeNum() {
+        return postLikeList.size();
+    }
+
+    public int getReplyNum(){
+        return postReplyList.size();
+    }
+
 }
