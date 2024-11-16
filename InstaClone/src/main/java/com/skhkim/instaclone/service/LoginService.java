@@ -8,9 +8,6 @@ import com.skhkim.instaclone.response.UserInfoResponse;
 import java.util.Map;
 
 public interface LoginService {
-
-    ClubMemberDTO getClubMemberByName(String name);
-
     boolean checkName(String name);
     boolean checkEmail(String email);
     boolean checkDuplication(ClubMemberDTO memberDTO);
@@ -20,22 +17,9 @@ public interface LoginService {
     void updatePassword(String memberName, String newPassword);
     void updateUserName(String changeName, String originalName);
     String register(ClubMemberDTO memberDTO);
-    ClubMemberDTO getClubMemberSearchbyName(String name);
     UserInfoResponse getClubMemberSearchbyNameAll(ProfilePageRequestDTO profilePageRequestDTO, String searchName, String loginName);
     ClubMemberDTO getClubMemberSearchbyEmail(String Email);
     boolean getUserExist(String name);
-    default ClubMember dtoToEntity(ClubMemberDTO dto){
-
-        ClubMember clubMember = ClubMember.builder()
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .name(dto.getName())
-                .fromSocial(dto.isFromSocial())
-                .roleSet(dto.getRoleSet())
-                .build();
-
-        return clubMember;
-    }
 
     default ClubMemberDTO entityToDTO(ClubMember clubMember){
 
@@ -50,17 +34,5 @@ public interface LoginService {
                 .build();
 
         return clubMemberDTO;
-    }
-
-    default ProfileImageDTO entityToDTOByProfileImage(ProfileImage profileImage){
-        ProfileImageDTO profileImageDTO = ProfileImageDTO.builder()
-                .pfino(profileImage.getPfino())
-                .userName(profileImage.getClubMember().getName())
-                .imgName(profileImage.getImgName())
-                .userEmail(profileImage.getClubMember().getEmail())
-                .path(profileImage.getPath())
-                .uuid(profileImage.getUuid())
-                .build();
-        return profileImageDTO;
     }
 }

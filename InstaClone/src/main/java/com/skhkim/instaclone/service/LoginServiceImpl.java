@@ -50,18 +50,13 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public String register(ClubMemberDTO memberDTO){
 
-        ClubMember clubMember = dtoToEntity(memberDTO);
+        ClubMember clubMember = EntityMapper.dtoToEntity(memberDTO);
         clubMember.addMemberRole(ClubMemberRole.USER);
         String discriptedPassword = passwordEncoder.encode(clubMember.getPassword());
 
         clubMember.changePassword(discriptedPassword);
         clubMemberRepository.save(clubMember);
         return clubMember.getEmail();
-    }
-    @Override
-    public ClubMemberDTO getClubMemberSearchbyName(String name) {
-        ClubMember result = clubMemberRepository.findByName(name);
-        return result != null ? entityToDTO(result) : ClubMemberDTO.builder().build();
     }
     @Override
     @Transactional
@@ -93,14 +88,5 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public boolean checkEmail(String email){
         return clubMemberRepository.existsByEmail(email);
-    }
-
-    @Override
-    @Transactional
-    public ClubMemberDTO getClubMemberByName(String name){
-        ClubMember clubMember = clubMemberRepository.findByName(name);
-        ClubMemberDTO clubMemberDTO = entityToDTO(clubMember);
-
-        return clubMemberDTO;
     }
 }

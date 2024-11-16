@@ -1,10 +1,6 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
-import com.skhkim.instaclone.chatting.dto.PageResultDTO;
-import com.skhkim.instaclone.dto.ProfileImageDTO;
-import com.skhkim.instaclone.dto.ReplyDTO;
-import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.response.ReplyResponse;
 import com.skhkim.instaclone.service.ReplyService;
@@ -15,10 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/reply")

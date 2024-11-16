@@ -2,27 +2,21 @@ package com.skhkim.instaclone.chatting.service;
 
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
-import com.skhkim.instaclone.chatting.dto.PageResultDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatMessageRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
-import com.skhkim.instaclone.dto.UserInfoDTO;
-import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.service.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +25,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatUserRepository chatUserRepository;
-    private final ProfileImageRepository profileImageRepository;
 
     @Override
     public void register(ChatMessageDTO chatMessageDTO, Long roomID){

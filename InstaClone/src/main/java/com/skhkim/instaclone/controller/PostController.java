@@ -2,7 +2,6 @@ package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.dto.PostDTO;
 import com.skhkim.instaclone.dto.PostPageRequestDTO;
-import com.skhkim.instaclone.dto.PostPageResultDTO;
 import com.skhkim.instaclone.response.PostResponse;
 import com.skhkim.instaclone.service.PostService;
 import lombok.RequiredArgsConstructor;

@@ -15,31 +15,4 @@ public interface FriendShipService {
     boolean deleteFriendShip(String loginName, String userName);
 
     int getFriendNum(String name);
-//    default FriendShip dtoToEntity(FriendShipDTO dto){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        FriendShip friendShip = FriendShip.builder()
-//                .id(dto.getId())
-//                .clubMemberUser(ClubMember.builder().email(authentication.getName()).build())
-//                .clubMemberFriend(ClubMember.builder().email(dto.getFriendEmail()).build())
-//                .status(dto.getStatus())
-//                .isFrom(dto.isFrom())
-//                .build();
-//
-//
-//        return friendShip;
-//    }
-
-//    default FriendShipDTO entityToDto(FriendShip friendShip){
-//
-//        FriendShipDTO friendShipDTO = FriendShipDTO.builder()
-//                .id(friendShip.getId())
-//                .userEmail(friendShip.getClubMemberUser().getEmail())
-//                .userName(friendShip.getClubMemberUser().getName())
-//                .friendEmail(friendShip.getClubMemberFriend().getEmail())
-//                .friendName(friendShip.getClubMemberFriend().getName())
-//                .status(friendShip.getStatus())
-//                .isFrom(friendShip.isFrom())
-//                .build();
-//        return friendShipDTO;
-//    }
 }

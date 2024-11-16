@@ -24,20 +24,6 @@ public class SearchCotroller {
     private final LoginService loginService;
     private final ProfileService profileService;
 
-    @GetMapping("/name/{name}")
-    public ResponseEntity<Map<String, Object>> getListByName(@PathVariable("name") String name) {
-        ClubMemberDTO clubMemberDTO = loginService.getClubMemberSearchbyName(name);
-        Map<String, Object> response = getClubMemberDTOAndProfileImageDTO(clubMemberDTO);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Map<String, Object>> getListByEmail(@PathVariable("email") String email) {
-        ClubMemberDTO clubMemberDTO = loginService.getClubMemberSearchbyEmail(email);
-        Map<String, Object> response = getClubMemberDTOAndProfileImageDTO(clubMemberDTO);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @PostMapping("/name/all")
     public ResponseEntity getListByNameAll
             (ProfilePageRequestDTO profilePageRequestDTO, String searchName, String loginName) {
@@ -50,19 +36,6 @@ public class SearchCotroller {
     public ResponseEntity getInivteListByNameAll(ProfilePageRequestDTO profilePageRequestDTO, @RequestBody InviteRequest inviteRequest) {
         UserInfoResponse result = profileService.getInviteSearchListPage(profilePageRequestDTO, inviteRequest.getLoginName(), inviteRequest.getSearchTerm(), inviteRequest.getUserNames());
         return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-    private Map<String, Object> getClubMemberDTOAndProfileImageDTO
-            (ClubMemberDTO clubMemberDTO) {
-
-        String clubMemberEmail = clubMemberDTO.getEmail();
-        String clubMemberName = clubMemberDTO.getName();
-        ProfileImageDTO profileImageDTO = profileService.getProfileImage(clubMemberName);
-        Map<String, Object> response = new HashMap<>();
-        response.put("clubMemberEmail", clubMemberEmail);
-        response.put("clubMemberName", clubMemberName);
-        response.put("profileImageDTO", profileImageDTO);
-        return response;
     }
 }
 

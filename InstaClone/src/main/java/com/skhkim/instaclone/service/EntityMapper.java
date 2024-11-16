@@ -40,6 +40,19 @@ public class EntityMapper {
         return userInfoDTO;
     }
 
+    public static ClubMember dtoToEntity(ClubMemberDTO dto){
+
+        ClubMember clubMember = ClubMember.builder()
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .name(dto.getName())
+                .fromSocial(dto.isFromSocial())
+                .roleSet(dto.getRoleSet())
+                .build();
+
+        return clubMember;
+    }
+
     public static ChatMessageDTO entityToDTO(ChatMessage chatMessage){
         ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder()
                 .senderEmail(chatMessage.getSenderEmail())

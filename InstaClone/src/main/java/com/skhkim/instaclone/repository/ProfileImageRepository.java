@@ -42,12 +42,6 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
             "ORDER BY FA.user2.name")
     Slice<UserInfoProjection> getByAcceptListPage(Pageable pageable, @Param("loginName") String loginName);
 
-
-
-    @Query("select FA FROM FriendAccept FA " +
-            "WHERE FA.user1.name = :loginName")
-    List<Object[]> test(String loginName);
-
     @Query("SELECT FA_USER.user2 AS clubMember, " +
             "CASE WHEN FA_LOGIN.user2 IS NOT NULL THEN com.skhkim.instaclone.entity.type.FriendStatus.ACCEPTED " +
             "WHEN FW_RECEVER.requester IS NOT NULL THEN com.skhkim.instaclone.entity.type.FriendStatus.RECEIVER " +
@@ -76,9 +70,5 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
             "AND FA.user2.name NOT IN :roomUsers " +
             "ORDER BY FA.user2.name")
     Slice<UserInfoProjection> selectInviteList(Pageable pageable, String loginName, List<String> roomUsers);
-
-    @Query("SELECT pi FROM ProfileImage pi WHERE pi.clubMember.email =:userEmail")
-    Optional<ProfileImage> getProfileImageByUserEmail(String userEmail);
-
 }
 
