@@ -4,11 +4,11 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $(document).on('click', '.post-list-img',function() {
         $('#postModal').modal('show');
 
+
         var loginName = document.getElementById("loginName").dataset.loginName;
         var loginEmail = document.getElementById("loginEmail").dataset.loginEmail;
-        var userEmail  = document.getElementById("userEmail").dataset.userEmail;
 
-        PostDetailApp.init(loginName, loginEmail, userEmail);
+        PostDetailApp.init(loginName, loginEmail, UserProfileApp.$data.userEmail);
 
         var commentBox = document.querySelector('#reply-box');
         commentBox.addEventListener('input', handleInput)
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         var commentBox = document.querySelector('#reply-box');
         if (commentBox.value.trim() === "")
             return ;
-        insertReply(PostDetailApp.$data.postId, commentBox, userEmail);
+        insertReply(PostDetailApp.$data.postId, commentBox, UserProfileApp.$data.userEmail);
         $('#post-not-exist').html("")
     });
 

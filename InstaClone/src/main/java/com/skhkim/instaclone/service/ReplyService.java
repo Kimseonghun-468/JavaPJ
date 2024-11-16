@@ -8,37 +8,38 @@ import com.skhkim.instaclone.dto.ReplyDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.Reply;
+import com.skhkim.instaclone.response.ReplyResponse;
 
 import java.awt.print.Pageable;
 import java.util.List;
 
 public interface ReplyService {
 
-    Long register(ReplyDTO replyDTO);
-//    List<ReplyDTO> getListOfPost(Long pno);
-    PageResultDTO<ReplyDTO, Reply> getListOfPostPage(PageRequestDTO pageRequestDTO, Long pno);
+//    Long register(ReplyDTO replyDTO);
+    ReplyResponse selectReplyList(PageRequestDTO pageRequestDTO, Long pno);
+
     void remove(Long replynum);
-    default Reply dtoToEntity(ReplyDTO replyDTO){
+//    default Reply dtoToEntity(ReplyDTO replyDTO){
+//
+//        Reply postReply = Reply.builder()
+//                .text(replyDTO.getText())
+//                .post(Post.builder().pno(replyDTO.getPno()).build())
+//                .clubMember(ClubMember.builder().email(replyDTO.getEmail()).build())
+//                .build();
+//
+//        return postReply;
+//    }
 
-        Reply postReply = Reply.builder()
-                .text(replyDTO.getText())
-                .post(Post.builder().pno(replyDTO.getPno()).build())
-                .clubMember(ClubMember.builder().email(replyDTO.getEmail()).build())
-                .build();
-
-        return postReply;
-    }
-
-    default ReplyDTO entityToDTO(Reply postReply){
-        ReplyDTO postReplyDTO = ReplyDTO.builder()
-                .rno(postReply.getRno())
-                .pno(postReply.getPost().getPno())
-                .name(postReply.getClubMember().getName())
-                .email(postReply.getClubMember().getEmail())
-                .text(postReply.getText())
-                .regDate(postReply.getRegDate())
-                .modDate(postReply.getModDate())
-                .build();
-        return postReplyDTO;
-    }
+//    default ReplyDTO entityToDTO(Reply postReply){
+//        ReplyDTO postReplyDTO = ReplyDTO.builder()
+//                .rno(postReply.getRno())
+//                .pno(postReply.getPost().getPno())
+//                .name(postReply.getClubMember().getName())
+//                .email(postReply.getClubMember().getEmail())
+//                .text(postReply.getText())
+//                .regDate(postReply.getRegDate())
+//                .modDate(postReply.getModDate())
+//                .build();
+//        return postReplyDTO;
+//    }
 }

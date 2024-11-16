@@ -6,6 +6,7 @@ import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.ReplyDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
+import com.skhkim.instaclone.response.ReplyResponse;
 import com.skhkim.instaclone.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,27 +28,30 @@ import java.util.Optional;
 public class ReplyController {
     private final ReplyService replyService;
     private final ProfileImageRepository profileImageRepository;
-    @GetMapping("{pno}/all")
-    public ResponseEntity<PageResultDTO> getList(PageRequestDTO pageRequestDTO, @PathVariable("pno") Long pno){
-        log.info("MNO : " + pno);
 
-        PageResultDTO reviewDTOList = replyService.getListOfPostPage(pageRequestDTO, pno);
-        return new ResponseEntity<>(reviewDTOList, HttpStatus.OK);
+    @PostMapping("/selectReplyList")
+    public ResponseEntity selectReplyList(PageRequestDTO pageRequestDTO, Long pno){
+        ReplyResponse replyResponse = replyService.selectReplyList(pageRequestDTO, pno);
+
+        return ResponseEntity.ok(replyResponse);
+
     }
-    @PostMapping("/{pno}")
-    public ResponseEntity<Map<String, Object>> addReview(@RequestBody ReplyDTO postReplyDTO){
 
-        Map<String, Object> result = new HashMap<>();
-        Long rno = replyService.register(postReplyDTO);
-        Optional<ProfileImage> profileImage = profileImageRepository.getProfileImageByUserEmail(postReplyDTO.getEmail());
-        if(profileImage.isPresent())
-            result.put("imageUrl", profileImage.get().getImageURL());
-        else
-            result.put("imageUrl", null);
-        result.put("rno", rno);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+//    @PostMapping("/{pno}") // ksh edit
+//    public ResponseEntity<Map<String, Object>> addReview(@RequestBody ReplyDTO postReplyDTO){
+//
+//        Map<String, Object> result = new HashMap<>();
+//        Long rno = replyService.register(postReplyDTO);
+//        Optional<ProfileImage> profileImage = profileImageRepository.getProfileImageByUserEmail(postReplyDTO.getEmail());
+//        if(profileImage.isPresent())
+//            result.put("imageUrl", profileImage.get().getImageURL());
+//        else
+//            result.put("imageUrl", null);
+//        result.put("rno", rno);
+//
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
     @DeleteMapping("/{replynum}")
     public ResponseEntity<Long> removeReply(@PathVariable Long replynum){
         log.info("replynum : " + replynum);

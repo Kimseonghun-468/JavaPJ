@@ -10,10 +10,12 @@ import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.entity.Reply;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.repository.ReplyRepository;
+import com.skhkim.instaclone.response.ReplyResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,39 +28,24 @@ import java.util.stream.Collectors;
 @Log4j2
 public class ReplyServiceImpl implements ReplyService{
     private final ReplyRepository replyRepository;
-    private final ProfileImageRepository profileImageRepository;
-    @Override
-    public Long register(ReplyDTO replyDTO){
-
-        Reply reply = dtoToEntity(replyDTO);
-        replyRepository.save(reply);
-
-        return reply.getRno();
-    }
 //    @Override
-//    public List<ReplyDTO> getListOfPost(Long pno){
-//        Post post = Post.builder().pno(pno).build();
-//        List<Reply> result = replyRepository.findByPost(post);
-//        return result.stream().map(postReview -> entityToDTO(postReview)).collect(Collectors.toList());
+//    public Long register(ReplyDTO replyDTO){
+//
+//        Reply reply = dtoToEntity(replyDTO);
+//        replyRepository.save(reply);
+//
+//        return reply.getRno();
 //    }
 
+
     @Override
-    public PageResultDTO<ReplyDTO, Reply> getListOfPostPage(PageRequestDTO pageRequestDTO, Long pno){
+    public ReplyResponse selectReplyList(PageRequestDTO pageRequestDTO, Long pno){
         Pageable pageable = pageRequestDTO.getPageable();
-        Function<Reply, ReplyDTO> fn = (arr -> {
-           ReplyDTO replyDTO = entityToDTO(arr);
-           Optional<ProfileImage> profileImage = profileImageRepository.getProfileImageByUserEmail(replyDTO.getEmail());
-           profileImage.ifPresent(image -> replyDTO.setProfileImageUrl(image.getImageURL()));
-           return replyDTO;
-        });
-
-        Page<Reply> result = replyRepository.findByPost(pageable, pno);
-
-
-        return new PageResultDTO<>(result, fn);
+        Slice<Reply> result = replyRepository.selectReplyList(pageable, pno);
+        List<ReplyDTO> replyDTOS = result.stream().map(reply -> EntityMapper.entityToDTO(reply)).toList();
+        return new ReplyResponse(replyDTOS, result.hasNext());
 
     }
-
     @Override
     public void remove(Long replynum){
         replyRepository.deleteById(replynum);

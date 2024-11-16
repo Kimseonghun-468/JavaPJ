@@ -42,10 +42,7 @@ const PostDetailApp = {
 
     setPostImageList(data){
         var carouselTag = "";
-        var imageUrl = `[[${profileImageDTO.getImageURL()}]]`
-        if ('[[${profileImageDTO.path}]]' == '')
-            imageUrl = 'outprofile.png'
-        var loadName = '[[${userName}]]';
+        var imageUrl = UserProfileApp.$data.profileImage
 
         $.each(data.imageDTOList, function (idx, imageInfo){
             if(idx ==0)
@@ -91,7 +88,7 @@ const PostDetailApp = {
         }
 
         let postTitle = data.title.replaceAll("\n", "<br>")
-        this.createTitleTag(loadName, postTitle, imageUrl, data.regDate);
+        this.createTitleTag(this.$data.loginName, postTitle, imageUrl, data.regDate);
         $("#carousel-image-box").html(carouselTag)
         $("#modify-carousel-image-box").html(carouselTag)
     },
@@ -100,16 +97,16 @@ const PostDetailApp = {
         var str = "";
         var buttonTag = ""
 
-        $.each(arr.dtoList, function (idx, reply){
-            this.setReply(reply)
-        });
+        data.replyDTOS.forEach(item => {
+            this.setReply(item)
+        })
 
-        if (arr.dtoList.length == 0){
+        if (data.replyDTOS.length < 1){
             str += '<div class="not-exist-list" id="post-not-exist">현재 댓글이 없습니다.</div>'
         }
 
         $("#post-reply-container").append(str);
-        if (arr.totalPage >replyPage){
+        if (this.$data.hasNext == true){
             buttonTag += '<div class="reply-paging-button">'
             buttonTag += '<svg aria-label="댓글 더 읽어들이기" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>댓글 더 읽어들이기</title><circle cx="12.001" cy="12.005" fill="none" r="10.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="7.001" x2="17.001" y1="12.005" y2="12.005"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.001" x2="12.001" y1="7.005" y2="17.005"></line></svg>'
             buttonTag += '</div>'
@@ -121,17 +118,17 @@ const PostDetailApp = {
         var str = "";
         str += '<div class="reply-main">';
         str += '<div class="reply-image-container">'
-        if (data.profileImageUrl != null)
-            str+= '<img src="/display?fileName=' + data.profileImageUrl +'/" class="reply-profile">';
-        else
-            str += '<img src="/display?fileName=outprofile.png/" class="reply-profile">'
+
+
+        str+= '<img src='+ (data.userInfoDTO.imgName ? `/display?fileName=${data.userInfoDTO.imageURL}` : this.$data.noneImage) +' class="reply-profile">';
+
         str += '</div>'
         str += '<div class="reply-wrapper">';
-        str += '<div class="reply-name">' + data.name + '</div>';
+        str += '<div class="reply-name">' + data.userInfoDTO.userName + '</div>';
         str += '<div class="reply-content">' + data.text + '</div>';
         str += '<div class="reply-side">';
         str += '<div class="reply-time">' + formatTimeDifference(data.regDate) + '</div>';
-        if (loginName == data.name) {
+        if (this.$data.loginName == data.userInfoDTO.userName) {
             str += '<span class="options dots reply-option" data-rno="' + data.rno + '">...</span>'
         }
         str += '</div>'

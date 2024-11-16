@@ -4,18 +4,11 @@ import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
-import com.skhkim.instaclone.dto.PostDTO;
-import com.skhkim.instaclone.dto.PostImageDTO;
-import com.skhkim.instaclone.dto.UserInfoDTO;
-import com.skhkim.instaclone.dto.UserInfoProjection;
-import com.skhkim.instaclone.entity.ClubMember;
-import com.skhkim.instaclone.entity.Post;
-import com.skhkim.instaclone.entity.PostImage;
-import com.skhkim.instaclone.entity.ProfileImage;
+import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.entity.*;
 import lombok.Data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Data
@@ -90,6 +83,16 @@ public class EntityMapper {
         postDTO.setImageDTOList(postImageDTOList);
 
         return postDTO;
+    }
+
+    public static ReplyDTO entityToDTO(Reply reply){
+
+        ReplyDTO replyDTO = ReplyDTO.builder()
+                .userInfoDTO(EntityMapper.entityToDTO(reply.getClubMember()))
+                .text(reply.getText())
+                .regDate(reply.getRegDate())
+                .build();
+        return replyDTO;
     }
 }
 

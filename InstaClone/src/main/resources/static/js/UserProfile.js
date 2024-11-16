@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     var userName = document.getElementById("userName").dataset.userName;
 
-    UserProfileApp.init(userName);
+    UserProfileApp.init(userName)
 
-    selectUserInfo(UserProfileApp.$data.userName);
+
+
 })
 
 function selectUserInfo(userName){

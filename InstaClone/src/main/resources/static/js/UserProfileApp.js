@@ -13,6 +13,7 @@ const UserProfileApp = {
 
     init(userName) {
         this.$data.userName = userName;
+        selectUserInfo(userName)
     },
 
     setUserInfo(data){
