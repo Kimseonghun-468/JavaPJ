@@ -57,9 +57,10 @@ const PostApp = {
     setFormData(){
         this.$data.formData = new FormData();
         var files = $("input.post-Image-File")[0].files;
-        files.forEach(item =>{
-            this.$data.formData.append("uploadFiles", item);
-        })
+
+        for (var i = 0; i < files.length; i++){
+            this.$data.formData.append("uploadFiles",  files[i]);
+        }
     },
 
     setUploadForm(data){

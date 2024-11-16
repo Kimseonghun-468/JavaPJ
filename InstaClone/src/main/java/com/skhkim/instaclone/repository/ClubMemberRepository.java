@@ -40,9 +40,6 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
             "WHERE FA.user1.name = :loginName AND FA.user2.name = :userName")
     Optional<FriendAccept> getAcceptFriend(String loginName, String userName);
 
-    @Query("SELECT m, pi FROM ClubMember m LEFT JOIN ProfileImage pi ON m.name = pi.clubMember.name WHERE m.name like CONCAT('%', :searchTerm, '%') AND m.name != :userName ORDER BY m.name")
-    Page<Object[]> findByNamePage(Pageable pageable, @Param("searchTerm")String searchTerm, String userName);
-
     @Query("SELECT CM AS clubMember FROM ClubMember CM " +
             "WHERE CM.name like CONCAT('%', :searchTerm, '%') AND CM.name != :loginName ORDER BY CM.name")
     Slice<ClubMember> selectSearchUserInfo(Pageable pageable, String searchTerm, String loginName);

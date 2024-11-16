@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", ()=> {
-
-
     $(document).on('click', '.post-list-img',function() {
         $('#postModal').modal('show');
 
@@ -36,7 +34,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $('#postModal').on('click', '#post-option', function (){
         $('#post-option-modal').css('z-index', 1051).modal('show');
         $('#remove-post').off('click').on('click', function (){
-            deletePost(postId)
+            deletePost(PostDetailApp.$data.postId);
             $('#post-option-modal').modal('hide');
             $('#postModal').modal('hide')
             alert("삭제가 완료되었습니다.")

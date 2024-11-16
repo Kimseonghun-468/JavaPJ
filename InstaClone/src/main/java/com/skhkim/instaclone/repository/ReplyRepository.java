@@ -13,9 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
-//    List<Reply> findByPost(Post post);
-    @Query("SELECT r FROM Reply r where r.post.pno = :pno ORDER BY r.rno DESC")
-    Page<Reply> findByPost(Pageable pageable, Long pno);
 
     @Query("SELECT r FROM Reply r where r.post.pno = :pno ORDER BY r.rno DESC")
     Slice<Reply> selectReplyList(Pageable pageable, Long pno);
