@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.controller;
 
-import net.coobird.thumbnailator.Thumbnailator;
 import com.skhkim.instaclone.dto.UploadResultDTO;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnails;

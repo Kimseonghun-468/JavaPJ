@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.controller;
 
-import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.response.UserInfoResponse;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
+
 @RestController
 @RequestMapping("/profileImage")
 @Log4j2
@@ -22,7 +23,6 @@ import java.util.Map;
 @PreAuthorize("hasRole('USER')")
 public class ProfileImageController {
     private final ProfileService profileService;
-
     @PostMapping("waitingList")
     public ResponseEntity
     getProfileImagebyClubMember(ProfilePageRequestDTO profilePageRequestDTO, String loginName){

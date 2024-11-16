@@ -1,9 +1,7 @@
 package com.skhkim.instaclone.repository;
 
-import com.skhkim.instaclone.dto.UserInfoProjection;
 import com.skhkim.instaclone.entity.FriendAccept;
 import com.skhkim.instaclone.entity.FriendWait;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -11,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import com.skhkim.instaclone.entity.ClubMember;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
@@ -26,7 +23,6 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, String> 
 
     boolean existsByEmail(String email);
     boolean existsByName(String name);
-
 
     @Query("SELECT CASE WHEN count(m) > 0 THEN TRUE ELSE FALSE END from ClubMember m WHERE m.name = :name OR m.email =:email")
     boolean existsByNameAndEmail(String name, String email);

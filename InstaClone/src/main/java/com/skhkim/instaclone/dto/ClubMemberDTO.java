@@ -4,7 +4,6 @@ import com.skhkim.instaclone.entity.ClubMemberRole;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 

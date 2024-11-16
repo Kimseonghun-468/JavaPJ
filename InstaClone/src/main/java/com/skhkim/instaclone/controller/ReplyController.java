@@ -1,7 +1,6 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
-import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.response.ReplyResponse;
 import com.skhkim.instaclone.service.ReplyService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasRole('USER')")
 public class ReplyController {
     private final ReplyService replyService;
-    private final ProfileImageRepository profileImageRepository;
 
     @PostMapping("/selectReplyList")
     public ResponseEntity selectReplyList(PageRequestDTO pageRequestDTO, Long pno){
