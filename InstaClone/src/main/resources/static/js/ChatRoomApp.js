@@ -34,7 +34,7 @@ const ChatRoomApp = {
         data.chatRoomDTOS.forEach(value => {
             if (value.lastChat == null) return; // lastChat이 null일 경우 건너뜀
 
-            getNotReadMessageNum(loginEmail, value.roomId); // 메시지 수 가져오기
+            getNotReadMessageNum(this.$data.loginEmail, value.roomId); // 메시지 수 가져오기
             const nameLength = value.userInfoDTOS.length
 
             // 개별 사용자 정보 박스 생성

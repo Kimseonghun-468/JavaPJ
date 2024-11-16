@@ -101,10 +101,8 @@ const PostDetailApp = {
             this.setReply(item)
         })
 
-        if (data.replyDTOS.length < 1){
-            str += '<div class="not-exist-list" id="post-not-exist">현재 댓글이 없습니다.</div>'
-        }
-
+        this.$data.hasNext = data.hasNext;
+        this.$data.page += 1
         $("#post-reply-container").append(str);
         if (this.$data.hasNext == true){
             buttonTag += '<div class="reply-paging-button">'
@@ -112,6 +110,10 @@ const PostDetailApp = {
             buttonTag += '</div>'
         }
         $("#post-reply-container").append(buttonTag);
+
+        if (data.replyDTOS.length < 1){
+            str += '<div class="not-exist-list" id="post-not-exist">현재 댓글이 없습니다.</div>'
+        }
     },
 
     setReply(data){

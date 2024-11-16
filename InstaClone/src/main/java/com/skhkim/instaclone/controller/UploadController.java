@@ -70,10 +70,6 @@ public class UploadController {
                 Path saveThumbnailPath = Paths.get(thumbnailSaveName);
                 File saveThumbnailFile = saveThumbnailPath.toFile();
                 ImageIO.write(croppedImage,"png" ,saveThumbnailFile);
-//                File thumbnailFile = new File(thumbnailSaveName);
-//                Thumbnailator.createThumbnail(savePath.toFile(), saveThumbnailFile, cropSize, cropSize);
-//                //----
-//                imageWidth
 
                 resultDTOList.add(new UploadResultDTO(fileName,uuid,folderPath));
 

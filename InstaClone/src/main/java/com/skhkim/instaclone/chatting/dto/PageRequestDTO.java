@@ -17,7 +17,7 @@ public class PageRequestDTO {
     private String keyword;
     public PageRequestDTO(){
         this.page = 1;
-        this.size = 15;
+        this.size = 12;
 
     }
     public Pageable getPageable(){

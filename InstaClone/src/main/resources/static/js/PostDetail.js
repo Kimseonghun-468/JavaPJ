@@ -14,9 +14,9 @@ document.addEventListener("DOMContentLoaded", ()=> {
         commentBox.addEventListener('input', handleInput)
         commentBox.addEventListener('keydown', handleKeyDown);
 
-        var postId = $(this).data('pid');
-        selectPostImageList(postId);
-        selectReplyList(postId, PostDetailApp.$data.page);
+        PostDetailApp.$data.postId = $(this).data('pid');
+        selectPostImageList(PostDetailApp.$data.postId);
+        selectReplyList(PostDetailApp.$data.postId, PostDetailApp.$data.page);
 
     });
     $(document).on('click', '.reply-paging-button', function (){
@@ -115,7 +115,7 @@ function insertReply(postId, commentBox, userEmail){
         url: '/reply/'+postId,
         type: "POST",
         data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
+        contentType: "application/json",
         success: function (data){
             PostDetailApp.setReply(data);
             $('#reply-box').val('');
@@ -128,7 +128,7 @@ function deletePost(pno){
     $.ajax({
         url: '/post/delete/' + pno,
         type: 'DELETE',
-        success: function (result){
+        success: function (data){
         }
     })
 }
@@ -139,7 +139,7 @@ function deleteReply(rno){
         type: 'DELETE',
         contentType: "application/json; charset=utf-8",
         dataType: "text",
-        success: function (result){
+        success: function (data){
             $('[data-rno="' + rno + '"]').closest('.reply-main').remove();
         }
     })
