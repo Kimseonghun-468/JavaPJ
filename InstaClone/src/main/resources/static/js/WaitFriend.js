@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectWaitUsersInfo(loginName, page){
     $.ajax({
-        url: '/profileImage/waitingList?page='+page,
+        url: '/api/v1/friend/waitingList?page='+page,
         type: "POST",
         data: {loginName:loginName},
         dataType: "JSON",

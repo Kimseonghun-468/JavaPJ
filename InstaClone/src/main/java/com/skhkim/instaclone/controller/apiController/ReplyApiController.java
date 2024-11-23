@@ -1,22 +1,23 @@
-package com.skhkim.instaclone.controller;
+package com.skhkim.instaclone.controller.apiController;
 
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
+import com.skhkim.instaclone.response.ApiResponse;
 import com.skhkim.instaclone.response.ReplyResponse;
 import com.skhkim.instaclone.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
 @RequestMapping("/reply")
 @Log4j2
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('USER')")
-public class ReplyController {
+public class ReplyApiController {
     private final ReplyService replyService;
 
     @PostMapping("/selectReplyList")
@@ -27,8 +28,7 @@ public class ReplyController {
 
     }
 
-
-//    @PostMapping("/{pno}") // ksh edit
+    //    @PostMapping("/{pno}") // ksh edit
 //    public ResponseEntity<Map<String, Object>> addReview(@RequestBody ReplyDTO postReplyDTO){
 //
 //        Map<String, Object> result = new HashMap<>();
@@ -42,10 +42,9 @@ public class ReplyController {
 //
 //        return new ResponseEntity<>(result, HttpStatus.OK);
 //    }
-    @DeleteMapping("/{replynum}")
-    public ResponseEntity<Long> removeReply(@PathVariable Long replynum){
+    @DeleteMapping("/deleteReply")
+    public ResponseEntity deleteReply(Long replynum){
         replyService.remove(replynum);
-
-        return new ResponseEntity<>(replynum, HttpStatus.OK);
+        return ApiResponse.OK();
     }
 }

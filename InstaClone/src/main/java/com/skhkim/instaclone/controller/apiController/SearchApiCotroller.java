@@ -1,4 +1,4 @@
-package com.skhkim.instaclone.controller;
+package com.skhkim.instaclone.controller.apiController;
 
 import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.dto.*;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('USER')")
-public class SearchCotroller {
+public class SearchApiCotroller {
     private final LoginService loginService;
     private final ProfileService profileService;
 

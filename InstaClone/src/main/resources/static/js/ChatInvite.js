@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectInviteUserList(loginName, roomUsers, page){
     $.ajax({
-        url: '/profileImage/inviteList?page=' + page,
+        url: '/api/v1/friend/inviteList?page=' + page,
         type: "POST",
         data: {loginName: loginName, roomUsers:Object.keys(roomUsers)},
         dataType: "JSON",

@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectUsersInfo(loginName, page){
     $.ajax({
-        url: '/profileImage/selectAcceptUsersInfo?page='+page,
+        url: '/api/v1/friend/selectAcceptUsersInfo?page='+page,
         type: "POST",
         data: {loginName:loginName},
         dataType: "JSON",
