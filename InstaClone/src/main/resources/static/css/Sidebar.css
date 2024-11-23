@@ -1020,3 +1020,11 @@ button:hover {
 .post-item:hover img {
     opacity: 0.5; /* 해당 이미지에만 opacity 적용 */
 }
+
+.menu-item .far  {
+    font-size: 24px;
+}
+
+.menu-item .fas  {
+    font-size: 24px;
+}
