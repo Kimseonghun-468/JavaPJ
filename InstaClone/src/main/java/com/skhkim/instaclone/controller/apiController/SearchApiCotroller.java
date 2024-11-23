@@ -3,7 +3,7 @@ package com.skhkim.instaclone.controller.apiController;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.response.UserInfoResponse;
-import com.skhkim.instaclone.service.LoginService;
+import com.skhkim.instaclone.service.MemberService;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('USER')")
 public class SearchApiCotroller {
-    private final LoginService loginService;
+    private final MemberService memberService;
     private final ProfileService profileService;
 
     @PostMapping("/name/all")
     public ResponseEntity getListByNameAll
             (ProfilePageRequestDTO profilePageRequestDTO, String searchName, String loginName) {
         UserInfoResponse result =
-                loginService.getClubMemberSearchbyNameAll(profilePageRequestDTO, searchName, loginName);
+                memberService.getClubMemberSearchbyNameAll(profilePageRequestDTO, searchName, loginName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

@@ -2,10 +2,11 @@ package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.response.UserInfoResponse;
 
-public interface LoginService {
+public interface MemberService {
     boolean checkName(String name);
     boolean checkEmail(String email);
     boolean checkDuplication(ClubMemberDTO memberDTO);
@@ -19,6 +20,7 @@ public interface LoginService {
     ClubMember getClubMemberSearchbyEmail(String Email);
     boolean getUserExist(String name);
 
+    UserInfoDTO selectUserInfo(String userName);
     default ClubMemberDTO entityToDTO(ClubMember clubMember){
 
         ClubMemberDTO clubMemberDTO = ClubMemberDTO.builder()

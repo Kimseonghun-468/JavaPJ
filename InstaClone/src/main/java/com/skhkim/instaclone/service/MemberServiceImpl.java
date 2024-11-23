@@ -20,7 +20,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class LoginServiceImpl implements LoginService{
+public class MemberServiceImpl implements MemberService {
 
     private final ClubMemberRepository clubMemberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -76,6 +76,12 @@ public class LoginServiceImpl implements LoginService{
     public boolean getUserExist(String name){
         ClubMember result = clubMemberRepository.findByName(name);
         return result != null;
+    }
+
+    @Override
+    public UserInfoDTO selectUserInfo(String userName){
+        ClubMember clubMember = clubMemberRepository.selectUserInfo(userName);
+        return EntityMapper.entityToDTO(clubMember);
     }
 
     @Override

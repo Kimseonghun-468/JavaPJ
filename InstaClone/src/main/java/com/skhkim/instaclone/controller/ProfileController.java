@@ -2,16 +2,14 @@ package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.ProfileImageDTO;
-import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.type.FriendStatus;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.FriendShipService;
-import com.skhkim.instaclone.service.LoginService;
+import com.skhkim.instaclone.service.MemberService;
 import com.skhkim.instaclone.service.PostService;
 import com.skhkim.instaclone.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -31,7 +29,7 @@ public class ProfileController {
 
     private final PostService postService;
     private final ProfileService profileService;
-    private final LoginService loginService;
+    private final MemberService memberService;
     private final FriendShipService friendShipService;
 
     @PreAuthorize("hasRole('USER')")
@@ -45,7 +43,7 @@ public class ProfileController {
         ProfileImageDTO profileImageDTO = profileService.getProfileImage(name); // 삭제
         FriendStatus friendStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
         model.addAttribute("friendshipStatus", friendStatus); // ## 필요,,?
-        model.addAttribute("userExist", loginService.getUserExist(name)); // 이거는 만들자.. ##
+        model.addAttribute("userExist", memberService.getUserExist(name)); // 이거는 만들자.. ##
         model.addAttribute("profileImageDTO", profileImageDTO); // 여것도 필요없음.
         model.addAttribute("memberDTO", clubAuthMemberDTO); // 이것도 이름만 남겨여함.
         model.addAttribute("userName", name); // 남겨놓기
@@ -67,7 +65,7 @@ public class ProfileController {
 //            model.addAttribute("psError", true);
 //        String userEamil = postService.getEmailByUserName(name);
 //        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
-//        model.addAttribute("userExist", loginService.getUserExist(name));
+//        model.addAttribute("userExist", memberService.getUserExist(name));
 //        model.addAttribute("profileImageDTO", profileImageDTO);
 //        model.addAttribute("memberDTO", clubAuthMemberDTO);
 //        model.addAttribute("userName", name);
@@ -90,12 +88,5 @@ public class ProfileController {
     public String defaultPage(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO) throws UnsupportedEncodingException{
         String encodedName = URLEncoder.encode(clubAuthMemberDTO.getName(), "UTF-8");
         return "redirect:/sidebar/"+encodedName;
-    }
-
-    @PostMapping("/selectUserInfo")
-    public ResponseEntity selectUserInfo(String userName){
-        UserInfoDTO result = profileService.selectUserInfo(userName);
-
-        return ResponseEntity.ok(result);
     }
 }

@@ -5,7 +5,7 @@ import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.security.Utils.JwtUtils;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.EntityMapper;
-import com.skhkim.instaclone.service.LoginService;
+import com.skhkim.instaclone.service.MemberService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtil;
-    private final LoginService loginService;
+    private final MemberService memberService;
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            ClubMember clubMember = loginService.getClubMemberSearchbyEmail(email);
+            ClubMember clubMember = memberService.getClubMemberSearchbyEmail(email);
             ClubAuthMemberDTO clubAuthMember = new ClubAuthMemberDTO(
                     clubMember.getEmail(),
                     clubMember.getPassword(),

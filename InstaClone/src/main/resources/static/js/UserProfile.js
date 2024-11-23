@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectUserInfo(userName){
     $.ajax({
-        url: '/selectUserInfo',
+        url: '/member/selectUserInfo',
         type: "POST",
         data: {userName: userName},
         dataType: "JSON",

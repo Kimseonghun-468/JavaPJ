@@ -2,11 +2,13 @@ package com.skhkim.instaclone.controller.apiController;
 
 import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.ClubMemberDTO;
+import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
-import com.skhkim.instaclone.service.LoginService;
+import com.skhkim.instaclone.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -23,13 +25,13 @@ import java.nio.charset.StandardCharsets;
 public class MemberApiController {
     private final ClubMemberRepository clubMemberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final LoginService loginService;
+    private final MemberService memberService;
     @Value("${password.reset.key")
     private String passwordResetKey;
     @PostMapping("")
     public String singupMember(ClubMemberDTO memberDTO){
 
-        boolean checkResult = loginService.checkDuplication(memberDTO);
+        boolean checkResult = memberService.checkDuplication(memberDTO);
 
         log.info("checkResult : " + checkResult);
 
@@ -38,7 +40,7 @@ public class MemberApiController {
         }
 
         else{
-            loginService.register(memberDTO);
+            memberService.register(memberDTO);
         }
         return "redirect:/sidebar";
 
@@ -63,10 +65,16 @@ public class MemberApiController {
         }
         else{
             String loginName = LoginContext.getUserInfo().getUserName();
-            loginService.updatePassword(loginName, newPassword);
-            loginService.updateUserName(memberDTO.getName(),loginName);
+            memberService.updatePassword(loginName, newPassword);
+            memberService.updateUserName(memberDTO.getName(),loginName);
             String encodedName = URLEncoder.encode(memberDTO.getName(), StandardCharsets.UTF_8);
             return "redirect:/sidebar/"+encodedName;
         }
+    }
+
+    @PostMapping("/selectUserInfo")
+    public ResponseEntity selectUserInfo(String userName){
+        UserInfoDTO result = memberService.selectUserInfo(userName);
+        return ResponseEntity.ok(result);
     }
 }
