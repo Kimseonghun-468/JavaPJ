@@ -34,17 +34,15 @@ function debounce(func, wait) {
 }
 
 $(document).on('click', '.request-Follow-button', function (){
-    var loadName = '[[${userName}]]';
     var name = $(this).attr('data-name');
     var $button = $(this);
     sendFollowRequest(name, $button);
 });
 
 $(document).on('click', '.request-Accept-button', function(){
-    var loginName = '[[${memberDTO.name}]]';
     var requesterName = $(this).attr('data-name');
     var $button = $(this);
-    sendAcceptFriendShipRequest(loginName, requesterName, $button);
+    sendAcceptFriendShipRequest(UserProfileApp.$data.loginName, requesterName, $button);
 })
 
 $(document).on('click', '.request-Delete-button', function (){
@@ -57,10 +55,10 @@ $(document).on('click', '.request-Delete-button', function (){
 function sendDeleteFriendShipRequest(loginName, requesterName, $button){
     var data = {loginName:loginName, requesterName:requesterName};
     $.ajax({
-        url: '/friendShip/deleteFriendShipRequest',
+        url: '/api/v1/friend/deleteFriendShipRequest',
         type: "POST",
         data: data,
-        dataType: "TEXT",
+        dataType: "JSON",
         success: function (result){
             $button.text("삭제 완료");
             $button.prop('disabled, true');
@@ -71,10 +69,10 @@ function sendDeleteFriendShipRequest(loginName, requesterName, $button){
 function sendAcceptFriendShipRequest(loginName, requesterName, $button){
     var data = {loginName:loginName, requesterName:requesterName};
     $.ajax({
-        url: '/friendShip/acceptFriendShipRequest',
-        type: "POST",
+        url: '/api/v1/friend/acceptFriendShipRequest',
+        type: 'POST',
         data: data,
-        dataType: "TEXT",
+        dataType: 'JSON',
         success: function (result) {
             $button.text('친구 수락 완료');
             $button.prop('disabled', true);
@@ -86,10 +84,12 @@ function sendAcceptFriendShipRequest(loginName, requesterName, $button){
 }
 
 function sendFollowRequest(name, $button){
+    data = {name :name}
     $.ajax({
-        url: '/friendShip/' + name,
+        url: '/api/v1/friend/request',
         type: 'POST',
-        dataType: 'text',
+        data: data,
+        dataType: 'JSON',
         success: function (arr){
             $button.text("친구 요청 완료");
             $button.prop("disabled", true);

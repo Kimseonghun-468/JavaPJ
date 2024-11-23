@@ -14,7 +14,7 @@ public interface PostService {
     Long getPostNumber(String email);
 
     void removePost(Long pno);
-    PostDTO getPostByID(Long pno);
+
     String getEmailByUserName(String userName);
 
     PostDTO getPostWithAllImage(Long postID);

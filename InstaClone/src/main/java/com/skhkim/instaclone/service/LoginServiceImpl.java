@@ -27,8 +27,7 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public boolean checkDuplication(ClubMemberDTO memberDTO){
-        boolean checkResult = clubMemberRepository.existsByNameAndEmail(memberDTO.getName(),memberDTO.getEmail());
-        return checkResult;
+        return clubMemberRepository.existsByNameAndEmail(memberDTO.getName(),memberDTO.getEmail());
     }
     @Override
     public void updateUserName(String changeName, String originalName){
@@ -69,9 +68,9 @@ public class LoginServiceImpl implements LoginService{
 
     }
     @Override
-    public ClubMemberDTO getClubMemberSearchbyEmail(String Email) {
+    public ClubMember getClubMemberSearchbyEmail(String Email) {
         Optional<ClubMember> result = clubMemberRepository.findByEmail(Email);
-        return result.isPresent() ? entityToDTO(result.get()) : ClubMemberDTO.builder().build();
+        return result.orElseGet(() -> ClubMember.builder().build());
     }
     @Override
     public boolean getUserExist(String name){

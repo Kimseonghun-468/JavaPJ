@@ -71,21 +71,12 @@ public class PostServiceImpl implements PostService {
     }
     @Override
     public String getEmailByUserName(String userName){
-
         return postRepository.getEmail(userName);
     }
-    @Override
-    public PostDTO getPostByID(Long pno){
-        Post post = postRepository.findByPno(pno);
-        PostDTO postDTO = EntityMapper.entityToDTO(post);
-        return postDTO;
-    }
 
     @Override
-    public PostDTO getPostWithAllImage(Long postID){
-        List<Object[]> result = postRepository.getPostWithAll(postID);
-        Post post = (Post) result.get(0)[0];
-
+    public PostDTO getPostWithAllImage(Long postId){
+        Post post = postRepository.selectPost(postId);
         return EntityMapper.entityToDTO(post);
     }
     @Override

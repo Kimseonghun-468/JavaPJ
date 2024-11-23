@@ -38,6 +38,7 @@ public class ProfileController {
     public String sidebar(@PathVariable("name") String name,
                           @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                           Model model){
+
         String userEamil = postService.getEmailByUserName(name); // 삭제
         ProfileImageDTO profileImageDTO = profileService.getProfileImage(name); // 삭제
         FriendStatus friendStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
@@ -52,27 +53,27 @@ public class ProfileController {
         return "profile";
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/userinfo/{name}")
-    public String userinfo(@PathVariable("name") String name,
-                          String nameError, String psError,
-                          @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
-                          Model model){
-        if ( nameError != null )
-            model.addAttribute("nameChangeError", true);
-        if ( psError != null )
-            model.addAttribute("psError", true);
-        String userEamil = postService.getEmailByUserName(name);
-        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
-        model.addAttribute("userExist", loginService.getUserExist(name));
-        model.addAttribute("profileImageDTO", profileImageDTO);
-        model.addAttribute("memberDTO", clubAuthMemberDTO);
-        model.addAttribute("userName", name);
-        model.addAttribute("userEmail", userEamil);
-        model.addAttribute("postNum", postService.getPostNumber(userEamil));
-        model.addAttribute("friendNum", friendShipService.getFriendNum(name));
-        return "userinfo";
-    }
+//    @PreAuthorize("hasRole('USER')")
+//    @GetMapping("/userinfo/{name}")
+//    public String userinfo(@PathVariable("name") String name,
+//                          String nameError, String psError,
+//                          @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
+//                          Model model){
+//        if ( nameError != null )
+//            model.addAttribute("nameChangeError", true);
+//        if ( psError != null )
+//            model.addAttribute("psError", true);
+//        String userEamil = postService.getEmailByUserName(name);
+//        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
+//        model.addAttribute("userExist", loginService.getUserExist(name));
+//        model.addAttribute("profileImageDTO", profileImageDTO);
+//        model.addAttribute("memberDTO", clubAuthMemberDTO);
+//        model.addAttribute("userName", name);
+//        model.addAttribute("userEmail", userEamil);
+//        model.addAttribute("postNum", postService.getPostNumber(userEamil));
+//        model.addAttribute("friendNum", friendShipService.getFriendNum(name));
+//        return "userinfo";
+//    }
 
     @PostMapping("/sidebar/profileImage/{name}")
     public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO) throws UnsupportedEncodingException{

@@ -41,8 +41,8 @@ function selectPostList(userName, page){
         type: "POST",
         data: {userName: userName},
         dataType: "JSON",
-        success: function (data){
-            PostApp.setPostList(data);
+        success: function (response){
+            PostApp.setPostList(response.data);
         }
     })
 }
@@ -76,7 +76,7 @@ function insertPost(postRequest){
         data: JSON.stringify(sendData),
         dataType: "JSON",
         contentType: "application/json",
-        success: function (data){
+        success: function (response){
 
         }
     })

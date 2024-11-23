@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     $(document).on('click', '.post-list-img',function() {
         $('#postModal').modal('show');
-
-
         var loginName = document.getElementById("loginName").dataset.loginName;
         var loginEmail = document.getElementById("loginEmail").dataset.loginEmail;
 
@@ -93,8 +91,8 @@ function selectPostImageList(postId){
         type:"POST",
         data: {pno:postId},
         dataType:"JSON",
-        success: function (data) {
-            PostDetailApp.setPostImageList(data)
+        success: function (response) {
+            PostDetailApp.setPostImageList(response.data)
         }
     })
 }
@@ -131,7 +129,7 @@ function deletePost(pno){
     $.ajax({
         url: '/post/delete/' + pno,
         type: 'DELETE',
-        success: function (data){
+        success: function (response){
         }
     })
 }
@@ -184,7 +182,7 @@ function updatePost(postReuest){
         data: JSON.stringify(sendData),
         dataType: "JSON",
         contentType: "application/json",
-        success: function (data){
+        success: function (response){
 
         }
     })
