@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.service;
 
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.FriendAccept;
 import com.skhkim.instaclone.entity.FriendWait;
@@ -7,11 +8,8 @@ import com.skhkim.instaclone.entity.type.FriendStatus;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.repository.FriendAcceptRepository;
 import com.skhkim.instaclone.repository.FriendWaitRepository;
-import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +25,7 @@ public class FriendShipServiceImpl implements FriendShipService{
     @Override
     @Transactional
     public boolean createFriendShip(String userName){
-
-        // Select Login Name By Security Context
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        ClubAuthMemberDTO authenticationMember = (ClubAuthMemberDTO) authentication.getPrincipal();
-        String loginName = authenticationMember.getName();
+        String loginName = LoginContext.getUserInfo().getUserName();
 
         // Select Member Record By Name (Login, Search User Name)
         ClubMember loginMember = memberRepository.findByName(loginName);
@@ -81,7 +75,9 @@ public class FriendShipServiceImpl implements FriendShipService{
 
     @Override
     @Transactional
-    public boolean acceptFriendShip(String loginName, String userName){
+    public boolean acceptFriendShip(String userName){
+
+        String loginName = LoginContext.getUserInfo().getUserName();
 
         Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
 
@@ -106,7 +102,8 @@ public class FriendShipServiceImpl implements FriendShipService{
 
     @Override
     @Transactional
-    public boolean deleteFriendShip(String loginName, String userName){
+    public boolean deleteFriendShip(String userName){
+        String loginName = LoginContext.getUserInfo().getUserName();
         int result = acceptRepository.delete(loginName, userName);
         return result > 0;
     }

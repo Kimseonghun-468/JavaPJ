@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.controller;
 
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.type.FriendStatus;
@@ -39,6 +40,7 @@ public class ProfileController {
                           @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                           Model model){
 
+        LoginContext.getUserInfo();
         String userEamil = postService.getEmailByUserName(name); // 삭제
         ProfileImageDTO profileImageDTO = profileService.getProfileImage(name); // 삭제
         FriendStatus friendStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);

@@ -15,20 +15,20 @@ public class FriendApiController {
 
     private final FriendShipService friendShipService;
     @PostMapping("/request")
-    public ResponseEntity sendFriendShipRequest(String name){
-        boolean result = friendShipService.createFriendShip(name);
+    public ResponseEntity request(String userName){
+        boolean result = friendShipService.createFriendShip(userName);
         return ApiResponse.OK(result);
     }
 
-    @PostMapping("/acceptFriendShipRequest")
-    public ResponseEntity accecptFriendShipRequest(String loginName, String requesterName){
-        boolean result = friendShipService.acceptFriendShip(requesterName, loginName);
+    @PostMapping("/acceptFriend")
+    public ResponseEntity acceptFriend(String userName){
+        boolean result = friendShipService.acceptFriendShip(userName);
         return ApiResponse.OK(result);
     }
 
-    @PostMapping("/deleteFriendShipRequest")
-    public ResponseEntity deleteFriendShipRequest(String loginName, String requesterName){
-        boolean result = friendShipService.deleteFriendShip(requesterName, loginName);
+    @PostMapping("/deleteFriend")
+    public ResponseEntity deleteFriend(String userName){
+        boolean result = friendShipService.deleteFriendShip(userName);
         return ApiResponse.OK(result);
     }
 }

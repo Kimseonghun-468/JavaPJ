@@ -40,22 +40,21 @@ $(document).on('click', '.request-Follow-button', function (){
 });
 
 $(document).on('click', '.request-Accept-button', function(){
-    var requesterName = $(this).attr('data-name');
+    var userName = $(this).attr('data-name');
     var $button = $(this);
-    sendAcceptFriendShipRequest(UserProfileApp.$data.loginName, requesterName, $button);
+    sendAcceptFriend(userName, $button);
 })
 
 $(document).on('click', '.request-Delete-button', function (){
-    var loginName = '[[${memberDTO.name}]]';
-    var requesterName = $(this).attr('data-name');
+    var userName = $(this).attr('data-name');
     var $button = $(this);
-    sendDeleteFriendShipRequest(loginName, requesterName, $button)
+    sendDeleteFriendShipRequest(userName, $button)
 })
 
-function sendDeleteFriendShipRequest(loginName, requesterName, $button){
-    var data = {loginName:loginName, requesterName:requesterName};
+function sendDeleteFriendShipRequest(userName, $button){
+    var data = {userName:userName};
     $.ajax({
-        url: '/api/v1/friend/deleteFriendShipRequest',
+        url: '/api/v1/friend/deleteFriend',
         type: "POST",
         data: data,
         dataType: "JSON",
@@ -66,10 +65,10 @@ function sendDeleteFriendShipRequest(loginName, requesterName, $button){
     })
 }
 
-function sendAcceptFriendShipRequest(loginName, requesterName, $button){
-    var data = {loginName:loginName, requesterName:requesterName};
+function sendAcceptFriend(userName, $button){
+    var data = {userName:userName};
     $.ajax({
-        url: '/api/v1/friend/acceptFriendShipRequest',
+        url: '/api/v1/friend/acceptFriend',
         type: 'POST',
         data: data,
         dataType: 'JSON',
@@ -84,7 +83,7 @@ function sendAcceptFriendShipRequest(loginName, requesterName, $button){
 }
 
 function sendFollowRequest(name, $button){
-    data = {name :name}
+    data = {userName :name}
     $.ajax({
         url: '/api/v1/friend/request',
         type: 'POST',
