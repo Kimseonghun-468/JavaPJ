@@ -59,10 +59,15 @@ document.addEventListener("DOMContentLoaded", ()=> {
         $('#post-modify-modal').modal('show')
 
         $('#modify-post-button').click(function() {
+            postRequest = {
+                "loginName" : UserProfileApp.$data.userName,
+                "loginEmail" : UserProfileApp.$data.userEmail,
+                "postId" : PostDetailApp.$data.postId,
+                "title" : document.getElementById('post-update-title').value,
+            }
+
+            updatePost(postRequest)
             alert('포스트 파일이 수정되었습니다.');
-            // 여기도 modify form이 아니라 ajax로 update 요청 떄리고, 관리하도록 하자
-            $('.modify-value').append('<input type="hidden" name="pno" value=' + postId + '>')
-            $('#post-modify-form').submit();
 
         });
     })
@@ -164,6 +169,28 @@ function handleKeyDown(event){
     }
     console.log('!', event.isComposing)
 }
+
+function updatePost(postReuest){
+    sendData = {
+        "email" : postRequest.loginEmail,
+        "name" : postRequest.loginName,
+        "title" : postRequest.title,
+        "pno" : postReuest.postId
+    }
+
+    $.ajax({
+        url: "/post/updatePost",
+        type: "POST",
+        data: JSON.stringify(sendData),
+        dataType: "JSON",
+        contentType: "application/json",
+        success: function (data){
+
+        }
+    })
+}
+
+
 
 
 

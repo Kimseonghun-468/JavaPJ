@@ -166,7 +166,7 @@
   </div>
 </div>
 </body>
-
+</html>
 <div class="Profile-File-Modal modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -390,16 +390,12 @@
           </div>
         </div>
 
-        <form class="upload-form" id=post-modify-form th:action="@{/sidebar/postModify/{userName}(userName=${memberDTO.name})}" th:method="post">
-          <div class="upload-title-input">
-            <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
-          </div>
-          <div class="upload-button-box modify-value">
-            <input type="hidden" name="email" th:value="${memberDTO.email}">
-
-            <button type="button" class="btn btn-primary" id="modify-post-button">수정하기</button>
-          </div>
-        </form>
+        <div class="upload-title-input">
+          <textarea class="text-field" placeholder="제목을 입력하세요..." id="post-update-title"></textarea>
+        </div>
+        <div class="upload-button-box modify-value">
+          <button type="button" class="btn btn-primary" id="modify-post-button">수정하기</button>
+        </div>
       </div>
     </div>
 
@@ -444,7 +440,7 @@
     </ul>
   </div>
 </div>
-</html>
+
 
 <div id="friend-List-UserModal" class="modal-custom">
   <div id="profileFriendContainer" class="modal-content-side-frame" style="width: 650px; max-height: 100%">

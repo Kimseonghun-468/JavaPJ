@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.controller;
 
-import com.skhkim.instaclone.dto.PostDTO;
 import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.type.FriendStatus;
@@ -50,7 +49,7 @@ public class ProfileController {
         model.addAttribute("userEmail", userEamil); // 지워야ㅕ함
         model.addAttribute("postNum", postService.getPostNumber(userEamil)); // 이것도 js로 조회 할거임
         model.addAttribute("friendNum", friendShipService.getFriendNum(name)); // 이것도 js로 조회할거임
-        return "sidebar";
+        return "profile";
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -73,14 +72,6 @@ public class ProfileController {
         model.addAttribute("postNum", postService.getPostNumber(userEamil));
         model.addAttribute("friendNum", friendShipService.getFriendNum(name));
         return "userinfo";
-    }
-
-    @PostMapping("/sidebar/postModify/{name}")
-    public String postModify(@PathVariable("name") String name, PostDTO postDTO) throws UnsupportedEncodingException {
-        log.info("PostDTO : " + postDTO);
-        postService.modifyTitle(postDTO);
-        String encodedName = URLEncoder.encode(name, "UTF-8");
-        return "redirect:/sidebar/"+encodedName;
     }
 
     @PostMapping("/sidebar/profileImage/{name}")

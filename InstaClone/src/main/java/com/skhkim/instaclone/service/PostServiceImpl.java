@@ -43,10 +43,7 @@ public class PostServiceImpl implements PostService {
         List<PostImage> postImageList = (List<PostImage>) entityMap.get("imgList");
 
         postRepository.save(post);
-
-        postImageList.forEach(postImage -> {
-            postImageRepository.save(postImage);
-        });
+        postImageRepository.saveAll(postImageList);
 
     }
 
@@ -62,7 +59,7 @@ public class PostServiceImpl implements PostService {
     public PostResponse getList(PostPageRequestDTO postPageRequestDTO, String name){
         Pageable pageable = postPageRequestDTO.getPageable();
         Slice<Post> result = postRepository.getListPage(pageable, name);
-        List<PostDTO> postDTOS = result.stream().map(post -> EntityMapper.entityToDTO(post)).toList();
+        List<PostDTO> postDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new PostResponse(postDTOS, result.hasNext());
     }

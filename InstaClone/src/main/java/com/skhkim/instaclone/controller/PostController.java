@@ -46,8 +46,15 @@ public class PostController {
     }
 
     @PostMapping("/insertPost")
-    public String postRegister(@RequestBody PostDTO postDTO) throws UnsupportedEncodingException {
+    public String insertPost(@RequestBody PostDTO postDTO) throws UnsupportedEncodingException {
         postService.register(postDTO);
+        String encodedName = URLEncoder.encode(postDTO.getName(), "UTF-8");
+        return "redirect:/sidebar/"+encodedName;
+    }
+
+    @PostMapping("/updatePost")
+    public String updatePost(@RequestBody PostDTO postDTO) throws UnsupportedEncodingException {
+        postService.modifyTitle(postDTO);
         String encodedName = URLEncoder.encode(postDTO.getName(), "UTF-8");
         return "redirect:/sidebar/"+encodedName;
     }

@@ -52,7 +52,7 @@ public class ProfileImageController {
     public ResponseEntity
     getProfileImageInviteList(ProfilePageRequestDTO profilePageRequestDTO, String loginName,@RequestParam List<String> roomUsers){
         UserInfoResponse result =
-                profileService.getInviteListPage(profilePageRequestDTO, loginName, roomUsers);// 여기 함수 바꾸
+                profileService.getInviteListPage(profilePageRequestDTO, loginName, roomUsers);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

@@ -63,10 +63,12 @@ function uploadPostImage(formData){
 
 function insertPost(postRequest){
 
-    sendData = {"email" : postRequest.loginEmail,
+    sendData = {
+        "email" : postRequest.loginEmail,
         "name" : postRequest.loginName,
         "title" : postRequest.title,
-        "imageDTOList" : postRequest.uploadImages}
+        "imageDTOList" : postRequest.uploadImages
+    }
 
     $.ajax({
         url: "/post/insertPost",
