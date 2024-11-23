@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -74,13 +73,6 @@ public class ProfileController {
 //        model.addAttribute("friendNum", friendShipService.getFriendNum(name));
 //        return "userinfo";
 //    }
-
-    @PostMapping("/sidebar/profileImage/{name}")
-    public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO) throws UnsupportedEncodingException{
-        profileService.register(profileImageDTO);
-        String encodedName = URLEncoder.encode(name, "UTF-8");
-        return "redirect:/sidebar/"+encodedName;
-    }
 
 
     @PreAuthorize("hasRole('USER')")
