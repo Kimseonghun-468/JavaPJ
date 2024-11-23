@@ -1,15 +1,16 @@
 package com.skhkim.instaclone.service;
 
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
-import com.skhkim.instaclone.dto.*;
-import com.skhkim.instaclone.entity.*;
+import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.dto.UserInfoDTO;
+import com.skhkim.instaclone.entity.ClubMember;
+import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.response.UserInfoResponse;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ProfileService {
-    Long register(ProfileImageDTO profileImageDTO);
+    void register(ProfileImageDTO profileImageDTO);
     void deleteByName(String name);
     ProfileImageDTO getProfileImage(String name);
     UserInfoResponse getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName);

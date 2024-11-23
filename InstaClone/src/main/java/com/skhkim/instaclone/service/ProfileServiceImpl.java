@@ -35,15 +35,13 @@ public class ProfileServiceImpl implements ProfileService{
 
     @Override
     @Transactional
-    public Long register(ProfileImageDTO profileImageDTO){
+    public void register(ProfileImageDTO profileImageDTO){
 
         ProfileImage profileImage = dtoToEntity(profileImageDTO);
         ProfileImage beforeImage = profileImageRepository.findByUserEmail(profileImage.getClubMember().getEmail());
         profileImageRepository.deleteByUserEmail(profileImage.getClubMember().getEmail());
         deleteImage(beforeImage);
         profileImageRepository.save(profileImage);
-
-        return profileImage.getPfino();
     }
 
     public void deleteImage(ProfileImage imageEntity){
@@ -84,7 +82,7 @@ public class ProfileServiceImpl implements ProfileService{
     getWaitingFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.getByWaitingListPage(pageable, loginName);
-        List<UserInfoDTO> userInfoDTOS = result.stream().map(proejction -> EntityMapper.entityToDTO(proejction)).toList();
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
@@ -94,7 +92,7 @@ public class ProfileServiceImpl implements ProfileService{
     getAcceptFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.getByAcceptListPage(pageable, loginName);
-        List<UserInfoDTO> userInfoDTOS = result.stream().map(proejction -> EntityMapper.entityToDTO(proejction)).toList();
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
@@ -103,7 +101,7 @@ public class ProfileServiceImpl implements ProfileService{
     public UserInfoResponse getInviteSearchListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, String inviteSearchTerm, List<String> roomUsers){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.selectInviteListByName(pageable, loginName, inviteSearchTerm, roomUsers);
-        List<UserInfoDTO> userInfoDTOS = result.stream().map(proejction -> EntityMapper.entityToDTO(proejction)).toList();
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
@@ -113,7 +111,7 @@ public class ProfileServiceImpl implements ProfileService{
     getFriendListPage(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.getFriendListPage(pageable, userName, loginName);
-        List<UserInfoDTO> userInfoDTOS = result.stream().map(proejction -> EntityMapper.entityToDTO(proejction)).toList();
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
@@ -123,7 +121,7 @@ public class ProfileServiceImpl implements ProfileService{
     getInviteListPage(ProfilePageRequestDTO profilePageRequestDTO, String loginName, List<String> roomUsers){
         Pageable pageable = profilePageRequestDTO.getPageable();
         Slice<UserInfoProjection> result = profileImageRepository.selectInviteList(pageable, loginName, roomUsers);
-        List<UserInfoDTO> userInfoDTOS = result.stream().map(projection -> EntityMapper.entityToDTO(projection)).toList();
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
     }
@@ -150,8 +148,6 @@ public class ProfileServiceImpl implements ProfileService{
     @Override
     public UserInfoDTO selectUserInfo(String userName){
         ClubMember clubMember = memberRepository.selectUserInfo(userName);
-        UserInfoDTO userInfoDTO = EntityMapper.entityToDTO(clubMember);
-
-        return userInfoDTO;
+        return EntityMapper.entityToDTO(clubMember);
     }
 }
