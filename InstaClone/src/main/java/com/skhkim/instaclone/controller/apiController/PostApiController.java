@@ -44,4 +44,10 @@ public class PostApiController {
         postService.modifyTitle(postDTO);
         return ApiResponse.OK();
     }
+
+    @PostMapping("/selectPostNum")
+    public ResponseEntity selectPostNum(String userName) {
+        Long result = postService.getPostNumber(userName);
+        return ApiResponse.OK(result);
+    }
 }

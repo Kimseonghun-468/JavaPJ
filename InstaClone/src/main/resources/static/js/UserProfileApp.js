@@ -21,6 +21,8 @@ const UserProfileApp = {
         this.$data.userName = userName;
         this.$object.profileTable = $("#profile-table")
         selectUserInfo(userName)
+        selectPostNum(userName)
+        selectFriendNum(userName)
     },
 
     setUserInfo(data){
@@ -29,9 +31,9 @@ const UserProfileApp = {
             this.$data.profileImage = "/display?fileName=" + data.imageURL;
     },
 
-    setFormData(){
+    setFormData(files){
         this.$data.formData = new FormData();
-        var files = $("input.profile-Image-File")[0].files;
+
         this.$data.formData.append("uploadFiles", files[0]);
     },
 
@@ -58,7 +60,10 @@ const UserProfileApp = {
             'class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;  />';
 
         this.$object.profileTable.html(result);
-
     },
+
+    setReplyNum(data){
+        $("#post-num").html('게시물 ' +data)
+    }
 
 }

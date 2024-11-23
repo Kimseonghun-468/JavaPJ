@@ -34,20 +34,14 @@ public class ProfileController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/sidebar/{name}")
     public String sidebar(@PathVariable("name") String name,
-                          @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                           Model model){
 
-        UserInfoDTO userInfoDTO = LoginContext.getUserInfo();
-
-        String userEamil = postService.getEmailByUserName(name); // 삭제
-        FriendStatus friendStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
+        UserInfoDTO loginInfoDTO = LoginContext.getUserInfo();
+        FriendStatus friendStatus = friendShipService.checkFriendShip(loginInfoDTO.getUserName(), name);
         model.addAttribute("friendshipStatus", friendStatus); // ## 필요,,?
         model.addAttribute("userExist", memberService.getUserExist(name)); // 이거는 만들자.. ##
-        model.addAttribute("memberDTO", clubAuthMemberDTO); // 이것도 이름만 남겨여함.
+        model.addAttribute("memberDTO", loginInfoDTO);
         model.addAttribute("userName", name); // 남겨놓기
-        model.addAttribute("userEmail", userEamil); // 지워야ㅕ함
-        model.addAttribute("postNum", postService.getPostNumber(userEamil)); // 이것도 js로 조회 할거임
-        model.addAttribute("friendNum", friendShipService.getFriendNum(name)); // 이것도 js로 조회할거임
         return "profile";
     }
 

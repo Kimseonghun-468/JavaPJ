@@ -11,7 +11,7 @@ public interface PostService {
 
     void modifyTitle(PostDTO postDTO);
 
-    Long getPostNumber(String email);
+    Long getPostNumber(String name);
 
     void removePost(Long pno);
 

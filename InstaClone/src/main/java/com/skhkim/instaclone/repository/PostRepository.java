@@ -23,7 +23,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
     Post selectPost(Long pno);
 
     @Query("SELECT count(p) FROM Post p " +
-            "where p.clubMember.email = :email ")
+            "where p.clubMember.name = :name ")
     Long getPostCount(String email);
 
     @Query("SELECT m.email FROM ClubMember m " +

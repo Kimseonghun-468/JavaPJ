@@ -10,5 +10,5 @@ public interface FriendShipService {
     boolean acceptFriendShip(String userName);
     boolean deleteFriendShip(String userName);
 
-    int getFriendNum(String name);
+    int selectFriendNum(String userName);
 }

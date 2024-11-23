@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $('#upload-profile-image').on('click', function () {
         if (this.files && this.files.length > 0) {
             $('.Profile-File-Modal').css('z-index', 1060).modal('show');
-            UserProfileApp.setFormData()
+            var files = $("input.profile-Image-File")[0].files;
+            UserProfileApp.setFormData(files)
         }
     })
 
@@ -70,4 +71,27 @@ function uploadProfile(formData){
     })
 }
 
+function selectPostNum(userName){
+    $.ajax({
+        url: '/post/selectPostNum',
+        type: "POST",
+        data: {userName: userName},
+        dataType: "JSON",
+        success: function (response){
+            UserProfileApp.setReplyNum(response.data)
+        }
+    })
+}
 
+function selectFriendNum(userName){
+    $.ajax({
+        url: '/friend/selectFriendNum',
+        type: "POST",
+        data: {userName: userName},
+        dataType: "JSON",
+        success: function (response){
+            UserProfileApp.setFriendNum(response.data)
+        }
+    })
+
+}

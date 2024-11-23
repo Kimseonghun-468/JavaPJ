@@ -109,7 +109,7 @@ public class FriendShipServiceImpl implements FriendShipService{
     }
 
     @Override
-    public int getFriendNum(String userName){
+    public int selectFriendNum(String userName){
         return acceptRepository.getCount(userName);
 
     }

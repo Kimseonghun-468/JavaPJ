@@ -82,4 +82,10 @@ public class FriendApiController {
         UserInfoDTO result = profileService.getFirstUser(userName, loginName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PostMapping("/selectFriendNum")
+    public ResponseEntity selectFriendNum(String userName) {
+        int result = friendShipService.selectFriendNum(userName);
+        return ApiResponse.OK(result);
+    }
 }

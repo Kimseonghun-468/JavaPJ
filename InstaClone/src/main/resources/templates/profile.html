@@ -40,7 +40,6 @@
 <body>
 
 <input type="hidden" id="loginName" th:data-login-name="${memberDTO.name}">
-<input type="hidden" id="loginEmail" th:data-login-email="${memberDTO.email}">
 <input type="hidden" id="userName" th:data-user-name="${userName}">
 <input type="hidden" id="userEmail" th:data-user-email="${userEmail}">
 
@@ -104,7 +103,7 @@
             <div class="profile-info">
               <h1 class="username">[[${userName}]]</h1>
               <div class="stats">
-                <span>게시물 [[${postNum}]]</span>
+                <span id="post-num">게시물 -</span>
                 <span class="options" id="friend-List">친구 [[${friendNum}]]</span>
                 <span id="follow-status">
                   <button th:if="${memberDTO.name != userName && friendshipStatus =='NOTTING'}" th:data-name="${userName}" class="request-Follow-button follow">친구 요청</button>

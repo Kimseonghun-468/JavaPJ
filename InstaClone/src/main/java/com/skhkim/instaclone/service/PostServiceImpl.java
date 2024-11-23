@@ -65,8 +65,6 @@ public class PostServiceImpl implements PostService {
     }
     @Override
     public Long getPostNumber(String email){
-
-
         return postRepository.getPostCount(email);
     }
     @Override
