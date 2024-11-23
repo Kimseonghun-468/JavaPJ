@@ -1,8 +1,9 @@
 package com.skhkim.instaclone.controller;
 
-import com.skhkim.instaclone.dto.*;
+import com.skhkim.instaclone.dto.PostDTO;
+import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.type.FriendStatus;
-import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.FriendShipService;
 import com.skhkim.instaclone.service.LoginService;
@@ -32,33 +33,23 @@ public class ProfileController {
     private final ProfileService profileService;
     private final LoginService loginService;
     private final FriendShipService friendShipService;
-    private final ClubMemberRepository clubMemberRepository;
-    @GetMapping("/profile")
-    public void profile(){
-        log.info("Profile...-----");
-    }
-    @GetMapping("/templ")
-    public void templ(){
 
-    }
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/sidebar/{name}")
-    public String sidebar(@PathVariable("name") String name, PostPageRequestDTO postPageRequestDTO,
+    public String sidebar(@PathVariable("name") String name,
                           @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
-
                           Model model){
-        String userEamil = postService.getEmailByUserName(name);
-        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name);
+        String userEamil = postService.getEmailByUserName(name); // 삭제
+        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name); // 삭제
         FriendStatus friendStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
-        model.addAttribute("friendshipStatus", friendStatus);
-        model.addAttribute("userExist", loginService.getUserExist(name));
-//        model.addAttribute("result", postService.getList(postPageRequestDTO, name));
-        model.addAttribute("profileImageDTO", profileImageDTO);
-        model.addAttribute("memberDTO", clubAuthMemberDTO);
-        model.addAttribute("userName", name);
-        model.addAttribute("userEmail", userEamil);
-        model.addAttribute("postNum", postService.getPostNumber(userEamil));
-        model.addAttribute("friendNum", friendShipService.getFriendNum(name));
+        model.addAttribute("friendshipStatus", friendStatus); // ## 필요,,?
+        model.addAttribute("userExist", loginService.getUserExist(name)); // 이거는 만들자.. ##
+        model.addAttribute("profileImageDTO", profileImageDTO); // 여것도 필요없음.
+        model.addAttribute("memberDTO", clubAuthMemberDTO); // 이것도 이름만 남겨여함.
+        model.addAttribute("userName", name); // 남겨놓기
+        model.addAttribute("userEmail", userEamil); // 지워야ㅕ함
+        model.addAttribute("postNum", postService.getPostNumber(userEamil)); // 이것도 js로 조회 할거임
+        model.addAttribute("friendNum", friendShipService.getFriendNum(name)); // 이것도 js로 조회할거임
         return "sidebar";
     }
 
@@ -84,16 +75,6 @@ public class ProfileController {
         return "userinfo";
     }
 
-
-
-    @PostMapping("/sidebar/post/{name}")
-    public String postRegister(@PathVariable("name") String name, PostDTO postDTO) throws UnsupportedEncodingException {
-        log.info("PostDTO : " + postDTO);
-        Long pno = postService.register(postDTO);
-        String encodedName = URLEncoder.encode(name, "UTF-8");
-        return "redirect:/sidebar/"+encodedName;
-    }
-
     @PostMapping("/sidebar/postModify/{name}")
     public String postModify(@PathVariable("name") String name, PostDTO postDTO) throws UnsupportedEncodingException {
         log.info("PostDTO : " + postDTO);
@@ -105,7 +86,7 @@ public class ProfileController {
     @PostMapping("/sidebar/profileImage/{name}")
     public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO) throws UnsupportedEncodingException{
         log.info("Profile Image DTO : " + profileImageDTO);
-        Long pfino = profileService.register(profileImageDTO);
+        profileService.register(profileImageDTO);
         String encodedName = URLEncoder.encode(name, "UTF-8");
         return "redirect:/sidebar/"+encodedName;
     }

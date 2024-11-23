@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 @Controller
 @RequestMapping("/post")
 @Log4j2
@@ -40,5 +43,12 @@ public class PostController {
 
         postService.removePost(pno);
         return new ResponseEntity<>(pno, HttpStatus.OK);
+    }
+
+    @PostMapping("/insertPost")
+    public String postRegister(@RequestBody PostDTO postDTO) throws UnsupportedEncodingException {
+        postService.register(postDTO);
+        String encodedName = URLEncoder.encode(postDTO.getName(), "UTF-8");
+        return "redirect:/sidebar/"+encodedName;
     }
 }

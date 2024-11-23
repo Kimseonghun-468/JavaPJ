@@ -22,8 +22,15 @@ document.addEventListener("DOMContentLoaded", ()=> {
     })
 
     $('#upload-post-button').click(function() {
+        postRequest = {
+            "loginName" : UserProfileApp.$data.userName,
+            "loginEmail" : UserProfileApp.$data.userEmail,
+            "title" : document.getElementById('post-title').value,
+            "uploadImages" : PostApp.$data.uploadImages,
+        }
+        insertPost(postRequest)
         alert('포스트 파일이 제출되었습니다.');
-        $('#upload-form').submit();
+
     });
 
 })
@@ -53,6 +60,27 @@ function uploadPostImage(formData){
         },
     });
 }
+
+function insertPost(postRequest){
+
+    sendData = {"email" : postRequest.loginEmail,
+        "name" : postRequest.loginName,
+        "title" : postRequest.title,
+        "imageDTOList" : postRequest.uploadImages}
+
+    $.ajax({
+        url: "/post/insertPost",
+        type: "POST",
+        data: JSON.stringify(sendData),
+        dataType: "JSON",
+        contentType: "application/json",
+        success: function (data){
+
+        }
+    })
+}
+
+
 
 
 

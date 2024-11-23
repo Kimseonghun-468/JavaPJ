@@ -10,7 +10,9 @@ import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -18,8 +20,7 @@ import java.util.stream.Collectors;
 public class EntityMapper {
     public static UserInfoDTO entityToDTO(UserInfoProjection projection){
         ProfileImage profileImage = projection.getClubMember().getProfileImage();
-
-        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+        return UserInfoDTO.builder()
                 .imgName(profileImage != null ? profileImage.getImgName() : null)
                 .uuid(profileImage != null ? profileImage.getUuid() : null)
                 .path(profileImage != null ? profileImage.getPath() : null)
@@ -27,48 +28,40 @@ public class EntityMapper {
                 .userEmail(projection.getClubMember().getEmail())
                 .status(projection.getStatus())
                 .build();
-        return userInfoDTO;
     }
 
     public static UserInfoDTO entityToDTO(ClubMember clubMember){
         ProfileImage profileImage = clubMember.getProfileImage();
-
-        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+        return UserInfoDTO.builder()
                 .imgName(profileImage != null ? profileImage.getImgName() : null)
                 .uuid(profileImage != null ? profileImage.getUuid() : null)
                 .path(profileImage != null ? profileImage.getPath() : null)
                 .userName(clubMember.getName())
                 .userEmail(clubMember.getEmail())
                 .build();
-        return userInfoDTO;
     }
 
     public static ClubMember dtoToEntity(ClubMemberDTO dto){
-
-        ClubMember clubMember = ClubMember.builder()
+        return ClubMember.builder()
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .name(dto.getName())
                 .fromSocial(dto.isFromSocial())
                 .roleSet(dto.getRoleSet())
                 .build();
-
-        return clubMember;
     }
 
     public static ChatMessageDTO entityToDTO(ChatMessage chatMessage){
-        ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder()
+        return ChatMessageDTO.builder()
                 .senderEmail(chatMessage.getSenderEmail())
                 .content(chatMessage.getContent())
                 .readStatus(chatMessage.getReadStatus())
                 .regDate(chatMessage.getRegDate())
                 .build();
-
-        return chatMessageDTO;
     }
 
     public static ChatMessage dtoToEntity(ChatMessageDTO chatMessageDTO, Long roomID){
-        ChatMessage chatMessage = ChatMessage.builder()
+        return ChatMessage.builder()
                 .id(chatMessageDTO.getCid())
                 .roomId(roomID)
                 .senderEmail(chatMessageDTO.getSenderEmail())
@@ -76,33 +69,28 @@ public class EntityMapper {
                 .readStatus(chatMessageDTO.getReadStatus())
                 .regDate(chatMessageDTO.getRegDate())
                 .build();
-
-        return chatMessage;
     }
 
     public static ChatUserDTO entityToDTO(ChatUser chatUser){
-        ChatUserDTO chatUserDTO = ChatUserDTO.builder()
+        return ChatUserDTO.builder()
                 .userInfoDTO(entityToDTO(chatUser.getMember()))
                 .roomId(chatUser.getChatRoom().getRoomId())
                 .disConnect(chatUser.getDisConnect())
                 .build();
-
-        return chatUserDTO;
     }
 
     public static ChatRoomDTO entityToDTO(ChatRoom chatRoom){
-        ChatRoomDTO chatRoomDTO = ChatRoomDTO.builder()
+        return ChatRoomDTO.builder()
                 .roomId(chatRoom.getRoomId())
                 .userNum(chatRoom.getUserNum())
                 .lastChat(chatRoom.getLastChat())
                 .lastChatTime(chatRoom.getLastChatTime())
-                .userInfoDTOS(EntityMapper.entityToDTOS(chatRoom.getChatUserList()))
+                .userInfoDTOS(EntityMapper.entityToDTO(chatRoom.getChatUserList()))
                 .build();
-        return chatRoomDTO;
     }
 
-    public static List<UserInfoDTO> entityToDTOS(List<ChatUser> chatUserList){
-        List<UserInfoDTO> userInfoDTOS = chatUserList.stream().map(chatUser ->
+    public static List<UserInfoDTO> entityToDTO(List<ChatUser> chatUserList){
+        return chatUserList.stream().map(chatUser ->
                 UserInfoDTO.builder()
                         .userEmail(chatUser.getMember().getEmail())
                         .userName(chatUser.getMember().getName())
@@ -110,12 +98,28 @@ public class EntityMapper {
                         .uuid(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getUuid() : null)
                         .path(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getPath() : null)
                         .build()).collect(Collectors.toList());
+    }
 
-        return userInfoDTOS;
+    public static PostImageDTO entityToDTO(PostImage postImage){
+        return PostImageDTO.builder()
+                .imgName(postImage.getImgName())
+                .path(postImage.getPath())
+                .uuid(postImage.getUuid())
+                .pino(postImage.getPino())
+                .build();
+    }
+
+    public static PostImage dtoToEntity(PostImageDTO postImageDTO){
+        return PostImage.builder()
+                .path(postImageDTO.getPath())
+                .uuid(postImageDTO.getUuid())
+                .imgName(postImageDTO.getImgName())
+                .post(Post.builder().pno(postImageDTO.getPno()).build())
+                .build();
     }
 
     public static PostDTO entityToDTO(Post post){
-        PostDTO postDTO = PostDTO.builder()
+        return PostDTO.builder()
                 .pno(post.getPno())
                 .email(post.getClubMember().getEmail())
                 .comment(post.getComment())
@@ -124,20 +128,31 @@ public class EntityMapper {
                 .likeNum(post.getLikeNum())
                 .regDate(post.getRegDate())
                 .modDate(post.getModDate())
+                .imageDTOList(post.getPostImageList().stream().map
+                        (postImage -> EntityMapper.entityToDTO(postImage)).toList())
                 .build();
+    }
 
-        List<PostImage> postImages = post.getPostImageList();
+    public static Map<String, Object> dtoToEntity(PostDTO postDTO){
+        Map<String, Object> entityMap = new HashMap<>();
 
-        List<PostImageDTO> postImageDTOList = postImages.stream().map(postImage ->
-                PostImageDTO.builder().imgName(postImage.getImgName())
-                .path(postImage.getPath())
-                .uuid(postImage.getUuid())
-                .pino(postImage.getPino())
-                .build()).toList();
+        Post post = Post.builder()
+                .pno(postDTO.getPno())
+                .title(postDTO.getTitle())
+                .comment(postDTO.getComment())
+                .clubMember(ClubMember.builder().email(postDTO.getEmail()).build())
+                .build();
+        entityMap.put("post", post);
 
-        postDTO.setImageDTOList(postImageDTOList);
+        List<PostImageDTO> postImageDTOList = postDTO.getImageDTOList();
+        if(postImageDTOList != null && postImageDTOList.size() > 0){
+            List<PostImage> postImageList = postImageDTOList.stream().map(postImageDTO ->
+                    EntityMapper.dtoToEntity(postImageDTO)).collect(Collectors.toList());
 
-        return postDTO;
+            entityMap.put("imgList", postImageList);
+        }
+
+        return entityMap;
     }
 
     public static ReplyDTO entityToDTO(Reply reply){

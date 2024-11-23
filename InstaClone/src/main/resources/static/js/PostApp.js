@@ -5,6 +5,7 @@ const PostApp = {
         loginName: null,
         userName: null,
         formData: null,
+        uploadImages : [],
     },
 
     $object: {
@@ -74,10 +75,13 @@ const PostApp = {
         var str = "";
         var carouselTag = "";
 
-        $.each(data, function (idx, imageInfo) {
-            str += "<input type='hidden' name='imageDTOList["+idx+"].imgName' value='"+imageInfo['fileName'] +"'>";
-            str += "<input type='hidden' name='imageDTOList["+idx+"].path' value='"+imageInfo['folderPath']+"'>";
-            str += "<input type='hidden' name='imageDTOList["+idx+"].uuid' value='"+imageInfo['uuid']+"'>";
+
+        data.forEach((imageInfo, idx) => {
+            this.$data.uploadImages.push({
+                "imgName": imageInfo['fileName'],
+                "path": imageInfo['folderPath'],
+                "uuid": imageInfo['uuid']
+            });
 
             if(idx ==0)
                 carouselTag += '<div class="carousel-item active">'
@@ -85,7 +89,7 @@ const PostApp = {
                 carouselTag += '<div class="carousel-item">'
             carouselTag += '<img src=\"/display?fileName='+imageInfo.imageURL+'/\" alt=\"Profile Picture\" class=\"post-image\">';
             carouselTag += '</div>';
-        });
+        })
 
         $.getJSON("/getWidthAndHeight?fileName=" +(data[0].imageURL), function (arr){
             console.log(arr)

@@ -340,19 +340,14 @@
           </div>
         </div>
 
-    <form class="upload-form" id=upload-form th:action="@{/sidebar/post/{userName}(userName=${memberDTO.name})}" th:method="post">
-      <div class="upload-title-input">
-        <textarea class="text-field" placeholder="제목을 입력하세요..." name="title"></textarea>
-      </div>
-      <div class="upload-button-box">
-          <input type="hidden" name="email" th:value="${memberDTO.email}">
-        <div id="upload-form-image-box">
 
-        </div>
-          <button type="button" class="btn btn-primary" id="upload-post-button">공유하기</button>
-      </div>
+    <div class="upload-title-input">
+      <textarea class="text-field" placeholder="제목을 입력하세요..." id="post-title"></textarea>
+    </div>
+    <div class="upload-button-box">
+        <button type="button" class="btn btn-primary" id="upload-post-button">공유하기</button>
+    </div>
 
-    </form>
   </div>
     </div>
 
@@ -401,7 +396,7 @@
           </div>
           <div class="upload-button-box modify-value">
             <input type="hidden" name="email" th:value="${memberDTO.email}">
-<!--            <input type="hidden" name="pno" th:value="${memberDTO.email}">-->
+
             <button type="button" class="btn btn-primary" id="modify-post-button">수정하기</button>
           </div>
         </form>

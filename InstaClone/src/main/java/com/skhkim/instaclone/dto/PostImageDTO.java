@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 @Builder
 public class PostImageDTO {
     private Long pino;
+    private Long pno;
     private String uuid;
     private String imgName;
     private String path;

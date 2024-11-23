@@ -16,6 +16,7 @@ import java.util.List;
 public class PostDTO {
     private Long pno;
     private String email;
+    private String name;
     private String comment;
     private String title;
     private Integer replyNum;
@@ -24,7 +25,6 @@ public class PostDTO {
     @Builder.Default
     private List<PostImageDTO> imageDTOList = new ArrayList<>();
 
-    private int reviewCnt;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
 

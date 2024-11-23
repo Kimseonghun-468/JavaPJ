@@ -1,8 +1,7 @@
 package com.skhkim.instaclone.service;
 
-import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
-import com.skhkim.instaclone.dto.PostPageRequestDTO;
 import com.skhkim.instaclone.dto.PostDTO;
+import com.skhkim.instaclone.dto.PostPageRequestDTO;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.repository.PostImageRepository;
@@ -21,11 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +36,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Long register(PostDTO postDTO){
+    public void register(PostDTO postDTO){
 
-        Map<String, Object> entityMap = dtoToEntity(postDTO);
+        Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
         Post post = (Post) entityMap.get("post");
         List<PostImage> postImageList = (List<PostImage>) entityMap.get("imgList");
 
@@ -52,13 +48,12 @@ public class PostServiceImpl implements PostService {
             postImageRepository.save(postImage);
         });
 
-            return post.getPno();
     }
 
     @Override
     @Transactional
     public void modifyTitle(PostDTO postDTO){
-        Map<String, Object> entityMap = dtoToEntity(postDTO);
+        Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
         Post post = (Post) entityMap.get("post");
         postRepository.save(post);
     }
@@ -85,21 +80,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDTO getPostByID(Long pno){
         Post post = postRepository.findByPno(pno);
-        PostDTO postDTO = postToDTO(post);
+        PostDTO postDTO = EntityMapper.entityToDTO(post);
         return postDTO;
     }
 
     @Override
     public PostDTO getPostWithAllImage(Long postID){
         List<Object[]> result = postRepository.getPostWithAll(postID);
-
         Post post = (Post) result.get(0)[0];
 
-        List<PostImage> postImageList =  result.stream().map(arr -> {
-            return (PostImage) arr[1];
-        }).collect(Collectors.toList());
-
-        return entitiesToDTO(post, postImageList);
+        return EntityMapper.entityToDTO(post);
     }
     @Override
     @Transactional
