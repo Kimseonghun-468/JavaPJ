@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     $("#friendship-requested").click(function () {
         $('#friendShip-requestedModal').modal('show');
-        var loginName = document.getElementById("loginName").dataset.loginName;
-        WaitFriendApp.init(loginName);
+
+        WaitFriendApp.init(UserProfileApp.$data.loginName);
 
         selectWaitUsersInfo(WaitFriendApp.$data.loginName, WaitFriendApp.$data.page);
 

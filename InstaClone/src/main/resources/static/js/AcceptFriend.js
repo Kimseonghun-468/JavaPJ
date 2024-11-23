@@ -1,9 +1,7 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     $("#friendship-accepted").click(function (){
         $('#friendShip-acceptedModal').modal('show');
-        var loginName = document.getElementById("loginName").dataset.loginName;
-
-        AceeptFriendApp.init(loginName);
+        AceeptFriendApp.init(UserProfileApp.$data.loginName);
         selectUsersInfo(AceeptFriendApp.$data.loginName, AceeptFriendApp.$data.page);
 
         // Make Infinite Scroll Pagination

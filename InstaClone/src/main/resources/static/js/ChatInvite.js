@@ -1,10 +1,8 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     $('#invite-chatuser').click(function (){
         $('#inviteModal').css('z-index', 1053).modal('show');
-        var loginName = document.getElementById("loginName").dataset.loginName;
-        var loginEmail = document.getElementById("loginEmail").dataset.loginEmail;
 
-        ChatInviteApp.init(loginName, loginEmail);
+        ChatInviteApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.loginEmail);
 
         selectInviteUserList(ChatInviteApp.$data.loginName, ChattingApp.$data.nameAndEmailDict, ChatInviteApp.$data.page)
 
@@ -20,7 +18,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
             $('#inviteSearchResult').html("");
             // app으로 가져가
             let roomUserList = Object.keys(ChattingApp.$data.nameAndEmailDict);
-            selectInviteSearchUserList(loginName, ChatInviteApp.$data.searchTerm, roomUserList, ChatInviteApp.$data.page);
+            selectInviteSearchUserList(ChatInviteApp.$data.loginName, ChatInviteApp.$data.searchTerm, roomUserList, ChatInviteApp.$data.page);
 
         }
     });

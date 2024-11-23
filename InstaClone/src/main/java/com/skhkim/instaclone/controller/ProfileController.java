@@ -1,7 +1,7 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.context.LoginContext;
-import com.skhkim.instaclone.dto.ProfileImageDTO;
+import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.type.FriendStatus;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.FriendShipService;
@@ -37,13 +37,12 @@ public class ProfileController {
                           @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                           Model model){
 
-        LoginContext.getUserInfo();
+        UserInfoDTO userInfoDTO = LoginContext.getUserInfo();
+
         String userEamil = postService.getEmailByUserName(name); // 삭제
-        ProfileImageDTO profileImageDTO = profileService.getProfileImage(name); // 삭제
         FriendStatus friendStatus = friendShipService.checkFriendShip(clubAuthMemberDTO.getName(), name);
         model.addAttribute("friendshipStatus", friendStatus); // ## 필요,,?
         model.addAttribute("userExist", memberService.getUserExist(name)); // 이거는 만들자.. ##
-        model.addAttribute("profileImageDTO", profileImageDTO); // 여것도 필요없음.
         model.addAttribute("memberDTO", clubAuthMemberDTO); // 이것도 이름만 남겨여함.
         model.addAttribute("userName", name); // 남겨놓기
         model.addAttribute("userEmail", userEamil); // 지워야ㅕ함

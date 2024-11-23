@@ -10,6 +10,7 @@ const UserProfileApp = {
     },
 
     $object: {
+        profileTable: null,
     },
 
     $event: {
@@ -18,14 +19,14 @@ const UserProfileApp = {
     init(userName, loginName) {
         this.$data.loginName = loginName;
         this.$data.userName = userName;
+        this.$object.profileTable = $("#profile-table")
         selectUserInfo(userName)
     },
 
     setUserInfo(data){
         this.$data.userEmail = data.userEmail;
-        this.$data.profileImage = data.imageURL;
-
-
+        if(data.path != null)
+            this.$data.profileImage = "/display?fileName=" + data.imageURL;
     },
 
     setFormData(){
@@ -35,7 +36,7 @@ const UserProfileApp = {
     },
 
 
-    setProfile(){
+    insertProfile(result){
         var str = "";
         result.forEach((item, index) => {
             str += "<input type='hidden' name='imgName' value='" + item['fileName'] + "'>";
@@ -46,5 +47,18 @@ const UserProfileApp = {
         })
         $("#profile-box").html(str);
         $("#Profile-Image").submit();
-    }
+    },
+
+    setProfile(){
+        var result = ""
+        if (this.$data.userName = this.$data.loginName){
+            result += '<input type="file" class="fileInput profile-Image-File" style="display: none;">'
+        }
+        result += '<img src="' + imageUrl + '" alt="Profile Picture" ' +
+            'class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;  />';
+
+        this.$object.profileTable.html(result);
+
+    },
+
 }

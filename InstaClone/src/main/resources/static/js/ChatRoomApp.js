@@ -17,7 +17,7 @@ const ChatRoomApp = {
         scrollPagination : null,
     },
 
-    init(loginEmail, loginName) {
+    init(loginName, loginEmail) {
         console.log("ChatRoom App 초기화 중...");
         this.$data.page = 1;
         this.$data.loginEmail = loginEmail;

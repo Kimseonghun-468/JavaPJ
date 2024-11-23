@@ -1,10 +1,8 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     $(document).on('click', '.post-list-img',function() {
         $('#postModal').modal('show');
-        var loginName = document.getElementById("loginName").dataset.loginName;
-        var loginEmail = document.getElementById("loginEmail").dataset.loginEmail;
 
-        PostDetailApp.init(loginName, loginEmail, UserProfileApp.$data.userEmail);
+        PostDetailApp.init(UserProfileApp.$data.loginName);
 
         var commentBox = document.querySelector('#reply-box');
         commentBox.addEventListener('input', handleInput)

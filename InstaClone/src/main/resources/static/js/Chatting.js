@@ -1,11 +1,9 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     $(document).on('click', '.request-Chatroom-button', function (){
         $('#chatMessageModal').css('z-index', 1052).modal('show');
-        var loginName = document.getElementById("loginName").dataset.loginName;
-        var loginEmail = document.getElementById("loginEmail").dataset.loginEmail;
         var roomId = $(this).attr('room-id')
 
-        ChattingApp.init(loginName, loginEmail, roomId)
+        ChattingApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.loginEmail, roomId)
 
         selectChattingUp(ChattingApp.$data.loginEmail, ChattingApp.$data.roomId, ChattingApp.$data.upPage)
         selectChattingDown(ChattingApp.$data.loginEmail, ChattingApp.$data.roomId, ChattingApp.$data.downPage)
@@ -20,7 +18,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
                 content: messageContent,
                 senderEmail: ChattingApp.$data.loginEmail
             };
-            ChattingApp.$data.stompClient.send("/app/chat/"+roomId, {}, JSON.stringify(chatMessage));
+            ChattingApp.$data.stompClient.send("/app/chat/"+ChattingApp.$data.roomId, {}, JSON.stringify(chatMessage));
         })
 
     });

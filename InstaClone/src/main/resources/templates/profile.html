@@ -11,6 +11,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 
+  <script src="/js/UserProfileApp.js"></script>
+  <script src="/js/UserProfile.js"></script>
   <script src="/js/AcceptFriend.js"></script>
   <script src="/js/AcceptFriendApp.js"></script>
   <script src="/js/WaitFriend.js"></script>
@@ -29,8 +31,6 @@
   <script src="/js/PostApp.js"></script>
   <script src="/js/PostDetail.js"></script>
   <script src="/js/PostDetailApp.js"></script>
-  <script src="/js/UserProfileApp.js"></script>
-  <script src="/js/UserProfile.js"></script>
   <script src="/js/Core.js"></script>
 
   <link th:href="@{/css/carouselCustom.css}" rel="stylesheet">
@@ -98,15 +98,7 @@
       <div class="temp4">
         <header class="profile-header">
           <div class="profile-summary">
-            <div class="up-profile-picture">
-              <input type="file" th:if="${memberDTO.name == userName}"
-                     class="fileInput profile-Image-File" style="display: none;">
-              <img th:if ="${profileImageDTO.path != null}"
-                   th:src ="|/display?fileName=${profileImageDTO.getThumbnailURL()}|"
-                   alt="Profile Picture" class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;">
-              <img th:if ="${profileImageDTO.path == null}"
-                   th:src ="|/display?fileName=outprofile.png|"
-                   alt="Profile Picture" class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;">
+            <div class="up-profile-picture" id="profile-table">
 
             </div>
             <div class="profile-info">
@@ -255,10 +247,7 @@
       <div class="comment-header">
         <div class="reply-main" style="align-items: center;">
           <div class="reply-image-container">
-            <img th:if ="${profileImageDTO.path != null}"
-                 th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|" class="reply-profile">
-            <img th:if ="${profileImageDTO.path == null}"
-                 th:src ="|/display?fileName=outprofile.png|" class="reply-profile">
+
           </div>
           <div class="reply-wrapper">
             <div class="reply-name">[[${userName}]]</div>
@@ -318,13 +307,10 @@
         <div class="comment-header">
           <div class="reply-main" style="align-items: center;">
             <div class="reply-image-container">
-              <img th:if ="${profileImageDTO.path != null}"
-                   th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|" class="reply-profile">
-              <img th:if ="${profileImageDTO.path == null}"
-                   th:src ="|/display?fileName=outprofile.png|" class="reply-profile">
+
             </div>
             <div class="reply-wrapper">
-              <div class="reply-name">[[${userName}]]</div>
+
             </div>
           </div>
         </div>
@@ -368,10 +354,7 @@
         <div class="comment-header">
           <div class="reply-main" style="align-items: center;">
             <div class="reply-image-container">
-              <img th:if ="${profileImageDTO.path != null}"
-                   th:src ="|/display?fileName=${profileImageDTO.getImageURL()}|" class="reply-profile">
-              <img th:if ="${profileImageDTO.path == null}"
-                   th:src ="|/display?fileName=outprofile.png|" class="reply-profile">
+
             </div>
             <div class="reply-wrapper">
               <div class="reply-name">[[${userName}]]</div>

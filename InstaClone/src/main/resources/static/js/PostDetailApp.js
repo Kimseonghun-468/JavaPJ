@@ -3,7 +3,6 @@ const PostDetailApp = {
         page: 1,
         hasNext: false,
         loginName: null,
-        loginEmail: null,
         userName: null,
         postId: null,
         noneImage: "/display?fileName=outprofile.png/",
@@ -18,26 +17,11 @@ const PostDetailApp = {
         scrollPagination : null,
     },
 
-    init(loginName, loginEmail, userEmail) {
+    init(loginName) {
         console.log("Detail App 초기화 중...");
         this.$data.page = 1;
         this.$data.loginName = loginName;
-        this.$data.loginEmail = loginEmail;
-        this.$data.userEmail = userEmail;
-
         this.$object.replyTable = $("#post-reply-container"); // ksh 바꿔야함
-        this.$object.scrollContainer = document.getElementById('waitContainer'); // 너도 바꿔야
-        this.scrollPaging = this.scrollPaging.bind(this);
-    },
-
-    scrollPaging(){
-        var container = this.$object.scrollContainer;
-        var value = container.scrollHeight - container.scrollTop
-        if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
-            if(this.$data.hasNext)
-                // selectWaitUsersInfo(this.$data.loginName, this.$data.page);
-                ;
-        }
     },
 
     setPostImageList(data){
@@ -141,9 +125,9 @@ const PostDetailApp = {
     },
 
     createTitleTag(userName, title, imageUrl, regDate) {
-        result = ""
+        var result = ""
         result += '<div class="reply-title">'
-        result += '<img src="/display?fileName=' + imageUrl + '/" class="reply-profile">';
+        result += '<img src="' + imageUrl + '" class="reply-profile">';
         result += '</div>'
         result += '<div class="reply-wrapper">'
         result += '<div class="reply-name">' + userName + '</div>'

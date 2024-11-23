@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     $("#chatting-roomList").click(function () {
         $('#chatroom-Modal').modal('show');
-        var loginEmail = document.getElementById("loginEmail").dataset.loginEmail;
-        var loginName = document.getElementById("loginName").dataset.loginName;
-        ChatRoomApp.init(loginEmail, loginName)
+
+        ChatRoomApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.loginEmail)
 
         selectChatRoom(ChatRoomApp.$data.loginEmail, ChatRoomApp.$data.page);
 

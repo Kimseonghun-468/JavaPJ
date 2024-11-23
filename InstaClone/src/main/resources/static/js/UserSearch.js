@@ -2,9 +2,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $("#search-user").click(function (){
         $('#SearchModal').css('z-index', 1060).modal('show');
         $('#searchResult').append('<div class="not-exist-list">사용자를 검색해주세요.</div>')
-        var loginName = document.getElementById("loginName").dataset.loginName;
 
-        UserSearchApp.init(loginName);
+        UserSearchApp.init(UserProfileApp.$data.loginName);
 
         UserSearchApp.$event.scrollPagination = debounce(UserSearchApp.scrollPaging,300);
         UserSearchApp.$object.scrollContainer.addEventListener('scroll', UserSearchApp.$event.scrollPagination);

@@ -51,6 +51,7 @@ function selectUserInfo(userName){
         dataType: "JSON",
         success: function (data){
             UserProfileApp.setUserInfo(data);
+            UserProfileApp.setProfile();
         }
     })
 }
@@ -63,9 +64,10 @@ function uploadProfile(formData){
         data: formData,
         type: 'POST',
         dataType: 'json',
-        success: function (){
-            UserProfileApp.setProfile()
+        success: function (response){
+            UserProfileApp.insertProfile(response)
         }
     })
 }
+
 
