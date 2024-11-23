@@ -27,7 +27,6 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public boolean checkDuplication(ClubMemberDTO memberDTO){
-        log.info("Club member DTO in Duplication : " + memberDTO);
         boolean checkResult = clubMemberRepository.existsByNameAndEmail(memberDTO.getName(),memberDTO.getEmail());
         return checkResult;
     }

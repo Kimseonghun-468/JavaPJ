@@ -49,11 +49,9 @@ public class LoginController {
 
     @PostMapping("/signup")
     public String singupMember(@RequestBody ClubMemberDTO memberDTO){
-        log.info("memberDTO : " + memberDTO);
         boolean checkResult = loginService.checkDuplication(memberDTO);
-        log.info("checkResult : " + checkResult);
         if(checkResult){
-            log.info("이름이나 이메일이 중복");
+
             return "redirect:/login/signup?error";
         }
         else{

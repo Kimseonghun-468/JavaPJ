@@ -47,7 +47,6 @@ public class UploadController {
             }
             String originalName = uploadFile.getOriginalFilename();
             String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1);
-            log.info("fileName : " + fileName);
 
             String folderPath = makeFolder();
             String uuid = UUID.randomUUID().toString();
@@ -92,14 +91,10 @@ public class UploadController {
     @GetMapping("/display")
     public ResponseEntity<byte  []> getFile(String fileName){
         ResponseEntity<byte[]> result = null;
-        log.info("First Name : " + fileName);
         try{
             String srcFileName = fileName;//URLDecoder.decode(fileName, "UTF-8");
-            log.info("fileName : " + srcFileName);
 
             File file = new File(uploadPath + File.separator +srcFileName);
-
-            log.info("file : " + file);
 
             HttpHeaders header = new HttpHeaders();
 
@@ -114,7 +109,6 @@ public class UploadController {
 
     @GetMapping("/getWidthAndHeight")
     public ResponseEntity<List<Integer>> getWidthAndHeight(String fileName){
-        log.info("First Name : " + fileName);
         List<Integer> imageInfo = new ArrayList<>();
         try{
             File imageFile = new File(uploadPath + File.separator +fileName);

@@ -44,8 +44,6 @@ public class ReplyController {
 //    }
     @DeleteMapping("/{replynum}")
     public ResponseEntity<Long> removeReply(@PathVariable Long replynum){
-        log.info("replynum : " + replynum);
-
         replyService.remove(replynum);
 
         return new ResponseEntity<>(replynum, HttpStatus.OK);

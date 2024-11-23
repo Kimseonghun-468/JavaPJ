@@ -30,7 +30,6 @@ public class WebSocketEventListener {
         String sessionId = headerAccessor.getSessionId();
         chatRoomSessionManager.addUserToRoom(roomId, userId);
         webSocketSessionManager.addSessionToRoomAndName(sessionId, roomId, userId);
-        log.info("Received a new web socket connection from userId: " + userId);
     }
 
     @EventListener
@@ -43,7 +42,6 @@ public class WebSocketEventListener {
             String userId = ((ClubAuthMemberDTO) authenticationToken.getPrincipal()).getName();
             chatRoomSessionManager.removeUserFromRoom(chatSession.get(0), chatSession.get(1));
             webSocketSessionManager.removeSession(sessionId);
-            log.info("User Disconnected : " + userId);
         }
     }
 }

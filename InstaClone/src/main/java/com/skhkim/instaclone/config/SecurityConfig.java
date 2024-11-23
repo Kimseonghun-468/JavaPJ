@@ -30,8 +30,6 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http, JwtFilter jwtFilter) throws Exception {
-        log.info("-------------_Filter chin-------------");
-
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.formLogin((formLogin) -> formLogin.loginPage("/login"));

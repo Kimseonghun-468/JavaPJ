@@ -36,9 +36,6 @@ public class MemberController {
     public String singupMember(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
              ClubMemberDTO memberDTO,
              RedirectAttributes redirectAttributes){
-//        ClubMemberRole role = new ClubMemberRole();
-        log.info("authDTO : " +clubAuthMemberDTO);
-        log.info("memberDTO : " + memberDTO);
 
         boolean checkResult = loginService.checkDuplication(memberDTO);
 

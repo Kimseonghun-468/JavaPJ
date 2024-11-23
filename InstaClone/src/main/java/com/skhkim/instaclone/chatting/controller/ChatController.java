@@ -42,7 +42,6 @@ public class ChatController {
     @MessageMapping("/chat/{roomID}")
     @SendTo("/topic/chat/{roomID}")
     public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO) {
-        log.info("Room ID :"+ roomID);
         Long id = Long.parseLong(roomID);
         Long userNum = chatRoomService.getUserNum(id);
         int readStatus = userNum.intValue() - chatRoomSessionManager.getRoomJoinNum(roomID);

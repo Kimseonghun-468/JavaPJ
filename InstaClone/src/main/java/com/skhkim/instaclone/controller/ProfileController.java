@@ -76,7 +76,6 @@ public class ProfileController {
 
     @PostMapping("/sidebar/profileImage/{name}")
     public String profileImage(@PathVariable("name") String name, ProfileImageDTO profileImageDTO) throws UnsupportedEncodingException{
-        log.info("Profile Image DTO : " + profileImageDTO);
         profileService.register(profileImageDTO);
         String encodedName = URLEncoder.encode(name, "UTF-8");
         return "redirect:/sidebar/"+encodedName;

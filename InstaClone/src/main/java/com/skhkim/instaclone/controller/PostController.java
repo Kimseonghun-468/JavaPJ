@@ -22,7 +22,6 @@ public class PostController {
     private final PostService postService;
     @PostMapping("/postInfoWithImage")
     public ResponseEntity<PostDTO> getPostInfoWithImage(Long pno){
-        log.info("Post number : " + pno);
         PostDTO postDTO = postService.getPostWithAllImage(pno);
 
         return new ResponseEntity<>(postDTO, HttpStatus.OK);
