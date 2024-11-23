@@ -31,7 +31,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final ReplyRepository replyRepository;
-    @Value("/Users/gimseonghun/JavaPJ/InstaClone/data/")
+    @Value("${instaclone.upload.path")
     private String uploadPath;
 
     @Override

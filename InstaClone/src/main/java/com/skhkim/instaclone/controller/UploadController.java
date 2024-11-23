@@ -31,7 +31,7 @@ import java.util.UUID;
 @Log4j2
 public class UploadController {
 
-    @Value("/Users/gimseonghun/JavaPJ/InstaClone/data/")
+    @Value("${instaclone.upload.path")
     private String uploadPath;
 
     @PostMapping("/uploadAjax")

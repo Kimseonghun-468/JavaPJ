@@ -30,14 +30,14 @@ public class ProfileServiceImpl implements ProfileService{
 
     private final ProfileImageRepository profileImageRepository;
     private final ClubMemberRepository memberRepository;
-    @Value("/Users/gimseonghun/JavaPJ/InstaClone/data/")
+    @Value("${instaclone.upload.path")
     private String uploadPath;
 
     @Override
     @Transactional
     public void register(ProfileImageDTO profileImageDTO){
 
-        ProfileImage profileImage = dtoToEntity(profileImageDTO);
+        ProfileImage profileImage = EntityMapper.dtoToEntity(profileImageDTO);
         ProfileImage beforeImage = profileImageRepository.findByUserEmail(profileImage.getClubMember().getEmail());
         profileImageRepository.deleteByUserEmail(profileImage.getClubMember().getEmail());
         deleteImage(beforeImage);
@@ -61,7 +61,7 @@ public class ProfileServiceImpl implements ProfileService{
 
         ProfileImage profileImage = profileImageRepository.findByUserName(name);
         if(profileImage != null){
-            return entityToDTO(profileImage);
+            return EntityMapper.entityToDTO(profileImage);
         }
         else{
             return ProfileImageDTO.builder().build();

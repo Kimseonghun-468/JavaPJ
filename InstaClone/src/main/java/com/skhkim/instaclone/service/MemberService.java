@@ -21,18 +21,4 @@ public interface MemberService {
     boolean getUserExist(String name);
 
     UserInfoDTO selectUserInfo(String userName);
-    default ClubMemberDTO entityToDTO(ClubMember clubMember){
-
-        ClubMemberDTO clubMemberDTO = ClubMemberDTO.builder()
-                .email(clubMember.getEmail())
-                .password(clubMember.getPassword())
-                .name(clubMember.getName())
-                .fromSocial(clubMember.isFromSocial())
-                .roleSet(clubMember.getRoleSet())
-                .regDate(clubMember.getRegDate())
-                .modDate(clubMember.getModDate())
-                .build();
-
-        return clubMemberDTO;
-    }
 }

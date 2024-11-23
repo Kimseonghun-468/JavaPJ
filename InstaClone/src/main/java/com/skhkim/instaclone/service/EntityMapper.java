@@ -164,5 +164,25 @@ public class EntityMapper {
                 .build();
         return replyDTO;
     }
+
+    public static ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
+        return ProfileImage.builder()
+                .clubMember(ClubMember.builder().email(profileImageDTO.getUserEmail()).build())
+                .path(profileImageDTO.getPath())
+                .uuid(profileImageDTO.getUuid())
+                .imgName(profileImageDTO.getImgName())
+                .build();
+    }
+
+    public static ProfileImageDTO entityToDTO(ProfileImage profileImage){
+        return ProfileImageDTO.builder()
+                .pfino(profileImage.getPfino())
+                .userName(profileImage.getClubMember().getName())
+                .imgName(profileImage.getImgName())
+                .userEmail(profileImage.getClubMember().getEmail())
+                .path(profileImage.getPath())
+                .uuid(profileImage.getUuid())
+                .build();
+    }
 }
 
