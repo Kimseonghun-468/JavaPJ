@@ -102,7 +102,7 @@ const AceeptFriendApp = {
         var value = container.scrollHeight - container.scrollTop
         if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
             if(this.$data.hasNext)
-            selectUsersInfo(this.$data.loginName, this.$data.page)
+            selectUsersInfo(this.$data.page)
         }
     }
 };

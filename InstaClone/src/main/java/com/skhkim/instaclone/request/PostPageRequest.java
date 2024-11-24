@@ -1,4 +1,4 @@
-package com.skhkim.instaclone.dto;
+package com.skhkim.instaclone.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,17 +9,17 @@ import org.springframework.data.domain.Pageable;
 @Builder
 @AllArgsConstructor
 @Data
-public class ProfilePageRequestDTO {
+public class PostPageRequest {
     private int page;
     private int size;
     private String type;
     private String keyword;
-    public ProfilePageRequestDTO(){
+    public PostPageRequest(){
         this.page = 1;
-        this.size = 12;
-
+        this.size = 6;
     }
     public Pageable getPageable(){
         return PageRequest.of(page -1, size);
+
     }
 }

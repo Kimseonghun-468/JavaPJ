@@ -10,7 +10,7 @@ import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
-import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.response.UserInfoResponse;
@@ -118,8 +118,8 @@ public class ChatController {
     }
 
     @PostMapping("/chat/selectChatRoom")
-    public ResponseEntity selectChatRoom(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail){
-        ChatRoomResponse result = chatUserService.getProfileAndUseByLoginNamePage(profilePageRequestDTO, loginEmail);
+    public ResponseEntity selectChatRoom(UserInfoPageRequest userInfoPageRequest, String loginEmail){
+        ChatRoomResponse result = chatUserService.getProfileAndUseByLoginNamePage(userInfoPageRequest, loginEmail);
         return ResponseEntity.ok(result);
     }
 

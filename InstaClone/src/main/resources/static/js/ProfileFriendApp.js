@@ -32,7 +32,7 @@ const ProfileFriendApp = {
         var value = container.scrollHeight - container.scrollTop
         if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
             if(this.$data.hasNext)
-                selectProfileFriend(this.$data.loginName, this.$data.userName, this.$data.page)
+                selectProfileFriend(this.$data.userName, this.$data.page)
         }
     },
 

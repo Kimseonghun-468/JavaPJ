@@ -93,7 +93,7 @@ const WaitFriendApp = {
         var value = container.scrollHeight - container.scrollTop
         if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
             if(this.$data.hasNext)
-                selectWaitUsersInfo(this.$data.loginName, this.$data.page)
+                selectWaitUsersInfo(this.$data.page)
         }
     }
 }

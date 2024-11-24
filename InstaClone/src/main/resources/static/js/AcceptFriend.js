@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $("#friendship-accepted").click(function (){
         $('#friendShip-acceptedModal').modal('show');
         AceeptFriendApp.init(UserProfileApp.$data.loginName);
-        selectUsersInfo(AceeptFriendApp.$data.loginName, AceeptFriendApp.$data.page);
+        selectUsersInfo(AceeptFriendApp.$data.page);
 
         // Make Infinite Scroll Pagination
         AceeptFriendApp.$event.scrollPagination = debounce(AceeptFriendApp.scrollPaging,300);
@@ -16,11 +16,10 @@ document.addEventListener("DOMContentLoaded", ()=> {
     })
 });
 
-function selectUsersInfo(loginName, page){
+function selectUsersInfo(page){
     $.ajax({
         url: '/api/v1/friend/selectAcceptUsersInfo?page='+page,
         type: "POST",
-        data: {loginName:loginName},
         dataType: "JSON",
         success: function (data){
             AceeptFriendApp.setUserInfo(data);

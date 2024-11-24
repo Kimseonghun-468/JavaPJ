@@ -85,7 +85,7 @@ function sendAcceptFriend(userName, $button){
 function sendFollowRequest(name, $button){
     data = {userName :name}
     $.ajax({
-        url: '/api/v1/friend/request',
+        url: '/api/v1/friend/requestFriend',
         type: 'POST',
         data: data,
         dataType: 'JSON',

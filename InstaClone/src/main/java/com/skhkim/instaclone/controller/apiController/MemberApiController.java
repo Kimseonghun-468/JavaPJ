@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,7 +45,7 @@ public class MemberApiController {
 
     }
 //    @GetMapping({"/modify",""})
-//    @PreAuthorize("hasRole('USER')")
+//
 //    public void signup(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
 //                       Model model){
 //
@@ -56,7 +55,7 @@ public class MemberApiController {
     // Password를 그대로 뱉는 문제가 있음 지금.. 이거 MemberDTO에서 왜 전부다 받아서 쓰는지 확인하고 수정해야함.
 //    }
 
-    @PreAuthorize("hasRole('USER')")
+
     @PostMapping("/socialChange")
     public String socialChange(ClubMemberDTO memberDTO, String newPassword){
         boolean checkResult = clubMemberRepository.existsByName(memberDTO.getName());

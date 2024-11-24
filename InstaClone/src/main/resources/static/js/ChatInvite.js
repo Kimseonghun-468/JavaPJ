@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
         ChatInviteApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.loginEmail);
 
-        selectInviteUserList(ChatInviteApp.$data.loginName, ChattingApp.$data.nameAndEmailDict, ChatInviteApp.$data.page)
+        selectInviteUserList(ChattingApp.$data.nameAndEmailDict, ChatInviteApp.$data.page)
 
         ChatInviteApp.$event.scrollPagination = debounce(ChatInviteApp.scrollPaging,300);
         ChatInviteApp.$object.scrollContainer.addEventListener('scroll', ChatInviteApp.$event.scrollPagination);
@@ -61,11 +61,11 @@ document.addEventListener("DOMContentLoaded", ()=> {
     })
 });
 
-function selectInviteUserList(loginName, roomUsers, page){
+function selectInviteUserList(roomUsers, page){
     $.ajax({
         url: '/api/v1/friend/inviteList?page=' + page,
         type: "POST",
-        data: {loginName: loginName, roomUsers:Object.keys(roomUsers)},
+        data: {roomUsers:Object.keys(roomUsers)},
         dataType: "JSON",
         traditional: true,
         success: function (data) {

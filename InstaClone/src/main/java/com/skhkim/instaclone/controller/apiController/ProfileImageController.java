@@ -19,7 +19,7 @@ import java.net.URLEncoder;
 @RequestMapping("/profileImage")
 @Log4j2
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('USER')")
+
 public class ProfileImageController {
     private final ProfileService profileService;
 

@@ -7,7 +7,7 @@ import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 
-import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.response.UserInfoResponse;
@@ -74,8 +74,8 @@ public class ChatUserServiceImpl implements ChatUserService {
 
     @Override
     public ChatRoomResponse
-    getProfileAndUseByLoginNamePage(ProfilePageRequestDTO profilePageRequestDTO, String loginEmail){
-        Pageable pageable = profilePageRequestDTO.getPageable();
+    getProfileAndUseByLoginNamePage(UserInfoPageRequest userInfoPageRequest, String loginEmail){
+        Pageable pageable = userInfoPageRequest.getPageable();
         Slice<ChatRoom> result = chatUserRepository.getTest(pageable ,loginEmail);
         List<ChatRoomDTO> chatRoomDTOS = result.stream().map(chatRoom -> EntityMapper.entityToDTO(chatRoom)).toList();
 

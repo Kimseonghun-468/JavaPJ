@@ -1,7 +1,7 @@
 package com.skhkim.instaclone.controller.apiController;
 
 import com.skhkim.instaclone.dto.PostDTO;
-import com.skhkim.instaclone.dto.PostPageRequestDTO;
+import com.skhkim.instaclone.request.PostPageRequest;
 import com.skhkim.instaclone.response.ApiResponse;
 import com.skhkim.instaclone.response.PostResponse;
 import com.skhkim.instaclone.service.PostService;
@@ -23,8 +23,8 @@ public class PostApiController {
     }
 
     @PostMapping("/getPostInfo")
-    public ResponseEntity getPostInfo(PostPageRequestDTO postPageRequestDTO, String userName){
-        PostResponse result =  postService.getList(postPageRequestDTO, userName);
+    public ResponseEntity getPostInfo(PostPageRequest postPageRequest, String userName){
+        PostResponse result =  postService.getList(postPageRequest, userName);
         return ApiResponse.OK(result);
     }
     @DeleteMapping("/delete/{pno}")

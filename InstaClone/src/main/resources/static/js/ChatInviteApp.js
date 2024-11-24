@@ -45,7 +45,7 @@ const ChatInviteApp = {
                 if (this.$data.status == true) {
                     selectInviteSearchUserList(this.$data.loginName, this.$data.searchTerm, this.$data.roomUsers, this.$data.page)
                 } else {
-                    selectInviteUserList(this.$data.loginName, this.$data.roomUsers, this.$data.page)
+                    selectInviteUserList(this.$data.roomUsers, this.$data.page)
                 }
             }
         }

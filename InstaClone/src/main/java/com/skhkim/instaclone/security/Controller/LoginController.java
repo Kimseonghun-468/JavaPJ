@@ -60,7 +60,7 @@ public class LoginController {
         }
     }
     @PostMapping("/changeName")
-    @PreAuthorize("hasRole('USER')")
+
     public String changeName(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                              ClubMemberDTO memberDTO, String loadName) throws UnsupportedEncodingException {
         boolean checkResult = clubMemberRepository.existsByName(memberDTO.getName());
@@ -79,7 +79,7 @@ public class LoginController {
     }
 
     @PostMapping("/changePassword")
-    @PreAuthorize("hasRole('USER')")
+
     public String changePassword(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMemberDTO,
                                  ClubMemberDTO memberDTO, String newPassword) throws UnsupportedEncodingException{
         boolean checkResult = memberService.checkPassword(memberDTO);

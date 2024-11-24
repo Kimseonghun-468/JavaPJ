@@ -1,7 +1,7 @@
 package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.dto.PostDTO;
-import com.skhkim.instaclone.dto.PostPageRequestDTO;
+import com.skhkim.instaclone.request.PostPageRequest;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.repository.PostImageRepository;
@@ -56,8 +56,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getList(PostPageRequestDTO postPageRequestDTO, String name){
-        Pageable pageable = postPageRequestDTO.getPageable();
+    public PostResponse getList(PostPageRequest postPageRequest, String name){
+        Pageable pageable = postPageRequest.getPageable();
         Slice<Post> result = postRepository.getListPage(pageable, name);
         List<PostDTO> postDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 

@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
         WaitFriendApp.init(UserProfileApp.$data.loginName);
 
-        selectWaitUsersInfo(WaitFriendApp.$data.loginName, WaitFriendApp.$data.page);
+        selectWaitUsersInfo(WaitFriendApp.$data.page);
 
         // Make Infinite Scroll Pagination
         WaitFriendApp.$event.scrollPagination = debounce(WaitFriendApp.scrollPaging,300);
@@ -18,11 +18,10 @@ document.addEventListener("DOMContentLoaded", ()=> {
     });
 });
 
-function selectWaitUsersInfo(loginName, page){
+function selectWaitUsersInfo(page){
     $.ajax({
-        url: '/api/v1/friend/waitingList?page='+page,
+        url: '/api/v1/friend/selectWaitingFriend?page='+page,
         type: "POST",
-        data: {loginName:loginName},
         dataType: "JSON",
         success: function (data){
             WaitFriendApp.setUserInfo(data);

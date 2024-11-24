@@ -1,6 +1,6 @@
 package com.skhkim.instaclone.controller.apiController;
 
-import com.skhkim.instaclone.dto.ProfilePageRequestDTO;
+import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.response.ApiResponse;
 import com.skhkim.instaclone.response.UserInfoResponse;
@@ -23,7 +23,7 @@ public class FriendApiController {
 
     private final FriendShipService friendShipService;
     private final ProfileService profileService;
-    @PostMapping("/request")
+    @PostMapping("/requestFriend")
     public ResponseEntity request(String userName){
         boolean result = friendShipService.createFriendShip(userName);
         return ApiResponse.OK(result);
@@ -41,45 +41,42 @@ public class FriendApiController {
         return ApiResponse.OK(result);
     }
 
-
-
-
-    @PostMapping("waitingList")
+    @PostMapping("selectWaitingFriend")
     public ResponseEntity
-    getProfileImagebyClubMember(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
+    selectWaitingFriend(UserInfoPageRequest userInfoPageRequest){
         UserInfoResponse result =
-                profileService.getWaitingFriendListPage(profilePageRequestDTO, loginName);
+                profileService.getWaitingFriendListPage(userInfoPageRequest);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     @PostMapping("selectAcceptUsersInfo")
     public ResponseEntity
-    getProfileImageAcceptedList(ProfilePageRequestDTO profilePageRequestDTO, String loginName){
+    getProfileImageAcceptedList(UserInfoPageRequest userInfoPageRequest){
         UserInfoResponse result =
-                profileService.getAcceptFriendListPage(profilePageRequestDTO, loginName);
+                profileService.getAcceptFriendListPage(userInfoPageRequest);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("friendList")
     public ResponseEntity
-    getProfileImageFriendList(ProfilePageRequestDTO profilePageRequestDTO, String userName, String loginName){
+    getProfileImageFriendList(UserInfoPageRequest userInfoPageRequest, String userName){
         UserInfoResponse result =
-                profileService.getFriendListPage(profilePageRequestDTO, userName, loginName);
+                profileService.getFriendListPage(userInfoPageRequest, userName);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("inviteList")
     public ResponseEntity
-    getProfileImageInviteList(ProfilePageRequestDTO profilePageRequestDTO, String loginName,@RequestParam List<String> roomUsers){
+    getProfileImageInviteList(UserInfoPageRequest userInfoPageRequest, @RequestParam List<String> roomUsers){
         UserInfoResponse result =
-                profileService.getInviteListPage(profilePageRequestDTO, loginName, roomUsers);
+                profileService.getInviteListPage(userInfoPageRequest, roomUsers);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("firstList")
-    public ResponseEntity getProfileFirst(String userName, String loginName){
-        UserInfoDTO result = profileService.getFirstUser(userName, loginName);
+    public ResponseEntity getProfileFirst(String userName){
+        UserInfoDTO result = profileService.getFirstUser(userName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

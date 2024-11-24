@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", ()=> {
         ProfileFriendApp.init(loginName, userName);
 
 
-        selectFirstFriendProfile(userName, loginName)
+        selectFirstFriendProfile(userName)
         // then
-        selectProfileFriend(ProfileFriendApp.$data.loginName, ProfileFriendApp.$data.userName, ProfileFriendApp.$data.page)
+        selectProfileFriend(ProfileFriendApp.$data.userName, ProfileFriendApp.$data.page)
 
         ProfileFriendApp.$event.scrollPagination = debounce(ProfileFriendApp.scrollPaging, 300);
         ProfileFriendApp.$object.scrollContainer.addEventListener('scroll', ProfileFriendApp.$event.scrollPagination);
@@ -22,11 +22,11 @@ document.addEventListener("DOMContentLoaded", ()=> {
 });
 
 
-function selectProfileFriend(loginName, userName, page){
+function selectProfileFriend(userName, page){
     $.ajax({
         url: '/api/v1/friend/friendList?page=' + page,
         type: "POST",
-        data: {userName: userName, loginName: loginName},
+        data: {userName: userName},
         dataType: "JSON",
         success: function (data){
             ProfileFriendApp.setProfileFriend(data);
@@ -34,11 +34,11 @@ function selectProfileFriend(loginName, userName, page){
     });
 }
 
-function selectFirstFriendProfile(userName, loginName){
+function selectFirstFriendProfile(userName){
     $.ajax({
         url: "/api/v1/friend/firstList",
         type: "POST",
-        data: {userName:userName, loginName:loginName},
+        data: {userName:userName},
         dataType: "JSON",
         success: function (data){
             ProfileFriendApp.setFirst(data);
