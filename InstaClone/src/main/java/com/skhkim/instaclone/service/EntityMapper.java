@@ -165,6 +165,17 @@ public class EntityMapper {
         return replyDTO;
     }
 
+    public static Reply dtoToEntity(ReplyDTO replyDTO){
+
+        Reply postReply = Reply.builder()
+                .text(replyDTO.getText())
+                .post(Post.builder().pno(replyDTO.getPno()).build())
+                .clubMember(ClubMember.builder().email(replyDTO.getUserInfoDTO().getUserEmail()).build())
+                .build();
+
+        return postReply;
+    }
+
     public static ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
         return ProfileImage.builder()
                 .clubMember(ClubMember.builder().email(profileImageDTO.getUserEmail()).build())
@@ -184,5 +195,8 @@ public class EntityMapper {
                 .uuid(profileImage.getUuid())
                 .build();
     }
+
+
+
 }
 

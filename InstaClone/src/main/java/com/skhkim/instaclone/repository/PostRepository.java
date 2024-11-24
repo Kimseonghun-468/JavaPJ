@@ -21,7 +21,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "where p.clubMember.name = :name ")
     Long getPostCount(String email);
 
-    @Query("SELECT CASE WHEN COUNT(p) > 0 THEN TRUE ELSE FALSE END FROM Post p WHERE p.clubMember.email = :loginEmail")
+    @Query("SELECT CASE WHEN COUNT(p) > 0 THEN TRUE ELSE FALSE END FROM Post p WHERE p.clubMember.email = :loginEmail and p.pno = :pno")
     boolean checkValidation(Long pno, String loginEmail);
 
     @Modifying

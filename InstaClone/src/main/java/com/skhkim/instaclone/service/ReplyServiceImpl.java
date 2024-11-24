@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.ReplyDTO;
 import com.skhkim.instaclone.entity.Reply;
 
@@ -19,14 +20,24 @@ import java.util.List;
 @Log4j2
 public class ReplyServiceImpl implements ReplyService{
     private final ReplyRepository replyRepository;
-//    @Override
-//    public Long register(ReplyDTO replyDTO){
-//
-//        Reply reply = dtoToEntity(replyDTO);
-//        replyRepository.save(reply);
-//
-//        return reply.getRno();
-//    }
+    @Override
+    public ReplyDTO register(ReplyDTO replyDTO){
+        Reply reply = EntityMapper.dtoToEntity(replyDTO);
+        replyRepository.save(reply);
+        replyDTO.setRno(reply.getRno());
+
+        return replyDTO;
+    }
+    @Override
+    public boolean remove(Long rno) {
+
+        if(replyRepository.checkValidation(rno, LoginContext.getUserInfo().getUserEmail())) {
+            replyRepository.deleteById(rno);
+            return true;
+        }
+        else
+            return false;
+    }
 
 
     @Override
@@ -37,8 +48,5 @@ public class ReplyServiceImpl implements ReplyService{
         return new ReplyResponse(replyDTOS, result.hasNext());
 
     }
-    @Override
-    public void remove(Long replynum){
-        replyRepository.deleteById(replynum);
-    }
+
 }

@@ -101,8 +101,8 @@ function selectReplyList(postId, page){
         type:"POST",
         data: {pno:postId},
         dataType:"JSON",
-        success: function (data){
-            PostDetailApp.setReplyList(data);
+        success: function (response){
+            PostDetailApp.setReplyList(response.data);
         }
     })
 }
@@ -111,12 +111,12 @@ function insertReply(postId, commentBox, userEmail){
     var replyText = commentBox.value.replaceAll('\n', '<br>');
     var data = {pno:postId, text:replyText, email:userEmail};
     $.ajax({
-        url: '/reply/'+postId,
+        url: '/reply/insert',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json",
-        success: function (data){
-            PostDetailApp.setReply(data);
+        success: function (response){
+            PostDetailApp.setReply(response.data);
             $('#reply-box').val('');
             $('#reply-comment-body').scrollTop(0);
         }
@@ -135,11 +135,12 @@ function deletePost(pno){
 
 function deleteReply(rno){
     $.ajax({
-        url: '/reply/'+rno,
+        url: '/reply/delete',
         type: 'DELETE',
+        data: {rno: rno},
         contentType: "application/json; charset=utf-8",
         dataType: "text",
-        success: function (data){
+        success: function (response){
             $('[data-rno="' + rno + '"]').closest('.reply-main').remove();
         }
     })

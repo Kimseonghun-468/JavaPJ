@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReplyDTO {
+    private Long rno;
+    private Long pno;
     private UserInfoDTO userInfoDTO;
     private String text;
     private LocalDateTime regDate, modDate;
