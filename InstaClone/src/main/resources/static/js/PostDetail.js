@@ -56,8 +56,6 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
         $('#modify-post-button').click(function() {
             postRequest = {
-                "loginName" : UserProfileApp.$data.userName,
-                "loginEmail" : UserProfileApp.$data.userEmail,
                 "postId" : PostDetailApp.$data.postId,
                 "title" : document.getElementById('post-update-title').value,
             }
@@ -170,8 +168,6 @@ function handleKeyDown(event){
 
 function updatePost(postReuest){
     sendData = {
-        "email" : postRequest.loginEmail,
-        "name" : postRequest.loginName,
         "title" : postRequest.title,
         "pno" : postReuest.postId
     }

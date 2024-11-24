@@ -53,8 +53,8 @@ public class ChatController {
 
     @MessageMapping("/chat/accessLoad/{roomID}")
     @SendTo("/topic/chat/accessLoad/{roomID}")
-    public ChatUserDTO accessLoad(@DestinationVariable Long roomId, String loginName) {
-        ChatUserDTO result = chatUserService.selectChatUser(roomId, loginName);
+    public ChatUserDTO accessLoad(@DestinationVariable Long roomId) {
+        ChatUserDTO result = chatUserService.selectChatUser(roomId);
         return result;
     }
 
@@ -78,7 +78,7 @@ public class ChatController {
         // 그 와중에 이름으로 바꿔야겠네
 
         if (requestRoomId != null){
-            chatMessageService.updateChatMessagesReadStatus(requestRoomId, loginEmail);
+            chatMessageService.updateChatMessagesReadStatus(requestRoomId);
             return new ResponseEntity<>(requestRoomId, HttpStatus.OK);
         }
         Map<String, Object> chatRoomIDAndOR = chatRoomService.getORCreateChatRoomID(loginEmail, friendEmail);
@@ -87,25 +87,25 @@ public class ChatController {
             chatUserService.register(loginEmail, roomId);
             chatUserService.register(friendEmail, roomId);
         }
-        chatMessageService.updateChatMessagesReadStatus(roomId, loginEmail);
+        chatMessageService.updateChatMessagesReadStatus(roomId);
         return new ResponseEntity<>(roomId, HttpStatus.OK);
     }
     @PostMapping("/chat/selectChatRoomUsers")
-    public ResponseEntity selectChatRoomUsers(Long roomId, String loginEmail){
+    public ResponseEntity selectChatRoomUsers(Long roomId){
         UserInfoResponse result = chatUserService.selectChatRoomUsers(roomId);
-        chatMessageService.updateChatMessagesReadStatus(roomId, loginEmail);
+        chatMessageService.updateChatMessagesReadStatus(roomId);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/chat/selectChatMessageUp")
-    public ResponseEntity selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId, String loginEmail){
-        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(messagePageRequest, roomId, loginEmail);
+    public ResponseEntity selectChatMessageUp(MessagePageRequest replyPageRequest, Long roomId){
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(replyPageRequest, roomId);
         return ResponseEntity.ok(chatMessageResponse);
     }
 
     @PostMapping("/chat/selectChatMessageDown")
-    public ResponseEntity selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId, String loginEmail) {
-        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(messagePageRequest, roomId, loginEmail);
+    public ResponseEntity selectChatMessageDown(MessagePageRequest replyPageRequest, Long roomId) {
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(replyPageRequest, roomId);
         return ResponseEntity.ok(chatMessageResponse);
     }
 
@@ -116,20 +116,20 @@ public class ChatController {
     }
 
     @PostMapping("/chat/selectChatRoom")
-    public ResponseEntity selectChatRoom(UserInfoPageRequest userInfoPageRequest, String loginEmail){
-        ChatRoomResponse result = chatUserService.getProfileAndUseByLoginNamePage(userInfoPageRequest, loginEmail);
+    public ResponseEntity selectChatRoom(UserInfoPageRequest userInfoPageRequest){
+        ChatRoomResponse result = chatUserService.getProfileAndUseByLoginNamePage(userInfoPageRequest);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/chat/updateDisConnectTime")
-    public ResponseEntity<String> updateDisconnectTime(Long roomId, String loginEmail){
-        chatUserService.updateDisConnect(roomId, loginEmail);
+    public ResponseEntity<String> updateDisconnectTime(Long roomId){
+        chatUserService.updateDisConnect(roomId);
         return new ResponseEntity<>("성공", HttpStatus.OK);
     }
 
     @PostMapping("/chat/getNotReadNum")
-    public ResponseEntity<Long> getNotReadNum(String loginEmail, Long roomId){
-        Long resultNum = chatMessageService.getNotReadNum(loginEmail, roomId);
+    public ResponseEntity<Long> getNotReadNum(Long roomId){
+        Long resultNum = chatMessageService.getNotReadNum(roomId);
         return new ResponseEntity<>(resultNum, HttpStatus.OK);
     }
 

@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
         ChattingApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.loginEmail, roomId)
 
-        selectChattingUp(ChattingApp.$data.loginEmail, ChattingApp.$data.roomId, ChattingApp.$data.upPage)
-        selectChattingDown(ChattingApp.$data.loginEmail, ChattingApp.$data.roomId, ChattingApp.$data.downPage)
+        selectChattingUp(ChattingApp.$data.roomId, ChattingApp.$data.upPage)
+        selectChattingDown(ChattingApp.$data.roomId, ChattingApp.$data.downPage)
 
         ChattingApp.$event.scrollPagination = debounce(ChattingApp.scrollPaging,300);
         ChattingApp.$object.scrollContainer.addEventListener('scroll', ChattingApp.$event.scrollPagination);
@@ -31,11 +31,11 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 });
 
-function selectChattingUp(loginEmail, roomId ,page){
+function selectChattingUp(roomId ,page){
     $.ajax({
         url: '/chat/selectChatMessageUp?page=' + page,
         type: "POST",
-        data: {loginEmail: loginEmail, roomId:roomId},
+        data: {roomId:roomId},
         dataType: "JSON",
         success: function (data){
             ChattingApp.setChattingUp(data)
@@ -43,11 +43,11 @@ function selectChattingUp(loginEmail, roomId ,page){
     });
 }
 
-function selectChattingDown(loginEmail, roomId ,page){
+function selectChattingDown(roomId ,page){
     $.ajax({
         url: '/chat/selectChatMessageDown?page=' + page,
         type: "POST",
-        data: {loginEmail: loginEmail, roomId:roomId},
+        data: {roomId:roomId},
         dataType: "JSON",
         success: function (data){
             ChattingApp.setChattingDown(data)
@@ -56,12 +56,12 @@ function selectChattingDown(loginEmail, roomId ,page){
 }
 
 
-function getNotReadMessageNum(loginEmail, roomId) {
+function getNotReadMessageNum(roomId) {
     $.ajax({
         url: "/chat/getNotReadNum",
         type: "POST",
         dataType: "JSON",
-        data: {loginEmail: loginEmail, roomId: roomId},
+        data: {roomId: roomId},
         success: function (result){
             if (result > 300)
                 $('#num-'+roomId).html("300+");

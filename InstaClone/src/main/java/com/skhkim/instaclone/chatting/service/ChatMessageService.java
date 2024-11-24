@@ -7,13 +7,13 @@ import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
 
 public interface ChatMessageService {
 
-    Long getNotReadNum(String loginEmail, Long roomId);
+    Long getNotReadNum(Long roomId);
     void register(ChatMessageDTO chatMessageDTO, Long roomID);
 
-    void updateChatMessagesReadStatus(Long roomID, String userEmail);
-    ChatMessageResponse selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId, String loginEmail);
+    void updateChatMessagesReadStatus(Long roomID);
+    ChatMessageResponse selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId);
 
-    ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId, String loginEmail);
+    ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId);
 
 
 

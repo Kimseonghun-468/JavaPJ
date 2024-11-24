@@ -13,17 +13,17 @@ import java.util.List;
 public interface ChatUserService {
 
     void register(String userEmail, Long roomId);
-    void updateDisConnect(Long roomId, String loginEmail);
+    void updateDisConnect(Long roomId);
 
     List<Object[]> getEmailAndName(Long roomId);
 
     UserInfoResponse selectChatRoomUsers(Long roomId);
 
-    ChatUserDTO selectChatUser(Long roomId, String loginName);
+    ChatUserDTO selectChatUser(Long roomId);
 
     List<UserInfoDTO> selectChatUserList(Long roomId, List<String> invitNameList);
 
-    ChatRoomResponse getProfileAndUseByLoginNamePage(UserInfoPageRequest userInfoPageRequest, String loginEmail);
+    ChatRoomResponse getProfileAndUseByLoginNamePage(UserInfoPageRequest userInfoPageRequest);
 
     void insertChatUser(List<String> userEmails, Long roomId);
 

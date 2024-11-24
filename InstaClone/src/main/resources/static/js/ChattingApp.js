@@ -44,7 +44,7 @@ const ChattingApp = {
         this.$object.waitTable = $("#messages-box");
         this.$object.scrollContainer = document.getElementById('messages-modal');
         this.scrollPaging = this.scrollPaging.bind(this);
-        this.makeUserDict(roomId, loginEmail)
+        this.makeUserDict(roomId)
         this.connect()
 
     },
@@ -54,12 +54,12 @@ const ChattingApp = {
         var value = container.scrollHeight - container.scrollTop
         if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
             if(this.$data.hasNextDown)
-                selectChattingDown(this.$data.loginEmail, this.$data.roomId, this.$data.downPage)
+                selectChattingDown(this.$data.roomId, this.$data.downPage)
         }
 
         if (container.scrollTop >=0 &&  container.scrollTop <= 200) {
             if (this.$data.hasNextUp)
-                selectChattingUp(this.$data.loginEmail, this.$data.roomId, this.$data.upPage)
+                selectChattingUp(this.$data.roomId, this.$data.upPage)
 
         }
     },
@@ -107,11 +107,11 @@ const ChattingApp = {
         this.$data.hasNextDown = data.hasNext;
         this.$data.downPage += 1
     },
-    makeUserDict(roomId, loginEmail) {
+    makeUserDict(roomId) {
         $.ajax({
             url: '/chat/selectChatRoomUsers',
             type: 'POST',
-            data: {roomId : roomId, loginEmail:loginEmail},
+            data: {roomId : roomId},
             dataType: "JSON",
             success: (data) => {
                 data.userInfoDTOS.forEach((item, index) => {
@@ -168,7 +168,7 @@ const ChattingApp = {
                 result += '<div class="invite-list-container">'
                 result += '<div class="invite-user-list">' + names.slice(0, names.length-2) + '님이 초대되었습니다.</div>'
                 result += '</div>'
-                this.makeUserDict(roomId, this.$data.loginEmail)
+                this.makeUserDict(roomId)
                 $('#messages-box').append(result);
 
 
@@ -180,7 +180,6 @@ const ChattingApp = {
     disConnect() {
         var roomId = this.$data.roomId
         var client = this.$data.stompClient
-        var loginEmail = this.$data.loginEmail
 
         if (client !== null) {
             client.disconnect({'roomId': roomId});
@@ -189,7 +188,7 @@ const ChattingApp = {
         $.ajax({
             url: "/chat/updateDisConnectTime",
             type: "POST",
-            data: {roomId: roomId, loginEmail: loginEmail},
+            data: {roomId: roomId},
             dataType: "JSON",
             success: (data) => {
 

@@ -2,7 +2,6 @@ const AceeptFriendApp = {
     $data: {
         page: 1,
         hasNext: false,
-        loginName: null,
         noneImage: "/display?fileName=outprofile.png/",
     },
 
@@ -16,10 +15,9 @@ const AceeptFriendApp = {
         scrollPagination : null,
     },
 
-    init(loginName) {
+    init() {
         console.log("Accept App 초기화 중...");
         this.$data.page = 1;
-        this.$data.loginName = loginName;
         this.$object.acceptTable = $("#friendship-acceptedList");
         this.$object.scrollContainer = document.getElementById('acceptContainer');
         this.scrollPaging = this.scrollPaging.bind(this);

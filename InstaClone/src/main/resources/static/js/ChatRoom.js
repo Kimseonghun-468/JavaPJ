@@ -2,9 +2,9 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $("#chatting-roomList").click(function () {
         $('#chatroom-Modal').modal('show');
 
-        ChatRoomApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.loginEmail)
+        ChatRoomApp.init(UserProfileApp.$data.loginName)
 
-        selectChatRoom(ChatRoomApp.$data.loginEmail, ChatRoomApp.$data.page);
+        selectChatRoom(ChatRoomApp.$data.page);
 
         ChatRoomApp.$event.scrollPagination = debounce(ChatRoomApp.scrollPaging, 300);
         ChatRoomApp.$object.scrollContainer.addEventListener('scroll', ChatRoomApp.$event.scrollPagination);
@@ -18,11 +18,10 @@ document.addEventListener("DOMContentLoaded", ()=> {
 });
 
 
-function selectChatRoom(loginEmail, page){
+function selectChatRoom(page){
     $.ajax({
         url: '/chat/selectChatRoom?Page='+page,
         type: "POST",
-        data: {loginEmail:loginEmail},
         dataType: "JSON",
         success: function (data){
             ChatRoomApp.setChatRoom(data);

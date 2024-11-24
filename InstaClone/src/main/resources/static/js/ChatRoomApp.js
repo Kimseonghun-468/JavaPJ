@@ -2,9 +2,8 @@ const ChatRoomApp = {
     $data: {
         page: 1,
         hasNext: false,
-        loginEmail: null,
-        loginName: null,
         noneImage: "/display?fileName=outprofile.png/",
+        loginName: null,
     },
 
     $object: {
@@ -17,11 +16,10 @@ const ChatRoomApp = {
         scrollPagination : null,
     },
 
-    init(loginName, loginEmail) {
+    init(loginName) {
         console.log("ChatRoom App 초기화 중...");
         this.$data.page = 1;
-        this.$data.loginEmail = loginEmail;
-        this.$data.loginName = loginName;
+        this.$data.loginName = loginName
         this.$object.chatRoomTable = $("#chatroom-List"); // ksh 바꿔야함
         this.$object.scrollContainer = document.getElementById('chatRoomContainer'); // 너도 바꿔야
         this.scrollPaging = this.scrollPaging.bind(this);
@@ -34,7 +32,7 @@ const ChatRoomApp = {
         data.chatRoomDTOS.forEach(value => {
             if (value.lastChat == null) return; // lastChat이 null일 경우 건너뜀
 
-            getNotReadMessageNum(this.$data.loginEmail, value.roomId); // 메시지 수 가져오기
+            getNotReadMessageNum(value.roomId); // 메시지 수 가져오기
             const nameLength = value.userInfoDTOS.length
 
             // 개별 사용자 정보 박스 생성
@@ -142,7 +140,7 @@ const ChatRoomApp = {
         var value = container.scrollHeight - container.scrollTop
         if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
             if(this.$data.hasNext)
-                selectChatRoom(this.$data.loginEmail, this.$data.page)
+                selectChatRoom(this.$data.page)
         }
     },
 }

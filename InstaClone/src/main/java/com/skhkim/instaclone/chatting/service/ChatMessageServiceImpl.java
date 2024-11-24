@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.chatting.service;
 
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.request.MessagePageRequest;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
@@ -31,18 +32,19 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         chatMessageRepository.save(chatMessage);
     }
     @Override
-    public void updateChatMessagesReadStatus(Long roomID, String userEmail){
-        ChatUser chatUser = chatUserRepository.getChatUsersByRoomIdAndEmail(roomID, userEmail);
-        List<ChatMessage> result = chatMessageRepository.updateByRoomIdAndSenderEmailAndTime(roomID, userEmail, chatUser.getDisConnect());
+    public void updateChatMessagesReadStatus(Long roomID){
+        String loginEmail = LoginContext.getUserInfo().getUserEmail();
+        ChatUser chatUser = chatUserRepository.getChatUsersByRoomIdAndEmail(roomID, loginEmail);
+        List<ChatMessage> result = chatMessageRepository.updateByRoomIdAndSenderEmailAndTime(roomID, loginEmail, chatUser.getDisConnect());
         result.forEach(chatMessage -> chatMessage.setReadStatus(chatMessage.getReadStatus()-1));
         chatMessageRepository.saveAll(result);
     }
 
     @Override
-    public ChatMessageResponse selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId, String loginEmail){
+    public ChatMessageResponse selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId){
         Pageable pageable = messagePageRequest.getPageable();
 
-        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomId);
+        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(LoginContext.getUserInfo().getUserEmail(), roomId);
         Slice<ChatMessage> result = chatMessageRepository.selectChatMessageUp(pageable, roomId, disConnectTime);
         List<ChatMessageDTO> chatMessageDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
@@ -50,10 +52,10 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId, String loginEmail){
+    public ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId){
         Pageable pageable = messagePageRequest.getPageable();
 
-        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomId);
+        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(LoginContext.getUserInfo().getUserEmail(), roomId);
         Slice<ChatMessage> result = chatMessageRepository.selectChatMessageDown(pageable, roomId, disConnectTime);
         List<ChatMessageDTO> chatMessageDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
@@ -61,7 +63,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public Long getNotReadNum(String loginEmail, Long roomId){
+    public Long getNotReadNum(Long roomId){
+        String loginEmail = LoginContext.getUserInfo().getUserEmail();
         LocalDateTime disConnectTime = chatUserRepository.getChatUsersByRoomIdAndEmail(roomId, loginEmail).getDisConnect();
         return chatMessageRepository.getNotReadNum(roomId, loginEmail, disConnectTime);
     }

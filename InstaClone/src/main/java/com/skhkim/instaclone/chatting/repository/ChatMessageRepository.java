@@ -21,7 +21,7 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     Slice<ChatMessage> selectChatMessageDown(Pageable pageable, Long roomID, LocalDateTime disConnectTime);
 
     @Query("{ 'roomId' : ?0, 'regDate' : { $gte : ?2 }, 'senderEmail' : { $ne : ?1 } }")
-    List<ChatMessage> updateByRoomIdAndSenderEmailAndTime(Long roomId, String userEmail, LocalDateTime disConnect);
+    List<ChatMessage> updateByRoomIdAndSenderEmailAndTime(Long roomId, String loginEmail, LocalDateTime disConnect);
 
     @Query(value = "{ 'roomId' : ?0, 'senderEmail' : { $ne : ?1 }, 'regDate' : { $gte : ?2 } }", count = true)
     Long getNotReadNum(Long roomID, String loginEmail, LocalDateTime disConnectTime);

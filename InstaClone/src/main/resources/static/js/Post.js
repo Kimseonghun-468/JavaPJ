@@ -23,8 +23,6 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
     $('#upload-post-button').click(function() {
         postRequest = {
-            "loginName" : UserProfileApp.$data.userName,
-            "loginEmail" : UserProfileApp.$data.userEmail,
             "title" : document.getElementById('post-title').value,
             "uploadImages" : PostApp.$data.uploadImages,
         }
@@ -64,8 +62,6 @@ function uploadPostImage(formData){
 function insertPost(postRequest){
 
     sendData = {
-        "email" : postRequest.loginEmail,
-        "name" : postRequest.loginName,
         "title" : postRequest.title,
         "imageDTOList" : postRequest.uploadImages
     }

@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.service;
 
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.entity.ProfileImage;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
@@ -51,9 +52,10 @@ public class ProfileServiceImpl implements ProfileService{
 
     @Override
     @Transactional
-    public void deleteByName(String name){
-        ProfileImage beforeImage = profileImageRepository.findByUserName(name);
-        profileImageRepository.deleteByUserName(name);
+    public void delete(){
+        String loginName = LoginContext.getUserInfo().getUserName();
+        ProfileImage beforeImage = profileImageRepository.findByUserName(loginName);
+        profileImageRepository.deleteByUserName(loginName);
         deleteImage(beforeImage);
     }
 

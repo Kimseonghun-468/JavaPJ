@@ -2,8 +2,6 @@ const ChatInviteApp = {
     $data: {
         page: 1,
         hasNext: false,
-        loginName: null,
-        loginEmail: null,
         noneImage: "/display?fileName=outprofile.png/",
         searchTerm: null,
         status: false, // 기본값 False, 검색중 True
@@ -25,9 +23,7 @@ const ChatInviteApp = {
         scrollPagination : null,
     },
 
-    init(loginName, loginEmail){
-        this.$data.loginName = loginName;
-        this.$data.loginEmail = loginEmail;
+    init(){
         this.$data.page = 1;
         this.$data.nameDict = {};
         this.$data.emailDict = {};

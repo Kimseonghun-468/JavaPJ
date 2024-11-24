@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $('#invite-chatuser').click(function (){
         $('#inviteModal').css('z-index', 1053).modal('show');
 
-        ChatInviteApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.loginEmail);
+        ChatInviteApp.init();
 
         selectInviteUserList(ChattingApp.$data.nameAndEmailDict, ChatInviteApp.$data.page)
 

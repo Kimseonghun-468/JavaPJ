@@ -7,6 +7,7 @@ import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ClubMember;
@@ -37,8 +38,8 @@ public class ChatUserServiceImpl implements ChatUserService {
         chatUserRepository.save(chatUser);
     }
     @Override
-    public void updateDisConnect(Long roomId, String loginEmail){
-        ChatUser chatUser = chatUserRepository.getChatUsersByRoomIdAndEmail(roomId, loginEmail);
+    public void updateDisConnect(Long roomId){
+        ChatUser chatUser = chatUserRepository.getChatUsersByRoomIdAndEmail(roomId, LoginContext.getUserInfo().getUserEmail());
         chatUser.setDisConnect(LocalDateTime.now());
         chatUserRepository.save(chatUser);
     }
@@ -57,27 +58,23 @@ public class ChatUserServiceImpl implements ChatUserService {
     }
 
     @Override
-    public ChatUserDTO selectChatUser(Long roomId, String loginName){
-        ChatUser result = chatUserRepository.selectChatUser(roomId, loginName);
-        ChatUserDTO chatUserDTO = EntityMapper.entityToDTO(result);
-
-        return chatUserDTO;
+    public ChatUserDTO selectChatUser(Long roomId){
+        ChatUser result = chatUserRepository.selectChatUser(roomId, LoginContext.getUserInfo().getUserName());
+        return EntityMapper.entityToDTO(result);
     }
 
     @Override
     public List<UserInfoDTO> selectChatUserList(Long roomId, List<String> userNameList){
         List<ClubMember> result = chatUserRepository.selectChatUserList(roomId, userNameList);
-        List<UserInfoDTO> userInfoDTOS = result.stream().map(user -> EntityMapper.entityToDTO(user)).toList();
-
-        return userInfoDTOS;
+        return result.stream().map(EntityMapper::entityToDTO).toList();
     }
 
     @Override
     public ChatRoomResponse
-    getProfileAndUseByLoginNamePage(UserInfoPageRequest userInfoPageRequest, String loginEmail){
+    getProfileAndUseByLoginNamePage(UserInfoPageRequest userInfoPageRequest){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<ChatRoom> result = chatUserRepository.getTest(pageable ,loginEmail);
-        List<ChatRoomDTO> chatRoomDTOS = result.stream().map(chatRoom -> EntityMapper.entityToDTO(chatRoom)).toList();
+        Slice<ChatRoom> result = chatUserRepository.getTest(pageable , LoginContext.getUserInfo().getUserEmail());
+        List<ChatRoomDTO> chatRoomDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new ChatRoomResponse(chatRoomDTOS, result.hasNext());
     }

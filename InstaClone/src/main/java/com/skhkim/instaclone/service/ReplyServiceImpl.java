@@ -43,7 +43,7 @@ public class ReplyServiceImpl implements ReplyService{
     public ReplyResponse selectReplyList(ReplyPageRequest replyPageRequest, Long pno){
         Pageable pageable = replyPageRequest.getPageable();
         Slice<Reply> result = replyRepository.selectReplyList(pageable, pno);
-        List<ReplyDTO> replyDTOS = result.stream().map(reply -> EntityMapper.entityToDTO(reply)).toList();
+        List<ReplyDTO> replyDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
         return new ReplyResponse(replyDTOS, result.hasNext());
     }
 }

@@ -40,6 +40,9 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public boolean insert(PostDTO postDTO){
 
+        UserInfoDTO loginUserDTO = LoginContext.getUserInfo();
+        postDTO.setName(loginUserDTO.getImgName());
+        postDTO.setEmail(loginUserDTO.getUserEmail());
         Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
         Post post = (Post) entityMap.get("post");
         List<PostImage> postImageList = (List<PostImage>) entityMap.get("imgList");
@@ -55,6 +58,8 @@ public class PostServiceImpl implements PostService {
     public boolean update(PostDTO postDTO){
         UserInfoDTO loginUserDTO = LoginContext.getUserInfo();
         if(postRepository.checkValidation(postDTO.getPno(), loginUserDTO.getUserEmail())) {
+            postDTO.setName(loginUserDTO.getImgName());
+            postDTO.setEmail(loginUserDTO.getUserEmail());
             Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
             Post post = (Post) entityMap.get("post");
             postRepository.save(post);

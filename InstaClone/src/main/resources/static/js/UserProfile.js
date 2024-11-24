@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", ()=> {
         $.ajax({
             url: "/profileImage/deleteProfile",
             type: "POST",
-            data: { userName: loginName },
             success: function () {
                 self.location.reload();
             }
