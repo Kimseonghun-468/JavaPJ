@@ -2,7 +2,6 @@ package com.skhkim.instaclone.chatting.controller;
 
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
-import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
@@ -10,9 +9,9 @@ import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
-import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.dto.UserInfoDTO;
-import com.skhkim.instaclone.repository.ProfileImageRepository;
+import com.skhkim.instaclone.request.MessagePageRequest;
+import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -38,7 +37,6 @@ public class ChatController {
     private final ChatRoomService chatRoomService;
     private final ChatUserService chatUserService;
     private final ChatRoomSessionManager chatRoomSessionManager;
-    private final ProfileImageRepository profileImageRepository;
     @MessageMapping("/chat/{roomID}")
     @SendTo("/topic/chat/{roomID}")
     public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO) {
@@ -100,14 +98,14 @@ public class ChatController {
     }
 
     @PostMapping("/chat/selectChatMessageUp")
-    public ResponseEntity selectChatMessageUp(PageRequestDTO pageRequestDTO, Long roomId, String loginEmail){
-        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(pageRequestDTO, roomId, loginEmail);
+    public ResponseEntity selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId, String loginEmail){
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(messagePageRequest, roomId, loginEmail);
         return ResponseEntity.ok(chatMessageResponse);
     }
 
     @PostMapping("/chat/selectChatMessageDown")
-    public ResponseEntity selectChatMessageDown(PageRequestDTO pageRequestDTO, Long roomId, String loginEmail) {
-        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(pageRequestDTO, roomId, loginEmail);
+    public ResponseEntity selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId, String loginEmail) {
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(messagePageRequest, roomId, loginEmail);
         return ResponseEntity.ok(chatMessageResponse);
     }
 

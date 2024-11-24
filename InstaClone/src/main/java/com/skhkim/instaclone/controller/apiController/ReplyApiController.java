@@ -1,7 +1,7 @@
 package com.skhkim.instaclone.controller.apiController;
 
-import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
 import com.skhkim.instaclone.dto.ReplyDTO;
+import com.skhkim.instaclone.request.ReplyPageRequest;
 import com.skhkim.instaclone.response.ApiResponse;
 import com.skhkim.instaclone.service.ReplyService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,8 @@ public class ReplyApiController {
     private final ReplyService replyService;
 
     @PostMapping("/selectReplyList")
-    public ResponseEntity selectReplyList(PageRequestDTO pageRequestDTO, Long pno){
-        return ApiResponse.OK(replyService.selectReplyList(pageRequestDTO, pno));
+    public ResponseEntity selectReplyList(ReplyPageRequest replyPageRequest, Long pno){
+        return ApiResponse.OK(replyService.selectReplyList(replyPageRequest, pno));
     }
 
     @PostMapping("/insert")

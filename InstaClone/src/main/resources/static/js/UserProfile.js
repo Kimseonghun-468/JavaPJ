@@ -50,8 +50,8 @@ function selectUserInfo(userName){
         type: "POST",
         data: {userName: userName},
         dataType: "JSON",
-        success: function (data){
-            UserProfileApp.setUserInfo(data);
+        success: function (response){
+            UserProfileApp.setUserInfo(response.data);
             UserProfileApp.setProfile();
         }
     })

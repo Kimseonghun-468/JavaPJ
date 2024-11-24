@@ -2,7 +2,6 @@ package com.skhkim.instaclone.controller.apiController;
 
 import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.ClubMemberDTO;
-import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.response.ApiResponse;
@@ -75,8 +74,7 @@ public class MemberApiController {
 
     @PostMapping("/selectUserInfo")
     public ResponseEntity selectUserInfo(String userName){
-        UserInfoDTO result = memberService.selectUserInfo(userName);
-        return ResponseEntity.ok(result);
+        return ApiResponse.OK(memberService.selectUserInfo(userName));
     }
 
     @PostMapping("/selectSearchUsers")

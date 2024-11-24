@@ -1,13 +1,12 @@
 package com.skhkim.instaclone.chatting.service;
 
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
-import com.skhkim.instaclone.chatting.dto.PageRequestDTO;
+import com.skhkim.instaclone.request.MessagePageRequest;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatMessageRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
-import com.skhkim.instaclone.repository.ProfileImageRepository;
 import com.skhkim.instaclone.service.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -40,8 +39,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public ChatMessageResponse selectChatMessageUp(PageRequestDTO pageRequestDTO, Long roomId, String loginEmail){
-        Pageable pageable = pageRequestDTO.getPageable();
+    public ChatMessageResponse selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId, String loginEmail){
+        Pageable pageable = messagePageRequest.getPageable();
 
         LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomId);
         Slice<ChatMessage> result = chatMessageRepository.selectChatMessageUp(pageable, roomId, disConnectTime);
@@ -51,8 +50,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public ChatMessageResponse selectChatMessageDown(PageRequestDTO pageRequestDTO, Long roomId, String loginEmail){
-        Pageable pageable = pageRequestDTO.getPageable();
+    public ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId, String loginEmail){
+        Pageable pageable = messagePageRequest.getPageable();
 
         LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(loginEmail, roomId);
         Slice<ChatMessage> result = chatMessageRepository.selectChatMessageDown(pageable, roomId, disConnectTime);
