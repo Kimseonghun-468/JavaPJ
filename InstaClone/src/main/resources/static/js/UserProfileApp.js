@@ -58,7 +58,6 @@ const UserProfileApp = {
         }
         result += '<img src="' + this.$data.profileImage + '" alt="Profile Picture" ' +
             'class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;" />';
-        console.log(result);
         this.$object.profileTable.html(result);
     },
 

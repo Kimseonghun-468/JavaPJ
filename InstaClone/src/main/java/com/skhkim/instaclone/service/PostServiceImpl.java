@@ -41,13 +41,15 @@ public class PostServiceImpl implements PostService {
     public boolean insert(PostDTO postDTO){
 
         UserInfoDTO loginUserDTO = LoginContext.getUserInfo();
-        postDTO.setName(loginUserDTO.getImgName());
+        postDTO.setName(loginUserDTO.getUserName());
         postDTO.setEmail(loginUserDTO.getUserEmail());
         Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
         Post post = (Post) entityMap.get("post");
         List<PostImage> postImageList = (List<PostImage>) entityMap.get("imgList");
 
         postRepository.save(post);
+
+        postImageList.forEach(image -> image.setPost(post));
         postImageRepository.saveAll(postImageList);
 
         return true;

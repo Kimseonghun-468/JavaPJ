@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
     $(document).on('click', '.post-list-img',function() {
         $('#postModal').modal('show');
 
-        PostDetailApp.init(UserProfileApp.$data.loginName);
+        PostDetailApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.userName);
 
         var commentBox = document.querySelector('#reply-box');
         commentBox.addEventListener('input', handleInput)
@@ -89,6 +89,7 @@ function selectPostImageList(postId){
         dataType:"JSON",
         success: function (response) {
             PostDetailApp.setPostDetail(response.data)
+
         }
     })
 }
@@ -123,7 +124,7 @@ function insertReply(postId, commentBox, userEmail){
 
 function deletePost(pno){
     $.ajax({
-        url: '/post/delete/',
+        url: '/post/delete',
         type: 'DELETE',
         data: {pno:pno},
         success: function (response){

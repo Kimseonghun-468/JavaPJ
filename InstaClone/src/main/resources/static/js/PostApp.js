@@ -43,7 +43,7 @@ const PostApp = {
         data.postDTOS.forEach(item => {
             postResult += '<div class="post-item">';
             postResult += '<img class="post-list-img" ' +
-                'src="/display?fileName=' + item.imageDTOList[0].imageURL + '/" ' +
+                'src="/display?fileName=' + item.imageDTOList[0].thumbnailURL + '/" ' +
                 'data-reply-num="' +item.replyNum + '" ' +
                 'data-like-num="' +item.likeNum+ '" ' +
                 'data-pid="' + item.pno + '">'

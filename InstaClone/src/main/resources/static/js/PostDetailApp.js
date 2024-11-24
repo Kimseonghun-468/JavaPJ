@@ -10,18 +10,20 @@ const PostDetailApp = {
 
     $object: {
         replyTable : null,
-        scrollContainer : null,
+        postHeader: null,
     },
 
     $event: {
         scrollPagination : null,
     },
 
-    init(loginName) {
+    init(loginName, userName) {
         console.log("Detail App 초기화 중...");
         this.$data.page = 1;
         this.$data.loginName = loginName;
+        this.$data.userName = userName;
         this.$object.replyTable = $("#post-reply-container"); // ksh 바꿔야함
+        this.$object.postHeader = $("#post-header");
     },
 
     setPostDetail(data){
@@ -71,10 +73,13 @@ const PostDetailApp = {
             $(".carousel-control-next").html('<span class="carousel-control-next-icon" aria-hidden="true"></span>')
         }
 
+
         let postTitle = data.title.replaceAll("\n", "<br>")
         this.createTitleTag(this.$data.loginName, postTitle, imageUrl, data.regDate);
+        this.setPostHeader(this.$data.userName, this.$data.loginName)
         $("#carousel-image-box").html(carouselTag)
         $("#modify-carousel-image-box").html(carouselTag)
+
     },
 
     setReplyList(data){
@@ -104,7 +109,6 @@ const PostDetailApp = {
         var str = "";
         str += '<div class="reply-main">';
         str += '<div class="reply-image-container">'
-
 
         str+= '<img src='+ (data.userInfoDTO.imgName ? `/display?fileName=${data.userInfoDTO.imageURL}` : this.$data.noneImage) +' class="reply-profile">';
 
@@ -140,4 +144,22 @@ const PostDetailApp = {
 
         $("#post-title-container").html(result);
     },
+
+    setPostHeader(userName, loginName) {
+        var imageContainer = document.querySelector('.reply-image-container');
+
+        imageContainer.innerHTML = '<img src="' + UserProfileApp.$data.profileImage + '" class="reply-profile" />';
+
+        var nameContainer = document.querySelector('.reply-wrapper');
+
+        nameContainer.innerHTML = '<div class="reply-name">'+ userName +'</div>';
+
+        var commentHeader = document.querySelector('#post-option');
+
+        // 옵션 추가 (사용자 이름이 일치할 때)
+        if (loginName === userName) {
+            commentHeader.innerHTML = '<span class="options" id="post-option" style="margin-right: 16px; font-size: 28px;">...</span>'
+        }
+    },
+
 }
