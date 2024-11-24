@@ -11,5 +11,4 @@ public class InviteRequest {
     private List<String> userNames;
     private Integer addNum;
     private String searchTerm;
-    private String loginName;
 }

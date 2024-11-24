@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
             $('#inviteSearchResult').html("");
             // app으로 가져가
             let roomUserList = Object.keys(ChattingApp.$data.nameAndEmailDict);
-            selectInviteSearchUserList(ChatInviteApp.$data.loginName, ChatInviteApp.$data.searchTerm, roomUserList, ChatInviteApp.$data.page);
+            selectInviteSearchUserList(ChatInviteApp.$data.searchTerm, roomUserList, ChatInviteApp.$data.page);
 
         }
     });
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectInviteUserList(roomUsers, page){
     $.ajax({
-        url: '/api/v1/friend/inviteList?page=' + page,
+        url: '/api/v1/friend/selectInviteList?page=' + page,
         type: "POST",
         data: {roomUsers:Object.keys(roomUsers)},
         dataType: "JSON",
@@ -74,11 +74,11 @@ function selectInviteUserList(roomUsers, page){
     })
 }
 
-function selectInviteSearchUserList(loginName, searchTerm, roomUsers, page){
+function selectInviteSearchUserList(searchTerm, roomUsers, page){
     $.ajax({
-        url: "/search/invite?page=" + page,
+        url: "/api/v1/friend/selectInviteSearchUsers?page=" + page,
         type: "POST",
-        data: JSON.stringify({loginName:loginName, searchTerm:searchTerm, userNames:roomUsers}),
+        data: JSON.stringify({searchTerm:searchTerm, userNames:roomUsers}),
         dataType: "JSON",
         contentType: "application/json",
         traditional: true,

@@ -4,7 +4,7 @@ import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.type.FriendStatus;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
-import com.skhkim.instaclone.service.FriendShipService;
+import com.skhkim.instaclone.service.FriendService;
 import com.skhkim.instaclone.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +21,7 @@ import java.net.URLEncoder;
 public class ProfileController {
 
     private final MemberService memberService;
-    private final FriendShipService friendShipService;
+    private final FriendService friendService;
 
 
     @GetMapping("/sidebar/{name}")
@@ -29,7 +29,7 @@ public class ProfileController {
                           Model model){
 
         UserInfoDTO loginInfoDTO = LoginContext.getUserInfo();
-        FriendStatus friendStatus = friendShipService.checkFriendShip(loginInfoDTO.getUserName(), name);
+        FriendStatus friendStatus = friendService.checkFriendShip(loginInfoDTO.getUserName(), name);
         model.addAttribute("friendshipStatus", friendStatus);
         model.addAttribute("userExist", memberService.getUserExist(name));
         model.addAttribute("loginInfo", loginInfoDTO);

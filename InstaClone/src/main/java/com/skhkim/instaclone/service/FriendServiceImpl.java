@@ -1,6 +1,8 @@
 package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.context.LoginContext;
+import com.skhkim.instaclone.dto.UserInfoDTO;
+import com.skhkim.instaclone.dto.UserInfoProjection;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.FriendAccept;
 import com.skhkim.instaclone.entity.FriendWait;
@@ -8,16 +10,21 @@ import com.skhkim.instaclone.entity.type.FriendStatus;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.repository.FriendAcceptRepository;
 import com.skhkim.instaclone.repository.FriendWaitRepository;
+import com.skhkim.instaclone.request.UserInfoPageRequest;
+import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class FriendShipServiceImpl implements FriendShipService{
+public class FriendServiceImpl implements FriendService {
 
     private final ClubMemberRepository memberRepository;
     private final FriendWaitRepository waitRepository;
@@ -112,6 +119,76 @@ public class FriendShipServiceImpl implements FriendShipService{
     public int selectFriendNum(String userName){
         return acceptRepository.getCount(userName);
 
+    }
+
+    @Override
+    public UserInfoResponse
+    selectWaitingFriend(UserInfoPageRequest userInfoPageRequest){
+
+        Pageable pageable = userInfoPageRequest.getPageable();
+        Slice<UserInfoProjection> result = waitRepository.getByWaitingListPage(pageable, LoginContext.getUserInfo().getUserName());
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
+
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
+    }
+
+    @Override
+    public UserInfoResponse
+    selectAcceptUsersInfo(UserInfoPageRequest userInfoPageRequest){
+        Pageable pageable = userInfoPageRequest.getPageable();
+        Slice<UserInfoProjection> result = acceptRepository.getByAcceptListPage(pageable, LoginContext.getUserInfo().getUserName());
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
+
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
+    }
+
+    @Override
+    public UserInfoResponse selectInviteSearchUsers(UserInfoPageRequest userInfoPageRequest, String inviteSearchTerm, List<String> roomUsers){
+        Pageable pageable = userInfoPageRequest.getPageable();
+        Slice<UserInfoProjection> result = acceptRepository.selectInviteListByName(pageable, LoginContext.getUserInfo().getUserName(), inviteSearchTerm, roomUsers);
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
+
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
+    }
+
+    @Override
+    public UserInfoResponse
+    selectUserFriendsInfo(UserInfoPageRequest userInfoPageRequest, String userName){
+        Pageable pageable = userInfoPageRequest.getPageable();
+        Slice<UserInfoProjection> result = acceptRepository.getFriendListPage(pageable, userName, LoginContext.getUserInfo().getUserName());
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
+
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
+    }
+
+    @Override
+    public UserInfoResponse
+    selectInviteList(UserInfoPageRequest userInfoPageRequest, List<String> roomUsers){
+        Pageable pageable = userInfoPageRequest.getPageable();
+        Slice<UserInfoProjection> result = acceptRepository.selectInviteList(pageable, LoginContext.getUserInfo().getUserName(), roomUsers);
+        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
+
+        return new UserInfoResponse(userInfoDTOS, result.hasNext());
+    }
+    @Override
+    public UserInfoDTO selectFristFriend(String userName){
+
+        String loginName = LoginContext.getUserInfo().getUserName();
+        ClubMember loginMember = memberRepository.findByName(loginName);
+        UserInfoDTO userInfoDTO = EntityMapper.entityToDTO(loginMember);
+
+        Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
+        Optional<FriendAccept> friendAccept = memberRepository.getAcceptFriend(loginName, userName);
+
+        // Wait Requester, Receiver 처리
+        friendWait.ifPresent(wait -> userInfoDTO.setStatus(wait.getRequester().getName().equals(loginName)
+                ? FriendStatus.REQUESTER : FriendStatus.RECEIVER));
+
+        // Accept 처리
+        friendAccept.ifPresent(accept -> userInfoDTO.setStatus(FriendStatus.ACCEPTED));
+
+
+        return userInfoDTO;
     }
 
 }

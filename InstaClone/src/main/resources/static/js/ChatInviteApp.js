@@ -43,7 +43,7 @@ const ChatInviteApp = {
         if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
             if(this.$data.hasNext) {
                 if (this.$data.status == true) {
-                    selectInviteSearchUserList(this.$data.loginName, this.$data.searchTerm, this.$data.roomUsers, this.$data.page)
+                    selectInviteSearchUserList(this.$data.searchTerm, this.$data.roomUsers, this.$data.page)
                 } else {
                     selectInviteUserList(this.$data.roomUsers, this.$data.page)
                 }

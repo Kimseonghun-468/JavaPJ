@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectProfileFriend(userName, page){
     $.ajax({
-        url: '/api/v1/friend/friendList?page=' + page,
+        url: '/api/v1/friend/selectUserFriendsInfo?page=' + page,
         type: "POST",
         data: {userName: userName},
         dataType: "JSON",
@@ -36,7 +36,7 @@ function selectProfileFriend(userName, page){
 
 function selectFirstFriendProfile(userName){
     $.ajax({
-        url: "/api/v1/friend/firstList",
+        url: "/api/v1/friend/selectFristFriend",
         type: "POST",
         data: {userName:userName},
         dataType: "JSON",
