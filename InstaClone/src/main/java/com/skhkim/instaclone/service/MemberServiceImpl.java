@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.service;
 
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
@@ -59,9 +60,9 @@ public class MemberServiceImpl implements MemberService {
     }
     @Override
     @Transactional
-    public UserInfoResponse getClubMemberSearchbyNameAll(UserInfoPageRequest userInfoPageRequest, String searchName, String loginName){
+    public UserInfoResponse selectSearchUsers(UserInfoPageRequest userInfoPageRequest, String searchName){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<ClubMember> result = clubMemberRepository.selectSearchUserInfo(pageable, searchName, loginName);
+        Slice<ClubMember> result = clubMemberRepository.selectSearchUserInfo(pageable, searchName, LoginContext.getUserInfo().getUserName());
 
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
@@ -69,7 +70,7 @@ public class MemberServiceImpl implements MemberService {
 
     }
     @Override
-    public ClubMember getClubMemberSearchbyEmail(String Email) {
+    public ClubMember selectClubMember(String Email) {
         Optional<ClubMember> result = clubMemberRepository.findByEmail(Email);
         return result.orElseGet(() -> ClubMember.builder().build());
     }

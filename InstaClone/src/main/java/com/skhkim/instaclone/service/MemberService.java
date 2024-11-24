@@ -16,8 +16,8 @@ public interface MemberService {
     void updatePassword(String memberName, String newPassword);
     void updateUserName(String changeName, String originalName);
     String register(ClubMemberDTO memberDTO);
-    UserInfoResponse getClubMemberSearchbyNameAll(UserInfoPageRequest userInfoPageRequest, String searchName, String loginName);
-    ClubMember getClubMemberSearchbyEmail(String Email);
+    UserInfoResponse selectSearchUsers(UserInfoPageRequest userInfoPageRequest, String searchName);
+    ClubMember selectClubMember(String Email);
     boolean getUserExist(String name);
 
     UserInfoDTO selectUserInfo(String userName);

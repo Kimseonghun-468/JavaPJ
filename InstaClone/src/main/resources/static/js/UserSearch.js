@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
             document.getElementById('searchInput').value = "";
             $("#searchResult").html("");
             UserSearchApp.$data.page = 1
-            selectSearchUserInfo(UserSearchApp.$data.loginName, UserSearchApp.$data.searchName, UserSearchApp.$data.page);
+            selectSearchUserInfo(UserSearchApp.$data.searchName, UserSearchApp.$data.page);
 
         }
     });
@@ -28,15 +28,15 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 })
 
-function selectSearchUserInfo(loginName, searchName, page){
+function selectSearchUserInfo(searchName, page){
 
     $.ajax({
-        url: '/search/name/all?page='+page,
+        url: '/member/selectSearchUsers?page='+page,
         type: "POST",
-        data: {loginName:loginName, searchName:searchName},
+        data: {searchName:searchName},
         dataType: "JSON",
-        success: function (data){
-            UserSearchApp.setSearchUserInfo(data);
+        success: function (response){
+            UserSearchApp.setSearchUserInfo(response.data);
         }
     });
 }

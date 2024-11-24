@@ -4,6 +4,8 @@ import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
+import com.skhkim.instaclone.request.UserInfoPageRequest;
+import com.skhkim.instaclone.response.ApiResponse;
 import com.skhkim.instaclone.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -75,5 +77,11 @@ public class MemberApiController {
     public ResponseEntity selectUserInfo(String userName){
         UserInfoDTO result = memberService.selectUserInfo(userName);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/selectSearchUsers")
+    public ResponseEntity selectSearchUsers
+            (UserInfoPageRequest userInfoPageRequest, String searchName) {
+        return ApiResponse.OK(memberService.selectSearchUsers(userInfoPageRequest, searchName));
     }
 }

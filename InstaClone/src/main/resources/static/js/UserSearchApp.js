@@ -80,7 +80,7 @@ const UserSearchApp = {
         var value = container.scrollHeight - container.scrollTop
         if (container.clientHeight -15 <= value  &&  value <= container.clientHeight +15) {
             if(this.$data.hasNext)
-                selectSearchUserInfo(this.$data.loginName, this.$data.searchName, this.$data.page)
+                selectSearchUserInfo(this.$data.searchName, this.$data.page)
         }
     },
 }

@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            ClubMember clubMember = memberService.getClubMemberSearchbyEmail(email);
+            ClubMember clubMember = memberService.selectClubMember(email);
             ClubAuthMemberDTO clubAuthMember = new ClubAuthMemberDTO(
                     clubMember.getEmail(),
                     clubMember.getPassword(),
