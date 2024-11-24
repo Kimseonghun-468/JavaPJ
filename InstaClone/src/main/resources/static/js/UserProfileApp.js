@@ -51,19 +51,24 @@ const UserProfileApp = {
         $("#Profile-Image").submit();
     },
 
-    setProfile(){
-        var result = ""
-        if (this.$data.userName = this.$data.loginName){
-            result += '<input type="file" class="fileInput profile-Image-File" style="display: none;">'
+    setProfile() {
+        var result = "";
+        if (this.$data.userName == this.$data.loginName) {  // 비교 연산자를 사용
+            result += '<input type="file" class="fileInput profile-Image-File" style="display: none;" />';
         }
-        result += '<img src="' + imageUrl + '" alt="Profile Picture" ' +
-            'class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;  />';
-
+        result += '<img src="' + this.$data.profileImage + '" alt="Profile Picture" ' +
+            'class="profile-picture uploadButton-profile" style="width: 150px; height: 150px;" />';
+        console.log(result);
         this.$object.profileTable.html(result);
     },
 
+
     setReplyNum(data){
         $("#post-num").html('게시물 ' +data)
+    },
+
+    setFriendNum(data){
+        $("#friend-List").html("친구 " +data)
     }
 
 }

@@ -24,7 +24,7 @@ public class ClubOAuth2LoginSuccessHandler implements AuthenticationSuccessHandl
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private PasswordEncoder passwordEncoder;
 
-    @Value("${password.reset.key")
+    @Value("${password.reset.key}")
     private String passwordResetKey;
     @Autowired
     private JwtUtils jwtUtils;

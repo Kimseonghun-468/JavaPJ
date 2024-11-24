@@ -25,7 +25,7 @@ public class ClubOAuth2UserDetailsService extends DefaultOAuth2UserService {
 
     private final ClubMemberRepository repository;
     private final PasswordEncoder passwordEncoder;
-    @Value("${password.reset.key")
+    @Value("${password.reset.key}")
     private String passwordResetKey;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

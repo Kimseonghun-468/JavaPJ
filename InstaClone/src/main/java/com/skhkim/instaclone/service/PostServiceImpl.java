@@ -33,7 +33,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final ReplyRepository replyRepository;
-    @Value("${instaclone.upload.path")
+    @Value("${instaclone.upload.path}")
     private String uploadPath;
 
     @Override
@@ -78,8 +78,8 @@ public class PostServiceImpl implements PostService {
         return new PostResponse(postDTOS, result.hasNext());
     }
     @Override
-    public Long selectPostNumber(String email){
-        return postRepository.getPostCount(email);
+    public Long selectPostNumber(String name){
+        return postRepository.getPostCount(name);
     }
 
     @Override

@@ -23,7 +23,7 @@ public class ProfileServiceImpl implements ProfileService{
 
     private final ProfileImageRepository profileImageRepository;
     private final ClubMemberRepository memberRepository;
-    @Value("${instaclone.upload.path")
+    @Value("${instaclone.upload.path}")
     private String uploadPath;
 
     @Override

@@ -26,7 +26,7 @@ public class MemberApiController {
     private final ClubMemberRepository clubMemberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MemberService memberService;
-    @Value("${password.reset.key")
+    @Value("${password.reset.key}")
     private String passwordResetKey;
     @PostMapping("")
     public String singupMember(ClubMemberDTO memberDTO){

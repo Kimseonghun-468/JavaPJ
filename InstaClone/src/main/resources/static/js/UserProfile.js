@@ -84,7 +84,7 @@ function selectPostNum(userName){
 
 function selectFriendNum(userName){
     $.ajax({
-        url: '/friend/selectFriendNum',
+        url: '/api/v1/friend/selectFriendNum',
         type: "POST",
         data: {userName: userName},
         dataType: "JSON",
