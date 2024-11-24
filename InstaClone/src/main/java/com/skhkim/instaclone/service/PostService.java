@@ -6,16 +6,14 @@ import com.skhkim.instaclone.response.PostResponse;
 
 public interface PostService {
 
-    PostResponse getList(PostPageRequest postPageRequest, String name);
-    void register(PostDTO postDTO);
+    PostResponse selectPostList(PostPageRequest postPageRequest, String name);
+    boolean insert(PostDTO postDTO);
 
-    void modifyTitle(PostDTO postDTO);
+    boolean update(PostDTO postDTO);
 
-    Long getPostNumber(String name);
+    Long selectPostNumber(String name);
 
-    void removePost(Long pno);
+    boolean delete(Long pno);
 
-    String getEmailByUserName(String userName);
-
-    PostDTO getPostWithAllImage(Long postID);
+    PostDTO selectPostDetail(Long postId);
 }

@@ -85,12 +85,12 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectPostImageList(postId){
     $.ajax({
-        url:'/post/postInfoWithImage',
+        url:'/post/selectPostDetail',
         type:"POST",
         data: {pno:postId},
         dataType:"JSON",
         success: function (response) {
-            PostDetailApp.setPostImageList(response.data)
+            PostDetailApp.setPostDetail(response.data)
         }
     })
 }
@@ -125,8 +125,9 @@ function insertReply(postId, commentBox, userEmail){
 
 function deletePost(pno){
     $.ajax({
-        url: '/post/delete/' + pno,
+        url: '/post/delete/',
         type: 'DELETE',
+        data: {pno:pno},
         success: function (response){
         }
     })

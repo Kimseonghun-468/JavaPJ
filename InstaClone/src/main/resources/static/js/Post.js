@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectPostList(userName, page){
     $.ajax({
-        url: "/post/getPostInfo?page=" + page,
+        url: "/post/selectPostList?page=" + page,
         type: "POST",
         data: {userName: userName},
         dataType: "JSON",

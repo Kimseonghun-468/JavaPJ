@@ -23,8 +23,8 @@ function selectWaitUsersInfo(page){
         url: '/api/v1/friend/selectWaitingFriend?page='+page,
         type: "POST",
         dataType: "JSON",
-        success: function (data){
-            WaitFriendApp.setUserInfo(data);
+        success: function (response){
+            WaitFriendApp.setUserInfo(response.data);
         }
     });
 }

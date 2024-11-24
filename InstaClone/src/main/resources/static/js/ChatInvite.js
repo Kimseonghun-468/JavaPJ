@@ -68,8 +68,8 @@ function selectInviteUserList(roomUsers, page){
         data: {roomUsers:Object.keys(roomUsers)},
         dataType: "JSON",
         traditional: true,
-        success: function (data) {
-            ChatInviteApp.setInviteUserList(data, false)
+        success: function (response) {
+            ChatInviteApp.setInviteUserList(response.data, false)
         }
     })
 }
@@ -82,8 +82,8 @@ function selectInviteSearchUserList(searchTerm, roomUsers, page){
         dataType: "JSON",
         contentType: "application/json",
         traditional: true,
-        success: function (data){
-            ChatInviteApp.setInviteUserList(data, true);
+        success: function (response){
+            ChatInviteApp.setInviteUserList(response.data, true);
         }
     })
 }

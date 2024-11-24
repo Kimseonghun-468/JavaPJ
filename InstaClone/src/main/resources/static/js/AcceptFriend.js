@@ -21,8 +21,8 @@ function selectUsersInfo(page){
         url: '/api/v1/friend/selectAcceptUsersInfo?page='+page,
         type: "POST",
         dataType: "JSON",
-        success: function (data){
-            AceeptFriendApp.setUserInfo(data);
+        success: function (response){
+            AceeptFriendApp.setUserInfo(response.data);
         }
     });
 }

@@ -10,7 +10,6 @@ const ProfileFriendApp = {
     $object: {
         profileFriendTable : null,
         scrollContainer : null,
-
     },
 
     $event: {
@@ -112,13 +111,9 @@ const ProfileFriendApp = {
         this.$data.hasNext = data.hasNext;
         this.$data.page += 1
         this.$object.profileFriendTable.append(container.innerHTML);
-        // 결과를 HTML에 추가
-        // const friendListUserBox = document.getElementById("friend-List-UserBox");
-        // friendListUserBox.innerHTML = ""; // 기존 내용을 비웁니다.
-        // friendListUserBox.appendChild(container);
     },
 
-    setFirst(data) {
+    setFirst(data) { // KSH EDIT : Status 처리가 안보임..?
         // 최종적으로 추가할 부모 컨테이너 생성
         const userInfoBox = document.createElement("div");
         userInfoBox.classList.add("user-info-box");

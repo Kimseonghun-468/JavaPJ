@@ -6,8 +6,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         ProfileFriendApp.init(loginName, userName);
 
 
-        selectFirstFriendProfile(userName)
-        // then
+        selectFirstFriendProfile(ProfileFriendApp.$data.userName)
         selectProfileFriend(ProfileFriendApp.$data.userName, ProfileFriendApp.$data.page)
 
         ProfileFriendApp.$event.scrollPagination = debounce(ProfileFriendApp.scrollPaging, 300);
@@ -28,8 +27,8 @@ function selectProfileFriend(userName, page){
         type: "POST",
         data: {userName: userName},
         dataType: "JSON",
-        success: function (data){
-            ProfileFriendApp.setProfileFriend(data);
+        success: function (response){
+            ProfileFriendApp.setProfileFriend(response.data);
         }
     });
 }
@@ -40,8 +39,8 @@ function selectFirstFriendProfile(userName){
         type: "POST",
         data: {userName:userName},
         dataType: "JSON",
-        success: function (data){
-            ProfileFriendApp.setFirst(data);
+        success: function (response){
+            ProfileFriendApp.setFirst(response.data);
         }
     })
 }

@@ -24,7 +24,7 @@ const PostDetailApp = {
         this.$object.replyTable = $("#post-reply-container"); // ksh 바꿔야함
     },
 
-    setPostImageList(data){
+    setPostDetail(data){
         var carouselTag = "";
         var imageUrl = UserProfileApp.$data.profileImage
 

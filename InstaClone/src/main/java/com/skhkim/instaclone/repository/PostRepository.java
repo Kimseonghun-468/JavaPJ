@@ -8,16 +8,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 public interface PostRepository extends JpaRepository<Post, String> {
     @Query("SELECT p FROM Post p " +
             "WHERE p.clubMember.name = :name " +
             "ORDER BY p.pno DESC")
-    Slice<Post> getListPage(Pageable pageable, String name);
-
-    @Query("SELECT p, pi FROM Post p LEFT JOIN PostImage pi ON pi.post = p WHERE p.pno =:pno")
-    List<Object[]> getPostWithAll(Long pno);
+    Slice<Post> selectPostList(Pageable pageable, String name);
 
     @Query("SELECT p FROM Post p WHERE p.pno =:pno")
     Post selectPost(Long pno);
@@ -26,11 +21,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "where p.clubMember.name = :name ")
     Long getPostCount(String email);
 
-    @Query("SELECT m.email FROM ClubMember m " +
-            "WHERE m.name = :name ")
-    String getEmail(String name);
-
-    Post findByPno(Long pno);
+    @Query("SELECT CASE WHEN COUNT(p) > 0 THEN TRUE ELSE FALSE END FROM Post p WHERE p.clubMember.email = :loginEmail")
+    boolean checkValidation(Long pno, String loginEmail);
 
     @Modifying
     @Transactional

@@ -22,8 +22,6 @@ public class ProfileController {
 
     private final MemberService memberService;
     private final FriendService friendService;
-
-
     @GetMapping("/sidebar/{name}")
     public String sidebar(@PathVariable("name") String name,
                           Model model){

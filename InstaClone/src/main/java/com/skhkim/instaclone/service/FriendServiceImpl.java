@@ -34,7 +34,6 @@ public class FriendServiceImpl implements FriendService {
     public boolean createFriendShip(String userName){
         String loginName = LoginContext.getUserInfo().getUserName();
 
-        // Select Member Record By Name (Login, Search User Name)
         ClubMember loginMember = memberRepository.findByName(loginName);
         ClubMember userMember = memberRepository.findByName(userName);
 
@@ -174,8 +173,13 @@ public class FriendServiceImpl implements FriendService {
     public UserInfoDTO selectFristFriend(String userName){
 
         String loginName = LoginContext.getUserInfo().getUserName();
+
         ClubMember loginMember = memberRepository.findByName(loginName);
         UserInfoDTO userInfoDTO = EntityMapper.entityToDTO(loginMember);
+
+        // Self, None 처리
+        userInfoDTO.setStatus(loginName.equals(userName) ?
+                FriendStatus.SELF : FriendStatus.NONE);
 
         Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
         Optional<FriendAccept> friendAccept = memberRepository.getAcceptFriend(loginName, userName);

@@ -16,38 +16,34 @@ import org.springframework.web.bind.annotation.*;
 public class PostApiController {
 
     private final PostService postService;
-    @PostMapping("/postInfoWithImage")
-    public ResponseEntity getPostInfoWithImage(Long pno){
-        PostDTO result = postService.getPostWithAllImage(pno);
+    @PostMapping("/selectPostDetail")
+    public ResponseEntity selectPostDetail(Long pno){
+        PostDTO result = postService.selectPostDetail(pno);
         return ApiResponse.OK(result);
     }
 
-    @PostMapping("/getPostInfo")
-    public ResponseEntity getPostInfo(PostPageRequest postPageRequest, String userName){
-        PostResponse result =  postService.getList(postPageRequest, userName);
+    @PostMapping("/selectPostList")
+    public ResponseEntity selectPostList(PostPageRequest postPageRequest, String userName){
+        PostResponse result =  postService.selectPostList(postPageRequest, userName);
         return ApiResponse.OK(result);
     }
-    @DeleteMapping("/delete/{pno}")
-    public ResponseEntity removePost(@PathVariable Long pno){
-        postService.removePost(pno);
-        return ApiResponse.OK(pno);
+    @DeleteMapping("/delete")
+    public ResponseEntity delete(Long pno){
+        return ApiResponse.OK(postService.delete(pno));
     }
 
     @PostMapping("/insertPost")
-    public ResponseEntity insertPost(@RequestBody PostDTO postDTO){ // ksh edit : 이거 redirection은 그냥 js에서 하고 반환은 제대로 해야겠음.
-        postService.register(postDTO);
-        return ApiResponse.OK();
+    public ResponseEntity insertPost(@RequestBody PostDTO postDTO){
+        return ApiResponse.OK(postService.insert(postDTO));
     }
 
     @PostMapping("/updatePost")
     public ResponseEntity updatePost(@RequestBody PostDTO postDTO){
-        postService.modifyTitle(postDTO);
-        return ApiResponse.OK();
+        return ApiResponse.OK(postService.update(postDTO));
     }
 
     @PostMapping("/selectPostNum")
     public ResponseEntity selectPostNum(String userName) {
-        Long result = postService.getPostNumber(userName);
-        return ApiResponse.OK(result);
+        return ApiResponse.OK(postService.selectPostNumber(userName));
     }
 }

@@ -1,13 +1,10 @@
 package com.skhkim.instaclone.controller.apiController;
 
 import com.skhkim.instaclone.chatting.request.InviteRequest;
-import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.response.ApiResponse;
-import com.skhkim.instaclone.response.UserInfoResponse;
 import com.skhkim.instaclone.service.FriendService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,52 +42,39 @@ public class FriendApiController {
     @PostMapping("/selectWaitingFriend")
     public ResponseEntity
     selectWaitingFriend(UserInfoPageRequest userInfoPageRequest){
-        UserInfoResponse result =
-                friendService.selectWaitingFriend(userInfoPageRequest);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return ApiResponse.OK(friendService.selectWaitingFriend(userInfoPageRequest));
     }
-
 
     @PostMapping("/selectAcceptUsersInfo")
     public ResponseEntity
-    getProfileImageAcceptedList(UserInfoPageRequest userInfoPageRequest){
-        UserInfoResponse result =
-                friendService.selectAcceptUsersInfo(userInfoPageRequest);
-        return ResponseEntity.ok(result);
+    selectAcceptUsersInf(UserInfoPageRequest userInfoPageRequest){
+        return ApiResponse.OK(friendService.selectAcceptUsersInfo(userInfoPageRequest));
     }
 
     @PostMapping("/selectUserFriendsInfo")
     public ResponseEntity
     selectUserFriendsInfo(UserInfoPageRequest userInfoPageRequest, String userName){
-        UserInfoResponse result =
-                friendService.selectUserFriendsInfo(userInfoPageRequest, userName);
-        return ResponseEntity.ok(result);
+        return ApiResponse.OK(friendService.selectUserFriendsInfo(userInfoPageRequest, userName));
     }
-
 
     @PostMapping("/selectInviteList")
     public ResponseEntity
     selectInviteList(UserInfoPageRequest userInfoPageRequest, @RequestParam List<String> roomUsers){
-        UserInfoResponse result =
-                friendService.selectInviteList(userInfoPageRequest, roomUsers);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return ApiResponse.OK(friendService.selectInviteList(userInfoPageRequest, roomUsers));
     }
 
     @PostMapping("selectFristFriend")
     public ResponseEntity selectFristFriend(String userName){
-        UserInfoDTO result = friendService.selectFristFriend(userName);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return ApiResponse.OK(friendService.selectFristFriend(userName));
     }
 
     @PostMapping("/selectInviteSearchUsers")
     public ResponseEntity selectInviteSearchUsers(UserInfoPageRequest userInfoPageRequest, @RequestBody InviteRequest inviteRequest) {
-        UserInfoResponse result = friendService.selectInviteSearchUsers(userInfoPageRequest, inviteRequest.getSearchTerm(), inviteRequest.getUserNames());
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return ApiResponse.OK(friendService.selectInviteSearchUsers(userInfoPageRequest, inviteRequest.getSearchTerm(), inviteRequest.getUserNames()));
     }
     @PostMapping("/selectFriendNum")
     public ResponseEntity selectFriendNum(String userName) {
-        int result = friendService.selectFriendNum(userName);
-        return ApiResponse.OK(result);
+        return ApiResponse.OK(friendService.selectFriendNum(userName));
     }
 
 }
