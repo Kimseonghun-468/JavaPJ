@@ -5,13 +5,11 @@ import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
+import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
-
 import com.skhkim.instaclone.context.LoginContext;
-import com.skhkim.instaclone.request.UserInfoPageRequest;
-import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.ClubMember;
-import com.skhkim.instaclone.response.UserInfoResponse;
+import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.service.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -50,11 +48,9 @@ public class ChatUserServiceImpl implements ChatUserService {
     }
 
     @Override
-    public UserInfoResponse selectChatRoomUsers(Long roomId){
-        List<ClubMember> result = chatUserRepository.selectChatRoomUsers(roomId);
-        List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
-
-        return new UserInfoResponse(userInfoDTOS, false);
+    public List<ChatUserDTO> selectChatRoomUsers(Long roomId){
+        List<ChatUser> result = chatUserRepository.selectChatRoomUsers(roomId);
+        return result.stream().map(EntityMapper::entityToDTO).toList();
     }
 
     @Override
@@ -64,8 +60,8 @@ public class ChatUserServiceImpl implements ChatUserService {
     }
 
     @Override
-    public List<UserInfoDTO> selectChatUserList(Long roomId, List<String> userNameList){
-        List<ClubMember> result = chatUserRepository.selectChatUserList(roomId, userNameList);
+    public List<ChatUserDTO> selectChatUserList(InviteRequest inviteRequest){
+        List<ChatUser> result = chatUserRepository.selectChatUserList(inviteRequest.getRoomId(), inviteRequest.getUserNames());
         return result.stream().map(EntityMapper::entityToDTO).toList();
     }
 

@@ -40,8 +40,9 @@ public class RedisConfig {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
-        container.addMessageListener(onChatMessage(), new PatternTopic("/chat/*")); // 패턴 구독
+        container.addMessageListener(onChatMessage(), new PatternTopic("/chat/*"));
         container.addMessageListener(onChatSesson(), new ChannelTopic("websocket-events"));
+        container.addMessageListener(onChatInvite(), new PatternTopic("/invite/*"));
         return container;
     }
 
@@ -53,4 +54,6 @@ public class RedisConfig {
     public MessageListener onChatSesson() {
         return new MessageListenerAdapter(redisSubscriber, "onSession");
     }
+    @Bean
+    public MessageListener onChatInvite() {return new MessageListenerAdapter(redisSubscriber, "onInvite");}
 }

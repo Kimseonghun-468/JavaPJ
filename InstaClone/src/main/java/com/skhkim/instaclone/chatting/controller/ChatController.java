@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.chatting.controller;
 
+import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
@@ -10,11 +11,9 @@ import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
 import com.skhkim.instaclone.context.LoginContext;
-import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.request.MessagePageRequest;
 import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.response.ApiResponse;
-import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -62,17 +62,6 @@ public class ChatController {
         return result;
     }
 
-
-    // Invite할 때 -> Invite한 목록 Message에 저장 한번 하고,
-    // Read Status를 -9999 로 넣고, 음수 체크 후 senderEmail을 기준으로 Name으로 변환한다음
-    // 이 기준을 가지고 OOO님이 입장하셨습니다 로 퉁치자
-    @MessageMapping("/chat/inviteLoad/{roomID}")
-    @SendTo("/topic/chat/inviteLoad/{roomID}")
-    public ResponseEntity inviteLoad(@RequestBody InviteRequest inviteRequest) {
-        List<UserInfoDTO> result = chatUserService.selectChatUserList(inviteRequest.getRoomId(), inviteRequest.getUserNames());
-        return ResponseEntity.ok(result);
-    }
-
     @PostMapping("/chat/getORCreateChatRoom")
     public ResponseEntity<Long> getORCreateChatRoom(String loginEmail, String friendEmail, Long requestRoomId){
         // room id가 존재하는 경우엔 update하고 들어가고, 없는 경우에는 챗룸 생성하고, 업데이트 한다.. 가 맞겠지?
@@ -94,7 +83,7 @@ public class ChatController {
     }
     @PostMapping("/chat/selectChatRoomUsers")
     public ResponseEntity selectChatRoomUsers(Long roomId){
-        UserInfoResponse result = chatUserService.selectChatRoomUsers(roomId);
+        List<ChatUserDTO> result = chatUserService.selectChatRoomUsers(roomId);
         chatMessageService.updateChatMessagesReadStatus(roomId);
         return ApiResponse.OK(result);
     }
@@ -135,10 +124,25 @@ public class ChatController {
         return ApiResponse.OK(resultNum);
     }
 
+
     @PostMapping("/chat/updateUserAndRoom")
     public ResponseEntity updateUserAndRoom(@RequestBody InviteRequest inviteRequest){
         chatUserService.insertChatUser(inviteRequest.getUserEmails(), inviteRequest.getRoomId());
         chatRoomService.updateUserNum(inviteRequest.getRoomId(), inviteRequest.getAddNum());
+
+        ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder()
+                .roomId(inviteRequest.getRoomId())
+                .inviteNames(inviteRequest.getUserNames().toString())
+                .inviterName(LoginContext.getUserInfo().getUserName())
+                .regDate(LocalDateTime.now())
+                .build();
+        chatMessageService.register(chatMessageDTO);
+        return ApiResponse.OK();
+    }
+
+    @PostMapping("/chat/broadInviteUsers")
+    public ResponseEntity broadInviteUsers(@RequestBody InviteRequest inviteRequest){
+        redisTemplate.convertAndSend("/invite/"+ inviteRequest.getRoomId(), inviteRequest);
         return ApiResponse.OK();
     }
 

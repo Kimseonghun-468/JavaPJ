@@ -17,6 +17,8 @@ public class ChatMessageDTO {
     private String senderEmail;
     private String content;
     private Long readStatus;
+    private String inviterName;
+    private String inviteNames;
     private LocalDateTime regDate;
     private String profileImageUrl;
 }

@@ -1,11 +1,13 @@
 package com.skhkim.instaclone.chatting.entity;
-import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+
+import jakarta.persistence.Id;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.lang.annotation.Documented;
 import java.time.LocalDateTime;
 
 //@Entity
@@ -28,6 +30,9 @@ public class ChatMessage{
     private Long roomId;
     @Field("sender_email") // 필드명을 명시적으로 지정 (snake_case)
     private String senderEmail;
+    private String inviteNames;
+    private String inviterName;
+
     private String content;
     @Field("read_status")
     private Long readStatus;

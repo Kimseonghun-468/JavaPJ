@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString(exclude = "chatUserList")
-public class ChatRoom {
+public class ChatRoom extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

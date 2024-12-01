@@ -66,19 +66,25 @@ const ChattingApp = {
     setChattingUp(data) {
 
         data.chatMessageDTOS.forEach(item => {
-            const messageData = item;
-            const senderName = this.$data.emailAndNameDict[messageData.senderEmail]
-            const content = messageData.content;
-            const regDate = messageData.regDate;
-            const readStatus = messageData.readStatus;
-            const profileImageUrl = this.$data.emailAndProfileDict[messageData.senderEmail];
-            if (this.$data.upDayCheck != regDate.slice(0, 10)){
+
+            const chatInfo = {
+                "senderName": this.$data.emailAndNameDict[item.senderEmail],
+                "content": item.content,
+                "regDate": item.regDate,
+                "readStatus": item.readStatus,
+                "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
+                "inviterName": item.inviterName,
+                "inviteNames": item.inviteNames
+            };
+
+            if (this.$data.upDayCheck != item.regDate.slice(0, 10)){
                 $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + this.$data.upDayCheck +'</div></div>')
-                this.$data.upDayCheck = regDate.slice(0, 10)
+                this.$data.upDayCheck = item.regDate.slice(0, 10)
             }
-            this.setChatMessage(senderName, content, readStatus, regDate, profileImageUrl, inverse= true)
+            this.setChatMessage(chatInfo, inverse= true)
 
         })
+
         if (data.hasNext == false)
             $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + this.$data.upDayCheck +'</div></div>')
 
@@ -90,41 +96,61 @@ const ChattingApp = {
     setChattingDown(data) {
 
         data.chatMessageDTOS.forEach(item => {
-            const messageData = item;
-            const senderName = this.$data.emailAndNameDict[messageData.senderEmail]
-            const content = messageData.content;
-            const regDate = messageData.regDate;
-            const readStatus = messageData.readStatus;
-            const profileImageUrl = this.$data.emailAndProfileDict[messageData.senderEmail];
-            if (this.$data.downDayCheck != regDate.slice(0, 10)){
-                this.$data.downDayCheck = regDate.slice(0, 10);
+            const chatInfo = {
+                "senderName": this.$data.emailAndNameDict[item.senderEmail],
+                "content": item.content,
+                "regDate": item.regDate,
+                "readStatus": item.readStatus,
+                "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
+                "inviterName": item.inviterName,
+                "inviteNames": item.inviteNames
+            };
+
+            if (this.$data.downDayCheck != item.regDate.slice(0, 10)){
+                this.$data.downDayCheck = item.regDate.slice(0, 10);
                 $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + this.$data.downDayCheck +'</div></div>');
             }
-            this.setChatMessage(senderName, content, readStatus, regDate, profileImageUrl, inverse= false)
+
+            this.setChatMessage(chatInfo, inverse= false)
         })
 
         this.$data.hasNextDown = data.hasNext;
         this.$data.downPage += 1
     },
-    initChattingApp(roomId){
-        $.ajax({
-            url: '/chat/selectChatRoomUsers',
-            type: 'POST',
-            data: {roomId : roomId},
-            dataType: "JSON",
-            success: (response) => {
-                response.data.userInfoDTOS.forEach((item, index) => {
-                    ChattingApp.$data.nameAndEmailDict[item.userName] = item.userEmail
-                    ChattingApp.$data.emailAndNameDict[item.userEmail] = item.userName
-                    if(item.path != null)
-                        ChattingApp.$data.emailAndProfileDict[item.userEmail] = item.imageURL
-                    else
-                        ChattingApp.$data.emailAndProfileDict[item.userEmail] = ChattingApp.$data.noneImage
-                })
-                selectChattingUp(ChattingApp.$data.roomId, ChattingApp.$data.upPage)
-                selectChattingDown(ChattingApp.$data.roomId, ChattingApp.$data.downPage)
-            }
-        })
+    async initChattingApp(roomId){
+        try {
+            await this.makeUserDict(roomId);
+            selectChattingUp(ChattingApp.$data.roomId, ChattingApp.$data.upPage);
+            selectChattingDown(ChattingApp.$data.roomId, ChattingApp.$data.downPage);
+        } catch (error) {
+            console.error("Chat room users loading failed:", error);
+        }
+    },
+
+    makeUserDict(roomId) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/chat/selectChatRoomUsers',
+                type: 'POST',
+                data: { roomId: roomId },
+                dataType: "JSON",
+                success: (response) => {
+                    response.data.forEach((item) => {
+                        ChattingApp.$data.nameAndEmailDict[item.userInfoDTO.userName] = item.userInfoDTO.userEmail;
+                        ChattingApp.$data.emailAndNameDict[item.userInfoDTO.userEmail] = item.userInfoDTO.userName;
+                        if (item.userInfoDTO.path != null) {
+                            ChattingApp.$data.emailAndProfileDict[item.userInfoDTO.userEmail] = item.userInfoDTO.imageURL;
+                        } else {
+                            ChattingApp.$data.emailAndProfileDict[item.userInfoDTO.userEmail] = ChattingApp.$data.noneImage;
+                        }
+                    });
+                    resolve(response);
+                },
+                error: (error) => {
+                    reject(error);
+                }
+            });
+        });
     },
 
 
@@ -135,19 +161,18 @@ const ChattingApp = {
         client.connect({'roomId': roomId}, () => {
 
             client.subscribe('/topic/chat/' + roomId, (chatMessage) => {
+                const item = JSON.parse(chatMessage.body);  // 한 번만 파싱
+                const chatInfo = {
+                    "senderName": this.$data.emailAndNameDict[item.senderEmail],
+                    "content": item.content,
+                    "regDate": regDate = Date.now(),
+                    "readStatus": item.readStatus,
+                    "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
+                    "inviterName": item.inviterName,
+                    "inviteNames": item.inviteNames
+                };
 
-                const messageData = JSON.parse(chatMessage.body);  // 한 번만 파싱
-                const senderName = this.$data.emailAndNameDict[messageData.senderEmail]
-                const content = messageData.content;
-                const readStatus = messageData.readStatus;
-                const profileImageUrl = this.$data.emailAndProfileDict[messageData.senderEmail];
-                var regDate = messageData.regDate;
-
-                if(regDate == null){
-                    regDate = Date.now()
-                }
-
-                this.setChatMessage(senderName, content, readStatus, regDate, profileImageUrl, inverse= false)
+                this.setChatMessage(chatInfo, inverse= false)
 
             });
 
@@ -168,11 +193,10 @@ const ChattingApp = {
             })
 
             client.subscribe('/topic/chat/inviteLoad/' + roomId, (result) => {
-                var invitedList = JSON.parse(result.body).body
+                var invitedList = JSON.parse(result.body)
                 var names = ""
                 invitedList.forEach(item => {
-                    names += item.userName + ', '
-
+                    names += item + ', '
                 })
                 result = ""
                 result += '<div class="invite-list-container">'
@@ -207,15 +231,34 @@ const ChattingApp = {
     },
 
 
-    setChatMessage(name, message, readStatus, time, imageUrl, inverse) {
+    setChatMessage(chatInfo, inverse) {
         const tag = document.createElement("div");
-        const profileImage = imageUrl ? `/display?fileName=${imageUrl}` : "/display?fileName=outprofile.png";
-        const timeFormat = formatter.format(new Date(time));
-        const showedTime = timeFormat.slice(21, 23)+" "+
-            timeFormat.slice(12, 20)
+        const profileImage = chatInfo.profileImageUrl ? `/display?fileName=${chatInfo.profileImageUrl}` : "/display?fileName=outprofile.png";
+
+        const timeFormat = formatter.format(new Date(chatInfo.regDate));
+        const showedTime = timeFormat.slice(21, 23) + " " + timeFormat.slice(12, 20);
         const timeFormatted = showedTime.slice(0, 8);
 
-        if (name !== this.$data.loginName) {
+        if (chatInfo.inviterName != null) {
+            const inviteListContainer = document.createElement('div');
+            inviteListContainer.classList.add('invite-list-container');
+
+            const inviteUserList = document.createElement('div');
+            inviteUserList.classList.add('invite-user-list');
+            inviteUserList.textContent = `${chatInfo.inviterName}님이 ${chatInfo.inviteNames}님을 초대하였습니다.`;
+
+            inviteListContainer.appendChild(inviteUserList);
+
+            if (inverse === true) {
+                $('#messages-box').prepend(inviteListContainer);
+            } else {
+                $('#messages-box').append(inviteListContainer);
+            }
+            return
+        }
+
+
+        if (chatInfo.senderName !== this.$data.loginName) {
             tag.classList.add("message", "received");
 
             const chatMain = document.createElement("div");
@@ -230,24 +273,24 @@ const ChattingApp = {
 
             const sender = document.createElement("div");
             sender.classList.add("sender");
-            sender.textContent = name;
+            sender.textContent = chatInfo.senderName;
 
             const contentWrapper = document.createElement("div");
             contentWrapper.classList.add("content-wrapper");
 
             const content = document.createElement("div");
             content.classList.add("content");
-            content.textContent = message;
+            content.textContent = chatInfo.content;
 
             const chatlog = document.createElement("div");
             chatlog.classList.add("chatlog");
 
-            if (readStatus > 0) {
+            if (chatInfo.readStatus > 0) {
                 const statusTrue = document.createElement("div");
                 statusTrue.classList.add("status-true");
-                statusTrue.dataset.time = time;
-                statusTrue.dataset.name = name;
-                statusTrue.textContent = readStatus;
+                statusTrue.dataset.time = chatInfo.regDate;
+                statusTrue.dataset.name = chatInfo.senderName;
+                statusTrue.textContent = chatInfo.readStatus;
                 chatlog.appendChild(statusTrue);
             }
 
@@ -277,7 +320,7 @@ const ChattingApp = {
 
             const sender = document.createElement("div");
             sender.classList.add("sender");
-            sender.textContent = name;
+            sender.textContent = chatInfo.senderName;
 
             const chatSideAdd = document.createElement("div");
             chatSideAdd.classList.add("chat-side-add");
@@ -285,12 +328,12 @@ const ChattingApp = {
             const chatlog = document.createElement("div");
             chatlog.classList.add("chatlog");
 
-            if (readStatus > 0) {
+            if (chatInfo.readStatus > 0) {
                 const statusTrue = document.createElement("div");
                 statusTrue.classList.add("status-true");
-                statusTrue.dataset.time = time;
-                statusTrue.dataset.name = name;
-                statusTrue.textContent = readStatus;
+                statusTrue.dataset.time = chatInfo.regDate;
+                statusTrue.dataset.name = chatInfo.senderName;
+                statusTrue.textContent = chatInfo.readStatus;
                 chatlog.appendChild(statusTrue);
             }
 
@@ -303,7 +346,7 @@ const ChattingApp = {
 
             const content = document.createElement("div");
             content.classList.add("content");
-            content.textContent = message;
+            content.textContent = chatInfo.content;
 
             chatSideAdd.appendChild(content);
             chatSide.appendChild(sender);
@@ -318,11 +361,13 @@ const ChattingApp = {
             chatMain.appendChild(img);
             tag.appendChild(chatMain);
         }
-        if (inverse == true)
-            $('#messages-box').prepend(tag)
+
+        if (inverse === true)
+            $('#messages-box').prepend(tag);
         else
-            $('#messages-box').append(tag)
-    },
+            $('#messages-box').append(tag);
+    }
+
 
 
 

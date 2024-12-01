@@ -89,17 +89,40 @@ function selectInviteSearchUserList(searchTerm, roomUsers, page){
 }
 
 function inviteUsers(userNames, userEmails, roomId){
+
+    const sendData = {
+        userEmails:userEmails,
+        userNames:userNames,
+        roomId:roomId,
+        addNum:userEmails.length
+    }
+
     $.ajax({
         url: "/chat/updateUserAndRoom",
         type: 'POST',
-        data: JSON.stringify({userEmails:userEmails, roomId:roomId, addNum:userEmails.length}),
+        data: JSON.stringify(sendData),
         dataType: "JSON",
         contentType: "application/json",
         success: function (response){
-            ChattingApp.$data.stompClient.send("/app/chat/inviteLoad/"+ roomId, {}, JSON.stringify({userNames:userNames, roomId:roomId}));
-            $('#inviteModal').modal('hide');
+            // update 하고 브로드캐스트 한다 이거지?
+            // 그렇다면 나는.. 업데이트 할 때 그냥 브로드 캐스팅 떄릴레
+            // ChattingApp.$data.stompClient.send("/app/chat/inviteLoad/"+ roomId, {}, JSON.stringify({userNames:userNames, roomId:roomId}));
+            $.ajax({
+                url: "/chat/broadInviteUsers",
+                type: 'POST',
+                data: JSON.stringify(sendData),
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function () {
+                    $('#inviteModal').modal('hide');
+                }
+            });
         }
     })
+}
+
+function boradInviteUsers(){
+
 }
 
 

@@ -54,9 +54,12 @@ public class EntityMapper {
     public static ChatMessageDTO entityToDTO(ChatMessage chatMessage){
         return ChatMessageDTO.builder()
                 .senderEmail(chatMessage.getSenderEmail())
+                .roomId(chatMessage.getRoomId())
                 .content(chatMessage.getContent())
                 .readStatus(chatMessage.getReadStatus())
                 .regDate(chatMessage.getRegDate())
+                .inviteNames(chatMessage.getInviteNames())
+                .inviterName(chatMessage.getInviterName())
                 .build();
     }
 
@@ -68,6 +71,8 @@ public class EntityMapper {
                 .content(chatMessageDTO.getContent())
                 .readStatus(chatMessageDTO.getReadStatus())
                 .regDate(chatMessageDTO.getRegDate())
+                .inviteNames(chatMessageDTO.getInviteNames())
+                .inviterName(chatMessageDTO.getInviterName())
                 .build();
     }
 
@@ -76,6 +81,7 @@ public class EntityMapper {
                 .userInfoDTO(entityToDTO(chatUser.getMember()))
                 .roomId(chatUser.getChatRoom().getRoomId())
                 .disConnect(chatUser.getDisConnect())
+                .regDate(chatUser.getRegDate())
                 .build();
     }
 

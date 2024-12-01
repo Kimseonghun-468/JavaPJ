@@ -1,6 +1,5 @@
 package com.skhkim.instaclone.chatting.dto;
 
-import com.skhkim.instaclone.dto.ProfileImageDTO;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import lombok.*;
 
@@ -15,6 +14,7 @@ public class ChatUserDTO {
     private Long roomId;
     private LocalDateTime disConnect;
     private UserInfoDTO userInfoDTO;
+    private LocalDateTime regDate;
 
 
 }

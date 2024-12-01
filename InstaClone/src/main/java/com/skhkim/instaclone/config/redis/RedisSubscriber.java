@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.config.redis;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
@@ -8,6 +9,8 @@ import com.skhkim.instaclone.dto.SocketSessionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -45,6 +48,20 @@ public class RedisSubscriber {
             }
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onInvite(String message) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(message);
+            JsonNode userNamesNode = rootNode.get("userNames");
+            List<String> userNames = objectMapper.readValue(userNamesNode.get(1).toString(), List.class);
+            rootNode.get("roomId").asLong();
+
+            messagingTemplate.convertAndSend("/topic/chat/inviteLoad/" + rootNode.get("roomId").asLong(), userNames);
         } catch (Exception e) {
             e.printStackTrace();
         }
