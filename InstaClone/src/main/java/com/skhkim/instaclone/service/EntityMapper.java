@@ -60,10 +60,10 @@ public class EntityMapper {
                 .build();
     }
 
-    public static ChatMessage dtoToEntity(ChatMessageDTO chatMessageDTO, Long roomID){
+    public static ChatMessage dtoToEntity(ChatMessageDTO chatMessageDTO){
         return ChatMessage.builder()
                 .id(chatMessageDTO.getCid())
-                .roomId(roomID)
+                .roomId(chatMessageDTO.getRoomId())
                 .senderEmail(chatMessageDTO.getSenderEmail())
                 .content(chatMessageDTO.getContent())
                 .readStatus(chatMessageDTO.getReadStatus())

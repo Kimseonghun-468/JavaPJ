@@ -23,8 +23,8 @@ function selectChatRoom(page){
         url: '/chat/selectChatRoom?Page='+page,
         type: "POST",
         dataType: "JSON",
-        success: function (data){
-            ChatRoomApp.setChatRoom(data);
+        success: function (response){
+            ChatRoomApp.setChatRoom(response.data);
         }
     });
 }

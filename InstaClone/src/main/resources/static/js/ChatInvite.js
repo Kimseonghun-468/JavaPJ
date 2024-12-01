@@ -95,8 +95,7 @@ function inviteUsers(userNames, userEmails, roomId){
         data: JSON.stringify({userEmails:userEmails, roomId:roomId, addNum:userEmails.length}),
         dataType: "JSON",
         contentType: "application/json",
-        success: function (data){
-            console.log("성공")
+        success: function (response){
             ChattingApp.$data.stompClient.send("/app/chat/inviteLoad/"+ roomId, {}, JSON.stringify({userNames:userNames, roomId:roomId}));
             $('#inviteModal').modal('hide');
         }

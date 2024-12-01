@@ -5,11 +5,11 @@ const ChattingApp = {
         hasNextUp: false,
         hasNextDown: false,
         loginName: null,
-        loginEmail: null,
         roomId: null,
-        noneImage: "/display?fileName=outprofile.png/",
+        noneImage: "outprofile.png/",
         nameAndEmailDict : {},
         emailAndNameDict : {},
+        emailAndProfileDict : {},
         upDayCheck: null,
         downDayCheck: null,
 
@@ -30,10 +30,9 @@ const ChattingApp = {
     },
 
 
-    init(loginName, loginEmail, roomId) {
+    init(loginName, roomId) {
         console.log("Chatting App 초기화 중...");
         this.$data.loginName = loginName;
-        this.$data.loginEmail = loginEmail;
         this.$data.upPage = 1;
         this.$data.downPage = 1;
         this.$data.upDayCheck = new Date().toISOString().slice(0, 10);
@@ -44,7 +43,7 @@ const ChattingApp = {
         this.$object.waitTable = $("#messages-box");
         this.$object.scrollContainer = document.getElementById('messages-modal');
         this.scrollPaging = this.scrollPaging.bind(this);
-        this.makeUserDict(roomId)
+        this.initChattingApp(roomId)
         this.connect()
 
     },
@@ -72,7 +71,7 @@ const ChattingApp = {
             const content = messageData.content;
             const regDate = messageData.regDate;
             const readStatus = messageData.readStatus;
-            const profileImageUrl = messageData.profileImageUrl;
+            const profileImageUrl = this.$data.emailAndProfileDict[messageData.senderEmail];
             if (this.$data.upDayCheck != regDate.slice(0, 10)){
                 $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + this.$data.upDayCheck +'</div></div>')
                 this.$data.upDayCheck = regDate.slice(0, 10)
@@ -96,7 +95,7 @@ const ChattingApp = {
             const content = messageData.content;
             const regDate = messageData.regDate;
             const readStatus = messageData.readStatus;
-            const profileImageUrl = messageData.profileImageUrl;
+            const profileImageUrl = this.$data.emailAndProfileDict[messageData.senderEmail];
             if (this.$data.downDayCheck != regDate.slice(0, 10)){
                 this.$data.downDayCheck = regDate.slice(0, 10);
                 $('#messages-box').prepend('<div class="chat-date-frame"><div class="chat-date">' + this.$data.downDayCheck +'</div></div>');
@@ -107,20 +106,27 @@ const ChattingApp = {
         this.$data.hasNextDown = data.hasNext;
         this.$data.downPage += 1
     },
-    makeUserDict(roomId) {
+    initChattingApp(roomId){
         $.ajax({
             url: '/chat/selectChatRoomUsers',
             type: 'POST',
             data: {roomId : roomId},
             dataType: "JSON",
-            success: (data) => {
-                data.userInfoDTOS.forEach((item, index) => {
-                    this.$data.nameAndEmailDict[item.userName] = item.userEmail
-                    this.$data.emailAndNameDict[item.userEmail] = item.userName
+            success: (response) => {
+                response.data.userInfoDTOS.forEach((item, index) => {
+                    ChattingApp.$data.nameAndEmailDict[item.userName] = item.userEmail
+                    ChattingApp.$data.emailAndNameDict[item.userEmail] = item.userName
+                    if(item.path != null)
+                        ChattingApp.$data.emailAndProfileDict[item.userEmail] = item.imageURL
+                    else
+                        ChattingApp.$data.emailAndProfileDict[item.userEmail] = ChattingApp.$data.noneImage
                 })
+                selectChattingUp(ChattingApp.$data.roomId, ChattingApp.$data.upPage)
+                selectChattingDown(ChattingApp.$data.roomId, ChattingApp.$data.downPage)
             }
         })
     },
+
 
     connect() {
         var roomId = this.$data.roomId
@@ -133,9 +139,13 @@ const ChattingApp = {
                 const messageData = JSON.parse(chatMessage.body);  // 한 번만 파싱
                 const senderName = this.$data.emailAndNameDict[messageData.senderEmail]
                 const content = messageData.content;
-                const regDate = messageData.regDate;
                 const readStatus = messageData.readStatus;
-                const profileImageUrl = messageData.profileImageUrl;
+                const profileImageUrl = this.$data.emailAndProfileDict[messageData.senderEmail];
+                var regDate = messageData.regDate;
+
+                if(regDate == null){
+                    regDate = Date.now()
+                }
 
                 this.setChatMessage(senderName, content, readStatus, regDate, profileImageUrl, inverse= false)
 
@@ -190,7 +200,7 @@ const ChattingApp = {
             type: "POST",
             data: {roomId: roomId},
             dataType: "JSON",
-            success: (data) => {
+            success: (response) => {
 
             }
         })

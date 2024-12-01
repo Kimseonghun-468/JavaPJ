@@ -1,5 +1,6 @@
 package com.skhkim.instaclone.chatting.service;
 
+import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
@@ -44,11 +45,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    public void updateLastChatTime(Long roomID, String comment) {
-        Optional<ChatRoom> result = chatRoomRepository.getChatRoombyRoomId(roomID);
+    public void updateLastChatTime(ChatMessageDTO chatMessageDTO) {
+        Optional<ChatRoom> result = chatRoomRepository.getChatRoombyRoomId(chatMessageDTO.getRoomId());
         if (result.isPresent()) {
             ChatRoom chatRoom = result.get();
-            chatRoom.setLastChat(comment);
+            chatRoom.setLastChat(chatMessageDTO.getContent());
             chatRoom.setLastChatTime(LocalDateTime.now());
             chatRoomRepository.save(chatRoom);
         }

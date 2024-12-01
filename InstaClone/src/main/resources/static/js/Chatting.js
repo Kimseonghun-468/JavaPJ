@@ -3,26 +3,19 @@ document.addEventListener("DOMContentLoaded", ()=> {
         $('#chatMessageModal').css('z-index', 1052).modal('show');
         var roomId = $(this).attr('room-id')
 
-        ChattingApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.loginEmail, roomId)
-
-        selectChattingUp(ChattingApp.$data.roomId, ChattingApp.$data.upPage)
-        selectChattingDown(ChattingApp.$data.roomId, ChattingApp.$data.downPage)
+        ChattingApp.init(UserProfileApp.$data.loginName, roomId)
 
         ChattingApp.$event.scrollPagination = debounce(ChattingApp.scrollPaging,300);
         ChattingApp.$object.scrollContainer.addEventListener('scroll', ChattingApp.$event.scrollPagination);
-
-        $('#send-button-modalroom').click(function () {
-            var messageContent = document.getElementById('messageInput').value.trim();
-
-            var chatMessage = {
-                content: messageContent,
-                senderEmail: ChattingApp.$data.loginEmail
-            };
-            ChattingApp.$data.stompClient.send("/app/chat/"+ChattingApp.$data.roomId, {}, JSON.stringify(chatMessage));
-        })
-
     });
 
+    $('#send-button-modalroom').click(function () {
+        var messageContent = document.getElementById('messageInput').value.trim();
+        var chatMessage = {
+            content: messageContent,
+        };
+        sendChatMessage(ChattingApp.$data.roomId, chatMessage);
+    })
     $('#chatMessageModal').on('hidden.bs.modal', function () {
       document.getElementById('messages-box').innerHTML = '';
       ChattingApp.$object.scrollContainer.removeEventListener('scroll', ChattingApp.$event.scrollPagination);
@@ -37,8 +30,8 @@ function selectChattingUp(roomId ,page){
         type: "POST",
         data: {roomId:roomId},
         dataType: "JSON",
-        success: function (data){
-            ChattingApp.setChattingUp(data)
+        success: function (response){
+            ChattingApp.setChattingUp(response.data)
         }
     });
 }
@@ -49,8 +42,8 @@ function selectChattingDown(roomId ,page){
         type: "POST",
         data: {roomId:roomId},
         dataType: "JSON",
-        success: function (data){
-            ChattingApp.setChattingDown(data)
+        success: function (response){
+            ChattingApp.setChattingDown(response.data)
         }
     });
 }
@@ -62,13 +55,25 @@ function getNotReadMessageNum(roomId) {
         type: "POST",
         dataType: "JSON",
         data: {roomId: roomId},
-        success: function (result){
-            if (result > 300)
+        success: function (response){
+            if (response.data > 300)
                 $('#num-'+roomId).html("300+");
-            else if (result > 0)
-                $('#num-'+roomId).html(result);
+            else if (response.data > 0)
+                $('#num-'+roomId).html(response.data);
         }
     })
-
 }
+
+function sendChatMessage(roomId, chatMessage){
+    $.ajax({
+        url: "/chat/sendMessage",
+        type: "POST",
+        dataType: "JSON",
+        data: JSON.stringify({roomId: roomId, chatMessageDTO: chatMessage}),
+        contentType: "application/json",
+        success: function (response){
+        }
+    })
+}
+
 

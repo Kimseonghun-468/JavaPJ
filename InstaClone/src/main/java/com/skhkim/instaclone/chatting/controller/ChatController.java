@@ -1,20 +1,23 @@
 package com.skhkim.instaclone.chatting.controller;
 
-import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
+import com.skhkim.instaclone.chatting.request.MessageRequest;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
 import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.request.MessagePageRequest;
 import com.skhkim.instaclone.request.UserInfoPageRequest;
+import com.skhkim.instaclone.response.ApiResponse;
 import com.skhkim.instaclone.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -24,7 +27,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -37,18 +39,20 @@ public class ChatController {
     private final ChatRoomService chatRoomService;
     private final ChatUserService chatUserService;
     private final ChatRoomSessionManager chatRoomSessionManager;
-    @MessageMapping("/chat/{roomID}")
-    @SendTo("/topic/chat/{roomID}")
-    public ChatMessageDTO sendMessage(@DestinationVariable String roomID, ChatMessageDTO chatMessageDTO) {
-        Long id = Long.parseLong(roomID);
-        Long userNum = chatRoomService.getUserNum(id);
-        int readStatus = userNum.intValue() - chatRoomSessionManager.getRoomJoinNum(roomID);
-        chatMessageDTO.setReadStatus((long) readStatus);
-        chatMessageDTO.setRegDate(LocalDateTime.now());
-        chatMessageService.register(chatMessageDTO, id);
-        chatRoomService.updateLastChatTime(id, chatMessageDTO.getContent());
+    private final RedisTemplate<String, Object> redisTemplate;
 
-        return chatMessageDTO;
+    @PostMapping("/chat/sendMessage")
+    public ResponseEntity sendMessage(@RequestBody MessageRequest request) {
+        Long userNum = chatRoomService.getUserNum(request.getRoomId());
+        int readStatus = userNum.intValue() - chatRoomSessionManager.getRoomJoinNum(request.getRoomId().toString());
+        request.getChatMessageDTO().setSenderEmail(LoginContext.getUserInfo().getUserEmail());
+        request.getChatMessageDTO().setReadStatus((long) readStatus);
+        request.getChatMessageDTO().setRoomId(request.getRoomId());
+        chatMessageService.register(request.getChatMessageDTO());
+        chatRoomService.updateLastChatTime(request.getChatMessageDTO());
+        redisTemplate.convertAndSend("/chat/"+ request.getRoomId(), request.getChatMessageDTO());
+
+        return ApiResponse.OK();
     }
 
     @MessageMapping("/chat/accessLoad/{roomID}")
@@ -66,8 +70,6 @@ public class ChatController {
     @SendTo("/topic/chat/inviteLoad/{roomID}")
     public ResponseEntity inviteLoad(@RequestBody InviteRequest inviteRequest) {
         List<UserInfoDTO> result = chatUserService.selectChatUserList(inviteRequest.getRoomId(), inviteRequest.getUserNames());
-
-
         return ResponseEntity.ok(result);
     }
 
@@ -94,19 +96,19 @@ public class ChatController {
     public ResponseEntity selectChatRoomUsers(Long roomId){
         UserInfoResponse result = chatUserService.selectChatRoomUsers(roomId);
         chatMessageService.updateChatMessagesReadStatus(roomId);
-        return ResponseEntity.ok(result);
+        return ApiResponse.OK(result);
     }
 
     @PostMapping("/chat/selectChatMessageUp")
     public ResponseEntity selectChatMessageUp(MessagePageRequest replyPageRequest, Long roomId){
         ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(replyPageRequest, roomId);
-        return ResponseEntity.ok(chatMessageResponse);
+        return ApiResponse.OK(chatMessageResponse);
     }
 
     @PostMapping("/chat/selectChatMessageDown")
     public ResponseEntity selectChatMessageDown(MessagePageRequest replyPageRequest, Long roomId) {
         ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(replyPageRequest, roomId);
-        return ResponseEntity.ok(chatMessageResponse);
+        return ApiResponse.OK(chatMessageResponse);
     }
 
     @PostMapping("/chat/getEmailAndNameByRoomId")
@@ -118,26 +120,26 @@ public class ChatController {
     @PostMapping("/chat/selectChatRoom")
     public ResponseEntity selectChatRoom(UserInfoPageRequest userInfoPageRequest){
         ChatRoomResponse result = chatUserService.getProfileAndUseByLoginNamePage(userInfoPageRequest);
-        return ResponseEntity.ok(result);
+        return ApiResponse.OK(result);
     }
 
     @PostMapping("/chat/updateDisConnectTime")
-    public ResponseEntity<String> updateDisconnectTime(Long roomId){
+    public ResponseEntity updateDisconnectTime(Long roomId){
         chatUserService.updateDisConnect(roomId);
-        return new ResponseEntity<>("성공", HttpStatus.OK);
+        return ApiResponse.OK("성공");
     }
 
     @PostMapping("/chat/getNotReadNum")
-    public ResponseEntity<Long> getNotReadNum(Long roomId){
+    public ResponseEntity getNotReadNum(Long roomId){
         Long resultNum = chatMessageService.getNotReadNum(roomId);
-        return new ResponseEntity<>(resultNum, HttpStatus.OK);
+        return ApiResponse.OK(resultNum);
     }
 
     @PostMapping("/chat/updateUserAndRoom")
     public ResponseEntity updateUserAndRoom(@RequestBody InviteRequest inviteRequest){
         chatUserService.insertChatUser(inviteRequest.getUserEmails(), inviteRequest.getRoomId());
         chatRoomService.updateUserNum(inviteRequest.getRoomId(), inviteRequest.getAddNum());
-        return ResponseEntity.ok(true);
+        return ApiResponse.OK();
     }
 
 }

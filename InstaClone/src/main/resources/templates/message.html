@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/dist/stomp.min.js"></script>
+</head>
+<body>
+<h1>WebSocket Chat</h1>
+<input type="text" id="message" placeholder="Enter message" />
+<button onclick="sendMessage()">Send</button>
+
+<script>
+    var socket = new SockJS('/ws');  // WebSocket 엔드포인트
+    var stompClient = Stomp.over(socket);
+
+    // WebSocket 연결 시 실행될 콜백
+    stompClient.connect({}, function(frame) {
+        console.log('Connected: ' + frame);
+    });
+
+    // 메시지 보내기
+    function sendMessage() {
+        var message = document.getElementById('message').value;
+        stompClient.send("/app/chat/send", {}, JSON.stringify({ 'message': message }));
+    }
+</script>
+</body>
+</html>

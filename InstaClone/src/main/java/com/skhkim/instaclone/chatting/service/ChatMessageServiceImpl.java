@@ -27,8 +27,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatUserRepository chatUserRepository;
 
     @Override
-    public void register(ChatMessageDTO chatMessageDTO, Long roomID){
-        ChatMessage chatMessage = EntityMapper.dtoToEntity(chatMessageDTO, roomID);
+    public void register(ChatMessageDTO chatMessageDTO){
+        ChatMessage chatMessage = EntityMapper.dtoToEntity(chatMessageDTO);
+        chatMessage.setRegDate(LocalDateTime.now());
         chatMessageRepository.save(chatMessage);
     }
     @Override
