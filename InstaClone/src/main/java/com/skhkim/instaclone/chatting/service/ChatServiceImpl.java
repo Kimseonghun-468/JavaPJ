@@ -86,7 +86,6 @@ public class ChatServiceImpl implements ChatService {
         Optional<Long> roomId = userRepository.checkChatRoom(LoginContext.getClubMember().getName(), userName);
 
         if(roomId.isPresent()){
-            this.joinChatRoom(roomId.get());
             return roomId.get();
         }
         else{
@@ -96,7 +95,6 @@ public class ChatServiceImpl implements ChatService {
             roomRepository.save(chatRoom);
             userService.register(LoginContext.getClubMember().getEmail(), chatRoom.getRoomId());
             userService.register(memberRepository.findByName(userName).getEmail(), chatRoom.getRoomId());
-            this.joinChatRoom(chatRoom.getRoomId());
             return chatRoom.getRoomId();
         }
     }

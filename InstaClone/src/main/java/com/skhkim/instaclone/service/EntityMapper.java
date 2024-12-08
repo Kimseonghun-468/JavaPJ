@@ -26,7 +26,7 @@ public class EntityMapper {
                 .uuid(profileImage != null ? profileImage.getUuid() : null)
                 .path(profileImage != null ? profileImage.getPath() : null)
                 .userName(projection.getClubMember().getName())
-//                .userEmail(projection.getClubMember().getEmail())
+                .userEmail(projection.getClubMember().getEmail())
                 .status(projection.getStatus())
                 .build();
     }
@@ -38,7 +38,7 @@ public class EntityMapper {
                 .uuid(profileImage != null ? profileImage.getUuid() : null)
                 .path(profileImage != null ? profileImage.getPath() : null)
                 .userName(clubMember.getName())
-//                .userEmail(clubMember.getEmail())
+                .userEmail(clubMember.getEmail())
                 .build();
     }
     
@@ -106,7 +106,7 @@ public class EntityMapper {
     public static List<UserInfoDTO> entityToDTO(List<ChatUser> chatUserList){
         return chatUserList.stream().map(chatUser ->
                 UserInfoDTO.builder()
-//                        .userEmail(chatUser.getMember().getEmail())
+                        .userEmail(chatUser.getMember().getEmail())
                         .userName(chatUser.getMember().getName())
                         .imgName(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getImgName() : null)
                         .uuid(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getUuid() : null)

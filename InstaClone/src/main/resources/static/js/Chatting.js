@@ -1,7 +1,13 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     $(document).on('click', '.request-Chatroom-button', function (){
         $('#chatMessageModal').css('z-index', 1052).modal('show');
+
         var roomId = $(this).attr('room-id')
+
+        if(roomId == null){
+            var userName = $(this).data('name');
+            roomId = createChatRoom(userName)
+        }
 
         ChattingApp.init(UserProfileApp.$data.loginName, roomId)
 
@@ -76,4 +82,20 @@ function sendChatMessage(roomId, chatMessage){
     })
 }
 
+function createChatRoom(userName) {
+    var roomId = null;  // 반환할 roomId 변수 초기화
+
+    $.ajax({
+        url: "/chat/createChatRoom",
+        type: "POST",
+        dataType: "JSON",
+        data: { userName: userName },
+        async: false,
+        success: function (response) {
+            roomId = response.data;
+        }
+    });
+
+    return roomId;
+}
 

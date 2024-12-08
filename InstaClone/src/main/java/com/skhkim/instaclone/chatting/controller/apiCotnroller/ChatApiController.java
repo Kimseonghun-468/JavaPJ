@@ -6,7 +6,6 @@ import com.skhkim.instaclone.chatting.request.MessageRequest;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.chatting.service.ChatMessageService;
-import com.skhkim.instaclone.chatting.service.ChatRoomService;
 import com.skhkim.instaclone.chatting.service.ChatService;
 import com.skhkim.instaclone.chatting.service.ChatUserService;
 import com.skhkim.instaclone.request.MessagePageRequest;
@@ -28,7 +27,6 @@ import java.util.List;
 public class ChatApiController {
     private final ChatMessageService chatMessageService;
     private final ChatUserService chatUserService;
-    private final ChatRoomService chatRoomService;
     private final ChatService chatService;
 
     @PostMapping("/sendMessage")

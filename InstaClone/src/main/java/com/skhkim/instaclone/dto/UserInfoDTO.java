@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 @AllArgsConstructor
 public class UserInfoDTO {
     private String userName;
+    private String userEmail;
     private String uuid;
     private String imgName;
     private String path;

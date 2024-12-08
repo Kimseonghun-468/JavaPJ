@@ -58,7 +58,7 @@ const AceeptFriendApp = {
 
             const chatButton = document.createElement("button");
             chatButton.classList.add("request-Chatroom-button", "follow");
-            chatButton.dataset.name = value.userEmail;
+            chatButton.dataset.name = value.userName;
             chatButton.textContent = "1:1 채팅하기";
             chatButtonBox.appendChild(chatButton);
 
@@ -68,7 +68,7 @@ const AceeptFriendApp = {
 
             const deleteButton = document.createElement("button");
             deleteButton.classList.add("request-Delete-button", "follow");
-            deleteButton.dataset.name = value.userEmail;
+            deleteButton.dataset.name = value.userName;
             deleteButton.textContent = "친구 삭제";
             friendButtonBox.appendChild(deleteButton);
 
