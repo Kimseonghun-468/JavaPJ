@@ -62,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public UserInfoResponse selectSearchUsers(UserInfoPageRequest userInfoPageRequest, String searchName){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<ClubMember> result = clubMemberRepository.selectSearchUserInfo(pageable, searchName, LoginContext.getUserInfo().getUserName());
+        Slice<ClubMember> result = clubMemberRepository.selectSearchUserInfo(pageable, searchName, LoginContext.getClubMember().getName());
 
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 

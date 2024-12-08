@@ -1,8 +1,8 @@
 package com.skhkim.instaclone.service;
 
 import com.skhkim.instaclone.context.LoginContext;
+import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.dto.PostDTO;
-import com.skhkim.instaclone.dto.UserInfoDTO;
 import com.skhkim.instaclone.entity.Post;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.repository.PostImageRepository;
@@ -40,9 +40,9 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public boolean insert(PostDTO postDTO){
 
-        UserInfoDTO loginUserDTO = LoginContext.getUserInfo();
-        postDTO.setName(loginUserDTO.getUserName());
-        postDTO.setEmail(loginUserDTO.getUserEmail());
+        ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
+        postDTO.setName(loginUserDTO.getName());
+        postDTO.setEmail(loginUserDTO.getEmail());
         Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
         Post post = (Post) entityMap.get("post");
         List<PostImage> postImageList = (List<PostImage>) entityMap.get("imgList");
@@ -58,10 +58,10 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public boolean update(PostDTO postDTO){
-        UserInfoDTO loginUserDTO = LoginContext.getUserInfo();
-        if(postRepository.checkValidation(postDTO.getPno(), loginUserDTO.getUserEmail())) {
-            postDTO.setName(loginUserDTO.getImgName());
-            postDTO.setEmail(loginUserDTO.getUserEmail());
+        ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
+        if(postRepository.checkValidation(postDTO.getPno(), loginUserDTO.getEmail())) {
+            postDTO.setName(loginUserDTO.getName());
+            postDTO.setEmail(loginUserDTO.getEmail());
             Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
             Post post = (Post) entityMap.get("post");
             postRepository.save(post);
@@ -93,8 +93,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public boolean delete(Long pno){
 
-        UserInfoDTO loginUserDTO = LoginContext.getUserInfo();
-        if(postRepository.checkValidation(pno, loginUserDTO.getUserEmail())) {
+        ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
+        if(postRepository.checkValidation(pno, loginUserDTO.getEmail())) {
             replyRepository.deleteByPostPno(pno);
             List<PostImage> postImageList = postImageRepository.findByPno(pno);
             postImageRepository.deleteByPostPno(pno);

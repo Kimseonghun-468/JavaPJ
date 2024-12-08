@@ -39,13 +39,13 @@
 
 <body>
 
-<input type="hidden" id="loginName" th:data-login-name="${loginInfo.userName}">
+<input type="hidden" id="loginName" th:data-login-name="${loginInfo.name}">
 <input type="hidden" id="userName" th:data-user-name="${userName}">
 
 <div class="temp">
 
   <div class="sidebar">
-    <div class="logo"><a th:href="@{/sidebar/{name}(name=${loginInfo.userName})}" style="color: black;">Instagram</a></div>
+    <div class="logo"><a th:href="@{/sidebar/{name}(name=${loginInfo.name})}" style="color: black;">Instagram</a></div>
 
     <div class="menu-item" id="search-user">
       <i class="fas fa-search"></i>
@@ -68,18 +68,18 @@
     </div>
 
 
-    <input type="file" th:if="${loginInfo.userName == userName}" class="fileInput post-Image-File" accept=".png, .jpg, .jpeg" style="display: none;" multiple >
-    <div class="menu-item uploadButton-post" th:if="${loginInfo.userName == userName}">
+    <input type="file" th:if="${loginInfo.name == userName}" class="fileInput post-Image-File" accept=".png, .jpg, .jpeg" style="display: none;" multiple >
+    <div class="menu-item uploadButton-post" th:if="${loginInfo.name == userName}">
       <i class="fas fa-upload" ></i>
       <span>업로드</span>
     </div>
 
-    <a th:href="@{/sidebar/{name}(name=${loginInfo.userName})}" class="menu-item">
+    <a th:href="@{/sidebar/{name}(name=${loginInfo.name})}" class="menu-item">
       <i class="fas fa-user-edit" ></i>
 
       <span>프로필</span>
     </a>
-    <a th:href="@{/userinfo/{name}(name=${loginInfo.userName})}" class="menu-item">
+    <a th:href="@{/userinfo/{name}(name=${loginInfo.name})}" class="menu-item">
       <i class="fas fa-cogs" ></i>
       <span>회원 정보</span>
     </a>
@@ -105,11 +105,11 @@
                 <span id="post-num">게시물 -</span>
                 <span class="options" id="friend-List">친구 [[${friendNum}]]</span>
                 <span id="follow-status">
-                  <button th:if="${loginInfo.userName != userName && friendshipStatus =='NOTTING'}" th:data-name="${userName}" class="request-Follow-button follow">친구 요청</button>
-                  <button th:if="${loginInfo.userName != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
-                  <button th:if="${loginInfo.userName != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Delete-button follow">친구 삭제</button>
-                  <button th:if="${loginInfo.userName != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Chatroom-button follow">1:1 채팅하기</button>
-                  <button th:if="${loginInfo.userName != userName && friendshipStatus =='WAITACCEPT'}" th:data-name="${userName}" class="request-Accept-button follow">친구 수락</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='NOTTING'}" th:data-name="${userName}" class="request-Follow-button follow">친구 요청</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Delete-button follow">친구 삭제</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Chatroom-button follow">1:1 채팅하기</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='WAITACCEPT'}" th:data-name="${userName}" class="request-Accept-button follow">친구 수락</button>
                 </span>
               </div>
             </div>
@@ -141,7 +141,7 @@
   </section>
   <div class ="temp2 temp4 logo" th:unless="${userExist}">
     <p>페이지를 찾을 수 없습니다.</p>
-    <a th:href="@{/sidebar/{name}(name=${loginInfo.userName})}">돌아가기</a>
+    <a th:href="@{/sidebar/{name}(name=${loginInfo.name})}">돌아가기</a>
   </div>
 </div>
 </body>
@@ -158,7 +158,7 @@
       <div class="modal-body">
 
         프로필 파일을 제출하시겠습니까?
-        <form id=Profile-Image th:action="@{/profileImage/{userName}(userName=${loginInfo.userName})}" th:method="post">
+        <form id=Profile-Image th:action="@{/profileImage/{userName}(userName=${loginInfo.name})}" th:method="post">
           <div id="profile-box">
 
           </div>

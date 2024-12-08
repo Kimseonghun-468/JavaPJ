@@ -41,15 +41,22 @@ public class ChatApiController {
         return ApiResponse.OK();
     }
 
-    @PostMapping("/selectChatRoom")
-    public ResponseEntity selectChatRoom(UserInfoPageRequest userInfoPageRequest){
-        ChatRoomResponse result = chatUserService.getProfileAndUseByLoginNamePage(userInfoPageRequest);
+    @PostMapping("/createChatRoom")
+    public ResponseEntity createChatRoom(String userName){
+        Long roomId = chatService.createChatRoom(userName);
+        return ApiResponse.OK(roomId);
+    }
+
+    @PostMapping("/joinChatRoom")
+    public ResponseEntity joinChatRoom(Long roomId){
+        List<ChatUserDTO> result = chatService.joinChatRoom(roomId);
         return ApiResponse.OK(result);
     }
 
-    @PostMapping("/selectChatRoomUsers")
-    public ResponseEntity selectChatRoomUsers(Long roomId){
-        List<ChatUserDTO> result = chatUserService.selectChatRoomUsers(roomId);
+
+    @PostMapping("/selectChatRoom")
+    public ResponseEntity selectChatRoom(UserInfoPageRequest userInfoPageRequest){
+        ChatRoomResponse result = chatUserService.selectChatRooms(userInfoPageRequest);
         return ApiResponse.OK(result);
     }
 

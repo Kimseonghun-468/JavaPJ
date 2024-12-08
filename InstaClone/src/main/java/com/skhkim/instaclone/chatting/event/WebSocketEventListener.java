@@ -33,7 +33,7 @@ public class WebSocketEventListener {
                 .sessionId(sessionId)
                 .eventType("connect")
                 .roomId(roomId)
-                .userId(LoginContext.getUserInfo().getUserName())
+                .userId(LoginContext.getClubMember().getName())
                 .build();
 
         redisPublisher.publishSessionEvent(socketSessionDTO);

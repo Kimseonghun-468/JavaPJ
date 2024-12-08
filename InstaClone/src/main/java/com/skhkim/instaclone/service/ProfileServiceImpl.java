@@ -53,7 +53,7 @@ public class ProfileServiceImpl implements ProfileService{
     @Override
     @Transactional
     public void delete(){
-        String loginName = LoginContext.getUserInfo().getUserName();
+        String loginName = LoginContext.getClubMember().getName();
         ProfileImage beforeImage = profileImageRepository.findByUserName(loginName);
         profileImageRepository.deleteByUserName(loginName);
         deleteImage(beforeImage);

@@ -1,7 +1,7 @@
 package com.skhkim.instaclone.controller;
 
 import com.skhkim.instaclone.context.LoginContext;
-import com.skhkim.instaclone.dto.UserInfoDTO;
+import com.skhkim.instaclone.dto.ClubMemberDTO;
 import com.skhkim.instaclone.entity.type.FriendStatus;
 import com.skhkim.instaclone.security.dto.ClubAuthMemberDTO;
 import com.skhkim.instaclone.service.FriendService;
@@ -26,11 +26,12 @@ public class ProfileController {
     public String sidebar(@PathVariable("name") String name,
                           Model model){
 
-        UserInfoDTO loginInfoDTO = LoginContext.getUserInfo();
-        FriendStatus friendStatus = friendService.checkFriendShip(loginInfoDTO.getUserName(), name);
+        ClubMemberDTO clubMemberDTO = LoginContext.getClubMember();
+
+        FriendStatus friendStatus = friendService.checkFriendShip(clubMemberDTO.getName(), name);
         model.addAttribute("friendshipStatus", friendStatus);
         model.addAttribute("userExist", memberService.getUserExist(name));
-        model.addAttribute("loginInfo", loginInfoDTO);
+        model.addAttribute("loginInfo", clubMemberDTO);
         model.addAttribute("userName", name);
         return "profile";
     }

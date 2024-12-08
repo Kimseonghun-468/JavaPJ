@@ -1,7 +1,6 @@
 package com.skhkim.instaclone.chatting.service;
 
 import com.skhkim.instaclone.chatting.dto.ChatRoomDTO;
-import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
@@ -15,7 +14,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +24,6 @@ import java.util.List;
 public class ChatUserServiceImpl implements ChatUserService {
 
     private final ChatUserRepository chatUserRepository;
-    private final ChatMessageService messageService;
     @Override
     public void register(String userEmail, Long roomId){
         ChatUser chatUser = ChatUser.builder()
@@ -38,35 +35,16 @@ public class ChatUserServiceImpl implements ChatUserService {
     }
     @Override
     public void updateDisConnect(Long roomId){
-        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, LoginContext.getUserInfo().getUserEmail());
+        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, LoginContext.getClubMember().getEmail());
         chatUser.setDisConnect(LocalDateTime.now());
         chatUserRepository.save(chatUser);
     }
 
     @Override
-    public List<Object[]> getEmailAndName(Long roomId){
-        return chatUserRepository.getEmailAndNmaeByRoomId(roomId);
-    }
-
-    @Override
-    @Transactional
-    public List<ChatUserDTO> selectChatRoomUsers(Long roomId){
-        List<ChatUser> result = chatUserRepository.selectChatRoomUsers(roomId);
-        messageService.updateReadStatus(roomId);
-        return result.stream().map(EntityMapper::entityToDTO).toList();
-    }
-
-    @Override
-    public ChatUserDTO selectChatUser(Long roomId){
-        ChatUser result = chatUserRepository.selectChatUser(roomId, LoginContext.getUserInfo().getUserEmail());
-        return EntityMapper.entityToDTO(result);
-    }
-
-    @Override
     public ChatRoomResponse
-    getProfileAndUseByLoginNamePage(UserInfoPageRequest userInfoPageRequest){
+    selectChatRooms(UserInfoPageRequest userInfoPageRequest){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<ChatRoom> result = chatUserRepository.getTest(pageable , LoginContext.getUserInfo().getUserEmail());
+        Slice<ChatRoom> result = chatUserRepository.selectChatRoom(pageable, LoginContext.getClubMember().getEmail());
         List<ChatRoomDTO> chatRoomDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new ChatRoomResponse(chatRoomDTOS, result.hasNext());

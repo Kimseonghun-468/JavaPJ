@@ -130,7 +130,7 @@ const ChattingApp = {
     makeUserDict(roomId) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: '/chat/selectChatRoomUsers',
+                url: '/chat/joinChatRoom',
                 type: 'POST',
                 data: { roomId: roomId },
                 dataType: "JSON",

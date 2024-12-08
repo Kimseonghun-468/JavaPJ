@@ -12,10 +12,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
-    @Query("SELECT cu1.chatRoom.roomId FROM ChatUser cu1 " +
-            "LEFT JOIN ChatUser cu2 ON cu1.chatRoom = cu2.chatRoom " +
-            "WHERE cu1.member.email =:loginEmail AND cu2.member.email =:friendEmail AND cu1.chatRoom.userNum = 2")
-    Optional<Long> getRoomIdByEmails(String loginEmail, String friendEmail);
+
+    @Query("SELECT CU_LOGIN.chatRoom.roomId FROM ChatUser CU_LOGIN " +
+            "JOIN ChatUser CU_USER ON CU_LOGIN.chatRoom.roomId = CU_USER.chatRoom.roomId " +
+            "WHERE CU_LOGIN.member.name =:loginName AND CU_USER.member.name =:userName " +
+            "AND CU_LOGIN.chatRoom.userNum = 2")
+    Optional<Long> checkChatRoom(String loginName, String userName);
+
 
     @Query("SELECT cu FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.email =:loginEmail")
     ChatUser selectChatUser(Long roomId, String loginEmail);
@@ -23,16 +26,13 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
     @Query("SELECT cu.disConnect FROM ChatUser cu WHERE cu.member.email =:loginEmail AND cu.chatRoom.roomId =:roomId")
     LocalDateTime getDisConnectTimeByEmail(String loginEmail, Long roomId);
 
-    @Query("SELECT cu.member.email, cu.member.name FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId")
-    List<Object[]> getEmailAndNmaeByRoomId(Long roomId);
-
     @Query("SELECT CU.chatRoom FROM ChatUser CU " +
             "WHERE CU.member.email = :loginEmail " +
             "ORDER BY CU.chatRoom.lastChatTime DESC")
-    Slice<ChatRoom> getTest(Pageable pageable, String loginEmail);
+    Slice<ChatRoom> selectChatRoom(Pageable pageable, String loginEmail);
 
     @Query("SELECT cu FROM ChatUser cu " +
             "WHERE cu.chatRoom.roomId =:roomId")
-    List<ChatUser> selectChatRoomUsers(Long roomId);
+    List<ChatUser> selectChatUsers(Long roomId);
 
 }

@@ -56,7 +56,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         clubAuthMember, null, clubAuthMember.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                LoginContext.setUserInfo(EntityMapper.entityToDTO(clubMember));
+                LoginContext.setUserInfo(EntityMapper.toLoginContext(clubMember));
             }
         }
         chain.doFilter(request, response);

@@ -32,7 +32,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     @Transactional
     public boolean createFriendShip(String userName){
-        String loginName = LoginContext.getUserInfo().getUserName();
+        String loginName = LoginContext.getClubMember().getName();
 
         ClubMember loginMember = memberRepository.findByName(loginName);
         ClubMember userMember = memberRepository.findByName(userName);
@@ -83,7 +83,7 @@ public class FriendServiceImpl implements FriendService {
     @Transactional
     public boolean acceptFriendShip(String userName){
 
-        String loginName = LoginContext.getUserInfo().getUserName();
+        String loginName = LoginContext.getClubMember().getName();
 
         Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
 
@@ -109,7 +109,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     @Transactional
     public boolean deleteFriendShip(String userName){
-        String loginName = LoginContext.getUserInfo().getUserName();
+        String loginName = LoginContext.getClubMember().getName();
         int result = acceptRepository.delete(loginName, userName);
         return result > 0;
     }
@@ -125,7 +125,7 @@ public class FriendServiceImpl implements FriendService {
     selectWaitingFriend(UserInfoPageRequest userInfoPageRequest){
 
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = waitRepository.getByWaitingListPage(pageable, LoginContext.getUserInfo().getUserName());
+        Slice<UserInfoProjection> result = waitRepository.getByWaitingListPage(pageable, LoginContext.getClubMember().getName());
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -135,7 +135,7 @@ public class FriendServiceImpl implements FriendService {
     public UserInfoResponse
     selectAcceptUsersInfo(UserInfoPageRequest userInfoPageRequest){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = acceptRepository.getByAcceptListPage(pageable, LoginContext.getUserInfo().getUserName());
+        Slice<UserInfoProjection> result = acceptRepository.getByAcceptListPage(pageable, LoginContext.getClubMember().getName());
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -144,7 +144,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public UserInfoResponse selectInviteSearchUsers(UserInfoPageRequest userInfoPageRequest, String inviteSearchTerm, List<String> roomUsers){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = acceptRepository.selectInviteListByName(pageable, LoginContext.getUserInfo().getUserName(), inviteSearchTerm, roomUsers);
+        Slice<UserInfoProjection> result = acceptRepository.selectInviteListByName(pageable, LoginContext.getClubMember().getName(), inviteSearchTerm, roomUsers);
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -154,7 +154,7 @@ public class FriendServiceImpl implements FriendService {
     public UserInfoResponse
     selectUserFriendsInfo(UserInfoPageRequest userInfoPageRequest, String userName){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = acceptRepository.getFriendListPage(pageable, userName, LoginContext.getUserInfo().getUserName());
+        Slice<UserInfoProjection> result = acceptRepository.getFriendListPage(pageable, userName, LoginContext.getClubMember().getName());
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -164,7 +164,7 @@ public class FriendServiceImpl implements FriendService {
     public UserInfoResponse
     selectInviteList(UserInfoPageRequest userInfoPageRequest, List<String> roomUsers){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = acceptRepository.selectInviteList(pageable, LoginContext.getUserInfo().getUserName(), roomUsers);
+        Slice<UserInfoProjection> result = acceptRepository.selectInviteList(pageable, LoginContext.getClubMember().getName(), roomUsers);
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -172,7 +172,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public UserInfoDTO selectFristFriend(String userName){
 
-        String loginName = LoginContext.getUserInfo().getUserName();
+        String loginName = LoginContext.getClubMember().getName();
 
         ClubMember loginMember = memberRepository.findByName(loginName);
         UserInfoDTO userInfoDTO = EntityMapper.entityToDTO(loginMember);

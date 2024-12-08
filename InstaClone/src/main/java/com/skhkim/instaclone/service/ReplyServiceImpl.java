@@ -30,7 +30,7 @@ public class ReplyServiceImpl implements ReplyService{
     @Override
     public boolean remove(Long rno) {
 
-        if(replyRepository.checkValidation(rno, LoginContext.getUserInfo().getUserEmail())) {
+        if(replyRepository.checkValidation(rno, LoginContext.getClubMember().getEmail())) {
             replyRepository.deleteById(rno);
             return true;
         }

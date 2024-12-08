@@ -6,6 +6,7 @@ import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
+import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.dto.*;
 import com.skhkim.instaclone.entity.*;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class EntityMapper {
                 .uuid(profileImage != null ? profileImage.getUuid() : null)
                 .path(profileImage != null ? profileImage.getPath() : null)
                 .userName(projection.getClubMember().getName())
-                .userEmail(projection.getClubMember().getEmail())
+//                .userEmail(projection.getClubMember().getEmail())
                 .status(projection.getStatus())
                 .build();
     }
@@ -37,7 +38,14 @@ public class EntityMapper {
                 .uuid(profileImage != null ? profileImage.getUuid() : null)
                 .path(profileImage != null ? profileImage.getPath() : null)
                 .userName(clubMember.getName())
-                .userEmail(clubMember.getEmail())
+//                .userEmail(clubMember.getEmail())
+                .build();
+    }
+    
+    public static ClubMemberDTO toLoginContext(ClubMember clubMember){
+        return ClubMemberDTO.builder()
+                .email(clubMember.getEmail())
+                .name(clubMember.getName())
                 .build();
     }
 
@@ -98,7 +106,7 @@ public class EntityMapper {
     public static List<UserInfoDTO> entityToDTO(List<ChatUser> chatUserList){
         return chatUserList.stream().map(chatUser ->
                 UserInfoDTO.builder()
-                        .userEmail(chatUser.getMember().getEmail())
+//                        .userEmail(chatUser.getMember().getEmail())
                         .userName(chatUser.getMember().getName())
                         .imgName(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getImgName() : null)
                         .uuid(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getUuid() : null)
@@ -176,9 +184,8 @@ public class EntityMapper {
         Reply postReply = Reply.builder()
                 .text(replyDTO.getText())
                 .post(Post.builder().pno(replyDTO.getPno()).build())
-                .clubMember(ClubMember.builder().email(replyDTO.getUserInfoDTO().getUserEmail()).build())
+                .clubMember(ClubMember.builder().email(LoginContext.getClubMember().getEmail()).build())
                 .build();
-
         return postReply;
     }
 

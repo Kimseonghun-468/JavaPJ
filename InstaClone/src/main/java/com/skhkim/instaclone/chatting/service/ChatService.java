@@ -1,7 +1,10 @@
 package com.skhkim.instaclone.chatting.service;
 
+import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.request.MessageRequest;
+
+import java.util.List;
 
 public interface ChatService {
 
@@ -23,4 +26,16 @@ public interface ChatService {
      * 4. Redis Pub
      * */
     void inviteChatUsers(InviteRequest request);
+
+
+    /**
+     * 채팅방 참여
+     * Param : roomId
+     * 1. Select ChatUsers
+     * 2. Update ReadStatus
+     * */
+    List<ChatUserDTO> joinChatRoom(Long roomId);
+
+
+    Long createChatRoom(String userName);
 }

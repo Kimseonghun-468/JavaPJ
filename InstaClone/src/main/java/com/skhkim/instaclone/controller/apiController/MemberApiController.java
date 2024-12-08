@@ -64,7 +64,7 @@ public class MemberApiController {
             return "redirect:/member/modify?nameError";
         }
         else{
-            String loginName = LoginContext.getUserInfo().getUserName();
+            String loginName = LoginContext.getClubMember().getName();
             memberService.updatePassword(loginName, newPassword);
             memberService.updateUserName(memberDTO.getName(),loginName);
             String encodedName = URLEncoder.encode(memberDTO.getName(), StandardCharsets.UTF_8);
