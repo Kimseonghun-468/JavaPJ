@@ -1,19 +1,20 @@
 package com.skhkim.instaclone.chatting.service;
 
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
-import com.skhkim.instaclone.context.LoginContext;
-import com.skhkim.instaclone.request.MessagePageRequest;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatMessageRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
+import com.skhkim.instaclone.context.LoginContext;
+import com.skhkim.instaclone.request.MessagePageRequest;
 import com.skhkim.instaclone.service.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,10 +34,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         chatMessageRepository.save(chatMessage);
     }
     @Override
-    public void updateChatMessagesReadStatus(Long roomID){
+    @Transactional
+    public void updateReadStatus(Long roomID){
         String loginEmail = LoginContext.getUserInfo().getUserEmail();
-        ChatUser chatUser = chatUserRepository.getChatUsersByRoomIdAndEmail(roomID, loginEmail);
-        List<ChatMessage> result = chatMessageRepository.updateByRoomIdAndSenderEmailAndTime(roomID, loginEmail, chatUser.getDisConnect());
+        ChatUser chatUser = chatUserRepository.selectChatUser(roomID, loginEmail);
+        List<ChatMessage> result = chatMessageRepository.selectChatMessage(roomID, loginEmail, chatUser.getDisConnect());
         result.forEach(chatMessage -> chatMessage.setReadStatus(chatMessage.getReadStatus() != null ? chatMessage.getReadStatus()-1 : null));
         chatMessageRepository.saveAll(result);
     }
@@ -66,9 +68,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public Long getNotReadNum(Long roomId){
         String loginEmail = LoginContext.getUserInfo().getUserEmail();
-        LocalDateTime disConnectTime = chatUserRepository.getChatUsersByRoomIdAndEmail(roomId, loginEmail).getDisConnect();
+        LocalDateTime disConnectTime = chatUserRepository.selectChatUser(roomId, loginEmail).getDisConnect();
         return chatMessageRepository.getNotReadNum(roomId, loginEmail, disConnectTime);
     }
-
 
 }

@@ -30,11 +30,11 @@ public class ChatRoomSessionManager {
         }
     }
 
-    public int getRoomJoinNum(String roomId){
+    public Long getRoomJoinNum(String roomId) {
         List<String> result = roomToUsersMap.get(roomId);
         Set<String> set = new HashSet<>(result);
 
-        return set.size();
+        return (long) set.size();
     }
 
 }

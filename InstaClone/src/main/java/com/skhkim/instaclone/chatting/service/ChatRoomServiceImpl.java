@@ -5,15 +5,15 @@ import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class ChatRoomServiceImpl implements ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
@@ -37,11 +37,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             roomIdAndOR.put("OR", false);
             return roomIdAndOR;
         }
-    }
-
-    @Override
-    public Long getUserNum(Long roomId) {
-        return chatRoomRepository.getUserNum(roomId);
     }
 
     @Override

@@ -18,16 +18,10 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
     Optional<Long> getRoomIdByEmails(String loginEmail, String friendEmail);
 
     @Query("SELECT cu FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.email =:loginEmail")
-    ChatUser getChatUsersByRoomIdAndEmail(Long roomId, String loginEmail);
+    ChatUser selectChatUser(Long roomId, String loginEmail);
 
     @Query("SELECT cu.disConnect FROM ChatUser cu WHERE cu.member.email =:loginEmail AND cu.chatRoom.roomId =:roomId")
     LocalDateTime getDisConnectTimeByEmail(String loginEmail, Long roomId);
-
-    @Query("SELECT cu FROM ChatUser cu WHERE cu.member.name =:loginName AND cu.chatRoom.roomId = :roomId")
-    ChatUser selectChatUser(Long roomId, String loginName);
-
-    @Query("SELECT cu FROM ChatUser cu WHERE cu.member.name in :userNameList AND cu.chatRoom.roomId = :roomId")
-    List<ChatUser> selectChatUserList(Long roomId, List<String> userNameList);
 
     @Query("SELECT cu.member.email, cu.member.name FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId")
     List<Object[]> getEmailAndNmaeByRoomId(Long roomId);

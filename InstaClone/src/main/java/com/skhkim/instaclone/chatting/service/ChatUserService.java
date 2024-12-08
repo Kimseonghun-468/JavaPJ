@@ -1,7 +1,6 @@
 package com.skhkim.instaclone.chatting.service;
 
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
-import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.request.UserInfoPageRequest;
 
@@ -18,8 +17,6 @@ public interface ChatUserService {
     List<ChatUserDTO> selectChatRoomUsers(Long roomId);
 
     ChatUserDTO selectChatUser(Long roomId);
-
-    List<ChatUserDTO> selectChatUserList(InviteRequest inviteRequest);
 
     ChatRoomResponse getProfileAndUseByLoginNamePage(UserInfoPageRequest userInfoPageRequest);
 

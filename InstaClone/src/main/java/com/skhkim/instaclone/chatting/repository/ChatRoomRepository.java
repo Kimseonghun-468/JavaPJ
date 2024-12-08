@@ -12,9 +12,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
     @Query("SELECT cr FROM ChatRoom cr WHERE cr.roomId = :roomId")
     Optional<ChatRoom> getChatRoombyRoomId(Long roomId);
 
-    @Query("SELECT cr.userNum FROM ChatRoom cr WHERE cr.roomId =:roomId")
-    Long getUserNum(Long roomId);
-
     @Modifying
     @Transactional
     @Query("UPDATE ChatRoom cr SET cr.userNum = cr.userNum + :addNum WHERE cr.roomId = :roomId")
