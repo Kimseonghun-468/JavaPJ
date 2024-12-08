@@ -165,7 +165,7 @@ const ChattingApp = {
                 const chatInfo = {
                     "senderName": this.$data.emailAndNameDict[item.senderEmail],
                     "content": item.content,
-                    "regDate": regDate = Date.now(),
+                    "regDate": Date.now(),
                     "readStatus": item.readStatus,
                     "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
                     "inviterName": item.inviterName,

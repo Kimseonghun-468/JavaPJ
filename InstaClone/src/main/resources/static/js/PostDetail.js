@@ -5,7 +5,9 @@ document.addEventListener("DOMContentLoaded", ()=> {
         PostDetailApp.init(UserProfileApp.$data.loginName, UserProfileApp.$data.userName);
 
         var commentBox = document.querySelector('#reply-box');
-        commentBox.addEventListener('input', handleInput)
+        commentBox.addEventListener('input', function() {
+            handleInput(commentBox);
+        });
         commentBox.addEventListener('keydown', handleKeyDown);
 
         PostDetailApp.$data.postId = $(this).data('pid');
@@ -23,7 +25,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         var commentBox = document.querySelector('#reply-box');
         if (commentBox.value.trim() === "")
             return ;
-        insertReply(PostDetailApp.$data.postId, commentBox, UserProfileApp.$data.userEmail);
+        insertReply(PostDetailApp.$data.postId, commentBox);
         $('#post-not-exist').html("")
     });
 
@@ -66,7 +68,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         });
     })
 
-    $('#myModal').on('click', '.reply-option', function() {
+    $(document).on('click', '.reply-option', function() {
         console.log('reply-option event');
         var rno = $(this).data("rno");
         $('#reply-option-modal').css('z-index', 1051).modal('show');
@@ -106,16 +108,16 @@ function selectReplyList(postId, page){
     })
 }
 
-function insertReply(postId, commentBox, userEmail){
+function insertReply(postId, commentBox){
     var replyText = commentBox.value.replaceAll('\n', '<br>');
-    var data = {pno:postId, text:replyText, email:userEmail};
+    var data = {pno:postId, text:replyText};
     $.ajax({
         url: '/reply/insert',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json",
         success: function (response){
-            PostDetailApp.setReply(response.data);
+            PostDetailApp.insertReply(response.data);
             $('#reply-box').val('');
             $('#reply-comment-body').scrollTop(0);
         }
@@ -137,7 +139,6 @@ function deleteReply(rno){
         url: '/reply/delete',
         type: 'DELETE',
         data: {rno: rno},
-        contentType: "application/json; charset=utf-8",
         dataType: "text",
         success: function (response){
             $('[data-rno="' + rno + '"]').closest('.reply-main').remove();
@@ -145,7 +146,7 @@ function deleteReply(rno){
     })
 }
 
-function handleInput(){
+function handleInput(commentBox){
     var text = commentBox.value.trim()
     var button = document.querySelector('#reply-send')
 
@@ -157,14 +158,10 @@ function handleInput(){
     }
 }
 function handleKeyDown(event){
-
     if (!event.isComposing && event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         document.getElementById('reply-send').click();
-        console.log(event.key)
-        console.log(event.shiftKey)
     }
-    console.log('!', event.isComposing)
 }
 
 function updatePost(postReuest){

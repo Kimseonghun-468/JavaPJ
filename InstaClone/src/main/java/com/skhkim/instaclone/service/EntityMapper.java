@@ -172,6 +172,7 @@ public class EntityMapper {
     public static ReplyDTO entityToDTO(Reply reply){
 
         ReplyDTO replyDTO = ReplyDTO.builder()
+                .rno(reply.getRno())
                 .userInfoDTO(EntityMapper.entityToDTO(reply.getClubMember()))
                 .text(reply.getText())
                 .regDate(reply.getRegDate())
@@ -182,6 +183,7 @@ public class EntityMapper {
     public static Reply dtoToEntity(ReplyDTO replyDTO){
 
         Reply postReply = Reply.builder()
+                .rno(replyDTO.getRno())
                 .text(replyDTO.getText())
                 .post(Post.builder().pno(replyDTO.getPno()).build())
                 .clubMember(ClubMember.builder().email(LoginContext.getClubMember().getEmail()).build())

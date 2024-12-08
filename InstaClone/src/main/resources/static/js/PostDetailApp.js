@@ -128,6 +128,29 @@ const PostDetailApp = {
         this.$object.replyTable.append(str)
     },
 
+    insertReply(data){
+        var str = "";
+        str += '<div class="reply-main">';
+        str += '<div class="reply-image-container">'
+
+        str+= '<img src='+ (UserProfileApp.$data.profileImage) +' class="reply-profile">';
+
+        str += '</div>'
+        str += '<div class="reply-wrapper">';
+        str += '<div class="reply-name">' + UserProfileApp.$data.loginName + '</div>';
+        str += '<div class="reply-content">' + data.text + '</div>';
+        str += '<div class="reply-side">';
+        str += '<div class="reply-time">' + formatTimeDifference(Date.now()) + '</div>';
+        if (this.$data.loginName == UserProfileApp.$data.loginName) {
+            str += '<span class="options dots reply-option" data-rno="' + data.rno + '">...</span>'
+        }
+        str += '</div>'
+        str += '</div>'
+        str += '</div>'
+
+        this.$object.replyTable.prepend(str)
+    },
+
     createTitleTag(userName, title, imageUrl, regDate) {
         var result = ""
         result += '<div class="reply-title">'
