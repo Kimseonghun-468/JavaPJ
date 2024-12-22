@@ -2,9 +2,11 @@ package com.skhkim.instaclone.config.redis;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.event.ChatRoomSessionManager;
 import com.skhkim.instaclone.chatting.event.WebSocketSessionManager;
+import com.skhkim.instaclone.chatting.response.ChatUserResponse;
 import com.skhkim.instaclone.dto.SocketSessionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -65,5 +67,19 @@ public class RedisSubscriber {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void onAccess(String message){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+            ChatUserResponse chatUserResponse = objectMapper.readValue(message, ChatUserResponse.class);
+            messagingTemplate.convertAndSend("/topic/chat/accessLoad/" + chatUserResponse.getRoomId(), chatUserResponse);
+        } catch (Exception e) {
+            e.printStackTrace();  // 예외 처리
+        }
+
     }
 }

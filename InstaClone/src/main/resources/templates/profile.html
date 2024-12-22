@@ -105,11 +105,11 @@
                 <span id="post-num">게시물 -</span>
                 <span class="options" id="friend-List">친구 [[${friendNum}]]</span>
                 <span id="follow-status">
-                  <button th:if="${loginInfo.name != userName && friendshipStatus =='NOTTING'}" th:data-name="${userName}" class="request-Follow-button follow">친구 요청</button>
-                  <button th:if="${loginInfo.name != userName && friendshipStatus =='WAITING'}" class="requset-Cancle follow">친구 대기</button>
-                  <button th:if="${loginInfo.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Delete-button follow">친구 삭제</button>
-                  <button th:if="${loginInfo.name != userName && friendshipStatus =='ACCEPT'}" th:data-name="${userName}" class="request-Chatroom-button follow">1:1 채팅하기</button>
-                  <button th:if="${loginInfo.name != userName && friendshipStatus =='WAITACCEPT'}" th:data-name="${userName}" class="request-Accept-button follow">친구 수락</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='NONE'}" th:data-name="${userName}" class="request-Follow-button follow">친구 요청</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='REQUESTER'}" class="requset-Cancle follow">친구 대기</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='ACCEPTED'}" th:data-name="${userName}" class="request-Delete-button follow">친구 삭제</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='ACCEPTED'}" th:data-name="${userName}" class="request-Chatroom-button follow">1:1 채팅하기</button>
+                  <button th:if="${loginInfo.name != userName && friendshipStatus =='RECEIVER'}" th:data-name="${userName}" class="request-Accept-button follow">친구 수락</button>
                 </span>
               </div>
             </div>

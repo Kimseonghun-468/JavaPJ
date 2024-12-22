@@ -1,5 +1,8 @@
 package com.skhkim.instaclone.config.redis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,13 +27,17 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 
-        // Key는 String, Value는 Object 이므로 직렬화 방식을 설정합니다.
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer()); // JSON 직렬화
 
-        // Hash key와 value도 설정
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule()); // Java 8 날짜/시간 지원
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(serializer);
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(serializer);
 
         return template;
     }
@@ -43,6 +50,7 @@ public class RedisConfig {
         container.addMessageListener(onChatMessage(), new PatternTopic("/chat/*"));
         container.addMessageListener(onChatSesson(), new ChannelTopic("websocket-events"));
         container.addMessageListener(onChatInvite(), new PatternTopic("/invite/*"));
+        container.addMessageListener(onChatAccess(), new PatternTopic("/access/*"));
         return container;
     }
 
@@ -56,4 +64,7 @@ public class RedisConfig {
     }
     @Bean
     public MessageListener onChatInvite() {return new MessageListenerAdapter(redisSubscriber, "onInvite");}
+
+    @Bean
+    public MessageListener onChatAccess() {return new MessageListenerAdapter(redisSubscriber, "onAccess");}
 }

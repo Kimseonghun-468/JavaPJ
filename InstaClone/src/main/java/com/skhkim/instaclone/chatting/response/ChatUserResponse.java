@@ -1,15 +1,20 @@
 package com.skhkim.instaclone.chatting.response;
 
-import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
+@Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChatUserResponse {
-    private List<ChatUserDTO> chatUserDTOS;
-
-    public ChatUserResponse(List<ChatUserDTO> chatUserDTOS) {
-        this.chatUserDTOS = chatUserDTOS;
-    }
+    private String userName;
+    private Long roomId;
+    private LocalDateTime disConnect;
 }

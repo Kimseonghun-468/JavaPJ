@@ -165,27 +165,26 @@ const ChattingApp = {
                 const chatInfo = {
                     "senderName": this.$data.emailAndNameDict[item.senderEmail],
                     "content": item.content,
-                    "regDate": Date.now(),
+                    "regDate": new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 19),
                     "readStatus": item.readStatus,
                     "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
                     "inviterName": item.inviterName,
                     "inviteNames": item.inviteNames
                 };
-
                 this.setChatMessage(chatInfo, inverse= false)
 
             });
 
-            client.subscribe('/topic/chat/accessLoad/' + roomId, (result) => {
-                var result = result.body
-                if (result.userInfoDTO.userName != this.$data.loginName){
+            client.subscribe('/topic/chat/accessLoad/' + roomId, (response) => {
+                var result = JSON.parse(response.body)
+                if (result.userName != this.$data.loginName){
                     $('.status-true').each(function() {
 
                         let statusTime = ($(this).attr('data-time'));
                         let statusName = ($(this).attr('data-name'));
                         let readNum = $(this).text();
 
-                        if (statusTime > disConnectTime && statusName != result.userInfoDTO.userName){
+                        if (statusTime > result.disConnect && statusName.equals(result.userName)){
                             $(this).text(readNum-1);
                         }
                     });

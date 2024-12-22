@@ -15,7 +15,7 @@ public interface FriendWaitRepository extends JpaRepository<FriendWait, Long> {
     @Modifying
     @Transactional
     @Query("DELETE FROM FriendWait FW " +
-            "WHERE (FW.requester.name = :loginName AND FW.receiver.name = :userName)")
+            "WHERE (FW.requester.name = :userName AND FW.receiver.name = :loginName)")
     int delete(String loginName, String userName);
 
     @Query("SELECT FW.requester as clubMember FROM FriendWait FW " +

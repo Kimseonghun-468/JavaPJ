@@ -9,6 +9,7 @@ import com.skhkim.instaclone.chatting.repository.ChatRoomRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.request.MessageRequest;
+import com.skhkim.instaclone.chatting.response.ChatUserResponse;
 import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.service.EntityMapper;
@@ -76,7 +77,13 @@ public class ChatServiceImpl implements ChatService {
     public List<ChatUserDTO> joinChatRoom(Long roomId){
         List<ChatUser> result = userRepository.selectChatUsers(roomId);
         messageService.updateReadStatus(roomId);
-        // 여기 redis join 처리 해야함.
+
+        ChatUserResponse chatUser = ChatUserResponse.builder()
+                .roomId(roomId)
+                .userName(LoginContext.getClubMember().getName())
+                .disConnect(LocalDateTime.now())
+                .build();
+        redisTemplate.convertAndSend("/access/" +roomId, chatUser);
         return result.stream().map(EntityMapper::entityToDTO).toList();
     }
 

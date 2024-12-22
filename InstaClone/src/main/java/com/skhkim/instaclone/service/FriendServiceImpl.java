@@ -95,7 +95,13 @@ public class FriendServiceImpl implements FriendService {
                         .user1(friendWait.get().getReceiver())
                         .user2(friendWait.get().getRequester())
                         .build();
+                FriendAccept friendAcceptCounter = FriendAccept.builder()
+                        .user1(friendWait.get().getRequester())
+                        .user2(friendWait.get().getReceiver())
+                        .build();
                 acceptRepository.save(friendAccept);
+                acceptRepository.save(friendAcceptCounter);
+
                 // Wait Record 조회 - 삭제 - accept Record 삽입시 성공
                 return true;
             }

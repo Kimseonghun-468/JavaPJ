@@ -39,7 +39,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         String loginEmail = LoginContext.getClubMember().getEmail();
         ChatUser chatUser = chatUserRepository.selectChatUser(roomID, loginEmail);
         List<ChatMessage> result = chatMessageRepository.selectChatMessage(roomID, loginEmail, chatUser.getDisConnect());
-        result.forEach(chatMessage -> chatMessage.setReadStatus(chatMessage.getReadStatus() != null ? chatMessage.getReadStatus()-1 : null));
+        result.forEach(chatMessage -> chatMessage.setReadStatus(chatMessage.getReadStatus() -1));
+
         chatMessageRepository.saveAll(result);
     }
 

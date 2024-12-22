@@ -29,7 +29,7 @@ public class ProfileController {
         ClubMemberDTO clubMemberDTO = LoginContext.getClubMember();
 
         FriendStatus friendStatus = friendService.checkFriendShip(clubMemberDTO.getName(), name);
-        model.addAttribute("friendshipStatus", friendStatus);
+        model.addAttribute("friendshipStatus", friendStatus.name());
         model.addAttribute("userExist", memberService.getUserExist(name));
         model.addAttribute("loginInfo", clubMemberDTO);
         model.addAttribute("userName", name);
