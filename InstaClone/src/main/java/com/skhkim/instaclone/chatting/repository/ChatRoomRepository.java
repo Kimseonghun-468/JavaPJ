@@ -6,11 +6,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-public interface ChatRoomRepository extends JpaRepository<ChatRoom, String> {
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     @Query("SELECT cr FROM ChatRoom cr WHERE cr.roomId = :roomId")
-    Optional<ChatRoom> getChatRoombyRoomId(Long roomId);
+    ChatRoom selectChatRoom(Long roomId);
 
     @Modifying
     @Transactional

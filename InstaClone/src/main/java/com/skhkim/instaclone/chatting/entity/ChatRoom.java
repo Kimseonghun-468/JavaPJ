@@ -1,8 +1,8 @@
 package com.skhkim.instaclone.chatting.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class ChatRoom extends BaseEntity{
     private Long roomId;
     private String lastChat;
     private Long userNum;
-    private LocalDateTime lastChatTime;
+    private Long lastCid;
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatUser> chatUserList = new ArrayList<>();

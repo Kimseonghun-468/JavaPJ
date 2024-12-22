@@ -73,8 +73,8 @@ const ChattingApp = {
                 "regDate": item.regDate,
                 "readStatus": item.readStatus,
                 "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
-                "inviterName": item.inviterName,
-                "inviteNames": item.inviteNames
+                "inviterEmail": this.$data.emailAndNameDict[item.inviterEmail],
+                "inviteEmails": item.inviteEmails
             };
 
             if (this.$data.upDayCheck != item.regDate.slice(0, 10)){
@@ -102,8 +102,8 @@ const ChattingApp = {
                 "regDate": item.regDate,
                 "readStatus": item.readStatus,
                 "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
-                "inviterName": item.inviterName,
-                "inviteNames": item.inviteNames
+                "inviterEmail": this.$data.emailAndNameDict[item.inviterEmail],
+                "inviteEmails": item.inviteEmails
             };
 
             if (this.$data.downDayCheck != item.regDate.slice(0, 10)){
@@ -168,8 +168,8 @@ const ChattingApp = {
                     "regDate": new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 19),
                     "readStatus": item.readStatus,
                     "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
-                    "inviterName": item.inviterName,
-                    "inviteNames": item.inviteNames
+                    "inviterEmail": this.$data.emailAndNameDict[item.inviterEmail],
+                    "inviteEmails": item.inviteEmails
                 };
                 this.setChatMessage(chatInfo, inverse= false)
 
@@ -219,7 +219,7 @@ const ChattingApp = {
         }
 
         $.ajax({
-            url: "/chat/updateDisConnectTime",
+            url: "/chat/updateDisConnectCid",
             type: "POST",
             data: {roomId: roomId},
             dataType: "JSON",
@@ -238,13 +238,18 @@ const ChattingApp = {
         const showedTime = timeFormat.slice(21, 23) + " " + timeFormat.slice(12, 20);
         const timeFormatted = showedTime.slice(0, 8);
 
-        if (chatInfo.inviterName != null) {
+        if (chatInfo.inviterEmail != null) {
             const inviteListContainer = document.createElement('div');
             inviteListContainer.classList.add('invite-list-container');
 
             const inviteUserList = document.createElement('div');
             inviteUserList.classList.add('invite-user-list');
-            inviteUserList.textContent = `${chatInfo.inviterName}님이 ${chatInfo.inviteNames}님을 초대하였습니다.`;
+
+            const inviteUserNames = chatInfo.inviteEmails.replace(/[\[\]]/g, '').split(', ').map(email => {
+                return this.$data.emailAndNameDict[email];
+            });
+
+            inviteUserList.textContent = `${chatInfo.inviterEmail}님이 ${inviteUserNames.join(", ")}님을 초대하였습니다.`;
 
             inviteListContainer.appendChild(inviteUserList);
 

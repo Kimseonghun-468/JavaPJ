@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         ChattingApp.$object.scrollContainer.addEventListener('scroll', ChattingApp.$event.scrollPagination);
     });
 
-    $('#send-button-modalroom').click(function () {
+    $('#send-button-chat').click(function () {
         var messageContent = document.getElementById('messageInput').value.trim();
         var chatMessage = {
             content: messageContent,

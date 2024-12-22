@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatMessageDTO {
-    private String cid;
+    private Long cid;
     private Long roomId;
     private String senderEmail;
     private String content;
     private Long readStatus;
-    private String inviterName;
-    private String inviteNames;
+    private String inviterEmail;
+    private String inviteEmails;
     private LocalDateTime regDate;
     private String profileImageUrl;
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ChatUserDTO {
     private Long roomId;
-    private LocalDateTime disConnect;
+    private Long lastCid;
     private UserInfoDTO userInfoDTO;
     private LocalDateTime regDate;
 

@@ -8,7 +8,7 @@ import com.skhkim.instaclone.request.MessagePageRequest;
 public interface ChatMessageService {
 
     Long getNotReadNum(Long roomId);
-    void register(ChatMessageDTO chatMessageDTO);
+    Long register(ChatMessageDTO chatMessageDTO);
 
     void updateReadStatus(Long roomID);
     ChatMessageResponse selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId);

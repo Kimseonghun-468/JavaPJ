@@ -70,9 +70,9 @@ public class ChatApiController {
         return ApiResponse.OK(chatMessageResponse);
     }
 
-    @PostMapping("/updateDisConnectTime")
-    public ResponseEntity updateDisconnectTime(Long roomId){
-        chatUserService.updateDisConnect(roomId);
+    @PostMapping("/updateDisConnectCid")
+    public ResponseEntity updateDisconnectCid(Long roomId){
+        chatUserService.updateDisConnectCid(roomId);
         return ApiResponse.OK("성공");
     }
 

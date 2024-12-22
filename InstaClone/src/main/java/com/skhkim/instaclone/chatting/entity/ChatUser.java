@@ -4,15 +4,13 @@ import com.skhkim.instaclone.entity.ClubMember;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"member", "chatRoom"})
+@ToString(exclude = {"member", "chatRoom", "lastCid"})
 public class ChatUser extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +22,7 @@ public class ChatUser extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private ChatRoom chatRoom;
 
-    @Column(nullable = false)
-    private LocalDateTime disConnect;
+    private Long lastCid;
+
+    private Long joinCid;
 }

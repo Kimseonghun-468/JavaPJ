@@ -61,26 +61,25 @@ public class EntityMapper {
 
     public static ChatMessageDTO entityToDTO(ChatMessage chatMessage){
         return ChatMessageDTO.builder()
-                .senderEmail(chatMessage.getSenderEmail())
+                .senderEmail(chatMessage.getSendUser().getEmail())
                 .roomId(chatMessage.getRoomId())
                 .content(chatMessage.getContent())
                 .readStatus(chatMessage.getReadStatus())
                 .regDate(chatMessage.getRegDate())
-                .inviteNames(chatMessage.getInviteNames())
-                .inviterName(chatMessage.getInviterName())
+                .inviteEmails(chatMessage.getInvitedUser())
+                .inviterEmail(chatMessage.getInviteUser())
                 .build();
     }
 
     public static ChatMessage dtoToEntity(ChatMessageDTO chatMessageDTO){
         return ChatMessage.builder()
-                .id(chatMessageDTO.getCid())
+                .cid(chatMessageDTO.getCid())
                 .roomId(chatMessageDTO.getRoomId())
-                .senderEmail(chatMessageDTO.getSenderEmail())
+                .sendUser(ClubMember.builder().email(chatMessageDTO.getSenderEmail()).build())
                 .content(chatMessageDTO.getContent())
                 .readStatus(chatMessageDTO.getReadStatus())
-                .regDate(chatMessageDTO.getRegDate())
-                .inviteNames(chatMessageDTO.getInviteNames())
-                .inviterName(chatMessageDTO.getInviterName())
+                .invitedUser(chatMessageDTO.getInviteEmails())
+                .inviteUser(chatMessageDTO.getInviterEmail())
                 .build();
     }
 
@@ -88,7 +87,7 @@ public class EntityMapper {
         return ChatUserDTO.builder()
                 .userInfoDTO(entityToDTO(chatUser.getMember()))
                 .roomId(chatUser.getChatRoom().getRoomId())
-                .disConnect(chatUser.getDisConnect())
+                .lastCid(chatUser.getLastCid())
                 .regDate(chatUser.getRegDate())
                 .build();
     }
@@ -98,7 +97,7 @@ public class EntityMapper {
                 .roomId(chatRoom.getRoomId())
                 .userNum(chatRoom.getUserNum())
                 .lastChat(chatRoom.getLastChat())
-                .lastChatTime(chatRoom.getLastChatTime())
+                .lastCid(chatRoom.getLastCid())
                 .userInfoDTOS(EntityMapper.entityToDTO(chatRoom.getChatUserList()))
                 .build();
     }

@@ -16,7 +16,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,17 +27,18 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatUserRepository chatUserRepository;
 
     @Override
-    public void register(ChatMessageDTO chatMessageDTO){
+    public Long register(ChatMessageDTO chatMessageDTO){
         ChatMessage chatMessage = EntityMapper.dtoToEntity(chatMessageDTO);
-        chatMessage.setRegDate(LocalDateTime.now());
         chatMessageRepository.save(chatMessage);
+
+        return chatMessage.getCid();
     }
     @Override
     @Transactional
     public void updateReadStatus(Long roomID){
         String loginEmail = LoginContext.getClubMember().getEmail();
         ChatUser chatUser = chatUserRepository.selectChatUser(roomID, loginEmail);
-        List<ChatMessage> result = chatMessageRepository.selectChatMessage(roomID, loginEmail, chatUser.getDisConnect());
+        List<ChatMessage> result = chatMessageRepository.selectChatMessage(roomID, loginEmail, chatUser.getLastCid(), chatUser.getJoinCid());
         result.forEach(chatMessage -> chatMessage.setReadStatus(chatMessage.getReadStatus() -1));
 
         chatMessageRepository.saveAll(result);
@@ -48,8 +48,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public ChatMessageResponse selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId){
         Pageable pageable = messagePageRequest.getPageable();
 
-        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(LoginContext.getClubMember().getEmail(), roomId);
-        Slice<ChatMessage> result = chatMessageRepository.selectChatMessageUp(pageable, roomId, disConnectTime);
+        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, LoginContext.getClubMember().getEmail());
+        Slice<ChatMessage> result = chatMessageRepository.selectChatMessageUp(pageable, roomId, chatUser.getLastCid(), chatUser.getJoinCid());
         List<ChatMessageDTO> chatMessageDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new ChatMessageResponse(chatMessageDTOS, result.hasNext());
@@ -59,8 +59,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId){
         Pageable pageable = messagePageRequest.getPageable();
 
-        LocalDateTime disConnectTime = chatUserRepository.getDisConnectTimeByEmail(LoginContext.getClubMember().getEmail(), roomId);
-        Slice<ChatMessage> result = chatMessageRepository.selectChatMessageDown(pageable, roomId, disConnectTime);
+        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, LoginContext.getClubMember().getEmail());
+        Slice<ChatMessage> result = chatMessageRepository.selectChatMessageDown(pageable, roomId, chatUser.getLastCid(), chatUser.getJoinCid());
         List<ChatMessageDTO> chatMessageDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new ChatMessageResponse(chatMessageDTOS, result.hasNext());
@@ -69,8 +69,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public Long getNotReadNum(Long roomId){
         String loginEmail = LoginContext.getClubMember().getEmail();
-        LocalDateTime disConnectTime = chatUserRepository.selectChatUser(roomId, loginEmail).getDisConnect();
-        return chatMessageRepository.getNotReadNum(roomId, loginEmail, disConnectTime);
+        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, loginEmail);
+        return chatMessageRepository.getNotReadNum(roomId, loginEmail, chatUser.getLastCid(), chatUser.getJoinCid());
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
 public interface ChatUserService {
 
     void register(String userEmail, Long roomId);
-    void updateDisConnect(Long roomId);
+    void updateDisConnectCid(Long roomId);
 
     ChatRoomResponse selectChatRooms(UserInfoPageRequest userInfoPageRequest);
 

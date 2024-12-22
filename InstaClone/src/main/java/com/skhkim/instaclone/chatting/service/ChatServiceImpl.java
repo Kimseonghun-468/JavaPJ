@@ -50,9 +50,9 @@ public class ChatServiceImpl implements ChatService {
         request.getChatMessageDTO().setSenderEmail(loginEmail);
         request.getChatMessageDTO().setReadStatus(readStatus);
         request.getChatMessageDTO().setRoomId(request.getRoomId());
-
-        messageService.register(request.getChatMessageDTO());
-        roomService.updateLastChatTime(request.getChatMessageDTO());
+        Long cid = messageService.register(request.getChatMessageDTO());
+        request.getChatMessageDTO().setCid(cid);
+        roomService.updateLastCmId(request.getChatMessageDTO());
         redisTemplate.convertAndSend("/chat/"+ request.getRoomId(), request.getChatMessageDTO());
     }
 
@@ -64,8 +64,9 @@ public class ChatServiceImpl implements ChatService {
 
         ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder()
                 .roomId(request.getRoomId())
-                .inviteNames(request.getUserNames().toString())
-                .inviterName(LoginContext.getClubMember().getName())
+                .senderEmail(LoginContext.getClubMember().getEmail())
+                .inviteEmails(request.getUserEmails().toString())
+                .inviterEmail(LoginContext.getClubMember().getEmail())
                 .regDate(LocalDateTime.now())
                 .build();
         messageService.register(chatMessageDTO);
@@ -81,7 +82,6 @@ public class ChatServiceImpl implements ChatService {
         ChatUserResponse chatUser = ChatUserResponse.builder()
                 .roomId(roomId)
                 .userName(LoginContext.getClubMember().getName())
-                .disConnect(LocalDateTime.now())
                 .build();
         redisTemplate.convertAndSend("/access/" +roomId, chatUser);
         return result.stream().map(EntityMapper::entityToDTO).toList();
@@ -98,6 +98,8 @@ public class ChatServiceImpl implements ChatService {
         else{
             ChatRoom chatRoom = ChatRoom.builder()
                     .userNum(2L)
+                    .lastCid(0L)
+                    .lastChat("")
                     .build();
             roomRepository.save(chatRoom);
             userService.register(LoginContext.getClubMember().getEmail(), chatRoom.getRoomId());

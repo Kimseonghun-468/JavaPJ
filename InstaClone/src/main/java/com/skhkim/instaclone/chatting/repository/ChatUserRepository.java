@@ -7,7 +7,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,12 +22,11 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
     @Query("SELECT cu FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.email =:loginEmail")
     ChatUser selectChatUser(Long roomId, String loginEmail);
 
-    @Query("SELECT cu.disConnect FROM ChatUser cu WHERE cu.member.email =:loginEmail AND cu.chatRoom.roomId =:roomId")
-    LocalDateTime getDisConnectTimeByEmail(String loginEmail, Long roomId);
+
 
     @Query("SELECT CU.chatRoom FROM ChatUser CU " +
             "WHERE CU.member.email = :loginEmail " +
-            "ORDER BY CU.chatRoom.lastChatTime DESC")
+            "ORDER BY CU.chatRoom.lastCid DESC")
     Slice<ChatRoom> selectChatRoom(Pageable pageable, String loginEmail);
 
     @Query("SELECT cu FROM ChatUser cu " +
