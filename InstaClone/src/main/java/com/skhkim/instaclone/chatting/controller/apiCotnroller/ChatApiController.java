@@ -29,6 +29,11 @@ public class ChatApiController {
     private final ChatUserService chatUserService;
     private final ChatService chatService;
 
+    /**
+     * Logic : Message DB 저장 및 Redis BroadCasting
+     * Request : roomId, chatMessageDTO[content]
+     * Response : null
+     * */
     @PostMapping("/sendMessage")
     public ResponseEntity sendMessage(@RequestBody MessageRequest request) {
         try {
@@ -39,49 +44,91 @@ public class ChatApiController {
         return ApiResponse.OK();
     }
 
+    /**
+     * Logic : ChatRoom 생성 or ChatRoomId 반환
+     * Request : userName
+     * Response : roomId
+     * */
     @PostMapping("/createChatRoom")
     public ResponseEntity createChatRoom(String userName){
         Long roomId = chatService.createChatRoom(userName);
         return ApiResponse.OK(roomId);
     }
 
+    /**
+     * Logic : 채팅방 참여
+     * Request : roomId
+     * Response : List<ChatUserDTO>
+     * Todo : Eamil 노출 제거 및 UserProfile 개별적 불러오기 (성능 보다는 정보 유출을 더 막아야함)
+     * */
     @PostMapping("/joinChatRoom")
     public ResponseEntity joinChatRoom(Long roomId){
         List<ChatUserDTO> result = chatService.joinChatRoom(roomId);
         return ApiResponse.OK(result);
     }
 
-
+    /**
+     * Logic : 사용자의 채팅방 리스트 조회
+     * Request : Page
+     * Response : ChatRoomResponse[chatRoomDTOS, hasNext]
+     * */
     @PostMapping("/selectChatRoom")
     public ResponseEntity selectChatRoom(UserInfoPageRequest userInfoPageRequest){
         ChatRoomResponse result = chatUserService.selectChatRooms(userInfoPageRequest);
         return ApiResponse.OK(result);
     }
 
+    /**
+     * Logic : 채팅방의 이전 채팅 기록 조회
+     * Request : page, roomId
+     * Response : ChatMessageResponse[chatMessageDTOS, hasNext]
+     * */
     @PostMapping("/selectChatMessageUp")
-    public ResponseEntity selectChatMessageUp(MessagePageRequest replyPageRequest, Long roomId){
-        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(replyPageRequest, roomId);
+    public ResponseEntity selectChatMessageUp(MessagePageRequest request, Long roomId){
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(request, roomId);
         return ApiResponse.OK(chatMessageResponse);
     }
 
+    /**
+     * Logic : 채팅방의 읽지 않은 채팅 기록 조회
+     * Request : page, roomId
+     * Response : ChatMessageResponse[chatMessageDTOS, hasNext]
+     * */
     @PostMapping("/selectChatMessageDown")
-    public ResponseEntity selectChatMessageDown(MessagePageRequest replyPageRequest, Long roomId) {
-        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(replyPageRequest, roomId);
+    public ResponseEntity selectChatMessageDown(MessagePageRequest request, Long roomId) {
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(request, roomId);
         return ApiResponse.OK(chatMessageResponse);
     }
 
+    /**
+     * Logic : 채팅방의 마지막 CID 기록 - 읽지 않은 메시지 판별을 위한 보조 데이터
+     * Request : roomId
+     * Response : null
+     * */
     @PostMapping("/updateDisConnectCid")
     public ResponseEntity updateDisconnectCid(Long roomId){
         chatUserService.updateDisConnectCid(roomId);
         return ApiResponse.OK("성공");
     }
 
+    /**
+     * Logic : 채티방의 읽지 않은 메시지 수 출력
+     * Request : roomId
+     * Response : notReadNum
+     * Todo : Fetch Join을 통해 읽지 않은 Message의 수를 List 단위로 처리
+     * */
     @PostMapping("/getNotReadNum")
     public ResponseEntity getNotReadNum(Long roomId){
         Long resultNum = chatMessageService.getNotReadNum(roomId);
         return ApiResponse.OK(resultNum);
     }
 
+    /**
+     * Logic : 채팅방에 친구 초대 및 초대 목록 BroadCast
+     * Request : roomId, userEmails, userNum - userNames는 사용하지 않음.
+     * Response : null
+     * Todo :
+     * */
     @PostMapping("/inviteChatUsers")
     public ResponseEntity inviteChatUsers(@RequestBody InviteRequest inviteRequest){
         chatService.inviteChatUsers(inviteRequest);

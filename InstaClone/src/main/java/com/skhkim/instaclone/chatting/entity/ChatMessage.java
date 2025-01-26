@@ -23,8 +23,6 @@ public class ChatMessage extends BaseEntity{
 
     private String invitedUser;
 
-    private String inviteUser;
-
     private String content;
 
     private Long readStatus;

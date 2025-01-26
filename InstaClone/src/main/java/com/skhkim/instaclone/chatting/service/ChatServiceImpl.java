@@ -24,6 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRoomService roomService;
@@ -57,7 +58,6 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    @Transactional
     public void inviteChatUsers(InviteRequest request){
         userService.insertChatUser(request.getUserEmails(), request.getRoomId());
         roomService.updateUserNum(request.getRoomId(), request.getAddNum());
@@ -74,7 +74,6 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    @Transactional
     public List<ChatUserDTO> joinChatRoom(Long roomId){
         List<ChatUser> result = userRepository.selectChatUsers(roomId);
         messageService.updateReadStatus(roomId);
@@ -88,7 +87,6 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    @Transactional
     public Long createChatRoom(String userName){
         Optional<Long> roomId = userRepository.checkChatRoom(LoginContext.getClubMember().getName(), userName);
 

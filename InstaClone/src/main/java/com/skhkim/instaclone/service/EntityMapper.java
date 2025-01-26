@@ -67,7 +67,6 @@ public class EntityMapper {
                 .readStatus(chatMessage.getReadStatus())
                 .regDate(chatMessage.getRegDate())
                 .inviteEmails(chatMessage.getInvitedUser())
-                .inviterEmail(chatMessage.getInviteUser())
                 .build();
     }
 
@@ -79,7 +78,6 @@ public class EntityMapper {
                 .content(chatMessageDTO.getContent())
                 .readStatus(chatMessageDTO.getReadStatus())
                 .invitedUser(chatMessageDTO.getInviteEmails())
-                .inviteUser(chatMessageDTO.getInviterEmail())
                 .build();
     }
 
