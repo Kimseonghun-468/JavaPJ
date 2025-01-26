@@ -126,8 +126,8 @@ const ProfileFriendApp = {
         const profileImage = document.createElement("img");
         profileImage.classList.add("profile-picture");
         profileImage.alt = "Profile Picture";
-        profileImage.src = data.image
-            ? `/display?fileName=${data.image}`
+        profileImage.src = data.imageURL
+            ? `/display?fileName=${data.imageURL}`
             : "/display?fileName=outprofile.png/";
         profileBox.appendChild(profileImage);
 
@@ -136,9 +136,9 @@ const ProfileFriendApp = {
         userNameBox.classList.add("user-name-box");
 
         const userNameLink = document.createElement("a");
-        userNameLink.href = `/sidebar/${data.name}`;
+        userNameLink.href = `/sidebar/${data.userName}`;
         userNameLink.classList.add("comment-bold");
-        userNameLink.textContent = data.name;
+        userNameLink.textContent = data.userName;
         userNameBox.appendChild(userNameLink);
 
         // 채팅 버튼 박스 생성
@@ -151,7 +151,7 @@ const ProfileFriendApp = {
         userInfoBox.appendChild(chatButtonBox);
 
         // HTML에 요소 추가 (이름이 null이 아닐 경우)
-        if (data.name != null) {
+        if (data.userName != null) {
             const friendListUserBox = document.getElementById("friend-List-UserBox");
             friendListUserBox.prepend(userInfoBox);
         }
