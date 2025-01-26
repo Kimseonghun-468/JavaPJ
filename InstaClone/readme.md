@@ -1,5 +1,31 @@
 개발 기록
 
+2025-01-27 ~ (적용 예정)
+
+1. Request, Response DTO 재정의
+2. N+1 Fetch Join 최적화 적용
+   * 2-2. Collection에 대한 Batch 적용 (Pagination을 위함)
+3. QueryDSL 적용
+
+***
+2024-11-16 ~
+리펙터링 예정
+
+- 구조 관련 공부 진행 예정
+    - html, Controller, Repository 정리 - o
+    - page를 response에 - o
+    - 프로젝트 상세 Config들 공부 및 정리 후 적용 - o
+- 친절한 SQL 공부 진행 예정 - x (난이도 이슈)
+    - Query 튜닝 공부 및 적용 예정 - x (이후 진행)
+
+***
+2024-11-01 ~ 2024-11-16
+코드 리팩터링 시작
+
+- Script File 분할 (완료)
+    - 각 항목에 맞는 Script 파일 분할 (각 Modal별로 진행)
+
+---
 04-27 토
 
 1. Chatting 기능 구현한거 붙이기.
@@ -93,20 +119,4 @@ RDBMS로 설계 후, 처리 시간 확인 및 ChatMessage만 MongoDB로 수정 �
 
 
 
-***
-2024-11-01 ~ 2024-11-16
-코드 리팩터링 시작
 
-- Script File 분할 (완료)
-  - 각 항목에 맞는 Script 파일 분할 (각 Modal별로 진행)
-
-***
-2024-11-16 ~
-리펙터링 예정
-
-- 구조 관련 공부 진행 예정
-  - html, Controller, Repository 정리 예정
-  - page를 response에 정리
-  - 프로젝트 상세 Config들 공부 및 정리 후 적용 예정
-- 친절한 SQL 공부 진행 예정
-  - Query 튜닝 공부 및 적용 예정
