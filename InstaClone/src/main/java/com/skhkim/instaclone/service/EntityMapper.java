@@ -26,7 +26,6 @@ public class EntityMapper {
                 .uuid(profileImage != null ? profileImage.getUuid() : null)
                 .path(profileImage != null ? profileImage.getPath() : null)
                 .userName(projection.getClubMember().getName())
-                .userEmail(projection.getClubMember().getEmail())
                 .status(projection.getStatus())
                 .build();
     }
@@ -38,7 +37,6 @@ public class EntityMapper {
                 .uuid(profileImage != null ? profileImage.getUuid() : null)
                 .path(profileImage != null ? profileImage.getPath() : null)
                 .userName(clubMember.getName())
-                .userEmail(clubMember.getEmail())
                 .build();
     }
     
@@ -46,6 +44,7 @@ public class EntityMapper {
         return ClubMemberDTO.builder()
                 .email(clubMember.getEmail())
                 .name(clubMember.getName())
+                .userId(clubMember.getId())
                 .build();
     }
 
@@ -61,12 +60,14 @@ public class EntityMapper {
 
     public static ChatMessageDTO entityToDTO(ChatMessage chatMessage){
         return ChatMessageDTO.builder()
-                .senderEmail(chatMessage.getSendUser().getEmail())
+                .senderName(chatMessage.getSendUser().getName())
                 .roomId(chatMessage.getRoomId())
                 .content(chatMessage.getContent())
                 .readStatus(chatMessage.getReadStatus())
                 .regDate(chatMessage.getRegDate())
-                .inviteEmails(chatMessage.getInvitedUser())
+                .inviteNames(chatMessage.getInvitedUser())
+                .profileImageUrl(chatMessage.getSendUser().getProfileImage() != null ?
+                        chatMessage.getSendUser().getProfileImage().getImageURL() : null)
                 .build();
     }
 
@@ -74,10 +75,9 @@ public class EntityMapper {
         return ChatMessage.builder()
                 .cid(chatMessageDTO.getCid())
                 .roomId(chatMessageDTO.getRoomId())
-                .sendUser(ClubMember.builder().email(chatMessageDTO.getSenderEmail()).build())
                 .content(chatMessageDTO.getContent())
                 .readStatus(chatMessageDTO.getReadStatus())
-                .invitedUser(chatMessageDTO.getInviteEmails())
+                .invitedUser(chatMessageDTO.getInviteNames())
                 .build();
     }
 
@@ -103,7 +103,6 @@ public class EntityMapper {
     public static List<UserInfoDTO> entityToDTO(List<ChatUser> chatUserList){
         return chatUserList.stream().map(chatUser ->
                 UserInfoDTO.builder()
-                        .userEmail(chatUser.getMember().getEmail())
                         .userName(chatUser.getMember().getName())
                         .imgName(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getImgName() : null)
                         .uuid(chatUser.getMember().getProfileImage() != null ? chatUser.getMember().getProfileImage().getUuid() : null)

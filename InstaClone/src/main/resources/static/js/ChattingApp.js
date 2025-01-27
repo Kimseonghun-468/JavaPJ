@@ -7,15 +7,9 @@ const ChattingApp = {
         loginName: null,
         roomId: null,
         noneImage: "outprofile.png/",
-        nameAndEmailDict : {},
-        emailAndNameDict : {},
-        emailAndProfileDict : {},
         upDayCheck: null,
         downDayCheck: null,
-
-
         timeFormat: null,
-
         socket: null,
         stompClient: null,
     },
@@ -43,7 +37,6 @@ const ChattingApp = {
         this.$object.waitTable = $("#messages-box");
         this.$object.scrollContainer = document.getElementById('messages-modal');
         this.scrollPaging = this.scrollPaging.bind(this);
-        this.initChattingApp(roomId)
         this.connect()
 
     },
@@ -68,13 +61,13 @@ const ChattingApp = {
         data.chatMessageDTOS.forEach(item => {
 
             const chatInfo = {
-                "senderName": this.$data.emailAndNameDict[item.senderEmail],
+                "senderName": item.senderName,
                 "content": item.content,
                 "regDate": item.regDate,
                 "readStatus": item.readStatus,
-                "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
-                "inviterEmail": this.$data.emailAndNameDict[item.inviterEmail],
-                "inviteEmails": item.inviteEmails
+                "profileImageUrl": item.profileImageUrl,
+                "inviterName": item.inviterName,
+                "inviteNames": item.inviteNames
             };
 
             if (this.$data.upDayCheck != item.regDate.slice(0, 10)){
@@ -97,13 +90,13 @@ const ChattingApp = {
 
         data.chatMessageDTOS.forEach(item => {
             const chatInfo = {
-                "senderName": this.$data.emailAndNameDict[item.senderEmail],
+                "senderName": item.senderName,
                 "content": item.content,
                 "regDate": item.regDate,
                 "readStatus": item.readStatus,
-                "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
-                "inviterEmail": this.$data.emailAndNameDict[item.inviterEmail],
-                "inviteEmails": item.inviteEmails
+                "profileImageUrl": item.profileImageUrl,
+                "inviterName": item.inviterName,
+                "inviteNames": item.inviteNames
             };
 
             if (this.$data.downDayCheck != item.regDate.slice(0, 10)){
@@ -117,41 +110,6 @@ const ChattingApp = {
         this.$data.hasNextDown = data.hasNext;
         this.$data.downPage += 1
     },
-    async initChattingApp(roomId){
-        try {
-            await this.makeUserDict(roomId);
-            selectChattingUp(ChattingApp.$data.roomId, ChattingApp.$data.upPage);
-            selectChattingDown(ChattingApp.$data.roomId, ChattingApp.$data.downPage);
-        } catch (error) {
-            console.error("Chat room users loading failed:", error);
-        }
-    },
-
-    makeUserDict(roomId) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: '/chat/joinChatRoom',
-                type: 'POST',
-                data: { roomId: roomId },
-                dataType: "JSON",
-                success: (response) => {
-                    response.data.forEach((item) => {
-                        ChattingApp.$data.nameAndEmailDict[item.userInfoDTO.userName] = item.userInfoDTO.userEmail;
-                        ChattingApp.$data.emailAndNameDict[item.userInfoDTO.userEmail] = item.userInfoDTO.userName;
-                        if (item.userInfoDTO.path != null) {
-                            ChattingApp.$data.emailAndProfileDict[item.userInfoDTO.userEmail] = item.userInfoDTO.imageURL;
-                        } else {
-                            ChattingApp.$data.emailAndProfileDict[item.userInfoDTO.userEmail] = ChattingApp.$data.noneImage;
-                        }
-                    });
-                    resolve(response);
-                },
-                error: (error) => {
-                    reject(error);
-                }
-            });
-        });
-    },
 
 
     connect() {
@@ -163,13 +121,13 @@ const ChattingApp = {
             client.subscribe('/topic/chat/' + roomId, (chatMessage) => {
                 const item = JSON.parse(chatMessage.body);  // 한 번만 파싱
                 const chatInfo = {
-                    "senderName": this.$data.emailAndNameDict[item.senderEmail],
+                    "senderName": item.senderName,
                     "content": item.content,
                     "regDate": new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 19),
                     "readStatus": item.readStatus,
-                    "profileImageUrl": this.$data.emailAndProfileDict[item.senderEmail],
-                    "inviterEmail": this.$data.emailAndNameDict[item.inviterEmail],
-                    "inviteEmails": item.inviteEmails
+                    "profileImageUrl": item.profileImageUrl,
+                    "inviterName": item.inviterName,
+                    "inviteNames": item.inviteNames
                 };
                 this.setChatMessage(chatInfo, inverse= false)
 
@@ -201,7 +159,6 @@ const ChattingApp = {
                 result += '<div class="invite-list-container">'
                 result += '<div class="invite-user-list">' + names.slice(0, names.length-2) + '님이 초대되었습니다.</div>'
                 result += '</div>'
-                this.makeUserDict(roomId)
                 $('#messages-box').append(result);
 
 
@@ -238,18 +195,14 @@ const ChattingApp = {
         const showedTime = timeFormat.slice(21, 23) + " " + timeFormat.slice(12, 20);
         const timeFormatted = showedTime.slice(0, 8);
 
-        if (chatInfo.inviterEmail != null) {
+        if (chatInfo.inviterName != null) {
             const inviteListContainer = document.createElement('div');
             inviteListContainer.classList.add('invite-list-container');
 
             const inviteUserList = document.createElement('div');
             inviteUserList.classList.add('invite-user-list');
 
-            const inviteUserNames = chatInfo.inviteEmails.replace(/[\[\]]/g, '').split(', ').map(email => {
-                return this.$data.emailAndNameDict[email];
-            });
-
-            inviteUserList.textContent = `${chatInfo.inviterEmail}님이 ${inviteUserNames.join(", ")}님을 초대하였습니다.`;
+            inviteUserList.textContent = `${chatInfo.inviterName}님이 ${chatInfo.inviteNames}님을 초대하였습니다.`;
 
             inviteListContainer.appendChild(inviteUserList);
 

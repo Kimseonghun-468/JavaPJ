@@ -48,7 +48,6 @@ public class ChatServiceImpl implements ChatService {
         Long userNum = chatUser.getChatRoom().getUserNum();
         Long readStatus = userNum - sessionManager.getRoomJoinNum(request.getRoomId().toString());
 
-        request.getChatMessageDTO().setSenderEmail(loginEmail);
         request.getChatMessageDTO().setReadStatus(readStatus);
         request.getChatMessageDTO().setRoomId(request.getRoomId());
         Long cid = messageService.register(request.getChatMessageDTO());
@@ -59,16 +58,16 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void inviteChatUsers(InviteRequest request){
-        userService.insertChatUser(request.getUserEmails(), request.getRoomId());
+        userService.insertChatUser(request.getUserNames(), request.getRoomId());
         roomService.updateUserNum(request.getRoomId(), request.getAddNum());
 
         ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder()
                 .roomId(request.getRoomId())
-                .senderEmail(LoginContext.getClubMember().getEmail())
-                .inviteEmails(request.getUserEmails().toString())
-                .inviterEmail(LoginContext.getClubMember().getEmail())
+                .inviteNames(request.getUserNames().toString())
+                .inviterName(LoginContext.getClubMember().getName())
                 .regDate(LocalDateTime.now())
                 .build();
+
         messageService.register(chatMessageDTO);
         redisTemplate.convertAndSend("/invite/"+ request.getRoomId(), request);
     }

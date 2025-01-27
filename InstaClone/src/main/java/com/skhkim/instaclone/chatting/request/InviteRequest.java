@@ -9,7 +9,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InviteRequest {
     private Long roomId;
-    private List<String> userEmails;
     private List<String> userNames;
     private Integer addNum;
     private String searchTerm;

@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import com.skhkim.instaclone.entity.ClubMember;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
@@ -19,6 +21,12 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     @Query("select m from ClubMember m where m.fromSocial = :social and m.email =:email")
     Optional<ClubMember> findByEmail(String email, boolean social);
     Optional<ClubMember> findByEmail(String eamil);
+
+    @Query("select m from ClubMember m where m.id in :ids")
+    List<ClubMember> findByIds(List<Long> ids);
+    @Query("select m from ClubMember m where m.name in :names")
+    List<ClubMember> selectUserByNames(List<String> names);
+
     ClubMember findByName(String name);
 
     boolean existsByEmail(String email);

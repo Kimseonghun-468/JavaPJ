@@ -3,14 +3,14 @@ document.addEventListener("DOMContentLoaded", ()=> {
         $('#chatMessageModal').css('z-index', 1052).modal('show');
 
         var roomId = $(this).attr('room-id')
-
         if(roomId == null){
             var userName = $(this).data('name');
             roomId = createChatRoom(userName)
         }
 
         ChattingApp.init(UserProfileApp.$data.loginName, roomId)
-
+        selectChattingUp(ChattingApp.$data.roomId, ChattingApp.$data.upPage);
+        selectChattingDown(ChattingApp.$data.roomId, ChattingApp.$data.downPage);
         ChattingApp.$event.scrollPagination = debounce(ChattingApp.scrollPaging,300);
         ChattingApp.$object.scrollContainer.addEventListener('scroll', ChattingApp.$event.scrollPagination);
     });

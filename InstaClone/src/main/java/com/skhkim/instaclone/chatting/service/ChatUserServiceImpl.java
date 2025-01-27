@@ -8,6 +8,7 @@ import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatRoomResponse;
 import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.entity.ClubMember;
+import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.request.UserInfoPageRequest;
 import com.skhkim.instaclone.service.EntityMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class ChatUserServiceImpl implements ChatUserService {
 
     private final ChatUserRepository chatUserRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ClubMemberRepository memberRepository;
     @Override
     public void register(String userEmail, Long roomId){
 
@@ -53,12 +55,13 @@ public class ChatUserServiceImpl implements ChatUserService {
         return new ChatRoomResponse(chatRoomDTOS, result.hasNext());
     }
     @Override
-    public void insertChatUser(List<String> userEmails, Long roomId){
+    public void insertChatUser(List<String> userNames, Long roomId){
 
         ChatRoom chatRoom = chatRoomRepository.selectChatRoom(roomId);
-        userEmails.forEach(userEmail -> {
+        List<ClubMember> clubMembers = memberRepository.selectUserByNames(userNames);
+        clubMembers.forEach(member -> {
             ChatUser chatUser = ChatUser.builder()
-                    .member(ClubMember.builder().email(userEmail).build())
+                    .member(member)
                     .chatRoom(ChatRoom.builder().roomId(roomId).build())
                     .lastCid(chatRoom.getLastCid())
                     .joinCid(chatRoom.getLastCid())

@@ -13,7 +13,7 @@ public interface ChatUserService {
 
     ChatRoomResponse selectChatRooms(UserInfoPageRequest userInfoPageRequest);
 
-    void insertChatUser(List<String> userEmails, Long roomId);
+    void insertChatUser(List<String> userNames, Long roomId);
 
 }
 

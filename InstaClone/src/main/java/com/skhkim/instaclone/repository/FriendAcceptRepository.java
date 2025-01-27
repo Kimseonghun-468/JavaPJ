@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.repository;
 
 import com.skhkim.instaclone.dto.UserInfoProjection;
+import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.FriendAccept;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -58,6 +59,6 @@ public interface FriendAcceptRepository extends JpaRepository<FriendAccept, Long
             "WHERE FA.user1.name =:loginName " +
             "AND FA.user2.name NOT IN :roomUsers " +
             "ORDER BY FA.user2.name")
-    Slice<UserInfoProjection> selectInviteList(Pageable pageable, String loginName, List<String> roomUsers);
+    Slice<ClubMember> selectInviteList(Pageable pageable, String loginName, List<String> roomUsers);
 
 }

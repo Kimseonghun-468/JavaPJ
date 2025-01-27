@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 public class ChatMessageDTO {
     private Long cid;
     private Long roomId;
-    private String senderEmail;
+    private String senderName;
     private String content;
     private Long readStatus;
-    private String inviterEmail;
-    private String inviteEmails;
+    private String inviterName;
+    private String inviteNames;
     private LocalDateTime regDate;
     private String profileImageUrl;
 }

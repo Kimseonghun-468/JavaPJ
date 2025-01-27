@@ -170,7 +170,7 @@ public class FriendServiceImpl implements FriendService {
     public UserInfoResponse
     selectInviteList(UserInfoPageRequest userInfoPageRequest, List<String> roomUsers){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = acceptRepository.selectInviteList(pageable, LoginContext.getClubMember().getName(), roomUsers);
+        Slice<ClubMember> result = acceptRepository.selectInviteList(pageable, LoginContext.getClubMember().getName(), roomUsers);
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());

@@ -127,7 +127,7 @@ public class ChatApiController {
      * Logic : 채팅방에 친구 초대 및 초대 목록 BroadCast
      * Request : roomId, userEmails, userNum - userNames는 사용하지 않음.
      * Response : null
-     * Todo :
+     * Todo : userEmails를 Names로 교체하고 Ids로 변환
      * */
     @PostMapping("/inviteChatUsers")
     public ResponseEntity inviteChatUsers(@RequestBody InviteRequest inviteRequest){
