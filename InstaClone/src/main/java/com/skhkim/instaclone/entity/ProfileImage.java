@@ -18,9 +18,8 @@ public class ProfileImage extends BaseEntity{
     private Long pfino;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
     private ClubMember clubMember;
-//    private String userName;
-//    private String userEmail;
     private String uuid;
     private String imgName;
     private String path;

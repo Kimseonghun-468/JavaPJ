@@ -19,6 +19,7 @@ public class ChatMessage extends BaseEntity{
     private Long roomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private ClubMember sendUser;
 
     private String invitedUser;

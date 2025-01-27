@@ -18,8 +18,10 @@ public class Reply extends BaseEntity{
     private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="pno")
     private Post post;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
     private ClubMember clubMember;
 
 

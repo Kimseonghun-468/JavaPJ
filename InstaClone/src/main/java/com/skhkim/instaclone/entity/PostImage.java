@@ -22,6 +22,7 @@ public class PostImage extends BaseEntity{
     private String path;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="pno")
     private Post post;
 
 

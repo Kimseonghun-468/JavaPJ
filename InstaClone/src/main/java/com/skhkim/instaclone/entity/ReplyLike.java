@@ -15,8 +15,10 @@ public class ReplyLike extends BaseEntity{
     private Long rlno;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
     private ClubMember clubMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="rno")
     private Reply reply;
 }

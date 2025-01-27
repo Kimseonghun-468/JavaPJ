@@ -12,7 +12,7 @@ import com.skhkim.instaclone.entity.ClubMember;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
-public interface ClubMemberRepository extends JpaRepository<ClubMember, String> {
+public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 
 
     @EntityGraph(attributePaths = {"roleSet"}, type = EntityGraph.EntityGraphType.LOAD)

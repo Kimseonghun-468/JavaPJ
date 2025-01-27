@@ -3,9 +3,7 @@ package com.skhkim.instaclone.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -17,6 +15,10 @@ import java.util.Set;
 @ToString(exclude = "roleSet")
 public class ClubMember extends BaseEntity{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
+
     private String email;
     private String password;
     private String name;

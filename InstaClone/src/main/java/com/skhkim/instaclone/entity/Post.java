@@ -20,7 +20,8 @@ public class Post extends BaseEntity{
     private String title;
     private String comment;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 이거 필요하나..?
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
     private ClubMember clubMember;
 
     @OneToMany(mappedBy = "post")

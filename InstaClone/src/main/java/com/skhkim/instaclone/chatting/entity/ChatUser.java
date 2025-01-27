@@ -14,12 +14,14 @@ import lombok.*;
 public class ChatUser extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long chatId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
     private ClubMember member;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="room_id")
     private ChatRoom chatRoom;
 
     private Long lastCid;

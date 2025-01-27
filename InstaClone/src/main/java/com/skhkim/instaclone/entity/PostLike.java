@@ -17,9 +17,11 @@ public class PostLike extends BaseEntity {
     private Long lno;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
     private ClubMember clubMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="pno")
     private Post post;
 
 }

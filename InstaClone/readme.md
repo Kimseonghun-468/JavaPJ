@@ -3,6 +3,7 @@
 2025-01-27 ~ (적용 예정)
 
 1. Request, Response DTO 재정의
+    1. ChatMessage 
 2. N+1 Fetch Join 최적화 적용
    * 2-2. Collection에 대한 Batch 적용 (Pagination을 위함)
 3. QueryDSL 적용
