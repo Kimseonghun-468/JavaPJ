@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString(exclude = {"post", "clubMember", "reply"})
+@ToString(exclude = {"post", "clubMember"})
 public class Reply extends BaseEntity{
 
     @Id

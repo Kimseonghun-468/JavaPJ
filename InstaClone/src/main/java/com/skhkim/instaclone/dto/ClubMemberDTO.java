@@ -20,6 +20,8 @@ public class ClubMemberDTO {
     private String password;
     private boolean fromSocial;
     private LocalDateTime regDate, modDate;
+
+    @Builder.Default
     private Set<ClubMemberRole> roleSet = new HashSet<>();
 
 }

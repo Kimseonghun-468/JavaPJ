@@ -5,28 +5,38 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
-
 
     @Query("SELECT CM FROM ChatMessage CM WHERE CM.roomId = :roomId AND CM.cid <= :lastCid " +
             "AND CM.cid > :joinCid " +
             "ORDER BY CM.cid DESC")
-    Slice<ChatMessage> selectChatMessageUp(Pageable pageable, Long roomId, Long lastCid, Long joinCid);
+    Slice<ChatMessage> selectChatMessageUp(Pageable pageable,
+                                           @Param("roomId") Long roomId,
+                                           @Param("lastCid") Long lastCid,
+                                           @Param("joinCid") Long joinCid);
 
     @Query("SELECT CM FROM ChatMessage CM WHERE CM.roomId =:roomId AND CM.cid > :lastCid AND CM.cid > :joinCid " +
             "ORDER BY CM.cid ASC")
-    Slice<ChatMessage> selectChatMessageDown(Pageable pageable, Long roomId, Long lastCid, Long joinCid);
+    Slice<ChatMessage> selectChatMessageDown(Pageable pageable,
+                                             @Param("roomId") Long roomId,
+                                             @Param("lastCid") Long lastCid,
+                                             @Param("joinCid") Long joinCid);
 
     @Query("SELECT CM FROM ChatMessage CM WHERE CM.roomId =:roomId " +
             "AND CM.sendUser.email != :loginEmail AND CM.cid > :lastCid AND CM.cid > :joinCid")
-    List<ChatMessage> selectChatMessage(Long roomId, String loginEmail, Long lastCid, Long joinCid);
+    List<ChatMessage> selectChatMessage(@Param("roomId") Long roomId,
+                                        @Param("loginEmail") String loginEmail,
+                                        @Param("lastCid") Long lastCid,
+                                        @Param("joinCid") Long joinCid);
 
     @Query("SELECT count(*) FROM ChatMessage CM WHERE CM.roomId =:roomId " +
             "AND CM.sendUser.email != :loginEmail AND CM.cid > :lastCid AND CM.cid > :joinCid")
-    Long getNotReadNum(Long roomId, String loginEmail, Long lastCid, Long joinCid);
+    Long getNotReadNum(@Param("roomId") Long roomId,
+                       @Param("loginEmail") String loginEmail,
+                       @Param("lastCid") Long lastCid,
+                       @Param("joinCid") Long joinCid);
 }
-

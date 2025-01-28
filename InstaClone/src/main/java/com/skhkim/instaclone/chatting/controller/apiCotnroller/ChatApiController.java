@@ -1,6 +1,7 @@
 package com.skhkim.instaclone.chatting.controller.apiCotnroller;
 
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
+import com.skhkim.instaclone.chatting.repository.ChatMessageDSL;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.request.MessageRequest;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequestMapping("/chat")
 public class ChatApiController {
     private final ChatMessageService chatMessageService;
+    private final ChatMessageDSL chatMessageDSL;
     private final ChatUserService chatUserService;
     private final ChatService chatService;
 
@@ -86,6 +88,7 @@ public class ChatApiController {
     @PostMapping("/selectChatMessageUp")
     public ResponseEntity selectChatMessageUp(MessagePageRequest request, Long roomId){
         ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(request, roomId);
+//        List<ChatMessage> test = chatMessageDSL.selectChatMessageDSL(roomId, LoginContext.getClubMember().getUserId());
         return ApiResponse.OK(chatMessageResponse);
     }
 
@@ -99,6 +102,12 @@ public class ChatApiController {
         ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(request, roomId);
         return ApiResponse.OK(chatMessageResponse);
     }
+
+//    @PostMapping("/selectChatMessage")
+//    public ResponseEntity selectChatMessage(MessagePageRequest request, Long roomId){
+//        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessage(request, roomId);
+//        return ApiResponse.OK(chatMessageResponse);
+//    }
 
     /**
      * Logic : 채팅방의 마지막 CID 기록 - 읽지 않은 메시지 판별을 위한 보조 데이터

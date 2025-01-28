@@ -24,12 +24,15 @@ public class Post extends BaseEntity{
     @JoinColumn(name="user_id")
     private ClubMember clubMember;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<PostImage> postImageList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<PostLike> postLikeList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Reply> postReplyList = new ArrayList<>();
 

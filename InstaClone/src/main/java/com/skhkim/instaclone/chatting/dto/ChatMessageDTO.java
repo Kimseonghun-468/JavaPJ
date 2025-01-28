@@ -19,6 +19,7 @@ public class ChatMessageDTO {
     private Long readStatus;
     private String inviterName;
     private String inviteNames;
+    private String userIds;
     private LocalDateTime regDate;
     private String profileImageUrl;
 }

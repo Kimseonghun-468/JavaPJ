@@ -15,6 +15,8 @@ public interface ChatMessageService {
 
     ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId);
 
+//    ChatMessageResponse selectChatMessage(MessagePageRequest request, Long roomId);
+
 
 
 

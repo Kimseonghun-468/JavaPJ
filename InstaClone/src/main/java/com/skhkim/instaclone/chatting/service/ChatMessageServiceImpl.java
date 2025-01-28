@@ -83,6 +83,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
 
+    // Todo : ID TO NAME 변환 작업 공통화 및 MessageUp - Down에 관한 QueryDSL 적용하지
     @Override
     public ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId){
         Pageable pageable = messagePageRequest.getPageable();
@@ -114,6 +115,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return new ChatMessageResponse(chatMessageDTOS, result.hasNext());
     }
 
+//    @Override
+//    public ChatMessageResponse selectChatMessage(MessagePageRequest request, Long roomId){
+//        Pageable pageable = request.getPageable();
+//        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, LoginContext.getClubMember().getEmail());
+//        Slice<ChatMessage> result = chatMessageRepository.selectChatMessage(pageable, roomId, chatUser.getLastCid(), chatUser.getJoinCid());
+//        return new ChatMessageResponse(?, result.hasNext());
+//    }
     @Override
     public Long getNotReadNum(Long roomId){
         String loginEmail = LoginContext.getClubMember().getEmail();

@@ -20,12 +20,11 @@ public interface FriendAcceptRepository extends JpaRepository<FriendAccept, Long
     @Query("DELETE FROM FriendAccept FA " +
             "WHERE (FA.user1 = :loginName AND FA.user2 = :userName) " +
             "OR (FA.user1 = :userName AND FA.user2 = :loginName)")
-    int delete(String loginName, String userName);
+    int delete(@Param("loginName") String loginName, @Param("userName") String userName);
 
     @Query("SELECT count(*) FROM FriendAccept FA " +
             "WHERE FA.user2.name = :userName")
-    int getCount(String userName);
-
+    int getCount(@Param("userName") String userName);
 
     @Query("SELECT FA.user2 AS clubMember FROM FriendAccept FA " +
             "WHERE FA.user1.name =:loginName " +
@@ -46,19 +45,23 @@ public interface FriendAcceptRepository extends JpaRepository<FriendAccept, Long
             "FW_REQUESTER.receiver = FA_USER.user2 AND FW_REQUESTER.requester.name = :loginName "+
             "WHERE FA_USER.user1.name = :userName " +
             "ORDER BY FA_LOGIN.user2.name DESC, FW_RECEVER.requester.name DESC, FW_REQUESTER.receiver.name DESC")
-    Slice<UserInfoProjection> getFriendListPage(Pageable pageable, String userName, String loginName);
+    Slice<UserInfoProjection> getFriendListPage(Pageable pageable, @Param("userName") String userName, @Param("loginName") String loginName);
 
     @Query("SELECT FA.user2 AS clubMember FROM FriendAccept FA " +
             "WHERE FA.user1.name =:loginName " +
             "AND FA.user2.name like CONCAT('%', :inviteSearchTerm, '%') " +
             "AND FA.user2.name NOT IN :roomUsers " +
             "ORDER BY FA.user2.name")
-    Slice<UserInfoProjection> selectInviteListByName(Pageable pageable, String loginName, String inviteSearchTerm, List<String> roomUsers);
+    Slice<UserInfoProjection> selectInviteListByName(Pageable pageable,
+                                                     @Param("loginName") String loginName,
+                                                     @Param("inviteSearchTerm") String inviteSearchTerm,
+                                                     @Param("roomUsers") List<String> roomUsers);
 
     @Query("SELECT FA.user2 AS clubMember FROM FriendAccept FA " +
             "WHERE FA.user1.name =:loginName " +
             "AND FA.user2.name NOT IN :roomUsers " +
             "ORDER BY FA.user2.name")
-    Slice<ClubMember> selectInviteList(Pageable pageable, String loginName, List<String> roomUsers);
-
+    Slice<ClubMember> selectInviteList(Pageable pageable,
+                                       @Param("loginName") String loginName,
+                                       @Param("roomUsers") List<String> roomUsers);
 }

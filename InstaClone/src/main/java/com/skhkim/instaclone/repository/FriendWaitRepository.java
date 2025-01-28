@@ -16,12 +16,10 @@ public interface FriendWaitRepository extends JpaRepository<FriendWait, Long> {
     @Transactional
     @Query("DELETE FROM FriendWait FW " +
             "WHERE (FW.requester.name = :userName AND FW.receiver.name = :loginName)")
-    int delete(String loginName, String userName);
+    int delete(@Param("loginName") String loginName, @Param("userName") String userName);
 
     @Query("SELECT FW.requester as clubMember FROM FriendWait FW " +
             "WHERE FW.receiver.name = :loginName " +
             "ORDER BY FW.requester.name ")
     Slice<UserInfoProjection> getByWaitingListPage(Pageable pageable, @Param("loginName") String loginName);
-
-
 }

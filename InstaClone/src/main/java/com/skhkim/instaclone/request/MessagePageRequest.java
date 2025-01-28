@@ -12,8 +12,10 @@ import org.springframework.data.domain.Pageable;
 public class MessagePageRequest {
     private int page;
     private int size;
-    private String type;
-    private String keyword;
+    /**
+     * direction Type - cid 기준 이전 기록 조회인지, 이후 기록 조회인지
+     * */
+    private String dType;
     public MessagePageRequest(){
         this.page = 1;
         this.size = 12;

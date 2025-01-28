@@ -11,6 +11,7 @@ import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.request.MessageRequest;
 import com.skhkim.instaclone.chatting.response.ChatUserResponse;
 import com.skhkim.instaclone.context.LoginContext;
+import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.repository.ClubMemberRepository;
 import com.skhkim.instaclone.service.EntityMapper;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,9 +63,15 @@ public class ChatServiceImpl implements ChatService {
         userService.insertChatUser(request.getUserNames(), request.getRoomId());
         roomService.updateUserNum(request.getRoomId(), request.getAddNum());
 
+        // 여기서 names를 Id로 수정후 넣어줘야함.
+        List<ClubMember> clubMembers = memberRepository.selectUserByNames(request.getUserNames());
+        String userIds = clubMembers.stream()
+                .map(member -> String.valueOf(member.getId()))
+                .collect(Collectors.joining(", "));
+
         ChatMessageDTO chatMessageDTO = ChatMessageDTO.builder()
                 .roomId(request.getRoomId())
-                .inviteNames(request.getUserNames().toString())
+                .inviteNames(userIds)
                 .inviterName(LoginContext.getClubMember().getName())
                 .regDate(LocalDateTime.now())
                 .build();
