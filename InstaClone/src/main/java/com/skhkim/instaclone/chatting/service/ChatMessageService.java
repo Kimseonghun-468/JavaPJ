@@ -11,11 +11,8 @@ public interface ChatMessageService {
     Long register(ChatMessageDTO chatMessageDTO);
 
     void updateReadStatus(Long roomID);
-    ChatMessageResponse selectChatMessageUp(MessagePageRequest messagePageRequest, Long roomId);
 
-    ChatMessageResponse selectChatMessageDown(MessagePageRequest messagePageRequest, Long roomId);
-
-//    ChatMessageResponse selectChatMessage(MessagePageRequest request, Long roomId);
+    ChatMessageResponse selectChatMessages(MessagePageRequest request);
 
 
 

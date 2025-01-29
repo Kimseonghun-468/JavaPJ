@@ -81,33 +81,15 @@ public class ChatApiController {
     }
 
     /**
-     * Logic : 채팅방의 이전 채팅 기록 조회
-     * Request : page, roomId
-     * Response : ChatMessageResponse[chatMessageDTOS, hasNext]
-     * */
-    @PostMapping("/selectChatMessageUp")
-    public ResponseEntity selectChatMessageUp(MessagePageRequest request, Long roomId){
-        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageUp(request, roomId);
-//        List<ChatMessage> test = chatMessageDSL.selectChatMessageDSL(roomId, LoginContext.getClubMember().getUserId());
-        return ApiResponse.OK(chatMessageResponse);
-    }
-
-    /**
      * Logic : 채팅방의 읽지 않은 채팅 기록 조회
-     * Request : page, roomId
+     * Request : page, roomId, dType
      * Response : ChatMessageResponse[chatMessageDTOS, hasNext]
      * */
-    @PostMapping("/selectChatMessageDown")
-    public ResponseEntity selectChatMessageDown(MessagePageRequest request, Long roomId) {
-        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessageDown(request, roomId);
+    @PostMapping("/selectChatMessages")
+    public ResponseEntity selectChatMessage(MessagePageRequest request){
+        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessages(request);
         return ApiResponse.OK(chatMessageResponse);
     }
-
-//    @PostMapping("/selectChatMessage")
-//    public ResponseEntity selectChatMessage(MessagePageRequest request, Long roomId){
-//        ChatMessageResponse chatMessageResponse = chatMessageService.selectChatMessage(request, roomId);
-//        return ApiResponse.OK(chatMessageResponse);
-//    }
 
     /**
      * Logic : 채팅방의 마지막 CID 기록 - 읽지 않은 메시지 판별을 위한 보조 데이터

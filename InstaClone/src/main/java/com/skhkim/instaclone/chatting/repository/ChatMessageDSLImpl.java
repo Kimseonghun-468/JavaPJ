@@ -3,6 +3,7 @@ package com.skhkim.instaclone.chatting.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.QChatMessage;
+import com.skhkim.instaclone.request.MessagePageRequest;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,39 +20,40 @@ public class ChatMessageDSLImpl implements ChatMessageDSL{
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public Slice<ChatMessage> selectChatMessages(Pageable pageable, Long roomId, Long lastCid, Long joinCid, String loginEmail, String dType) {
+    public Slice<ChatMessage> selectChatMessages(MessagePageRequest request) {
         QChatMessage qChatMessage = QChatMessage.chatMessage;
+        Pageable pageable = request.getPageable();
 
         List<ChatMessage> result;
 
-        if (dType != null) {
-            if ("up".equalsIgnoreCase(dType)) {
+        if (request.getDType() != null) {
+            if ("up".equalsIgnoreCase(request.getDType())) {
                 result = queryFactory.selectFrom(qChatMessage)
-                        .where(qChatMessage.roomId.eq(roomId)
-                                .and(qChatMessage.cid.loe(lastCid))
-                                .and(qChatMessage.cid.gt(joinCid)))
+                        .where(qChatMessage.roomId.eq(request.getRoomId())
+                                .and(qChatMessage.cid.loe(request.getLastCid()))
+                                .and(qChatMessage.cid.gt(request.getJoinCid())))
                         .orderBy(qChatMessage.cid.desc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
-            } else if ("down".equalsIgnoreCase(dType)) {
+            } else if ("down".equalsIgnoreCase(request.getDType())) {
                 result = queryFactory.selectFrom(qChatMessage)
-                        .where(qChatMessage.roomId.eq(roomId)
-                                .and(qChatMessage.cid.gt(lastCid))
-                                .and(qChatMessage.cid.gt(joinCid)))
+                        .where(qChatMessage.roomId.eq(request.getRoomId())
+                                .and(qChatMessage.cid.gt(request.getLastCid()))
+                                .and(qChatMessage.cid.gt(request.getJoinCid())))
                         .orderBy(qChatMessage.cid.asc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
             } else {
-                throw new IllegalArgumentException("Invalid direction type: " + dType);
+                throw new IllegalArgumentException("Invalid direction type: " + request.getDType());
             }
         } else {
             result = queryFactory.selectFrom(qChatMessage)
-                    .where(qChatMessage.roomId.eq(roomId)
-                            .and(qChatMessage.sendUser.email.ne(loginEmail))
-                            .and(qChatMessage.cid.gt(lastCid))
-                            .and(qChatMessage.cid.gt(joinCid)))
+                    .where(qChatMessage.roomId.eq(request.getRoomId())
+                            .and(qChatMessage.sendUser.id.ne(request.getChatId()))
+                            .and(qChatMessage.cid.gt(request.getLastCid()))
+                            .and(qChatMessage.cid.gt(request.getJoinCid())))
                     .fetch();
         }
 

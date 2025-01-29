@@ -32,9 +32,9 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 function selectChattingUp(roomId ,page){
     $.ajax({
-        url: '/chat/selectChatMessageUp?page=' + page,
+        url: '/chat/selectChatMessages?page=' + page,
         type: "POST",
-        data: {roomId:roomId},
+        data: {roomId:roomId, dType:"up"},
         dataType: "JSON",
         success: function (response){
             ChattingApp.setChattingUp(response.data)
@@ -44,9 +44,9 @@ function selectChattingUp(roomId ,page){
 
 function selectChattingDown(roomId ,page){
     $.ajax({
-        url: '/chat/selectChatMessageDown?page=' + page,
+        url: '/chat/selectChatMessages?page=' + page,
         type: "POST",
-        data: {roomId:roomId},
+        data: {roomId:roomId, dType:"down"},
         dataType: "JSON",
         success: function (response){
             ChattingApp.setChattingDown(response.data)
