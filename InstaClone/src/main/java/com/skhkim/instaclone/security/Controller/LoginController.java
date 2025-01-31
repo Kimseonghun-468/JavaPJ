@@ -48,7 +48,7 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public String singupMember(@RequestBody ClubMemberDTO memberDTO){
+    public String singupMember(ClubMemberDTO memberDTO){
         boolean checkResult = memberService.checkDuplication(memberDTO);
         if(checkResult){
 

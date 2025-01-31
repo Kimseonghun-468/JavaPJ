@@ -4,25 +4,27 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
     UserProfileApp.init(userName, loginName)
 
-    $('.uploadButton-profile').on('click', function () {
+    $(document).on('click', '.uploadButton-profile', function () {
         if (UserProfileApp.$data.loginName == UserProfileApp.$data.userName)
             $('#profile-option-modal').modal('show');
     });
+    $(document).on('click', '#upload-profile-image', function () {
+        $('.profile-Image-File').off('change');
+        $('.profile-Image-File').click().on('change', function (){
+            if (this.files && this.files.length > 0) {
+                $('.Profile-File-Modal').css('z-index', 1060).modal('show');
+                var files = $("input.profile-Image-File")[0].files;
+                UserProfileApp.setFormData(files);
+            }
+        })
+    });
 
-    $('#upload-profile-image').on('click', function () {
-        if (this.files && this.files.length > 0) {
-            $('.Profile-File-Modal').css('z-index', 1060).modal('show');
-            var files = $("input.profile-Image-File")[0].files;
-            UserProfileApp.setFormData(files)
-        }
-    })
-
-    $('.submitFile-Profile').on('click', function () {
+    $(document).on('click', '.submitFile-Profile', function () {
         uploadProfile(UserProfileApp.$data.formData);
         alert('프로필 파일이 제출되었습니다.');
     });
 
-    $('#cancel-profile-image').on('click', function () {
+    $(document).on('click', '#cancel-profile-image', function () {
         $.ajax({
             url: "/profileImage/deleteProfile",
             type: "POST",
@@ -32,15 +34,14 @@ document.addEventListener("DOMContentLoaded", ()=> {
         });
     });
 
-    $(".profile-picture").click(function (){
+    $(document).on('click', ".profile-picture", function (){
         if (UserProfileApp.$data.loginName == UserProfileApp.$data.userName) {
             $('#profileImageModal').modal('show');
             var imageUrl = $(this).attr('src');
-            var str = '<img src=\"' + imageUrl + '/\"' +
-                ' alt=\"Profile Picture\" class=\"post-image\">'
+            var str = '<img src="' + imageUrl + '" alt="Profile Picture" class="post-image">';
             $("#modal-content-profile-imagebox").html(str);
         }
-    })
+    });
 })
 
 function selectUserInfo(userName){
