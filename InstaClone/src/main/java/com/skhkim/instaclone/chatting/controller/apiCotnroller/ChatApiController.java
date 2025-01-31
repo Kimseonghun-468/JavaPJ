@@ -1,7 +1,6 @@
 package com.skhkim.instaclone.chatting.controller.apiCotnroller;
 
 import com.skhkim.instaclone.chatting.dto.ChatUserDTO;
-import com.skhkim.instaclone.chatting.repository.ChatMessageDSL;
 import com.skhkim.instaclone.chatting.request.InviteRequest;
 import com.skhkim.instaclone.chatting.request.MessageRequest;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
@@ -27,7 +26,6 @@ import java.util.List;
 @RequestMapping("/chat")
 public class ChatApiController {
     private final ChatMessageService chatMessageService;
-    private final ChatMessageDSL chatMessageDSL;
     private final ChatUserService chatUserService;
     private final ChatService chatService;
 

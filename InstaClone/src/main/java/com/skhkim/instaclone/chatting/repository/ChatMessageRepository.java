@@ -9,23 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
-
-    @Query("SELECT CM FROM ChatMessage CM WHERE CM.roomId = :roomId AND CM.cid <= :lastCid " +
-            "AND CM.cid > :joinCid " +
-            "ORDER BY CM.cid DESC")
-    Slice<ChatMessage> selectChatMessageUp(Pageable pageable,
-                                           @Param("roomId") Long roomId,
-                                           @Param("lastCid") Long lastCid,
-                                           @Param("joinCid") Long joinCid);
-
-    @Query("SELECT CM FROM ChatMessage CM WHERE CM.roomId =:roomId AND CM.cid > :lastCid AND CM.cid > :joinCid " +
-            "ORDER BY CM.cid ASC")
-    Slice<ChatMessage> selectChatMessageDown(Pageable pageable,
-                                             @Param("roomId") Long roomId,
-                                             @Param("lastCid") Long lastCid,
-                                             @Param("joinCid") Long joinCid);
-
+public interface ChatMessageRepository extends JpaRepository<ChatMessage, String>, ChatMessageDSL {
     @Query("SELECT CM FROM ChatMessage CM WHERE CM.roomId =:roomId " +
             "AND CM.sendUser.email != :loginEmail AND CM.cid > :lastCid AND CM.cid > :joinCid")
     List<ChatMessage> selectChatMessage(@Param("roomId") Long roomId,

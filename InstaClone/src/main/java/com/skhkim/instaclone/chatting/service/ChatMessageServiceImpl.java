@@ -3,7 +3,6 @@ package com.skhkim.instaclone.chatting.service;
 import com.skhkim.instaclone.chatting.dto.ChatMessageDTO;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
-import com.skhkim.instaclone.chatting.repository.ChatMessageDSL;
 import com.skhkim.instaclone.chatting.repository.ChatMessageRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
@@ -31,7 +30,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatUserRepository chatUserRepository;
     private final ClubMemberRepository memberRepository;
-    private final ChatMessageDSL chatMessageDSL;
 
     @Override
     public Long register(ChatMessageDTO chatMessageDTO){
@@ -57,7 +55,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         request.setLastCid(chatUser.getLastCid());
         request.setJoinCid(chatUser.getJoinCid());
         request.setChatId(chatUser.getChatId());
-        Slice<ChatMessage> result = chatMessageDSL.selectChatMessages(request);
+        Slice<ChatMessage> result = chatMessageRepository.selectChatMessages(request);
 
         List<ChatMessageDTO> chatMessageDTOS = result.stream().map(chatMessage -> {
             ChatMessageDTO chatMessageDTO = EntityMapper.entityToDTO(chatMessage);

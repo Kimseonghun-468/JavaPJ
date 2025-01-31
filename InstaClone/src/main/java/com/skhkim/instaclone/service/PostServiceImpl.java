@@ -28,6 +28,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
@@ -37,7 +38,6 @@ public class PostServiceImpl implements PostService {
     private String uploadPath;
 
     @Override
-    @Transactional
     public boolean insert(PostDTO postDTO){
 
         ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
@@ -55,7 +55,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Transactional
     public boolean update(PostDTO postDTO){
         ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
         if(postRepository.checkValidation(postDTO.getPno(), loginUserDTO.getEmail())) {
@@ -88,28 +87,28 @@ public class PostServiceImpl implements PostService {
         return EntityMapper.entityToDTO(post);
     }
     @Override
-    @Transactional
     public boolean delete(Long pno){
 
         ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
-        if(postRepository.checkValidation(pno, loginUserDTO.getEmail())) {
-            replyRepository.deleteByPostPno(pno);
-            List<PostImage> postImageList = postImageRepository.findByPno(pno);
-            postImageRepository.deleteByPostPno(pno);
-            postImageList.forEach(postImage -> {
-                try {
-                    Path path = Paths.get(uploadPath + postImage.getPath() + "/" + postImage.getUuid() + "_" + postImage.getImgName());
-                    Path path_s = Paths.get(uploadPath + postImage.getPath() + "/s_" + postImage.getUuid() + "_" + postImage.getImgName());
-                    Files.deleteIfExists(path);
-                    Files.deleteIfExists(path_s);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            postRepository.deleteByPno(pno);
-            return true;
-        }
-        else
+        if(!postRepository.checkValidation(pno, loginUserDTO.getEmail()))
             return false;
+
+        List<PostImage> postImageList = postImageRepository.selectPostImages(pno);
+        postImageList.forEach(postImage -> {
+            try {
+                Path path = Paths.get(uploadPath + postImage.getPath() + "/" + postImage.getUuid() + "_" + postImage.getImgName());
+                Path path_s = Paths.get(uploadPath + postImage.getPath() + "/s_" + postImage.getUuid() + "_" + postImage.getImgName());
+                Files.deleteIfExists(path);
+                Files.deleteIfExists(path_s);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        replyRepository.deleteByPostPno(pno);
+        postImageRepository.delete(pno);
+        postRepository.deleteByPno(pno);
+        return true;
+
     }
 }
