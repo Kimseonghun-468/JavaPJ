@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FriendAcceptRepository extends JpaRepository<FriendAccept, Long>, FriendAcceptCustom {
 
@@ -65,4 +66,8 @@ public interface FriendAcceptRepository extends JpaRepository<FriendAccept, Long
     Slice<ClubMember> selectInviteList(Pageable pageable,
                                        @Param("loginName") String loginName,
                                        @Param("roomUsers") List<String> roomUsers);
+
+    @Query("SELECT FA FROM FriendAccept FA " +
+            "WHERE FA.user1.name = :loginName AND FA.user2.name = :userName")
+        Optional<FriendAccept> getAcceptFriend(@Param("loginName") String loginName, @Param("userName") String userName);
 }

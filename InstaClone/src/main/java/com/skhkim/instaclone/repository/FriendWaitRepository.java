@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 public interface FriendWaitRepository extends JpaRepository<FriendWait, Long>, FriendWaitCustom {
 
     @Modifying
@@ -23,4 +25,9 @@ public interface FriendWaitRepository extends JpaRepository<FriendWait, Long>, F
             "WHERE FW.receiver.name = :loginName " +
             "ORDER BY FW.requester.name ")
     Slice<UserInfoProjection> getByWaitingListPage(Pageable pageable, @Param("loginName") String loginName);
+
+    @Query("SELECT FW FROM FriendWait FW " +
+            "WHERE (FW.receiver.name = :loginName AND FW.requester.name = :userName) " +
+            "OR (FW.receiver.name = :userName AND FW.requester.name = :loginName)")
+        Optional<FriendWait> getWaitByName(@Param("loginName") String loginName, @Param("userName") String userName);
 }

@@ -53,8 +53,8 @@ public class FriendServiceImpl implements FriendService {
     @Override
     /* FriendWait Duplication Check */
     public boolean checkDuplication(String loginName, String userName){
-        Optional<FriendWait> resultWait = memberRepository.getWaitByName(loginName, userName);
-        Optional<FriendAccept> resultAccept = memberRepository.getAcceptFriend(loginName, userName);
+        Optional<FriendWait> resultWait = waitRepository.getWaitByName(loginName, userName);
+        Optional<FriendAccept> resultAccept = acceptRepository.getAcceptFriend(loginName, userName);
         return (resultWait.isEmpty() && resultAccept.isEmpty());
     }
     @Override
@@ -63,8 +63,8 @@ public class FriendServiceImpl implements FriendService {
         if (loginName.equals(userName))
             return FriendStatus.SELF;
 
-        Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
-        Optional<FriendAccept> friendAccept = memberRepository.getAcceptFriend(loginName, userName);
+        Optional<FriendWait> friendWait = waitRepository.getWaitByName(loginName, userName);
+        Optional<FriendAccept> friendAccept = acceptRepository.getAcceptFriend(loginName, userName);
 
         if(friendWait.isPresent()){
             if (friendWait.get().getRequester().getName().equals(loginName))
@@ -85,7 +85,7 @@ public class FriendServiceImpl implements FriendService {
 
         String loginName = LoginContext.getClubMember().getName();
 
-        Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
+        Optional<FriendWait> friendWait = waitRepository.getWaitByName(loginName, userName);
 
         if(friendWait.isPresent()){
             int waitCount = waitRepository.delete(loginName, userName);
@@ -187,8 +187,8 @@ public class FriendServiceImpl implements FriendService {
         userInfoDTO.setStatus(loginName.equals(userName) ?
                 FriendStatus.SELF : FriendStatus.NONE);
 
-        Optional<FriendWait> friendWait = memberRepository.getWaitByName(loginName, userName);
-        Optional<FriendAccept> friendAccept = memberRepository.getAcceptFriend(loginName, userName);
+        Optional<FriendWait> friendWait = waitRepository.getWaitByName(loginName, userName);
+        Optional<FriendAccept> friendAccept = acceptRepository.getAcceptFriend(loginName, userName);
 
         // Wait Requester, Receiver 처리
         friendWait.ifPresent(wait -> userInfoDTO.setStatus(wait.getRequester().getName().equals(loginName)

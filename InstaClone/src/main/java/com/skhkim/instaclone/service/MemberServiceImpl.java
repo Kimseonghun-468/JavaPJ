@@ -29,7 +29,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean checkDuplication(ClubMemberDTO memberDTO){
-        return clubMemberRepository.existsByNameAndEmail(memberDTO.getName(),memberDTO.getEmail());
+        return clubMemberRepository.signValidation(memberDTO.getName(),memberDTO.getEmail());
     }
     @Override
     public void updateUserName(String changeName, String originalName){
@@ -44,7 +44,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updatePassword(String memberName, String newPassword){
         String discriptedPassword = passwordEncoder.encode(newPassword);
-        clubMemberRepository.updateByPassword(discriptedPassword, memberName);
+        clubMemberRepository.updateByPassward(discriptedPassword, memberName);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public UserInfoResponse selectSearchUsers(UserInfoPageRequest userInfoPageRequest, String searchName){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<ClubMember> result = clubMemberRepository.selectSearchUserInfo(pageable, searchName, LoginContext.getClubMember().getName());
-
+        Long userId = LoginContext.getClubMember().getUserId();
+        Slice<ClubMember> result = clubMemberRepository.selectSearchUserList(pageable, searchName, userId);
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -71,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
     }
     @Override
     public ClubMember selectClubMember(String Email) {
-        Optional<ClubMember> result = clubMemberRepository.findByEmail(Email);
+        Optional<ClubMember> result = clubMemberRepository.selectByEmail(Email);
         return result.orElseGet(() -> ClubMember.builder().build());
     }
     @Override
@@ -82,7 +82,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public UserInfoDTO selectUserInfo(String userName){
-        ClubMember clubMember = clubMemberRepository.selectUserInfo(userName);
+        ClubMember clubMember = clubMemberRepository.selectByName(userName);
         return EntityMapper.entityToDTO(clubMember);
     }
 

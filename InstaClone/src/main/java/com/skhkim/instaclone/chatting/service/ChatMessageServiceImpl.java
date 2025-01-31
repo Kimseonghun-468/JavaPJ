@@ -66,7 +66,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                         .map(Long::parseLong)
                         .collect(Collectors.toList());
 
-                List<ClubMember> clubMembers = memberRepository.findByIds(userIdList);
+                List<ClubMember> clubMembers = memberRepository.selectByIds(userIdList);
                 String userNames = clubMembers.stream()
                         .map(ClubMember::getName)
                         .collect(Collectors.joining(", "));

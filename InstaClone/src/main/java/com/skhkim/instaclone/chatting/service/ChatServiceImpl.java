@@ -64,7 +64,7 @@ public class ChatServiceImpl implements ChatService {
         roomService.updateUserNum(request.getRoomId(), request.getAddNum());
 
         // 여기서 names를 Id로 수정후 넣어줘야함.
-        List<ClubMember> clubMembers = memberRepository.selectUserByNames(request.getUserNames());
+        List<ClubMember> clubMembers = memberRepository.selectByNames(request.getUserNames());
         String userIds = clubMembers.stream()
                 .map(member -> String.valueOf(member.getId()))
                 .collect(Collectors.joining(", "));

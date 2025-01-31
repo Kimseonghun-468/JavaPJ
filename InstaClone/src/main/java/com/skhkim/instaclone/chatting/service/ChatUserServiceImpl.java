@@ -58,7 +58,7 @@ public class ChatUserServiceImpl implements ChatUserService {
     public void insertChatUser(List<String> userNames, Long roomId){
 
         ChatRoom chatRoom = chatRoomRepository.selectChatRoom(roomId);
-        List<ClubMember> clubMembers = memberRepository.selectUserByNames(userNames);
+        List<ClubMember> clubMembers = memberRepository.selectByNames(userNames);
         clubMembers.forEach(member -> {
             ChatUser chatUser = ChatUser.builder()
                     .member(member)
