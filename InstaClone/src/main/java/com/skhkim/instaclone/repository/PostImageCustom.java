@@ -9,5 +9,4 @@ public interface PostImageCustom {
 
     List<PostImage> selectPostImages(Long pno);
 
-
 }

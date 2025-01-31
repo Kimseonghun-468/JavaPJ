@@ -2,6 +2,7 @@ package com.skhkim.instaclone.repository;
 
 import com.skhkim.instaclone.entity.FriendAccept;
 import com.skhkim.instaclone.entity.FriendWait;
+import com.skhkim.instaclone.repository.querydsl.ClubMemberCustom;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
+public interface ClubMemberRepository extends JpaRepository<ClubMember, Long>, ClubMemberCustom {
 
     @EntityGraph(attributePaths = {"roleSet"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("select m from ClubMember m where m.fromSocial = :social and m.email = :email")

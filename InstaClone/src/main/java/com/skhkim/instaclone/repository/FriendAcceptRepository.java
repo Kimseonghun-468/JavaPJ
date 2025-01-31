@@ -3,6 +3,7 @@ package com.skhkim.instaclone.repository;
 import com.skhkim.instaclone.dto.UserInfoProjection;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.FriendAccept;
+import com.skhkim.instaclone.repository.querydsl.FriendAcceptCustom;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface FriendAcceptRepository extends JpaRepository<FriendAccept, Long> {
+public interface FriendAcceptRepository extends JpaRepository<FriendAccept, Long>, FriendAcceptCustom {
 
     @Modifying
     @Transactional

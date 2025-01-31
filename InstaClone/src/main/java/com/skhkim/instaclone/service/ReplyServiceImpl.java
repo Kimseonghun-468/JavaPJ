@@ -29,8 +29,8 @@ public class ReplyServiceImpl implements ReplyService{
     }
     @Override
     public boolean remove(Long rno) {
-
-        if(replyRepository.checkValidation(rno, LoginContext.getClubMember().getEmail())) {
+        Long userId = LoginContext.getClubMember().getUserId();
+        if(replyRepository.validation(rno, userId)) {
             replyRepository.deleteById(rno);
             return true;
         }
@@ -42,7 +42,7 @@ public class ReplyServiceImpl implements ReplyService{
     @Override
     public ReplyResponse selectReplyList(ReplyPageRequest replyPageRequest, Long pno){
         Pageable pageable = replyPageRequest.getPageable();
-        Slice<Reply> result = replyRepository.selectReplyList(pageable, pno);
+        Slice<Reply> result = replyRepository.selectList(pageable, pno);
         List<ReplyDTO> replyDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
         return new ReplyResponse(replyDTOS, result.hasNext());
     }

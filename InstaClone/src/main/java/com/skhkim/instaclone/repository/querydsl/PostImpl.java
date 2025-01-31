@@ -1,4 +1,4 @@
-package com.skhkim.instaclone.repository;
+package com.skhkim.instaclone.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.skhkim.instaclone.entity.Post;

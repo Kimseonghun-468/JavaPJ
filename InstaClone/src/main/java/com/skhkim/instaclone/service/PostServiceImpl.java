@@ -47,7 +47,6 @@ public class PostServiceImpl implements PostService {
         List<PostImage> postImageList = (List<PostImage>) entityMap.get("imgList");
 
         postRepository.save(post);
-
         postImageList.forEach(image -> image.setPost(post));
         postImageRepository.saveAll(postImageList);
 
@@ -105,7 +104,7 @@ public class PostServiceImpl implements PostService {
             }
         });
 
-        replyRepository.deleteByPostPno(pno);
+        replyRepository.delete(pno);
         postImageRepository.delete(pno);
         postRepository.delete(pno);
         return true;

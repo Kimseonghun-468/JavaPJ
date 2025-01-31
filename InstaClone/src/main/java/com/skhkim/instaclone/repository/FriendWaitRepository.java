@@ -2,6 +2,7 @@ package com.skhkim.instaclone.repository;
 
 import com.skhkim.instaclone.dto.UserInfoProjection;
 import com.skhkim.instaclone.entity.FriendWait;
+import com.skhkim.instaclone.repository.querydsl.FriendWaitCustom;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface FriendWaitRepository extends JpaRepository<FriendWait, Long> {
+public interface FriendWaitRepository extends JpaRepository<FriendWait, Long>, FriendWaitCustom {
 
     @Modifying
     @Transactional
