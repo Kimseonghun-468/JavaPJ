@@ -150,7 +150,7 @@ public class EntityMapper {
                 .pno(postDTO.getPno())
                 .title(postDTO.getTitle())
                 .comment(postDTO.getComment())
-                .clubMember(ClubMember.builder().email(postDTO.getEmail()).build())
+                .clubMember(ClubMember.builder().id(postDTO.getUserId()).build())
                 .build();
         entityMap.put("post", post);
 

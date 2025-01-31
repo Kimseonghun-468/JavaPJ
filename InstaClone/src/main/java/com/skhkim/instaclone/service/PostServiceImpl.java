@@ -41,8 +41,7 @@ public class PostServiceImpl implements PostService {
     public boolean insert(PostDTO postDTO){
 
         ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
-        postDTO.setName(loginUserDTO.getName());
-        postDTO.setEmail(loginUserDTO.getEmail());
+        postDTO.setUserId(loginUserDTO.getUserId());
         Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
         Post post = (Post) entityMap.get("post");
         List<PostImage> postImageList = (List<PostImage>) entityMap.get("imgList");
@@ -60,8 +59,7 @@ public class PostServiceImpl implements PostService {
     public boolean update(PostDTO postDTO){
         ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
         if(postRepository.checkValidation(postDTO.getPno(), loginUserDTO.getEmail())) {
-            postDTO.setName(loginUserDTO.getName());
-            postDTO.setEmail(loginUserDTO.getEmail());
+            postDTO.setUserId(loginUserDTO.getUserId());
             Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
             Post post = (Post) entityMap.get("post");
             postRepository.save(post);

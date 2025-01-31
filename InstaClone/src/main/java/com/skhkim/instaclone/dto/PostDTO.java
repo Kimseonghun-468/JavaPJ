@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PostDTO {
     private Long pno;
+    private Long userId;
     private String email;
     private String name;
     private String comment;
