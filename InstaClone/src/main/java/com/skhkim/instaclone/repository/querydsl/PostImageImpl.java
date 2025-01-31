@@ -3,7 +3,6 @@ package com.skhkim.instaclone.repository.querydsl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.skhkim.instaclone.entity.PostImage;
 import com.skhkim.instaclone.entity.QPostImage;
-import com.skhkim.instaclone.repository.PostImageCustom;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
