@@ -19,45 +19,47 @@ import java.nio.file.Paths;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class ProfileServiceImpl implements ProfileService{
-
-    private final ProfileImageRepository profileImageRepository;
-    private final ClubMemberRepository memberRepository;
     @Value("${instaclone.upload.path}")
     private String uploadPath;
 
-    @Override
-    @Transactional
-    public void register(ProfileImageDTO profileImageDTO){
+    private final ProfileImageRepository profileImageRepository;
 
-        profileImageDTO.setUserId(LoginContext.getClubMember().getUserId());
-        ProfileImage profileImage = EntityMapper.dtoToEntity(profileImageDTO);
-        ProfileImage beforeImage = profileImageRepository.findByUserEmail(profileImage.getClubMember().getEmail());
-        profileImageRepository.deleteByUserEmail(profileImage.getClubMember().getEmail());
-        deleteImage(beforeImage);
-        profileImageRepository.save(profileImage);
-    }
-
-    public void deleteImage(ProfileImage imageEntity){
+    public void deleteImage(Long userId){
+        ProfileImage imageEntity = profileImageRepository.select(userId);
         if (imageEntity != null) {
             try {
                 Path path = Paths.get(uploadPath + imageEntity.getPath() + "/" + imageEntity.getUuid() + "_" + imageEntity.getImgName());
                 Path path_s = Paths.get(uploadPath + imageEntity.getPath() + "/s_" + imageEntity.getUuid() + "_" + imageEntity.getImgName());
                 Files.deleteIfExists(path);
                 Files.deleteIfExists(path_s);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
+
     @Override
-    @Transactional
+    public void register(ProfileImageDTO profileImageDTO){
+        Long userId = LoginContext.getClubMember().getUserId();
+        profileImageDTO.setUserId(userId);
+        ProfileImage profileImage = EntityMapper.dtoToEntity(profileImageDTO);
+
+        profileImageRepository.delete(userId);
+        profileImageRepository.save(profileImage);
+        this.deleteImage(userId);
+    }
+
+
+
+    @Override
     public void delete(){
-        String loginName = LoginContext.getClubMember().getName();
-        ProfileImage beforeImage = profileImageRepository.findByUserName(loginName);
-        profileImageRepository.deleteByUserName(loginName);
-        deleteImage(beforeImage);
+        Long userId = LoginContext.getClubMember().getUserId();
+        profileImageRepository.delete(userId);
+        this.deleteImage(userId);
     }
 
 }

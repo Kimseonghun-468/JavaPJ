@@ -57,7 +57,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public boolean update(PostDTO postDTO){
         ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
-        if(postRepository.checkValidation(postDTO.getPno(), loginUserDTO.getEmail())) {
+        if(postRepository.validation(postDTO.getPno(), loginUserDTO.getUserId())) {
             postDTO.setUserId(loginUserDTO.getUserId());
             Map<String, Object> entityMap = EntityMapper.dtoToEntity(postDTO);
             Post post = (Post) entityMap.get("post");
@@ -71,7 +71,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostResponse selectPostList(PostPageRequest postPageRequest, String name){
         Pageable pageable = postPageRequest.getPageable();
-        Slice<Post> result = postRepository.selectPostList(pageable, name);
+        Slice<Post> result = postRepository.selectList(pageable, name);
         List<PostDTO> postDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new PostResponse(postDTOS, result.hasNext());
@@ -83,14 +83,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDTO selectPostDetail(Long postId){
-        Post post = postRepository.selectPost(postId);
+        Post post = postRepository.select(postId);
         return EntityMapper.entityToDTO(post);
     }
     @Override
     public boolean delete(Long pno){
 
         ClubMemberDTO loginUserDTO = LoginContext.getClubMember();
-        if(!postRepository.checkValidation(pno, loginUserDTO.getEmail()))
+        if(!postRepository.validation(pno, loginUserDTO.getUserId()))
             return false;
 
         List<PostImage> postImageList = postImageRepository.selectPostImages(pno);
@@ -107,7 +107,7 @@ public class PostServiceImpl implements PostService {
 
         replyRepository.deleteByPostPno(pno);
         postImageRepository.delete(pno);
-        postRepository.deleteByPno(pno);
+        postRepository.delete(pno);
         return true;
 
     }
