@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 @Builder
 public class ProfileImageDTO {
     private Long pfino;
+    private Long userId;
     private String userName;
     private String userEmail;
     private String uuid;

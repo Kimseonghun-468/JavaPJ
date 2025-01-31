@@ -30,6 +30,7 @@ public class ProfileServiceImpl implements ProfileService{
     @Transactional
     public void register(ProfileImageDTO profileImageDTO){
 
+        profileImageDTO.setUserId(LoginContext.getClubMember().getUserId());
         ProfileImage profileImage = EntityMapper.dtoToEntity(profileImageDTO);
         ProfileImage beforeImage = profileImageRepository.findByUserEmail(profileImage.getClubMember().getEmail());
         profileImageRepository.deleteByUserEmail(profileImage.getClubMember().getEmail());

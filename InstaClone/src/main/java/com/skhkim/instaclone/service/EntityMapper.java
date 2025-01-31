@@ -189,7 +189,7 @@ public class EntityMapper {
 
     public static ProfileImage dtoToEntity(ProfileImageDTO profileImageDTO){
         return ProfileImage.builder()
-                .clubMember(ClubMember.builder().email(profileImageDTO.getUserEmail()).build())
+                .clubMember(ClubMember.builder().id(profileImageDTO.getUserId()).build())
                 .path(profileImageDTO.getPath())
                 .uuid(profileImageDTO.getUuid())
                 .imgName(profileImageDTO.getImgName())
