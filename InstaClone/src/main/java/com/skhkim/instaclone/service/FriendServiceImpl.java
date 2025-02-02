@@ -53,7 +53,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     /* FriendWait Duplication Check */
     public boolean checkDuplication(String loginName, String userName){
-        Optional<FriendWait> resultWait = waitRepository.getWaitByName(loginName, userName);
+        Optional<FriendWait> resultWait = waitRepository.selectByName(loginName, userName);
         Optional<FriendAccept> resultAccept = acceptRepository.getAcceptFriend(loginName, userName);
         return (resultWait.isEmpty() && resultAccept.isEmpty());
     }
@@ -63,7 +63,7 @@ public class FriendServiceImpl implements FriendService {
         if (loginName.equals(userName))
             return FriendStatus.SELF;
 
-        Optional<FriendWait> friendWait = waitRepository.getWaitByName(loginName, userName);
+        Optional<FriendWait> friendWait = waitRepository.selectByName(loginName, userName);
         Optional<FriendAccept> friendAccept = acceptRepository.getAcceptFriend(loginName, userName);
 
         if(friendWait.isPresent()){
@@ -85,7 +85,7 @@ public class FriendServiceImpl implements FriendService {
 
         String loginName = LoginContext.getClubMember().getName();
 
-        Optional<FriendWait> friendWait = waitRepository.getWaitByName(loginName, userName);
+        Optional<FriendWait> friendWait = waitRepository.selectByName(loginName, userName);
 
         if(friendWait.isPresent()){
             int waitCount = waitRepository.delete(loginName, userName);
@@ -131,7 +131,7 @@ public class FriendServiceImpl implements FriendService {
     selectWaitingFriend(UserInfoPageRequest userInfoPageRequest){
 
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = waitRepository.getByWaitingListPage(pageable, LoginContext.getClubMember().getName());
+        Slice<ClubMember> result = waitRepository.selectListById(pageable, LoginContext.getClubMember().getUserId());
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -141,7 +141,7 @@ public class FriendServiceImpl implements FriendService {
     public UserInfoResponse
     selectAcceptUsersInfo(UserInfoPageRequest userInfoPageRequest){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = acceptRepository.getByAcceptListPage(pageable, LoginContext.getClubMember().getName());
+        Slice<ClubMember> result = acceptRepository.getByAcceptListPage(pageable, LoginContext.getClubMember().getName());
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -150,7 +150,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public UserInfoResponse selectInviteSearchUsers(UserInfoPageRequest userInfoPageRequest, String inviteSearchTerm, List<String> roomUsers){
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<UserInfoProjection> result = acceptRepository.selectInviteListByName(pageable, LoginContext.getClubMember().getName(), inviteSearchTerm, roomUsers);
+        Slice<ClubMember> result = acceptRepository.selectInviteListByName(pageable, LoginContext.getClubMember().getName(), inviteSearchTerm, roomUsers);
         List<UserInfoDTO> userInfoDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new UserInfoResponse(userInfoDTOS, result.hasNext());
@@ -187,7 +187,7 @@ public class FriendServiceImpl implements FriendService {
         userInfoDTO.setStatus(loginName.equals(userName) ?
                 FriendStatus.SELF : FriendStatus.NONE);
 
-        Optional<FriendWait> friendWait = waitRepository.getWaitByName(loginName, userName);
+        Optional<FriendWait> friendWait = waitRepository.selectByName(loginName, userName);
         Optional<FriendAccept> friendAccept = acceptRepository.getAcceptFriend(loginName, userName);
 
         // Wait Requester, Receiver 처리

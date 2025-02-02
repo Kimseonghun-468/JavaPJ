@@ -55,7 +55,7 @@ public class FriendAcceptImpl implements FriendAcceptCustom {
         QClubMember clubMember = QClubMember.clubMember;
 
         List<ClubMember> result = queryFactory
-                .select(clubMember) // Assuming UserInfoProjection is mapped to ClubMember
+                .select(clubMember)
                 .from(friendAccept)
                 .join(friendAccept.user2, clubMember)
                 .where(friendAccept.user1.name.eq(loginName))

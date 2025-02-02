@@ -1,13 +1,11 @@
 package com.skhkim.instaclone.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.skhkim.instaclone.dto.UserInfoProjection;
 import com.skhkim.instaclone.entity.ClubMember;
 import com.skhkim.instaclone.entity.FriendWait;
 import com.skhkim.instaclone.entity.QClubMember;
 import com.skhkim.instaclone.entity.QFriendWait;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -33,7 +31,7 @@ public class FriendWaitImpl implements FriendWaitCustom{
     }
 
 
-    public Slice<ClubMember> selectListByName(Pageable pageable, Long userId) {
+    public Slice<ClubMember> selectListById(Pageable pageable, Long userId) {
         QFriendWait friendWait = QFriendWait.friendWait;
         QClubMember clubMember = QClubMember.clubMember;
         List<ClubMember> result = queryFactory.select(clubMember)
@@ -41,8 +39,8 @@ public class FriendWaitImpl implements FriendWaitCustom{
                 .join(friendWait.requester, clubMember)
                 .where(friendWait.receiver.id.eq(userId))
                 .orderBy(clubMember.name.asc())
-                .offset(pageable.getOffset())    // 페이지네이션 적용
-                .limit(pageable.getPageSize())   // 페이지 크기 적용
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
 
