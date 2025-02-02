@@ -10,6 +10,6 @@ import java.util.List;
 public class InviteRequest {
     private Long roomId;
     private List<String> userNames;
-    private Integer addNum;
+    private Long addNum;
     private String searchTerm;
 }

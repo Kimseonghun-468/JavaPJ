@@ -2,7 +2,6 @@ package com.skhkim.instaclone.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.skhkim.instaclone.entity.ClubMember;
-import com.skhkim.instaclone.entity.FriendWait;
 import com.skhkim.instaclone.entity.QClubMember;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;

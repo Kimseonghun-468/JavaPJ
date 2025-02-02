@@ -1,4 +1,4 @@
-package com.skhkim.instaclone.chatting.repository;
+package com.skhkim.instaclone.chatting.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.skhkim.instaclone.chatting.entity.ChatMessage;

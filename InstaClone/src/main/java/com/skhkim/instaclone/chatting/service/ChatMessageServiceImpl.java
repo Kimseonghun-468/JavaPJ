@@ -43,7 +43,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public void updateReadStatus(MessageRequest request){
         Long userId = LoginContext.getClubMember().getUserId();
-        ChatUser chatUser = chatUserRepository.selectChatUser(request.getRoomId(), userId);
+        ChatUser chatUser = chatUserRepository.select(request.getRoomId(), userId);
         request.setUserId(userId);
         request.setJoinCid(chatUser.getJoinCid());
         request.setLastCid(chatUser.getLastCid());
@@ -56,7 +56,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public ChatMessageResponse selectChatMessages(MessagePageRequest request){
         Long userId = LoginContext.getClubMember().getUserId();
-        ChatUser chatUser = chatUserRepository.selectChatUser(request.getRoomId(), userId);
+        ChatUser chatUser = chatUserRepository.select(request.getRoomId(), userId);
         request.setLastCid(chatUser.getLastCid());
         request.setJoinCid(chatUser.getJoinCid());
         request.setChatId(chatUser.getChatId());
@@ -87,7 +87,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public Long getNotReadNum(MessageRequest request){
         Long userId = LoginContext.getClubMember().getUserId();
-        ChatUser chatUser = chatUserRepository.selectChatUser(request.getRoomId(), userId);
+        ChatUser chatUser = chatUserRepository.select(request.getRoomId(), userId);
         request.setLastCid(chatUser.getLastCid());
         request.setJoinCid(chatUser.getJoinCid());
         return chatMessageRepository.getNotReadNum(request);

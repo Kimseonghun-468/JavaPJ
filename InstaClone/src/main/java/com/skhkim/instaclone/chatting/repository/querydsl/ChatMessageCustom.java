@@ -1,4 +1,4 @@
-package com.skhkim.instaclone.chatting.repository;
+package com.skhkim.instaclone.chatting.repository.querydsl;
 
 import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.request.MessageRequest;

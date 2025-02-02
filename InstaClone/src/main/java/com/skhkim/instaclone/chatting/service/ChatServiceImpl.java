@@ -45,7 +45,7 @@ public class ChatServiceImpl implements ChatService {
     public void sendMessage(MessageRequest request){
 
         Long userId = LoginContext.getClubMember().getUserId();
-        ChatUser chatUser = userRepository.selectChatUser(request.getRoomId(), userId);
+        ChatUser chatUser = userRepository.select(request.getRoomId(), userId);
 
         Long userNum = chatUser.getChatRoom().getUserNum();
         Long readStatus = userNum - sessionManager.getRoomJoinNum(request.getRoomId().toString());
@@ -82,7 +82,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<ChatUserDTO> joinChatRoom(MessageRequest request){
-        List<ChatUser> result = userRepository.selectChatUsers(request.getRoomId());
+        List<ChatUser> result = userRepository.selectList(request.getRoomId());
         messageService.updateReadStatus(request);
 
         ChatUserResponse chatUser = ChatUserResponse.builder()
@@ -95,7 +95,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Long createChatRoom(String userName){
-        Optional<Long> roomId = userRepository.checkChatRoom(LoginContext.getClubMember().getName(), userName);
+        Optional<Long> roomId = roomRepository.validate(LoginContext.getClubMember().getName(), userName);
 
         if(roomId.isPresent()){
             return roomId.get();
@@ -107,8 +107,8 @@ public class ChatServiceImpl implements ChatService {
                     .lastChat("")
                     .build();
             roomRepository.save(chatRoom);
-            userService.register(LoginContext.getClubMember().getEmail(), chatRoom.getRoomId());
-            userService.register(memberRepository.findByName(userName).getEmail(), chatRoom.getRoomId());
+            userService.register(LoginContext.getClubMember().getUserId(), chatRoom.getRoomId());
+            userService.register(memberRepository.findByName(userName).getId(), chatRoom.getRoomId());
             return chatRoom.getRoomId();
         }
     }

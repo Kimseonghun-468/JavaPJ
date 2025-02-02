@@ -28,11 +28,11 @@ public class ChatUserServiceImpl implements ChatUserService {
     private final ChatRoomRepository chatRoomRepository;
     private final ClubMemberRepository memberRepository;
     @Override
-    public void register(String userEmail, Long roomId){
+    public void register(Long userId, Long roomId){
 
         ChatUser chatUser = ChatUser.builder()
                 .chatRoom(ChatRoom.builder().roomId(roomId).build())
-                .member(ClubMember.builder().email(userEmail).build())
+                .member(ClubMember.builder().id(userId).build())
                 .lastCid(0L)
                 .joinCid(0L)
                 .build();
@@ -41,7 +41,7 @@ public class ChatUserServiceImpl implements ChatUserService {
     @Override
     public void updateDisConnectCid(Long roomId){
         Long userId = LoginContext.getClubMember().getUserId();
-        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, userId);
+        ChatUser chatUser = chatUserRepository.select(roomId, userId);
         chatUser.setLastCid(chatUser.getChatRoom().getLastCid());
         chatUserRepository.save(chatUser);
     }
@@ -49,8 +49,9 @@ public class ChatUserServiceImpl implements ChatUserService {
     @Override
     public ChatRoomResponse
     selectChatRooms(UserInfoPageRequest userInfoPageRequest){
+        Long userId = LoginContext.getClubMember().getUserId();
         Pageable pageable = userInfoPageRequest.getPageable();
-        Slice<ChatRoom> result = chatUserRepository.selectChatRoom(pageable, LoginContext.getClubMember().getEmail());
+        Slice<ChatRoom> result = chatRoomRepository.selectList(pageable, userId);
         List<ChatRoomDTO> chatRoomDTOS = result.stream().map(EntityMapper::entityToDTO).toList();
 
         return new ChatRoomResponse(chatRoomDTOS, result.hasNext());
@@ -58,7 +59,7 @@ public class ChatUserServiceImpl implements ChatUserService {
     @Override
     public void insertChatUser(List<String> userNames, Long roomId){
 
-        ChatRoom chatRoom = chatRoomRepository.selectChatRoom(roomId);
+        ChatRoom chatRoom = chatRoomRepository.select(roomId);
         List<ClubMember> clubMembers = memberRepository.selectByNames(userNames);
         clubMembers.forEach(member -> {
             ChatUser chatUser = ChatUser.builder()

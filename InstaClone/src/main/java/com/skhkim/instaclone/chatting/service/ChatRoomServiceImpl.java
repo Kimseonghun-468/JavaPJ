@@ -14,14 +14,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     @Override
     public void updateLastCmId(ChatMessageDTO chatMessageDTO) {
-        ChatRoom chatRoom = chatRoomRepository.selectChatRoom(chatMessageDTO.getRoomId());
+        ChatRoom chatRoom = chatRoomRepository.select(chatMessageDTO.getRoomId());
         chatRoom.setLastChat(chatMessageDTO.getContent());
         chatRoom.setLastCid(chatMessageDTO.getCid());
         chatRoomRepository.save(chatRoom);
 
     }
     @Override
-    public void updateUserNum(Long roomId, Integer addNum){
-        chatRoomRepository.updateUserNumByRoomId(roomId, addNum);
+    public void updateUserNum(Long roomId, Long addNum){
+        chatRoomRepository.updateUserNum(roomId, addNum);
     }
 }

@@ -1,36 +1,9 @@
 package com.skhkim.instaclone.chatting.repository;
 
-import com.skhkim.instaclone.chatting.entity.ChatRoom;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import com.skhkim.instaclone.chatting.repository.querydsl.ChatUserCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
-
-    @Query("SELECT CU_LOGIN.chatRoom.roomId FROM ChatUser CU_LOGIN " +
-            "JOIN ChatUser CU_USER ON CU_LOGIN.chatRoom.roomId = CU_USER.chatRoom.roomId " +
-            "WHERE CU_LOGIN.member.name =:loginName AND CU_USER.member.name =:userName " +
-            "AND CU_LOGIN.chatRoom.userNum = 2")
-    Optional<Long> checkChatRoom(@Param("loginName") String loginName,
-                                 @Param("userName") String userName);
-
-    @Query("SELECT cu FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.id =:userId")
-    ChatUser selectChatUser(@Param("roomId") Long roomId,
-                            @Param("userId") Long userId);
-
-    @Query("SELECT CU.chatRoom FROM ChatUser CU " +
-            "WHERE CU.member.email = :loginEmail " +
-            "ORDER BY CU.chatRoom.lastCid DESC")
-    Slice<ChatRoom> selectChatRoom(Pageable pageable, @Param("loginEmail") String loginEmail);
-
-    @Query("SELECT cu FROM ChatUser cu " +
-            "WHERE cu.chatRoom.roomId =:roomId")
-    List<ChatUser> selectChatUsers(@Param("roomId") Long roomId);
+public interface ChatUserRepository extends JpaRepository<ChatUser, Long>, ChatUserCustom {
 
 }
