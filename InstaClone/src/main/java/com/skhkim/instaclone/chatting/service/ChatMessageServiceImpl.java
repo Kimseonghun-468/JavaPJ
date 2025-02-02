@@ -5,6 +5,7 @@ import com.skhkim.instaclone.chatting.entity.ChatMessage;
 import com.skhkim.instaclone.chatting.entity.ChatUser;
 import com.skhkim.instaclone.chatting.repository.ChatMessageRepository;
 import com.skhkim.instaclone.chatting.repository.ChatUserRepository;
+import com.skhkim.instaclone.chatting.request.MessageRequest;
 import com.skhkim.instaclone.chatting.response.ChatMessageResponse;
 import com.skhkim.instaclone.context.LoginContext;
 import com.skhkim.instaclone.entity.ClubMember;
@@ -27,9 +28,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class ChatMessageServiceImpl implements ChatMessageService {
 
-    private final ChatMessageRepository chatMessageRepository;
     private final ChatUserRepository chatUserRepository;
     private final ClubMemberRepository memberRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     @Override
     public Long register(ChatMessageDTO chatMessageDTO){
@@ -40,22 +41,26 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return chatMessage.getCid();
     }
     @Override
-    public void updateReadStatus(Long roomID){
-        String loginEmail = LoginContext.getClubMember().getEmail();
-        ChatUser chatUser = chatUserRepository.selectChatUser(roomID, loginEmail);
-        List<ChatMessage> result = chatMessageRepository.selectChatMessage(roomID, loginEmail, chatUser.getLastCid(), chatUser.getJoinCid());
+    public void updateReadStatus(MessageRequest request){
+        Long userId = LoginContext.getClubMember().getUserId();
+        ChatUser chatUser = chatUserRepository.selectChatUser(request.getRoomId(), userId);
+        request.setUserId(userId);
+        request.setJoinCid(chatUser.getJoinCid());
+        request.setLastCid(chatUser.getLastCid());
+        chatMessageRepository.updateReadNum(request);
+        List<ChatMessage> result = chatMessageRepository.selectChatMessages(request);
         result.forEach(chatMessage -> chatMessage.setReadStatus(chatMessage.getReadStatus() -1));
-
         chatMessageRepository.saveAll(result);
     }
 
     @Override
     public ChatMessageResponse selectChatMessages(MessagePageRequest request){
-        ChatUser chatUser = chatUserRepository.selectChatUser(request.getRoomId(), LoginContext.getClubMember().getEmail());
+        Long userId = LoginContext.getClubMember().getUserId();
+        ChatUser chatUser = chatUserRepository.selectChatUser(request.getRoomId(), userId);
         request.setLastCid(chatUser.getLastCid());
         request.setJoinCid(chatUser.getJoinCid());
         request.setChatId(chatUser.getChatId());
-        Slice<ChatMessage> result = chatMessageRepository.selectChatMessages(request);
+        Slice<ChatMessage> result = chatMessageRepository.selectChatMessagesPage(request);
 
         List<ChatMessageDTO> chatMessageDTOS = result.stream().map(chatMessage -> {
             ChatMessageDTO chatMessageDTO = EntityMapper.entityToDTO(chatMessage);
@@ -80,10 +85,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return new ChatMessageResponse(chatMessageDTOS, result.hasNext());
     }
     @Override
-    public Long getNotReadNum(Long roomId){
-        String loginEmail = LoginContext.getClubMember().getEmail();
-        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, loginEmail);
-        return chatMessageRepository.getNotReadNum(roomId, loginEmail, chatUser.getLastCid(), chatUser.getJoinCid());
+    public Long getNotReadNum(MessageRequest request){
+        Long userId = LoginContext.getClubMember().getUserId();
+        ChatUser chatUser = chatUserRepository.selectChatUser(request.getRoomId(), userId);
+        request.setLastCid(chatUser.getLastCid());
+        request.setJoinCid(chatUser.getJoinCid());
+        return chatMessageRepository.getNotReadNum(request);
     }
 
 }

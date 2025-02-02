@@ -40,7 +40,8 @@ public class ChatUserServiceImpl implements ChatUserService {
     }
     @Override
     public void updateDisConnectCid(Long roomId){
-        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, LoginContext.getClubMember().getEmail());
+        Long userId = LoginContext.getClubMember().getUserId();
+        ChatUser chatUser = chatUserRepository.selectChatUser(roomId, userId);
         chatUser.setLastCid(chatUser.getChatRoom().getLastCid());
         chatUserRepository.save(chatUser);
     }

@@ -20,9 +20,9 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
     Optional<Long> checkChatRoom(@Param("loginName") String loginName,
                                  @Param("userName") String userName);
 
-    @Query("SELECT cu FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.email =:loginEmail")
+    @Query("SELECT cu FROM ChatUser cu WHERE cu.chatRoom.roomId =:roomId AND cu.member.id =:userId")
     ChatUser selectChatUser(@Param("roomId") Long roomId,
-                            @Param("loginEmail") String loginEmail);
+                            @Param("userId") Long userId);
 
     @Query("SELECT CU.chatRoom FROM ChatUser CU " +
             "WHERE CU.member.email = :loginEmail " +

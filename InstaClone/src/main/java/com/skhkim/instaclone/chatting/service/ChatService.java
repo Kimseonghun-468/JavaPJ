@@ -34,7 +34,7 @@ public interface ChatService {
      * 1. Select ChatUsers
      * 2. Update ReadStatus
      * */
-    List<ChatUserDTO> joinChatRoom(Long roomId);
+    List<ChatUserDTO> joinChatRoom(MessageRequest request);
 
 
     Long createChatRoom(String userName);

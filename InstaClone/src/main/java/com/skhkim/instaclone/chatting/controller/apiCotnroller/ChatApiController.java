@@ -62,8 +62,8 @@ public class ChatApiController {
      * Todo : Eamil 노출 제거 및 UserProfile 개별적 불러오기 (성능 보다는 정보 유출을 더 막아야함)
      * */
     @PostMapping("/joinChatRoom")
-    public ResponseEntity joinChatRoom(Long roomId){
-        List<ChatUserDTO> result = chatService.joinChatRoom(roomId);
+    public ResponseEntity joinChatRoom(MessageRequest request){
+        List<ChatUserDTO> result = chatService.joinChatRoom(request);
         return ApiResponse.OK(result);
     }
 
@@ -107,8 +107,8 @@ public class ChatApiController {
      * Todo : Fetch Join을 통해 읽지 않은 Message의 수를 List 단위로 처리
      * */
     @PostMapping("/getNotReadNum")
-    public ResponseEntity getNotReadNum(Long roomId){
-        Long resultNum = chatMessageService.getNotReadNum(roomId);
+    public ResponseEntity getNotReadNum(MessageRequest request){
+        Long resultNum = chatMessageService.getNotReadNum(request);
         return ApiResponse.OK(resultNum);
     }
 

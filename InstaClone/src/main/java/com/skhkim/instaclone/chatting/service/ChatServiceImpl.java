@@ -44,8 +44,8 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     public void sendMessage(MessageRequest request){
 
-        String loginEmail = LoginContext.getClubMember().getEmail();
-        ChatUser chatUser = userRepository.selectChatUser(request.getRoomId(), loginEmail);
+        Long userId = LoginContext.getClubMember().getUserId();
+        ChatUser chatUser = userRepository.selectChatUser(request.getRoomId(), userId);
 
         Long userNum = chatUser.getChatRoom().getUserNum();
         Long readStatus = userNum - sessionManager.getRoomJoinNum(request.getRoomId().toString());
@@ -81,15 +81,15 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<ChatUserDTO> joinChatRoom(Long roomId){
-        List<ChatUser> result = userRepository.selectChatUsers(roomId);
-        messageService.updateReadStatus(roomId);
+    public List<ChatUserDTO> joinChatRoom(MessageRequest request){
+        List<ChatUser> result = userRepository.selectChatUsers(request.getRoomId());
+        messageService.updateReadStatus(request);
 
         ChatUserResponse chatUser = ChatUserResponse.builder()
-                .roomId(roomId)
+                .roomId(request.getRoomId())
                 .userName(LoginContext.getClubMember().getName())
                 .build();
-        redisTemplate.convertAndSend("/access/" +roomId, chatUser);
+        redisTemplate.convertAndSend("/access/" +request.getRoomId(), chatUser);
         return result.stream().map(EntityMapper::entityToDTO).toList();
     }
 
