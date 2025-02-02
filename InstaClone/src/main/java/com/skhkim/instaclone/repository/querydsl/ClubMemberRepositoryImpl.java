@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ClubMemberImpl implements ClubMemberCustom {
+public class ClubMemberRepositoryImpl implements ClubMemberCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public ClubMemberImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+    public ClubMemberRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     public Optional<ClubMember> selectByEmail(String email){
         QClubMember clubMember = QClubMember.clubMember;

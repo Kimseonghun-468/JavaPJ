@@ -13,11 +13,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class PostImpl implements PostCustom {
+public class PostRepositoryImpl implements PostCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public PostImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+    public PostRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     public Slice<Post> selectList(Pageable pageable, String name){
         QPost Post = QPost.post;

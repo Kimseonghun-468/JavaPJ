@@ -16,10 +16,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class ChatMessageImpl implements ChatMessageCustom {
+public class ChatMessageRepositoryImpl implements ChatMessageCustom {
     private final JPAQueryFactory queryFactory;
 
-    public ChatMessageImpl(EntityManager em) {
+    public ChatMessageRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
 

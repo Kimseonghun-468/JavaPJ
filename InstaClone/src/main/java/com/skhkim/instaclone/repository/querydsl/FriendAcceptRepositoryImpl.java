@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class FriendAcceptImpl implements FriendAcceptCustom {
+public class FriendAcceptRepositoryImpl implements FriendAcceptCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public FriendAcceptImpl(EntityManager em) {
+    public FriendAcceptRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
 

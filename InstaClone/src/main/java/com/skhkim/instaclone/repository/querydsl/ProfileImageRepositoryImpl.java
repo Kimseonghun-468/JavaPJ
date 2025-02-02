@@ -8,10 +8,10 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProfileImageImpl implements ProfileImageCustom {
+public class ProfileImageRepositoryImpl implements ProfileImageCustom {
     private final JPAQueryFactory queryFactory;
 
-    public ProfileImageImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+    public ProfileImageRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     public ProfileImage select(Long userId) {
         QProfileImage profileImage = QProfileImage.profileImage;

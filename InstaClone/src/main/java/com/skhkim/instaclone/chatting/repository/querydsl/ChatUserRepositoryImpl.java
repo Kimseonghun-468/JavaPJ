@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class ChatUserImpl implements ChatUserCustom{
+public class ChatUserRepositoryImpl implements ChatUserCustom{
 
     private final JPAQueryFactory queryFactory;
 
-    public ChatUserImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+    public ChatUserRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     public ChatUser select(Long roomId, Long userId){
         QChatUser chatUser = QChatUser.chatUser;

@@ -11,11 +11,11 @@ import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
-public class ReplyImpl implements ReplyCustom {
+public class ReplyRepositoryImpl implements ReplyCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public ReplyImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+    public ReplyRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     public Slice<Reply> selectList(Pageable pageable, Long pno) {
         QReply reply = QReply.reply;

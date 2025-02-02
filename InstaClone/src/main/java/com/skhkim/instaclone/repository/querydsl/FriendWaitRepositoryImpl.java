@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class FriendWaitImpl implements FriendWaitCustom{
+public class FriendWaitRepositoryImpl implements FriendWaitCustom{
 
     private final JPAQueryFactory queryFactory;
 
-    public FriendWaitImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+    public FriendWaitRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     public int delete(String loginName, String userName){
         QFriendWait friendWait = QFriendWait.friendWait;

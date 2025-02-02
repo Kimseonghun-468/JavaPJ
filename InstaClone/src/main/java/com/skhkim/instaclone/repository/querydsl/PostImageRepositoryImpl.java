@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class PostImageImpl implements PostImageCustom {
+public class PostImageRepositoryImpl implements PostImageCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public PostImageImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+    public PostImageRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     public void delete(Long pno) {
         QPostImage postImage = QPostImage.postImage;

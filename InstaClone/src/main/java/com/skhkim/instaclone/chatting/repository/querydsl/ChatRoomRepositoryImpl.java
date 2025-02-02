@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ChatRoomImpl implements ChatRoomCustom{
+public class ChatRoomRepositoryImpl implements ChatRoomCustom{
 
     private final JPAQueryFactory queryFactory;
 
-    public ChatRoomImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
+    public ChatRoomRepositoryImpl(EntityManager em) {this.queryFactory = new JPAQueryFactory(em);}
 
     public ChatRoom select(Long roomId){
         QChatRoom chatRoom = QChatRoom.chatRoom;
