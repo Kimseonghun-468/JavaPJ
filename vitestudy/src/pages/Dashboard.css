@@ -1,0 +1,52 @@
+.portfolio-chart {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 도넛 가운데 텍스트 */
+.donut-center-text {
+  position: absolute;
+  top: 50%;
+  left: 35%;
+  transform: translate(-40%, -40%);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ccc;
+  pointer-events: none;
+  line-height: 1.4;
+}
+
+/* 범례 스타일 */
+.legend {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #ddd;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-name {
+  min-width: 40px;
+}
+
+.legend-percent {
+  margin-left: auto;
+  font-weight: 600;
+}

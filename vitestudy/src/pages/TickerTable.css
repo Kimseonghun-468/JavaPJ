@@ -1,0 +1,44 @@
+.ticker-table-wrapper {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 10px;
+  /*background-color: #1e1e1e;*/
+  color: #fff;
+  font-family: 'Noto Sans KR', sans-serif;
+  border-radius: 8px;
+  /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);*/
+}
+
+.ticker-table {
+  width: 100%;
+  /*border-collapse: collapse;*/
+}
+
+.ticker-table th, .ticker-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #333;
+}
+
+.ticker-table thead {
+  /*background-color: #2a2a2a;*/
+}
+
+.ticker-table th {
+  color: #ccc;
+}
+
+.symbol {
+  font-size: 0.85em;
+  color: #888;
+}
+
+.up {
+  color: #d84f4f; /* 빨간색 */
+  font-weight: bold;
+}
+
+.down {
+  color: #3f7ed5; /* 파란색 */
+  font-weight: bold;
+}
